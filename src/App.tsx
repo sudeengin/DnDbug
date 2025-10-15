@@ -22,14 +22,63 @@ const defaultInputs: GMInputs = {
   notes: "Oyuncular dışarıdan gezginler; köy halkı rüyalarla ipucu veriyor",
 };
 
+type SkeletonScene = {
+  scene_title: string;
+  scene_objective: string;
+  branch_hint?: string;
+  improv_note?: string;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function toOptionalString(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (value === undefined || value === null) return undefined;
+  return String(value);
+}
+
+function toSkeletonScene(raw: unknown): SkeletonScene {
+  if (!isRecord(raw)) {
+    return { scene_title: "", scene_objective: "" };
+  }
+  const sceneTitle =
+    toOptionalString(raw.scene_title) ?? toOptionalString(raw.title) ?? "";
+  const sceneObjective =
+    toOptionalString(raw.scene_objective) ??
+    toOptionalString(raw.objective) ??
+    "";
+  return {
+    scene_title: sceneTitle,
+    scene_objective: sceneObjective,
+    branch_hint: toOptionalString(raw.branch_hint),
+    improv_note: toOptionalString(raw.improv_note),
+  };
+}
+
+function normalizeSkeletonView(raw: unknown): { main_objective?: string; scenes: SkeletonScene[] } | null {
+  if (!isRecord(raw) || !Array.isArray(raw.scenes)) return null;
+  const scenes = raw.scenes as unknown[];
+  return {
+    main_objective: toOptionalString(raw.main_objective),
+    scenes: scenes.map(toSkeletonScene),
+  };
+}
+
+function normalizeSceneDetail(raw: unknown): SkeletonScene | null {
+  if (!raw) return null;
+  return toSkeletonScene(raw);
+}
+
 export default function App() {
   const [inputs, setInputs] = useState<GMInputs>(() => {
     const saved = localStorage.getItem("dndbug_inputs");
     return saved ? JSON.parse(saved) : defaultInputs;
   });
   const [loading, setLoading] = useState(false);
-  const [skeleton, setSkeleton] = useState<any>(null);
-  const [scene, setScene] = useState<any>(null);
+  const [skeleton, setSkeleton] = useState<unknown>(null);
+  const [scene, setScene] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,16 +86,18 @@ export default function App() {
   }, [inputs]);
 
   const disabled = useMemo(() => loading, [loading]);
+  const skeletonView = useMemo(() => normalizeSkeletonView(skeleton), [skeleton]);
+  const sceneDetail = useMemo(() => normalizeSceneDetail(scene), [scene]);
 
   async function buildSkeleton() {
     try {
       setError(null); setLoading(true);
-      const { data } = await postJSON<{ ok: boolean; data: any }>("/api/story", {
+      const { data } = await postJSON<{ ok: boolean; data: unknown }>("/api/story", {
         mode: "skeleton",
         payload: inputs,
       });
       setSkeleton(data); setScene(null);
-    } catch (e: any) { setError(e.message); }
+    } catch (error: unknown) { setError(error instanceof Error ? error.message : "Bilinmeyen hata"); }
     finally { setLoading(false); }
   }
 
@@ -54,12 +105,12 @@ export default function App() {
     if (!skeleton) return;
     try {
       setError(null); setLoading(true);
-      const { data } = await postJSON<{ ok: boolean; data: any }>("/api/story", {
+      const { data } = await postJSON<{ ok: boolean; data: unknown }>("/api/story", {
         mode: "scene1",
         payload: { inputs, skeleton },
       });
       setScene(data);
-    } catch (e: any) { setError(e.message); }
+    } catch (error: unknown) { setError(error instanceof Error ? error.message : "Bilinmeyen hata"); }
     finally { setLoading(false); }
   }
 
@@ -93,11 +144,41 @@ export default function App() {
           {error && <p className="text-red-600 text-sm">{error}</p>}
 
           <Card title="Story Skeleton (Phase 2)">
-            <pre className="text-xs whitespace-pre-wrap">{skeleton ? JSON.stringify(skeleton, null, 2) : "Henüz oluşturulmadı"}</pre>
+            {skeletonView ? (
+              <div className="space-y-3 text-sm">
+                {skeletonView.main_objective && (
+                  <p>
+                    <span className="font-semibold">Main Objective:</span> {skeletonView.main_objective}
+                  </p>
+                )}
+                <div className="space-y-2">
+                  {skeletonView.scenes.map((s, idx) => (
+                    <div key={idx} className="rounded-xl border border-zinc-100 bg-zinc-50 p-3 space-y-1">
+                      <div className="text-xs uppercase tracking-wide text-zinc-500">Scene {idx + 1}</div>
+                      <div><span className="font-semibold">Scene Title:</span> {s.scene_title || "—"}</div>
+                      <div><span className="font-semibold">Scene Objective:</span> {s.scene_objective || "—"}</div>
+                      {s.branch_hint && (
+                        <div><span className="font-semibold">Branch Hint:</span> {s.branch_hint}</div>
+                      )}
+                      {s.improv_note && (
+                        <div><span className="font-semibold">Improv Note:</span> {s.improv_note}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            <pre className="text-xs whitespace-pre-wrap mt-4">{skeleton ? JSON.stringify(skeleton, null, 2) : "Henüz oluşturulmadı"}</pre>
           </Card>
 
           <Card title="Scene 1 (Detay)">
-            <pre className="text-xs whitespace-pre-wrap">{scene ? JSON.stringify(scene, null, 2) : "Henüz oluşturulmadı"}</pre>
+            {sceneDetail ? (
+              <div className="space-y-2 text-sm">
+                <div><span className="font-semibold">Scene Title:</span> {sceneDetail.scene_title || "—"}</div>
+                <div><span className="font-semibold">Scene Objective:</span> {sceneDetail.scene_objective || "—"}</div>
+              </div>
+            ) : null}
+            <pre className="text-xs whitespace-pre-wrap mt-4">{scene ? JSON.stringify(scene, null, 2) : "Henüz oluşturulmadı"}</pre>
           </Card>
         </div>
       </section>

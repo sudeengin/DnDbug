@@ -1,4 +1,4 @@
-export async function postJSON<T>(url: string, body: any): Promise<T> {
+export async function postJSON<T>(url: string, body: unknown): Promise<T> {
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
