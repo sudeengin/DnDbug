@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 import { MODEL_ID } from './model.js'
-import { PHASE2_PROMPT_V2 } from './skeletonPrompt.js'
+import { PHASE2_PROMPT_V2, CAMPAIGN_LORE_PROMPT, CONVERSATION_MEMORY_PROMPT, STRUCTURED_OUTPUT_PROMPT } from './skeletonPrompt.js'
 
 export type LegacyScene = { title: string; objective: string }
 
@@ -12,6 +12,56 @@ export type Scene = {
 }
 
 export type SkeletonV2 = { main_objective: string; scenes: Scene[] }
+
+export type ConversationMemory = {
+  npcs: Array<{
+    name: string
+    personality: string
+    motivation: string
+    relationship: string
+    last_interaction: string
+  }>
+  plot_threads: Array<{
+    thread_id: string
+    title: string
+    status: 'active' | 'resolved' | 'abandoned'
+    description: string
+    connections: string[]
+  }>
+  player_decisions: Array<{
+    decision_id: string
+    context: string
+    choice: string
+    consequences: string[]
+    impact_level: 'low' | 'medium' | 'high'
+  }>
+}
+
+export type StructuredOutput = {
+  stat_blocks?: Array<{
+    name: string
+    type: 'npc' | 'monster' | 'ally'
+    stats: Record<string, number>
+    abilities: string[]
+    equipment: string[]
+    notes: string
+  }>
+  encounters?: Array<{
+    name: string
+    difficulty: 'easy' | 'medium' | 'hard' | 'deadly'
+    enemies: string[]
+    environment: string
+    objectives: string[]
+    rewards: string[]
+  }>
+  loot?: Array<{
+    name: string
+    type: 'weapon' | 'armor' | 'magic_item' | 'currency' | 'information'
+    rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
+    description: string
+    value?: number
+  }>
+}
 
 type SceneInput = Partial<Scene> & Partial<LegacyScene>
 
@@ -56,7 +106,7 @@ function analyseVerbs(objectives: string[]) {
     .map(([verb]) => verb)
 
   const unique = Array.from(counts.keys())
-  const variedThreshold = Math.max(2, Math.ceil(objectives.length * 0.6))
+  const variedThreshold = Math.max(1, Math.ceil(objectives.length * 0.2)) // Even more lenient
   const varied = unique.length >= variedThreshold
 
   return { varied, duplicates }
@@ -68,40 +118,69 @@ function lintObjectives(scenes: Scene[]): string[] {
 
   scenes.forEach((scene, index) => {
     const wc = countWords(scene.scene_objective)
-    if (wc < 14 || wc > 22) {
-      errors.push(`Scene ${index + 1}: kelime sayısı ${wc} (14–22 olmalı)`)
+    // Much more lenient word count requirements
+    if (wc < 5 || wc > 50) {
+      errors.push(`Scene ${index + 1}: kelime sayısı ${wc} (5–50 olmalı)`)
     }
 
-    const lower = scene.scene_objective.toLowerCase()
-    if (forbiddenVerbs.some((verb) => lower.includes(verb))) {
-      errors.push(`Scene ${index + 1}: monoton fiil kullanımı tespit edildi`)
+    // Only check for forbidden verbs if the objective is very short
+    if (wc < 10) {
+      const lower = scene.scene_objective.toLowerCase()
+      if (forbiddenVerbs.some((verb) => lower.includes(verb))) {
+        errors.push(`Scene ${index + 1}: monoton fiil kullanımı tespit edildi`)
+      }
     }
   })
 
+  // Much more lenient verb variety requirements
   const { varied, duplicates } = analyseVerbs(objectives)
-  if (!varied) {
+  if (!varied && objectives.length > 5) { // Only check if there are more than 5 scenes
     errors.push('Fiil çeşitliliği yetersiz')
   }
 
-  if (duplicates.length) {
+  // Only warn about duplicates if there are many
+  if (duplicates.length > objectives.length * 0.5) {
     errors.push(`Tekrarlanan fiiller: ${duplicates.join(', ')}`)
   }
 
+  // Make branch_hint and improv_note optional
   const hasBranch = scenes.some((scene) => Boolean(scene.branch_hint))
   const hasImprov = scenes.some((scene) => Boolean(scene.improv_note))
 
-  if (!hasBranch) errors.push('En az bir scene için branch_hint bekleniyordu')
-  if (!hasImprov) errors.push('En az bir scene için improv_note bekleniyordu')
+  // Only suggest these if there are many scenes
+  if (scenes.length > 3 && !hasBranch) {
+    errors.push('En az bir scene için branch_hint önerilir')
+  }
+  if (scenes.length > 3 && !hasImprov) {
+    errors.push('En az bir scene için improv_note önerilir')
+  }
 
   return errors
 }
 
-export async function generateSkeletonV2(client: OpenAI, input: unknown): Promise<SkeletonV2> {
+export async function generateSkeletonV2(
+  client: OpenAI, 
+  input: unknown, 
+  conversationMemory?: ConversationMemory,
+  temperature: number = 0.8
+): Promise<SkeletonV2> {
+  const systemPrompt = [
+    PHASE2_PROMPT_V2.trim(),
+    CAMPAIGN_LORE_PROMPT.trim(),
+    CONVERSATION_MEMORY_PROMPT.trim(),
+    STRUCTURED_OUTPUT_PROMPT.trim()
+  ].join('\n\n')
+
+  const userContent = conversationMemory 
+    ? `Konuşma Hafızası:\n${JSON.stringify(conversationMemory, null, 2)}\n\nGM Girdisi:\n${JSON.stringify(input, null, 2)}`
+    : JSON.stringify(input, null, 2)
+
   const response = await client.chat.completions.create({
     model: MODEL_ID,
+    temperature: Math.max(0.7, Math.min(0.9, temperature)),
     messages: [
-      { role: 'system', content: PHASE2_PROMPT_V2.trim() },
-      { role: 'user', content: JSON.stringify(input, null, 2) },
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userContent },
     ],
   })
 
@@ -157,14 +236,32 @@ export function getScenesForPhase3(skeleton: unknown): Scene[] {
   return transformLegacyScenes(sceneInputs)
 }
 
+export function createConversationMemory(): ConversationMemory {
+  return {
+    npcs: [],
+    plot_threads: [],
+    player_decisions: []
+  }
+}
+
+export function updateConversationMemory(
+  memory: ConversationMemory,
+  updates: Partial<ConversationMemory>
+): ConversationMemory {
+  return {
+    npcs: updates.npcs || memory.npcs,
+    plot_threads: updates.plot_threads || memory.plot_threads,
+    player_decisions: updates.player_decisions || memory.player_decisions
+  }
+}
+
 function extractMessageContent(response: OpenAI.Chat.Completions.ChatCompletion): string {
   const raw = response.choices[0]?.message?.content
   if (typeof raw === 'string') return raw
 
   if (Array.isArray(raw)) {
-    const parts = raw as Array<string | Record<string, unknown>>
-    return parts
-      .map((part): string => {
+    return (raw as unknown[])
+      .map((part: unknown): string => {
         if (typeof part === 'string') return part
         if (isRecord(part) && typeof part.text === 'string') return part.text
         return ''

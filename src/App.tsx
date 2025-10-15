@@ -2,6 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import Field from "./components/Field";
 import { postJSON } from "./lib/api";
 
+// Simple spinner component
+function Spinner() {
+  return (
+    <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+  );
+}
+
 type GMInputs = {
   theme: string;
   core_idea: string;
@@ -134,10 +141,12 @@ export default function App() {
 
         <div className="space-y-4">
           <div className="flex gap-3">
-            <button onClick={buildSkeleton} disabled={disabled} className="rounded-2xl px-4 py-2 bg-black text-white disabled:opacity-50">
+            <button onClick={buildSkeleton} disabled={disabled} className="rounded-2xl px-4 py-2 bg-black text-white disabled:opacity-50 flex items-center gap-2">
+              {loading && <Spinner />}
               1) Story Skeleton oluştur
             </button>
-            <button onClick={expandScene1} disabled={disabled || !skeleton} className="rounded-2xl px-4 py-2 bg-zinc-900 text-white disabled:opacity-50">
+            <button onClick={expandScene1} disabled={disabled || !skeleton} className="rounded-2xl px-4 py-2 bg-zinc-900 text-white disabled:opacity-50 flex items-center gap-2">
+              {loading && <Spinner />}
               2) Scene 1 detaylandır
             </button>
           </div>

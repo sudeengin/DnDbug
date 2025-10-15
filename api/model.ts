@@ -1,1 +1,1 @@
-export const MODEL_ID = 'gpt-5'
+export const MODEL_ID = 'gpt-4o'

@@ -1,7 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import OpenAI from 'openai'
 import { MODEL_ID } from './model.js'
-import { generateSkeletonV2, getScenesForPhase3, type Scene } from './genSkeleton.js'
+import { 
+  generateSkeletonV2, 
+  getScenesForPhase3, 
+  type Scene,
+  type ConversationMemory 
+} from './genSkeleton.js'
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
@@ -26,7 +31,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (mode === 'skeleton') {
-      const data = await generateSkeletonV2(client, payload)
+      // Extract conversation memory and temperature from payload if provided
+      let memory: ConversationMemory | undefined
+      let temp = 0.8
+      let skeletonInput: unknown
+      
+      if (isRecord(payload)) {
+        const { conversationMemory, temperature, ...rest } = payload
+        memory = conversationMemory as ConversationMemory | undefined
+        temp = typeof temperature === 'number' ? temperature : 0.8
+        skeletonInput = rest
+      } else {
+        skeletonInput = payload
+      }
+      
+      const data = await generateSkeletonV2(client, skeletonInput, memory, temp)
       res.status(200).json({ ok: true, data })
       return
     }

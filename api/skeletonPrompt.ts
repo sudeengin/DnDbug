@@ -33,3 +33,78 @@ GİRDİ
 ÇIKTI
 - Yukarıdaki şemaya sadık kal.
 `
+
+export const CAMPAIGN_LORE_PROMPT = `
+Kampanya Lore ve Ev Kuralları:
+
+Dünya Yapısı:
+- Bu dünya, büyülü ve tehlikeli bir ortamda geçer
+- Siyasi güçler arasında gerilim ve çatışma hakim
+- Eski uygarlıkların kalıntıları ve gizemli güçler mevcut
+- Doğaüstü olaylar ve büyülü yaratıklar yaygın
+
+Ev Kuralları:
+- Oyuncu seçimleri hikayenin yönünü belirler
+- NPC'ler kendi motivasyonları ve geçmişleri olan karakterler
+- Savaş ve çatışma kaçınılmaz, ancak diplomasi ve zeka da önemli
+- Ölüm riski gerçek, ancak kahramanlık ve cesaret ödüllendirilir
+- Büyü ve teknoloji bir arada var olabilir
+- Ahlaki gri alanlar ve zor seçimler yaygın
+
+Temalar:
+- Güç ve sorumluluk
+- Geçmiş ve gelecek arasındaki bağ
+- Bireysel vs toplumsal çıkarlar
+- Keşif ve bilinmeyenle yüzleşme
+- Dostluk ve ihanet
+`
+
+export const CONVERSATION_MEMORY_PROMPT = `
+Konuşma Hafızası ve Takip Sistemi:
+
+NPC Takibi:
+- Her NPC'nin kendi kişiliği, motivasyonu ve geçmişi vardır
+- NPC'ler oyuncu eylemlerini hatırlar ve tepki verir
+- İlişkiler dinamik olarak gelişir (dostluk, düşmanlık, güven, şüphe)
+- NPC'ler kendi ajandalarını takip eder
+
+Hikaye İplikleri:
+- Ana hikaye çizgisi ve yan hikayeler arasında bağlantılar
+- Geçmiş olayların gelecekteki sonuçları
+- Oyuncu kararlarının uzun vadeli etkileri
+- Gizli bilgiler ve sırların kademeli açığa çıkması
+
+Oyuncu Kararları:
+- Her önemli karar hikayeyi etkiler
+- Ahlaki seçimlerin sonuçları
+- Stratejik kararların taktiksel etkileri
+- Sosyal etkileşimlerin diplomatik sonuçları
+`
+
+export const STRUCTURED_OUTPUT_PROMPT = `
+Yapılandırılmış Çıktı Formatları:
+
+Stat Blokları:
+- Karakterler için detaylı istatistikler
+- Yetenekler, zayıflıklar ve özel güçler
+- Ekipman ve büyülü eşyalar
+- Sosyal statü ve ilişkiler
+
+Karşılaşmalar:
+- Düşman kompozisyonu ve taktikleri
+- Çevresel tehlikeler ve avantajlar
+- Ödül ve deneyim noktaları
+- Alternatif çözüm yolları
+
+Ganimet ve Ödüller:
+- Ekipman ve büyülü eşyalar
+- Para ve değerli eşyalar
+- Bilgi ve sırlar
+- Sosyal ödüller ve ilişki değişiklikleri
+
+Hikaye Elementleri:
+- Mekan tanımları ve atmosfer
+- NPC diyalogları ve kişilik özellikleri
+- Olay örgüsü noktaları ve dönüm noktaları
+- Oyuncu seçimlerinin sonuçları
+`
