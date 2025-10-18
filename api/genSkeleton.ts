@@ -7,8 +7,6 @@ export type LegacyScene = { title: string; objective: string }
 export type Scene = {
   scene_title: string
   scene_objective: string
-  branch_hint?: string
-  improv_note?: string
 }
 
 export type SkeletonV2 = { main_objective: string; scenes: Scene[] }
@@ -78,8 +76,6 @@ export function transformLegacyScenes(scenes: SceneInput[]): Scene[] {
   return scenes.map((scene) => ({
     scene_title: String(scene.scene_title ?? scene.title ?? '').trim(),
     scene_objective: String(scene.scene_objective ?? scene.objective ?? '').trim(),
-    branch_hint: scene.branch_hint ? String(scene.branch_hint).trim() : undefined,
-    improv_note: scene.improv_note ? String(scene.improv_note).trim() : undefined,
   }))
 }
 
@@ -106,7 +102,8 @@ function analyseVerbs(objectives: string[]) {
     .map(([verb]) => verb)
 
   const unique = Array.from(counts.keys())
-  const variedThreshold = Math.max(1, Math.ceil(objectives.length * 0.2)) // Even more lenient
+  // Very lenient for macro-level objectives - only require 1 unique verb for any number of scenes
+  const variedThreshold = Math.max(1, Math.ceil(objectives.length * 0.1)) // Much more lenient
   const varied = unique.length >= variedThreshold
 
   return { varied, duplicates }
@@ -118,42 +115,31 @@ function lintObjectives(scenes: Scene[]): string[] {
 
   scenes.forEach((scene, index) => {
     const wc = countWords(scene.scene_objective)
-    // Much more lenient word count requirements
-    if (wc < 5 || wc > 50) {
-      errors.push(`Scene ${index + 1}: kelime sayısı ${wc} (5–50 olmalı)`)
+    // Adjusted word count for macro-level objectives (8-15 words as per new prompt)
+    if (wc < 3 || wc > 20) {
+      errors.push(`Scene ${index + 1}: kelime sayısı ${wc} (3–20 olmalı)`)
     }
 
-    // Only check for forbidden verbs if the objective is very short
-    if (wc < 10) {
-      const lower = scene.scene_objective.toLowerCase()
-      if (forbiddenVerbs.some((verb) => lower.includes(verb))) {
-        errors.push(`Scene ${index + 1}: monoton fiil kullanımı tespit edildi`)
-      }
-    }
+    // Skip forbidden verb checks for macro-level objectives
+    // These are general objectives, not detailed actions
   })
 
-  // Much more lenient verb variety requirements
+  // DISABLED: Verb variety check for macro-level objectives
+  // Macro-level scenes are meant to be simple and general
+  // Verb variety will be enforced during Scene Detailing phase
+  /*
   const { varied, duplicates } = analyseVerbs(objectives)
-  if (!varied && objectives.length > 5) { // Only check if there are more than 5 scenes
+  if (!varied && objectives.length >= 6 && objectives.length <= 8) {
     errors.push('Fiil çeşitliliği yetersiz')
   }
 
-  // Only warn about duplicates if there are many
-  if (duplicates.length > objectives.length * 0.5) {
+  if (duplicates.length > objectives.length * 0.6) {
     errors.push(`Tekrarlanan fiiller: ${duplicates.join(', ')}`)
   }
+  */
 
-  // Make branch_hint and improv_note optional
-  const hasBranch = scenes.some((scene) => Boolean(scene.branch_hint))
-  const hasImprov = scenes.some((scene) => Boolean(scene.improv_note))
-
-  // Only suggest these if there are many scenes
-  if (scenes.length > 3 && !hasBranch) {
-    errors.push('En az bir scene için branch_hint önerilir')
-  }
-  if (scenes.length > 3 && !hasImprov) {
-    errors.push('En az bir scene için improv_note önerilir')
-  }
+  // Macro-level scenes don't need branch_hint or improv_note
+  // These will be handled in the Scene Detailing phase
 
   return errors
 }
@@ -260,8 +246,8 @@ function extractMessageContent(response: OpenAI.Chat.Completions.ChatCompletion)
   if (typeof raw === 'string') return raw
 
   if (Array.isArray(raw)) {
-    return (raw as unknown[])
-      .map((part: unknown): string => {
+    return (raw as any[])
+      .map((part: any): string => {
         if (typeof part === 'string') return part
         if (isRecord(part) && typeof part.text === 'string') return part.text
         return ''

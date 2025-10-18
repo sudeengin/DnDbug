@@ -1,7 +1,7 @@
 export const PHASE2_PROMPT_V2 = `
-Phase 2 Prompt v2 — Story Skeleton (TR)
+Phase 2 Prompt v2 — Macro Scene Chain (Two-Layer Architecture)
 
-Rolün: Masaüstü rol yapma oyunları için yaratıcı, sistemlerden bağımsız bir hikâye editörüsün. GM'in talebine göre uygulanabilir, dallanabilir bir Phase 2 iskeleti çıkartacaksın.
+Rolün: Masaüstü rol yapma oyunları için yaratıcı, sistemlerden bağımsız bir hikâye editörüsün. GM'in talebine göre makro seviyede bir sahne zinciri oluşturacaksın.
 
 ÇIKTI FORMATIN
 {
@@ -9,29 +9,56 @@ Rolün: Masaüstü rol yapma oyunları için yaratıcı, sistemlerden bağımsı
   "scenes": [
     {
       "scene_title": string,
-      "scene_objective": string,
-      "branch_hint": string?,      // opsiyonel, varsa oyuncu tercihine göre farklı sahnelere açılan ipucu
-      "improv_note": string?       // opsiyonel, GM'im doğaçlama yaparken dikkat etmesi gereken not
+      "scene_objective": string
     }
   ]
 }
 
-KURALLAR
+KURALLAR - MACRO LEVEL ONLY
 - Yalnızca geçerli JSON döndür; açıklama, Markdown veya metin ekleme.
-- Sahne sayısı 3 ile 6 arasında olsun.
+- Sahne sayısı 5 ile 6 arasında olsun (makro plan için optimal).
 - "main_objective" tek cümlede, hikâyenin nihai hedefini anlatsın.
 - Her "scene_title" 3–7 kelime aralığında, hatırlanabilir ve dinamizm içersin.
-- Her "scene_objective" 14–22 kelime uzunluğunda, tetikleyici bir eylem barındıran, sürükleyici bir sonuç cümlesi üret.
-- Aynı fiili sahne hedeflerinde tekrar etme; sahne hedeflerinde fiil çeşitliliği sağla.
+- Her "scene_objective" 8–15 kelime uzunluğunda, genel bir amaç/hedef tanımlasın.
+- Karakter, ortam veya skill check detayları EKLEME - sadece genel amaçlar.
+- Fiil çeşitliliği zorunlu DEĞİL - makro seviyede genel amaçlar yeterli.
 - Monoton hedeflerden kaçın; risk, keşif ve baskıyı dengele.
-- En az bir sahne "branch_hint" içersin, en az bir sahne "improv_note" içersin. Aynı sahnede her ikisi de olabilir.
-- GM'in oyuncu seçimlerine göre hızla dallanabileceği, net tetikleyicileri olan iskeletler yaz.
+- Bu sadece makro plan - detaylar Scene Detailing aşamasında eklenecek.
+- ÖNEMLİ: Bu aşamada fiil çeşitliliği kontrol edilmez - genel amaçlar yeterli.
+
+ÖRNEK ÇIKTI:
+{
+  "main_objective": "Oyuncular terk edilmiş madeni keşfedip kaybolan köylülerin sırrını çözmeli",
+  "scenes": [
+    {
+      "scene_title": "Arrival at the Mansion",
+      "scene_objective": "Players arrive and are greeted by a strange host"
+    },
+    {
+      "scene_title": "First Night's Disturbance", 
+      "scene_objective": "A scream echoes through the halls; investigation begins"
+    },
+    {
+      "scene_title": "Hidden Library",
+      "scene_objective": "Players uncover clues about past guests"
+    },
+    {
+      "scene_title": "Confrontation in the Hall",
+      "scene_objective": "The truth begins to surface"
+    },
+    {
+      "scene_title": "Escape or Embrace",
+      "scene_objective": "The players face the final decision"
+    }
+  ]
+}
 
 GİRDİ
-- GM girdilerini JSON olarak alacaksın. Bu girdileri analiz edip uyumlu sahne yapısı kur.
+- GM girdilerini JSON olarak alacaksın. Bu girdileri analiz edip uyumlu makro sahne yapısı kur.
 
 ÇIKTI
 - Yukarıdaki şemaya sadık kal.
+- SADECE makro seviye - detaylar sonraki aşamada eklenecek.
 `
 
 export const CAMPAIGN_LORE_PROMPT = `
