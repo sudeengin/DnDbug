@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Projects API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Test Projects API</h1>
+    <button onclick="testGetProjects()">Test GET /api/projects</button>
+    <button onclick="testCreateProject()">Test POST /api/projects</button>
+    <button onclick="testGetProjectsAgain()">Test GET /api/projects Again</button>
+    
+    <div id="results"></div>
+
+    <script>
+        function addResult(message, isError = false) {
+            const div = document.createElement('div');
+            div.className = `result ${isError ? 'error' : 'success'}`;
+            div.textContent = message;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function testGetProjects() {
+            try {
+                addResult('Testing GET /api/projects...');
+                const response = await fetch('/api/projects');
+                const data = await response.json();
+                addResult(`GET /api/projects: ${response.status} - ${JSON.stringify(data)}`);
+            } catch (error) {
+                addResult(`GET /api/projects ERROR: ${error.message}`, true);
+            }
+        }
+
+        async function testCreateProject() {
+            try {
+                addResult('Testing POST /api/projects...');
+                const response = await fetch('/api/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: 'Test Project ' + Date.now() })
+                });
+                const data = await response.json();
+                addResult(`POST /api/projects: ${response.status} - ${JSON.stringify(data)}`);
+            } catch (error) {
+                addResult(`POST /api/projects ERROR: ${error.message}`, true);
+            }
+        }
+
+        async function testGetProjectsAgain() {
+            try {
+                addResult('Testing GET /api/projects again...');
+                const response = await fetch('/api/projects');
+                const data = await response.json();
+                addResult(`GET /api/projects: ${response.status} - ${JSON.stringify(data)}`);
+            } catch (error) {
+                addResult(`GET /api/projects ERROR: ${error.message}`, true);
+            }
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            addResult('Page loaded, testing API...');
+            testGetProjects();
+        };
+    </script>
+</body>
+</html>

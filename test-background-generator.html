@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Background Generator - 5N1K Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3498db;
+        }
+
+        .input-section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .result-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .fiveWoneH-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .fiveWoneH-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .fiveWoneH-item.who { border-left-color: #e74c3c; }
+        .fiveWoneH-item.what { border-left-color: #f39c12; }
+        .fiveWoneH-item.where { border-left-color: #27ae60; }
+        .fiveWoneH-item.when { border-left-color: #9b59b6; }
+        .fiveWoneH-item.why { border-left-color: #e67e22; }
+        .fiveWoneH-item.how { border-left-color: #1abc9c; }
+
+        .fiveWoneH-item h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: #34495e;
+        }
+
+        .metadata {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .metadata-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .status-known { background: #d5f4e6; color: #27ae60; }
+        .status-unknown { background: #fadbd8; color: #e74c3c; }
+        .status-speculative { background: #fef9e7; color: #f39c12; }
+
+        .reveal-early { background: #e8f5e8; color: #27ae60; }
+        .reveal-mid { background: #fff3cd; color: #856404; }
+        .reveal-late { background: #f8d7da; color: #721c24; }
+        .reveal-never { background: #d1ecf1; color: #0c5460; }
+
+        .confidence {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .background-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .background-summary h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .detail-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #3498db;
+        }
+
+        .detail-section h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-section li {
+            background: white;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .success {
+            background: #d5f4e6;
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 5px solid #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .fiveWoneH-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 Story Background Generator</h1>
+            <p>5N1K Framework with Reveal Logic - DnD Story Development Tool</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <h2>📝 Story Concept Input</h2>
+                <div class="form-group">
+                    <label for="storyConcept">Enter your story concept:</label>
+                    <textarea 
+                        id="storyConcept" 
+                        placeholder="Örnek: Bir grup yabancı, kışın ortasında gizemli bir davet alır. Davetiyeler mühürsüz zarflarla ulaşmış ve kim tarafından gönderildiği belirsiz. Kuzey Ormanı'nın derinliklerindeki Esmond Malikanesi'ne çağrılmışlar..."
+                    ></textarea>
+                </div>
+                <button class="btn" onclick="generateBackground()">
+                    🚀 Generate Story Background
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating story background with 5N1K analysis...</p>
+            </div>
+
+            <div class="result-section" id="resultSection">
+                <h2>📖 Generated Story Background</h2>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function generateBackground() {
+            const storyConcept = document.getElementById('storyConcept').value.trim();
+            
+            if (!storyConcept) {
+                alert('Please enter a story concept first!');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const resultSection = document.getElementById('resultSection');
+            const resultContent = document.getElementById('resultContent');
+            const btn = document.querySelector('.btn');
+
+            // Show loading state
+            loading.style.display = 'block';
+            resultSection.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = '⏳ Generating...';
+
+            try {
+                const response = await fetch('/api/generate_background', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ storyConcept })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to generate background');
+                }
+
+                if (data.ok && data.data) {
+                    displayResult(data.data);
+                    resultSection.style.display = 'block';
+                } else {
+                    throw new Error('Invalid response format');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultContent.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+                resultSection.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+                btn.disabled = false;
+                btn.textContent = '🚀 Generate Story Background';
+            }
+        }
+
+        function displayResult(background) {
+            const resultContent = document.getElementById('resultContent');
+            
+            let html = '';
+
+            // Background Summary
+            if (background.backgroundSummary) {
+                html += `
+                    <div class="background-summary">
+                        <h3>📖 Background Summary</h3>
+                        <p>${background.backgroundSummary}</p>
+                    </div>
+                `;
+            }
+
+            // 5N1K Analysis
+            if (background.fiveWoneH) {
+                html += '<h3 style="color: #2c3e50; margin: 30px 0 20px 0; font-size: 1.4em;">🔍 5N1K Analysis</h3>';
+                html += '<div class="fiveWoneH-grid">';
+                
+                const fiveWoneH = background.fiveWoneH;
+                const items = [
+                    { key: 'who', label: 'Who', icon: '👤' },
+                    { key: 'what', label: 'What', icon: '🎯' },
+                    { key: 'where', label: 'Where', icon: '📍' },
+                    { key: 'when', label: 'When', icon: '⏰' },
+                    { key: 'why', label: 'Why', icon: '❓' },
+                    { key: 'how', label: 'How', icon: '🔧' }
+                ];
+
+                items.forEach(item => {
+                    const data = fiveWoneH[item.key];
+                    if (data) {
+                        html += `
+                            <div class="fiveWoneH-item ${item.key}">
+                                <h3>${item.icon} ${item.label}</h3>
+                                <div class="value">${data.value}</div>
+                                <div class="metadata">
+                                    <span class="metadata-item status-${data.status}">${data.status}</span>
+                                    <span class="metadata-item reveal-${data.revealPlan}">${data.revealPlan}</span>
+                                    <span class="metadata-item confidence">${Math.round(data.confidence * 100)}%</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                html += '</div>';
+            }
+
+            // Additional Details
+            const details = [
+                { key: 'anchors', label: 'Anchors', icon: '⚓' },
+                { key: 'unknowns', label: 'Unknowns', icon: '❓' },
+                { key: 'gmSecrets', label: 'GM Secrets', icon: '🔒' },
+                { key: 'motifs', label: 'Motifs', icon: '🎨' },
+                { key: 'hooks', label: 'Hooks', icon: '🎣' },
+                { key: 'continuityFlags', label: 'Continuity Flags', icon: '🔄' }
+            ];
+
+            html += '<h3 style="color: #2c3e50; margin: 30px 0 20px 0; font-size: 1.4em;">📋 Additional Details</h3>';
+            html += '<div class="details-grid">';
+
+            details.forEach(detail => {
+                if (background[detail.key] && Array.isArray(background[detail.key]) && background[detail.key].length > 0) {
+                    // Check if items have title/description structure (enhanced format)
+                    const isEnhanced = background[detail.key][0] && typeof background[detail.key][0] === 'object' && background[detail.key][0].title;
+                    
+                    if (isEnhanced) {
+                        html += `
+                            <div class="detail-section">
+                                <h4>${detail.icon} ${detail.label}</h4>
+                                <div class="space-y-3">
+                                    ${background[detail.key].map(item => `
+                                        <div class="bg-white border border-gray-200 rounded-md p-3">
+                                            <div class="font-medium text-gray-800 text-sm mb-1">${item.title}</div>
+                                            <div class="text-gray-600 text-xs leading-relaxed">${item.description}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Legacy format - simple strings
+                        html += `
+                            <div class="detail-section">
+                                <h4>${detail.icon} ${detail.label}</h4>
+                                <ul>
+                                    ${background[detail.key].map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            // Tone and Pacing
+            if (background.tone || background.pacing) {
+                html += `
+                    <div class="detail-section">
+                        <h4>🎭 Story Attributes</h4>
+                        <ul>
+                            ${background.tone ? `<li><strong>Tone:</strong> ${background.tone}</li>` : ''}
+                            ${background.pacing ? `<li><strong>Pacing:</strong> ${background.pacing}</li>` : ''}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
+            resultContent.innerHTML = html;
+        }
+
+        // Add some example concepts for quick testing
+        const exampleConcepts = [
+            "Bir grup yabancı, kışın ortasında gizemli bir davet alır. Davetiyeler mühürsüz zarflarla ulaşmış ve kim tarafından gönderildiği belirsiz. Kuzey Ormanı'nın derinliklerindeki Esmond Malikanesi'ne çağrılmışlar.",
+            "Eski bir kütüphanede bulunan büyülü kitap, okuyucularını farklı dünyalara götürüyor. Her sayfa yeni bir macera ve tehlike barındırıyor.",
+            "Karanlık ormanın derinliklerinde yaşayan eski bir büyücü, genç bir çırak arıyor. Ancak bu çıraklık sıradan bir eğitim değil, hayatı değiştirecek bir yolculuk.",
+            "Kayıp bir şehrin haritası bulunur ve maceracılar bu gizemli yeri keşfetmek için yola çıkar. Ancak şehir sadece kayıp değil, lanetli de olabilir."
+        ];
+
+        // Add example buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputSection = document.querySelector('.input-section');
+            const exampleSection = document.createElement('div');
+            exampleSection.innerHTML = `
+                <h3 style="color: #2c3e50; margin: 20px 0 15px 0; font-size: 1.2em;">💡 Example Concepts</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                    ${exampleConcepts.map((concept, index) => `
+                        <button onclick="loadExample(${index})" style="
+                            background: #ecf0f1; 
+                            border: 2px solid #bdc3c7; 
+                            padding: 8px 15px; 
+                            border-radius: 20px; 
+                            cursor: pointer; 
+                            font-size: 0.9em;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.background='#3498db'; this.style.color='white'; this.style.borderColor='#2980b9';" 
+                           onmouseout="this.style.background='#ecf0f1'; this.style.color='black'; this.style.borderColor='#bdc3c7';">
+                            Example ${index + 1}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+            inputSection.appendChild(exampleSection);
+        });
+
+        function loadExample(index) {
+            const textarea = document.getElementById('storyConcept');
+            textarea.value = exampleConcepts[index];
+        }
+    </script>
+</body>
+</html>

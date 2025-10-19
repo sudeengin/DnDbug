@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chain Lock/Unlock - Simple</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test Chain Lock/Unlock Functionality</h1>
+    
+    <div class="test-section">
+        <h3>Test Chain Lock</h3>
+        <button onclick="testLockChain()">Test Lock Chain</button>
+        <div id="lockResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test Chain Unlock</h3>
+        <button onclick="testUnlockChain()">Test Unlock Chain</button>
+        <div id="unlockResult"></div>
+    </div>
+
+    <script>
+        const sessionId = 'test-session-' + Date.now();
+        const chainId = 'test-chain-' + Date.now();
+
+        async function testLockChain() {
+            try {
+                const response = await fetch('/api/chain/lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        chainId: chainId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    document.getElementById('lockResult').innerHTML = `
+                        <div class="success">
+                            <strong>Lock Test Successful!</strong><br>
+                            Status: ${result.chain.status}<br>
+                            Locked At: ${result.chain.lockedAt}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('lockResult').innerHTML = `
+                        <div class="error">
+                            <strong>Lock Test Failed:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('lockResult').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testUnlockChain() {
+            try {
+                const response = await fetch('/api/chain/unlock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        chainId: chainId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    document.getElementById('unlockResult').innerHTML = `
+                        <div class="success">
+                            <strong>Unlock Test Successful!</strong><br>
+                            Status: ${result.chain.status}<br>
+                            Affected Scenes: ${result.affectedScenes.length}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('unlockResult').innerHTML = `
+                        <div class="error">
+                            <strong>Unlock Test Failed:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('unlockResult').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

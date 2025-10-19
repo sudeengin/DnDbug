@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chain Lock/Unlock</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test Chain Lock/Unlock Functionality</h1>
+    
+    <div class="test-section">
+        <h3>1. Generate a Macro Chain</h3>
+        <button onclick="generateChain()">Generate Chain</button>
+        <div id="chainResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Lock the Chain</h3>
+        <button onclick="lockChain()" id="lockBtn" disabled>Lock Chain</button>
+        <div id="lockResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Unlock the Chain</h3>
+        <button onclick="unlockChain()" id="unlockBtn" disabled>Unlock Chain</button>
+        <div id="unlockResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Test Status</h3>
+        <button onclick="checkStatus()">Check Chain Status</button>
+        <div id="statusResult"></div>
+    </div>
+
+    <script>
+        let currentChainId = null;
+        const sessionId = 'test-session-' + Date.now();
+
+        async function generateChain() {
+            try {
+                const response = await fetch('/api/generate_chain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        concept: 'A test adventure about exploring a mysterious dungeon',
+                        meta: { gameType: 'D&D', players: '4', level: '5' }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    currentChainId = result.data.chainId;
+                    document.getElementById('chainResult').innerHTML = `
+                        <div class="success">
+                            <strong>Chain Generated Successfully!</strong><br>
+                            Chain ID: ${currentChainId}<br>
+                            Status: ${result.data.status}<br>
+                            Scenes: ${result.data.scenes.length}
+                        </div>
+                    `;
+                    document.getElementById('lockBtn').disabled = false;
+                } else {
+                    document.getElementById('chainResult').innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('chainResult').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function lockChain() {
+            if (!currentChainId) {
+                alert('Please generate a chain first');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/chain/lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        chainId: currentChainId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    document.getElementById('lockResult').innerHTML = `
+                        <div class="success">
+                            <strong>Chain Locked Successfully!</strong><br>
+                            Status: ${result.chain.status}<br>
+                            Locked At: ${result.chain.lockedAt}
+                        </div>
+                    `;
+                    document.getElementById('unlockBtn').disabled = false;
+                    document.getElementById('lockBtn').disabled = true;
+                } else {
+                    document.getElementById('lockResult').innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('lockResult').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function unlockChain() {
+            if (!currentChainId) {
+                alert('Please generate and lock a chain first');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/chain/unlock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        chainId: currentChainId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.ok) {
+                    document.getElementById('unlockResult').innerHTML = `
+                        <div class="success">
+                            <strong>Chain Unlocked Successfully!</strong><br>
+                            Status: ${result.chain.status}<br>
+                            Affected Scenes: ${result.affectedScenes.length}
+                        </div>
+                    `;
+                    document.getElementById('lockBtn').disabled = false;
+                    document.getElementById('unlockBtn').disabled = true;
+                } else {
+                    document.getElementById('unlockResult').innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('unlockResult').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function checkStatus() {
+            if (!currentChainId) {
+                alert('Please generate a chain first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/context/get?sessionId=${sessionId}`);
+                const result = await response.json();
+                
+                if (result.ok && result.data && result.data.macroChains && result.data.macroChains[currentChainId]) {
+                    const chain = result.data.macroChains[currentChainId];
+                    document.getElementById('statusResult').innerHTML = `
+                        <div class="success">
+                            <strong>Chain Status:</strong><br>
+                            <pre>${JSON.stringify(chain, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('statusResult').innerHTML = `
+                        <div class="error">
+                            <strong>Chain not found in session context</strong>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('statusResult').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

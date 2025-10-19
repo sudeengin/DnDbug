@@ -1,19 +1,59 @@
 import { useState } from 'react';
-import StoryConceptForm from './StoryConceptForm';
 import MacroChainBoard from './MacroChainBoard';
+import { ContextPanel } from './ContextPanel';
+import StoryBackgroundGenerator from './StoryBackgroundGenerator';
+import BackgroundPanel from './BackgroundPanel';
+import ProjectCreate from './ProjectCreate';
+import ProjectList from './ProjectList';
 import { postJSON } from '../lib/api';
 import { validateGenerateChainRequest, validateMacroChain } from '../utils/macro-chain-validation';
 import { telemetry } from '../utils/telemetry';
-import type { GenerateChainRequest, MacroChain } from '../types/macro-chain';
+import type { GenerateChainRequest, MacroChain, SessionContext, StoryBackground } from '../types/macro-chain';
+
+interface Project {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function MacroChainApp() {
   const [chain, setChain] = useState<MacroChain | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
+  const [context, setContext] = useState<SessionContext | null>(null);
+  const [background, setBackground] = useState<any | null>(null);
+  const [showProjectCreate, setShowProjectCreate] = useState(false);
+
+  const handleProjectCreated = (createdProject: Project) => {
+    setProject(createdProject);
+    setSessionId(createdProject.id); // Use project ID as sessionId
+    setShowProjectCreate(false);
+  };
+
+  const handleProjectSelected = (selectedProject: Project) => {
+    setProject(selectedProject);
+    setSessionId(selectedProject.id); // Use project ID as sessionId
+  };
+
+  const handleCreateNew = () => {
+    setShowProjectCreate(true);
+  };
+
+  const handleBackgroundUpdate = (newBackground: any) => {
+    setBackground(newBackground);
+  };
 
   const handleGenerateChain = async (request: GenerateChainRequest) => {
     try {
+      if (!sessionId) {
+        setError('No active project session');
+        return;
+      }
+
       setError(null);
       setValidationErrors([]);
       setLoading(true);
@@ -30,8 +70,27 @@ export default function MacroChainApp() {
         console.warn('Validation warnings:', validation.warnings);
       }
 
-      // Call the API
-      const response = await postJSON<{ ok: boolean; data: MacroChain }>('/api/generate_chain', request);
+      // Store the story concept in context
+      try {
+        await postJSON('/api/context/append', {
+          sessionId,
+          blockType: 'story_concept',
+          data: {
+            concept: request.concept,
+            meta: request.meta,
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (error) {
+        console.warn('Failed to store story concept in context:', error);
+        // Continue with chain generation even if context storage fails
+      }
+
+      // Call the API with sessionId for context memory
+      const response = await postJSON<{ ok: boolean; data: MacroChain }>('/api/generate_chain', {
+        ...request,
+        sessionId
+      });
       
       if (!response.ok) {
         throw new Error('Failed to generate chain');
@@ -83,6 +142,14 @@ export default function MacroChainApp() {
     setValidationErrors([]);
   };
 
+  // Show project selection/creation if no project exists
+  if (!project || !sessionId) {
+    if (showProjectCreate) {
+      return <ProjectCreate onProjectCreated={handleProjectCreated} />;
+    }
+    return <ProjectList onProjectSelected={handleProjectSelected} onCreateNew={handleCreateNew} />;
+  }
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       <header className="flex items-center justify-between">
@@ -91,9 +158,25 @@ export default function MacroChainApp() {
           <p className="text-gray-600 mt-1">
             Generate 5-6 scene story chains with reorder and edit capabilities
           </p>
+          <div className="mt-2 flex items-center space-x-2">
+            <span className="text-sm text-gray-500">Project:</span>
+            <span className="text-sm font-medium text-blue-600">{project.title}</span>
+            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">{sessionId}</span>
+          </div>
         </div>
-        <div className="text-sm text-gray-500">
-          DnDBug — Story Agent MVP
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => {
+              setProject(null);
+              setSessionId(null);
+              setChain(null);
+              setContext(null);
+              setShowProjectCreate(false);
+            }}
+            className="text-sm text-gray-500 hover:text-gray-700 underline"
+          >
+            Switch Project
+          </button>
         </div>
       </header>
 
@@ -135,12 +218,28 @@ export default function MacroChainApp() {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Story Concept Form */}
+      <div className="grid lg:grid-cols-3 gap-8">
+        {/* Left Panel */}
         <div className="space-y-6">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <StoryConceptForm onSubmit={handleGenerateChain} loading={loading} />
-          </div>
+          {/* Story Background Generator */}
+          <StoryBackgroundGenerator 
+            onBackgroundGenerated={handleBackgroundUpdate}
+            onChainGenerated={handleGenerateChain}
+            loading={loading}
+            sessionId={sessionId}
+          />
+
+          {/* Background Panel */}
+          <BackgroundPanel 
+            sessionId={sessionId} 
+            onBackgroundUpdate={handleBackgroundUpdate}
+          />
+
+          {/* Context Panel */}
+          <ContextPanel 
+            sessionId={sessionId} 
+            onContextUpdate={setContext}
+          />
 
           {/* Telemetry Info (for development) */}
           {import.meta.env.DEV && (
@@ -158,7 +257,7 @@ export default function MacroChainApp() {
         </div>
 
         {/* Macro Chain Board */}
-        <div className="space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {chain ? (
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
@@ -174,6 +273,9 @@ export default function MacroChainApp() {
                 chain={chain} 
                 onUpdate={handleChainUpdate}
                 loading={loading}
+                sessionId={sessionId}
+                onContextUpdate={setContext}
+                background={background}
               />
             </div>
           ) : (

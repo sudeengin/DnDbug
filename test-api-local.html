@@ -63,6 +63,8 @@
         <div>
             <button onclick="testGenerateChain()" id="generateBtn">Test Generate Chain</button>
             <button onclick="testUpdateChain()" id="updateBtn" disabled>Test Update Chain</button>
+            <button onclick="testAddScene()" id="addSceneBtn" disabled>Test Add Scene</button>
+            <button onclick="testDeleteScene()" id="deleteSceneBtn" disabled>Test Delete Scene</button>
             <button onclick="clearResults()">Clear Results</button>
         </div>
         
@@ -101,6 +103,8 @@
                 if (response.ok && data.ok) {
                     currentChainId = data.data.chainId;
                     document.getElementById('updateBtn').disabled = false;
+                    document.getElementById('addSceneBtn').disabled = false;
+                    document.getElementById('deleteSceneBtn').disabled = false;
                     
                     let resultText = '✅ Generate Chain API Success!\n\n';
                     resultText += `Chain ID: ${data.data.chainId}\n`;
@@ -108,7 +112,8 @@
                     
                     data.data.scenes.forEach((scene, index) => {
                         resultText += `Scene ${index + 1}: ${scene.title}\n`;
-                        resultText += `  Objective: ${scene.objective}\n\n`;
+                        resultText += `  Objective: ${scene.objective}\n`;
+                        resultText += `  ID: ${scene.id}\n\n`;
                     });
                     
                     resultDiv.className = 'result success';
@@ -173,10 +178,109 @@
             }
         }
 
+        async function testAddScene() {
+            if (!currentChainId) {
+                alert('Please test Generate Chain first');
+                return;
+            }
+
+            const addSceneBtn = document.getElementById('addSceneBtn');
+            const resultDiv = document.getElementById('result');
+            
+            addSceneBtn.disabled = true;
+            addSceneBtn.textContent = 'Testing...';
+            
+            try {
+                const newScene = {
+                    id: `test-scene-${Date.now()}`,
+                    order: 999,
+                    title: 'Test New Scene',
+                    objective: 'This is a test scene added via API'
+                };
+
+                const response = await fetch('/api/update_chain', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chainId: currentChainId,
+                        edits: [{
+                            type: 'add_scene',
+                            sceneData: newScene
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ Add Scene API Success!\n\n' + JSON.stringify(data, null, 2);
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Add Scene API Error: ${error.message}`;
+            } finally {
+                addSceneBtn.disabled = false;
+                addSceneBtn.textContent = 'Test Add Scene';
+            }
+        }
+
+        async function testDeleteScene() {
+            if (!currentChainId) {
+                alert('Please test Generate Chain first');
+                return;
+            }
+
+            const deleteSceneBtn = document.getElementById('deleteSceneBtn');
+            const resultDiv = document.getElementById('result');
+            
+            deleteSceneBtn.disabled = true;
+            deleteSceneBtn.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch('/api/update_chain', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chainId: currentChainId,
+                        edits: [{
+                            type: 'delete_scene',
+                            sceneId: 'test_scene_1' // This would be a real scene ID in practice
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ Delete Scene API Success!\n\n' + JSON.stringify(data, null, 2);
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Delete Scene API Error: ${error.message}`;
+            } finally {
+                deleteSceneBtn.disabled = false;
+                deleteSceneBtn.textContent = 'Test Delete Scene';
+            }
+        }
+
         function clearResults() {
             document.getElementById('result').style.display = 'none';
             currentChainId = null;
             document.getElementById('updateBtn').disabled = true;
+            document.getElementById('addSceneBtn').disabled = true;
+            document.getElementById('deleteSceneBtn').disabled = true;
         }
     </script>
 </body>

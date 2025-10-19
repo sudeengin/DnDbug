@@ -1,0 +1,1830 @@
+{
+  "chain_1760899328488_04s92hwo0": {
+    "chainId": "chain_1760899328488_04s92hwo0",
+    "scenes": [
+      {
+        "id": "scene_1_1760899328488",
+        "order": 1,
+        "title": "Mysterious Forest Path",
+        "objective": "The adventurers begin their journey by exploring the ancient forest, uncovering clues related to the mysterious disappearance of travelers."
+      },
+      {
+        "id": "scene_2_1760899328488",
+        "order": 2,
+        "title": "Whispering Ruins Encounter",
+        "objective": "The party encounters a strange hermit who offers cryptic advice about the ruins' connection to recent strange events."
+      },
+      {
+        "id": "scene_3_1760899328488",
+        "order": 3,
+        "title": "Secrets of the Abandoned Village",
+        "objective": "Investigating the village, the adventurers discover hidden signs of an ancient conflict that may tie into the current disturbances."
+      },
+      {
+        "id": "scene_4_1760899328488",
+        "order": 4,
+        "title": "Confrontation at the Enchanted Lake",
+        "objective": "The heroes face a guardian spirit that holds answers to the forest's mysteries, revealing deeper layers of the past and present threats."
+      },
+      {
+        "id": "scene_5_1760899328488",
+        "order": 5,
+        "title": "Revelation in the Hidden Cave",
+        "objective": "Within a concealed cave, the adventurers find an artifact that unveils the true nature of the magical disturbances affecting the region."
+      },
+      {
+        "id": "scene_6_1760899328488",
+        "order": 6,
+        "title": "Final Stand at the Forest's Heart",
+        "objective": "The party confronts the source of the forest's disruptions, resolving the mysteries and restoring balance to the land."
+      }
+    ],
+    "createdAt": "2025-10-19T18:42:08.488Z",
+    "updatedAt": "2025-10-19T18:42:08.489Z"
+  },
+  "chain_1760899515742_hnnyqb1rc": {
+    "chainId": "chain_1760899515742_hnnyqb1rc",
+    "scenes": [
+      {
+        "id": "scene_1_1760899515742",
+        "order": 1,
+        "title": "Whispers in the Fog-Covered Town Square",
+        "objective": "Investigate the fog's onset in Millbrook's town square and uncover early clues about the missing people."
+      },
+      {
+        "id": "scene_2_1760899515742",
+        "order": 2,
+        "title": "Haunting Laughter at the Children's Playground",
+        "objective": "Observe the children gathering at the playground at night to understand their peculiar behavior and speech."
+      },
+      {
+        "id": "scene_3_1760899515742",
+        "order": 3,
+        "title": "Creeping Shadows at the Abandoned Mill",
+        "objective": "Explore the abandoned mill's surroundings to find any connections to the spreading fog and the missing townsfolk."
+      },
+      {
+        "id": "scene_4_1760899515742",
+        "order": 4,
+        "title": "Mysterious Meeting with Dr. Chen",
+        "objective": "Consult with Dr. Sarah Chen to delve deeper into the children's condition and any medical anomalies linked to the fog."
+      },
+      {
+        "id": "scene_5_1760899515742",
+        "order": 5,
+        "title": "The Mayor's Desperate Plea in the Mist",
+        "objective": "Converse with Mayor Thompson to learn about the town's plight and gather information on the fog's impact on neighboring areas."
+      },
+      {
+        "id": "scene_6_1760899515742",
+        "order": 6,
+        "title": "Revelations from Little Timmy's Insight",
+        "objective": "Engage with Little Timmy to piece together the chilling truths about the fog's origin and the entities within it."
+      }
+    ],
+    "meta": {
+      "gameType": "D&D",
+      "players": "4",
+      "level": "5"
+    },
+    "createdAt": "2025-10-19T18:45:15.742Z",
+    "updatedAt": "2025-10-19T18:45:15.744Z"
+  },
+  "chain_1760899936440_bxk0e08sw": {
+    "chainId": "chain_1760899936440_bxk0e08sw",
+    "scenes": [
+      {
+        "id": "scene_1_1760899936440",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Introduce the explorers as they discover the first signs of a presence maintaining the silence amidst the echoes of the past."
+      },
+      {
+        "id": "scene_2_1760899936440",
+        "order": 2,
+        "title": "The Enigmatic Guide's Revelations",
+        "objective": "Eldrin leads the group through a maze of ancient symbols, hinting at the political tensions and the land's protected nature."
+      },
+      {
+        "id": "scene_3_1760899936440",
+        "order": 3,
+        "title": "Secrets of the Forbidden Tomes",
+        "objective": "In an ancient library, Lady Althea deciphers texts that suggest why the lands were abandoned, deepening the mystery of the lost civilization."
+      },
+      {
+        "id": "scene_4_1760899936440",
+        "order": 4,
+        "title": "Echoes of the Hidden Labyrinth",
+        "objective": "Navigating the underground labyrinth with Zara's help, the explorers encounter traps that reveal the unseen guardians' intent."
+      },
+      {
+        "id": "scene_5_1760899936440",
+        "order": 5,
+        "title": "The Whisperer's Shadow",
+        "objective": "As tensions rise, Captain Roan confronts the presence of The Whisperer, unraveling the mysteries of the silence and impending catastrophe."
+      },
+      {
+        "id": "scene_6_1760899936440",
+        "order": 6,
+        "title": "The Revelation of the Echoing City",
+        "objective": "The explorers face the final truths in an empty city, where the interplay of light and shadow reveals the lingering powers and their ultimate choice."
+      }
+    ],
+    "meta": {
+      "source": "macroChainTab"
+    },
+    "createdAt": "2025-10-19T18:52:16.440Z",
+    "updatedAt": "2025-10-19T18:52:16.443Z"
+  },
+  "chain_1760900657420_296mwgkzu": {
+    "chainId": "chain_1760900657420_296mwgkzu",
+    "scenes": [
+      {
+        "id": "scene_1_1760900657420",
+        "order": 1,
+        "title": "Whispers of the Desolate Ruins",
+        "objective": "Explore the desolate magical ruins with Eldrin to uncover traces of the lost civilization while remaining undetected by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760900657420",
+        "order": 2,
+        "title": "Secrets of the Ancient Library",
+        "objective": "Decipher forbidden tomes in an ancient library with Lady Althea to find clues about the abandoned lands' protections and their mysterious past."
+      },
+      {
+        "id": "scene_3_1760900657420",
+        "order": 3,
+        "title": "Echoes in the Empty City",
+        "objective": "Investigate eerie phenomena in an echoing empty city with Captain Roan to unravel who or what might be maintaining the silence."
+      },
+      {
+        "id": "scene_4_1760900657420",
+        "order": 4,
+        "title": "Whispering Winds of the Enchanted Forest",
+        "objective": "Navigate the enigmatic forests with Zara to discover hidden warnings and understand the lingering magical powers."
+      },
+      {
+        "id": "scene_5_1760900657420",
+        "order": 5,
+        "title": "Labyrinth of Shadow and Light",
+        "objective": "Solve the puzzle of a hidden underground labyrinth to prevent catastrophe, understanding the purpose of ancient warnings with the help of the Whisperer."
+      },
+      {
+        "id": "scene_6_1760900657420",
+        "order": 6,
+        "title": "The Silent Revelation",
+        "objective": "Confront the presence maintaining the silence to reveal the truth about the lost civilization and navigate the political tensions threatening the explorers' unity."
+      }
+    ],
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "bfb35b5e-3272-43c8-91fb-eb2c00e34a73"
+    },
+    "createdAt": "2025-10-19T19:04:17.420Z",
+    "updatedAt": "2025-10-19T19:04:17.421Z"
+  },
+  "chain_1760900695050_9dvf65wu4": {
+    "chainId": "chain_1760900695050_9dvf65wu4",
+    "scenes": [
+      {
+        "id": "scene_1_1760900695050",
+        "order": 1,
+        "title": "Whispers Among Desolate Ruins",
+        "objective": "Explore the desolate magical ruins with Eldrin to uncover initial signs of the lost civilization and their mysterious silence."
+      },
+      {
+        "id": "scene_2_1760900695050",
+        "order": 2,
+        "title": "Echoes of Forbidden Tomes",
+        "objective": "In the ancient library, Lady Althea deciphers cryptic messages in forbidden tomes that hint at why the lands were abandoned."
+      },
+      {
+        "id": "scene_3_1760900695050",
+        "order": 3,
+        "title": "Shadows Over the Empty City",
+        "objective": "Navigate the echoing empty city with Captain Roan while avoiding traps set by unseen guardians to uncover who maintains the silence."
+      },
+      {
+        "id": "scene_4_1760900695050",
+        "order": 4,
+        "title": "Secrets of the Whispering Forest",
+        "objective": "Zara guides the explorers through a forest where the winds whisper warnings, revealing clues about the lost civilization's fate."
+      },
+      {
+        "id": "scene_5_1760900695050",
+        "order": 5,
+        "title": "Labyrinth of Hidden Warnings",
+        "objective": "Delve into a hidden underground labyrinth to decipher ancient warnings that could prevent a looming catastrophe."
+      },
+      {
+        "id": "scene_6_1760900695050",
+        "order": 6,
+        "title": "Revelation Beneath the Watchful Eyes",
+        "objective": "Confront the presence of the Whisperer and unravel the purpose of the protective silence, balancing political tensions between kingdoms."
+      }
+    ],
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "222ea760-271e-4c0e-bf59-1433027370e8"
+    },
+    "createdAt": "2025-10-19T19:04:55.050Z",
+    "updatedAt": "2025-10-19T19:04:55.051Z"
+  },
+  "chain_1760900788821_fi5f75le9": {
+    "chainId": "chain_1760900788821_fi5f75le9",
+    "scenes": [
+      {
+        "id": "scene_1_1760900788821",
+        "order": 1,
+        "title": "Whispering Winds of the Forgotten Forest",
+        "objective": "The explorers venture into the forest where the winds whisper secrets, aiming to uncover the first signs of the lost civilization while avoiding detection by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760900788821",
+        "order": 2,
+        "title": "Echoes in the Desolate Magical Ruins",
+        "objective": "Led by Eldrin, the group explores the magical ruins, deciphering ancient warnings that hint at the civilization's mysterious disappearance and the presence maintaining the silence."
+      },
+      {
+        "id": "scene_3_1760900788821",
+        "order": 3,
+        "title": "Secrets of the Forbidden Tome in the Ancient Library",
+        "objective": "Lady Althea discovers a forbidden tome that might reveal why the lands were abandoned, but the explorers must navigate the political tension it could ignite among the kingdoms."
+      },
+      {
+        "id": "scene_4_1760900788821",
+        "order": 4,
+        "title": "The Labyrinth's Shadow and the Unseen Eyes",
+        "objective": "Deep within a hidden underground labyrinth, Captain Roan and the team face traps and symbols, realizing they must survive the past's living dangers while Zara hints at deeper secrets."
+      },
+      {
+        "id": "scene_5_1760900788821",
+        "order": 5,
+        "title": "Confrontation with The Whisperer Amidst Echoing Empty Cities",
+        "objective": "In the heart of an echoing empty city, the explorers come face-to-face with The Whisperer, unraveling the truth behind the silence and the power that still lingers in the landscape."
+      },
+      {
+        "id": "scene_6_1760900788821",
+        "order": 6,
+        "title": "Revelation Beneath the Light and Shadow",
+        "objective": "The explorers must decipher the final warning to prevent catastrophe, balancing the interplay of light and shadow to reveal the purpose of their journey and ensure their kingdoms' survival."
+      }
+    ],
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "ada957f3-b828-4c20-a364-3810671bba0e"
+    },
+    "createdAt": "2025-10-19T19:06:28.821Z",
+    "updatedAt": "2025-10-19T19:06:28.824Z"
+  },
+  "chain_1760901987770_7zyzue7mq": {
+    "chainId": "chain_1760901987770_7zyzue7mq",
+    "scenes": [
+      {
+        "id": "scene_1_1760901987770",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "The explorers uncover cryptic symbols in the ruins that hint at the presence maintaining silence, beginning their quest to decipher ancient warnings."
+      },
+      {
+        "id": "scene_2_1760901987770",
+        "order": 2,
+        "title": "Echoes of the Past in the Forbidden Library",
+        "objective": "In an ancient library, the group navigates political tensions while seeking forbidden tomes that might explain the fate of the lost civilization."
+      },
+      {
+        "id": "scene_3_1760901987770",
+        "order": 3,
+        "title": "Shadowed Paths Through the Whispering Forest",
+        "objective": "As they traverse the forest, explorers must avoid traps and decipher warnings, all while sensing the watchful eyes of the unseen guardians."
+      },
+      {
+        "id": "scene_4_1760901987770",
+        "order": 4,
+        "title": "Beneath the Surface: The Hidden Labyrinth",
+        "objective": "Delving into an underground labyrinth, the team encounters signs of ancient power and must solve puzzles to uncover the purpose of the scattered warnings."
+      },
+      {
+        "id": "scene_5_1760901987770",
+        "order": 5,
+        "title": "The Silent City and the Unseen Eyes",
+        "objective": "In an echoing empty city, explorers confront the lingering powers and approach the truth behind the silence before their presence is detected."
+      },
+      {
+        "id": "scene_6_1760901987770",
+        "order": 6,
+        "title": "Revelation of the Whisperer",
+        "objective": "The explorers finally encounter the Whisperer and must negotiate to understand the protection of the lands and prevent catastrophe."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:26:27.770Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "0b27b2ba-7e9b-4108-8013-8d8f37e748ce"
+    },
+    "createdAt": "2025-10-19T19:26:27.770Z",
+    "updatedAt": "2025-10-19T19:26:27.772Z"
+  },
+  "chain_1760902381914_ffmn3c7uo": {
+    "chainId": "chain_1760902381914_ffmn3c7uo",
+    "scenes": [
+      {
+        "id": "scene_1_1760902381915",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Begin exploring the desolate magical ruins to uncover traces of the lost civilization while avoiding detection by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760902381915",
+        "order": 2,
+        "title": "Echoes from the Forbidden Library",
+        "objective": "Investigate an ancient library filled with forbidden tomes to decipher initial warnings about the land's abandonment and lingering powers."
+      },
+      {
+        "id": "scene_3_1760902381915",
+        "order": 3,
+        "title": "The Silence of the Empty City",
+        "objective": "Delve deeper into an echoing empty city to uncover clues about who or what maintains the silence and why the lands were protected."
+      },
+      {
+        "id": "scene_4_1760902381915",
+        "order": 4,
+        "title": "Whispering Winds of the Enchanted Forest",
+        "objective": "Navigate the forest with whispering winds, piecing together signs and symbols of warning while balancing political tensions between the explorers' kingdoms."
+      },
+      {
+        "id": "scene_5_1760902381915",
+        "order": 5,
+        "title": "Labyrinth of Shadows and Light",
+        "objective": "Explore a hidden underground labyrinth, confronting the interplay of light and shadow to prevent catastrophe by deciphering ancient warnings."
+      },
+      {
+        "id": "scene_6_1760902381915",
+        "order": 6,
+        "title": "Revelation of the Whisperer",
+        "objective": "Confront the Whisperer, unraveling the mysteries of the lost civilization and deciding how to proceed amidst the revelations and political consequences."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:33:01.915Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "70374ae8-c3f8-4029-9ffc-d45e8964d0d5"
+    },
+    "createdAt": "2025-10-19T19:33:01.915Z",
+    "updatedAt": "2025-10-19T19:33:01.916Z"
+  },
+  "chain_1760902475209_g8qny01xr": {
+    "chainId": "chain_1760902475209_g8qny01xr",
+    "scenes": [
+      {
+        "id": "scene_1_1760902475209",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Uncover initial clues of the lost civilization while sensing the presence maintaining silence."
+      },
+      {
+        "id": "scene_2_1760902475209",
+        "order": 2,
+        "title": "Secrets of the Forbidden Tomes",
+        "objective": "Decipher ancient warnings in an ancient library to understand the dangers of the land."
+      },
+      {
+        "id": "scene_3_1760902475209",
+        "order": 3,
+        "title": "Echoes of the Empty City",
+        "objective": "Investigate the echoing empty city to gather evidence of the civilization's sudden disappearance."
+      },
+      {
+        "id": "scene_4_1760902475209",
+        "order": 4,
+        "title": "The Labyrinth's Hidden Guardians",
+        "objective": "Navigate the hidden underground labyrinth to avoid traps and uncover the purpose of its construction."
+      },
+      {
+        "id": "scene_5_1760902475209",
+        "order": 5,
+        "title": "Whispering Winds of the Forgotten Forest",
+        "objective": "Survive the whispering winds while piecing together the signs of an impending revelation."
+      },
+      {
+        "id": "scene_6_1760902475209",
+        "order": 6,
+        "title": "Confrontation with The Whisperer",
+        "objective": "Engage in a tense encounter with The Whisperer to understand who or what maintains the silence."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:34:35.209Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "3c6d7d20-9357-452f-8b59-8cd28626f509"
+    },
+    "createdAt": "2025-10-19T19:34:35.209Z",
+    "updatedAt": "2025-10-19T19:34:35.212Z"
+  },
+  "chain_1760902567481_s8rr8gnmo": {
+    "chainId": "chain_1760902567481_s8rr8gnmo",
+    "scenes": [
+      {
+        "id": "scene_1_1760902567481",
+        "order": 1,
+        "title": "Echoes in the Desolate Ruins",
+        "objective": "The explorers begin their journey by uncovering symbols hinting at the lost civilization while avoiding detection by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760902567481",
+        "order": 2,
+        "title": "Whispers of the Ancient Library",
+        "objective": "In an ancient library, the explorers find forbidden tomes that suggest a connection to the Whisperer, unveiling the presence maintaining the silence."
+      },
+      {
+        "id": "scene_3_1760902567481",
+        "order": 3,
+        "title": "Shadows in the Empty City",
+        "objective": "As political tensions rise, the group navigates an echoing empty city, where they encounter signs of past conflicts and lingering magical powers."
+      },
+      {
+        "id": "scene_4_1760902567481",
+        "order": 4,
+        "title": "Warnings in the Whispering Forest",
+        "objective": "The forest reveals ancient warnings that must be deciphered to prevent a looming catastrophe, testing the explorers' ability to survive the hidden dangers."
+      },
+      {
+        "id": "scene_5_1760902567481",
+        "order": 5,
+        "title": "Labyrinth of Silent Guardians",
+        "objective": "Deep in a hidden underground labyrinth, the explorers face traps set by unseen guardians, pushing them to uncover the purpose of the warnings before it's too late."
+      },
+      {
+        "id": "scene_6_1760902567481",
+        "order": 6,
+        "title": "Revelation of the Whisperer",
+        "objective": "The final confrontation reveals the Whisperer's role in maintaining the silence and the explorers must decide how to balance the past's power with their kingdoms' futures."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:36:07.481Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "f4c7e611-ea24-47c1-8dec-82942175d5b8"
+    },
+    "createdAt": "2025-10-19T19:36:07.481Z",
+    "updatedAt": "2025-10-19T19:36:07.482Z"
+  },
+  "chain_1760902670628_7p3bfwh2o": {
+    "chainId": "chain_1760902670628_7p3bfwh2o",
+    "scenes": [
+      {
+        "id": "scene_1_1760902670628",
+        "order": 1,
+        "title": "Echoes in the Desolate Ruins",
+        "objective": "Uncover initial clues about the lost civilization while avoiding detection by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760902670628",
+        "order": 2,
+        "title": "Whispers in the Ancient Library",
+        "objective": "Decipher forbidden tomes to reveal the purpose of the warnings, amidst growing tensions between explorers."
+      },
+      {
+        "id": "scene_3_1760902670628",
+        "order": 3,
+        "title": "Shadows of the Empty City",
+        "objective": "Investigate the eerie silence of the empty city to understand who maintains it, while political tensions rise."
+      },
+      {
+        "id": "scene_4_1760902670628",
+        "order": 4,
+        "title": "The Labyrinth's Silent Watchers",
+        "objective": "Navigate the hidden underground labyrinth to avoid traps and uncover the intent behind the ancient warnings."
+      },
+      {
+        "id": "scene_5_1760902670628",
+        "order": 5,
+        "title": "Forests of Whispering Winds",
+        "objective": "Encounter The Whisperer and negotiate to gain insights into the lingering powers and their implications."
+      },
+      {
+        "id": "scene_6_1760902670628",
+        "order": 6,
+        "title": "Revelation at the Ruined Heart",
+        "objective": "Piece together the final mystery of why the lands were abandoned to prevent a looming catastrophe."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:37:50.628Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "e8f1138f-4ea6-4378-9ed1-7ee545f96c3c"
+    },
+    "createdAt": "2025-10-19T19:37:50.629Z",
+    "updatedAt": "2025-10-19T19:37:50.629Z"
+  },
+  "chain_1760902684921_28yvmmbwa": {
+    "chainId": "chain_1760902684921_28yvmmbwa",
+    "scenes": [
+      {
+        "id": "scene_1_1760902684922",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Uncover initial clues about who maintains the silence without alerting any unseen guardians."
+      },
+      {
+        "id": "scene_2_1760902684922",
+        "order": 2,
+        "title": "Secrets of the Echoing Library",
+        "objective": "Discover forbidden tomes that hint at the lost civilization's fate and the powers they wielded."
+      },
+      {
+        "id": "scene_3_1760902684922",
+        "order": 3,
+        "title": "Shadows Over Empty Cities",
+        "objective": "Navigate political tensions while investigating why these lands were abandoned and protected."
+      },
+      {
+        "id": "scene_4_1760902684922",
+        "order": 4,
+        "title": "The Labyrinth's Ancient Warnings",
+        "objective": "Decipher symbols that warn of a looming catastrophe as unseen eyes watch the party's every move."
+      },
+      {
+        "id": "scene_5_1760902684922",
+        "order": 5,
+        "title": "The Whisperer's Hidden Domain",
+        "objective": "Confront the rumored Whisperer to uncover the truth behind the silence and the land's lingering powers."
+      },
+      {
+        "id": "scene_6_1760902684922",
+        "order": 6,
+        "title": "Revelations in the Whispering Forest",
+        "objective": "Piece together the purpose of scattered warnings to prevent catastrophe and survive the magical landscape."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:38:04.922Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "ff1f4985-4cd3-4f86-8375-bf24b3782b29"
+    },
+    "createdAt": "2025-10-19T19:38:04.922Z",
+    "updatedAt": "2025-10-19T19:38:04.925Z"
+  },
+  "chain_1760902694647_osbm6l07n": {
+    "chainId": "chain_1760902694647_osbm6l07n",
+    "scenes": [
+      {
+        "id": "scene_1_1760902694648",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Uncover initial clues about the lost civilization while avoiding detection by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760902694648",
+        "order": 2,
+        "title": "Echoes of Knowledge in the Forbidden Library",
+        "objective": "Decipher ancient tomes to reveal hints of the civilization's fall and the purpose of the warnings."
+      },
+      {
+        "id": "scene_3_1760902694648",
+        "order": 3,
+        "title": "Shadows in the Empty City",
+        "objective": "Investigate the echoing streets for signs of past life and the lingering powers maintaining the silence."
+      },
+      {
+        "id": "scene_4_1760902694648",
+        "order": 4,
+        "title": "Secrets of the Whispering Forest",
+        "objective": "Navigate the forest's traps and political tensions while discovering ancient symbols pointing to the civilization's protector."
+      },
+      {
+        "id": "scene_5_1760902694648",
+        "order": 5,
+        "title": "Labyrinth of Hidden Truths",
+        "objective": "Solve puzzles to reach the heart of the labyrinth where the true purpose of the land's protection is revealed."
+      },
+      {
+        "id": "scene_6_1760902694648",
+        "order": 6,
+        "title": "Revelation in the Presence of The Whisperer",
+        "objective": "Confront The Whisperer to uncover the final mystery of who maintains the silence and why the lands were abandoned."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:38:14.648Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "54b7ccde-0f1c-4ba1-80a9-3d3ff5052176"
+    },
+    "createdAt": "2025-10-19T19:38:14.648Z",
+    "updatedAt": "2025-10-19T19:38:14.650Z"
+  },
+  "chain_1760902705053_gig7tkz8n": {
+    "chainId": "chain_1760902705053_gig7tkz8n",
+    "scenes": [
+      {
+        "id": "scene_1_1760902705054",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Explore the ruins to uncover clues about the lost civilization while avoiding the watchful presence maintaining the silence."
+      },
+      {
+        "id": "scene_2_1760902705054",
+        "order": 2,
+        "title": "Secrets of the Ancient Library",
+        "objective": "Decipher forbidden tomes to unravel the purpose of cryptic warnings and the fate of the lost civilization."
+      },
+      {
+        "id": "scene_3_1760902705054",
+        "order": 3,
+        "title": "Echoes from the Empty City",
+        "objective": "Investigate the echoing streets to uncover why the lands were abandoned and detect signs of the unseen guardians."
+      },
+      {
+        "id": "scene_4_1760902705054",
+        "order": 4,
+        "title": "The Labyrinth's Whisper",
+        "objective": "Navigate the hidden underground labyrinth to gather evidence of the Whisperer's influence and the lingering magical powers."
+      },
+      {
+        "id": "scene_5_1760902705054",
+        "order": 5,
+        "title": "Whispering Winds of the Forest",
+        "objective": "Survive the mystical forest's traps and uncover the signs and symbols warning of impending catastrophe."
+      },
+      {
+        "id": "scene_6_1760902705054",
+        "order": 6,
+        "title": "Revelation of the Silent Presence",
+        "objective": "Confront the Whisperer to reveal the truth behind the silence and prevent the ancient powers from unleashing disaster."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:38:25.054Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "70338d8d-d86b-4911-b3f1-064dfdbe904f"
+    },
+    "createdAt": "2025-10-19T19:38:25.054Z",
+    "updatedAt": "2025-10-19T19:38:25.056Z"
+  },
+  "chain_1760902754585_agbxm9hqs": {
+    "chainId": "chain_1760902754585_agbxm9hqs",
+    "scenes": [
+      {
+        "id": "scene_1_1760902754586",
+        "order": 1,
+        "title": "Whispers Among Desolate Ruins",
+        "objective": "Uncover initial clues about the lost civilization while avoiding detection from unseen guardians."
+      },
+      {
+        "id": "scene_2_1760902754586",
+        "order": 2,
+        "title": "Echoes in the Ancient Library",
+        "objective": "Decipher forbidden tomes to reveal early signs of the civilization's fate and the warnings left behind."
+      },
+      {
+        "id": "scene_3_1760902754586",
+        "order": 3,
+        "title": "Secrets of the Echoing Empty City",
+        "objective": "Investigate the silent city to understand why it was abandoned and how it is protected."
+      },
+      {
+        "id": "scene_4_1760902754586",
+        "order": 4,
+        "title": "Whispering Winds of the Forbidden Forest",
+        "objective": "Navigate the forest's hidden paths to find hints about the presence maintaining the silence."
+      },
+      {
+        "id": "scene_5_1760902754586",
+        "order": 5,
+        "title": "Labyrinth of Shadows and Revelation",
+        "objective": "Explore the underground labyrinth to uncover the purpose of ancient warnings and the lingering powers."
+      },
+      {
+        "id": "scene_6_1760902754586",
+        "order": 6,
+        "title": "Confrontation with The Whisperer",
+        "objective": "Engage in a tense negotiation with The Whisperer to gain insight into the mysteries and ensure survival."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:39:14.586Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "dd00d668-7b2d-463f-9eb7-8e901d18f63b"
+    },
+    "createdAt": "2025-10-19T19:39:14.586Z",
+    "updatedAt": "2025-10-19T19:39:14.588Z"
+  },
+  "chain_1760902763786_3q7os6x7j": {
+    "chainId": "chain_1760902763786_3q7os6x7j",
+    "scenes": [
+      {
+        "id": "scene_1_1760902763787",
+        "order": 1,
+        "title": "Whispers in the Echoing Empty City",
+        "objective": "Explore the desolate city ruins to uncover traces of the lost civilization while avoiding detection by unseen eyes."
+      },
+      {
+        "id": "scene_2_1760902763787",
+        "order": 2,
+        "title": "The Forbidden Tomes of the Ancient Library",
+        "objective": "Decipher ancient texts to understand why the lands were abandoned, navigating political tensions among explorers."
+      },
+      {
+        "id": "scene_3_1760902763787",
+        "order": 3,
+        "title": "Labyrinth of Shadows and Light",
+        "objective": "Navigate the hidden underground labyrinth to discover the purpose of the warnings and signs, avoiding traps set by unseen guardians."
+      },
+      {
+        "id": "scene_4_1760902763787",
+        "order": 4,
+        "title": "The Whisperer's Veil in the Whispering Winds",
+        "objective": "Unravel the identity of the Whisperer amidst the forest's secrets, balancing between the wonder of discovery and looming danger."
+      },
+      {
+        "id": "scene_5_1760902763787",
+        "order": 5,
+        "title": "Revelations at the Heart of Silence",
+        "objective": "Confront the truth of who maintains the silence and what powers linger, ensuring survival as the past comes alive."
+      },
+      {
+        "id": "scene_6_1760902763787",
+        "order": 6,
+        "title": "The Silent Accord",
+        "objective": "Navigate a diplomatic resolution among the kingdoms to prevent catastrophe as the mysteries of the magical landscape are revealed."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:39:23.787Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "d78de9ce-c070-4b9b-9dd6-125ddc6c7954"
+    },
+    "createdAt": "2025-10-19T19:39:23.787Z",
+    "updatedAt": "2025-10-19T19:39:23.788Z"
+  },
+  "chain_1760902896458_lyhy743qn": {
+    "chainId": "chain_1760902896458_lyhy743qn",
+    "scenes": [
+      {
+        "id": "scene_1_1760902896458",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Begin the quest by uncovering the first signs of the lost civilization while remaining undetected by the unseen presence."
+      },
+      {
+        "id": "scene_2_1760902896458",
+        "order": 2,
+        "title": "Secrets of the Forbidden Tomes",
+        "objective": "Investigate the ancient libraries to decipher cryptic warnings and political implications."
+      },
+      {
+        "id": "scene_3_1760902896458",
+        "order": 3,
+        "title": "Echoes from the Empty City",
+        "objective": "Deepen the exploration by unraveling the mystery of why the city was abandoned, while avoiding traps set by the unseen guardians."
+      },
+      {
+        "id": "scene_4_1760902896458",
+        "order": 4,
+        "title": "The Labyrinth's Shadow",
+        "objective": "Navigate the hidden underground labyrinth to discover the purpose of the ancient warnings and hints of lingering power."
+      },
+      {
+        "id": "scene_5_1760902896458",
+        "order": 5,
+        "title": "The Whisperer's Veil",
+        "objective": "Confront the presence of The Whisperer, seeking answers about the maintenance of silence and the fate of the lost civilization."
+      },
+      {
+        "id": "scene_6_1760902896458",
+        "order": 6,
+        "title": "Revelations Beneath the Whispering Winds",
+        "objective": "Conclude the quest by piecing together the remaining mysteries to prevent catastrophe and understand the balance of power in the magical landscape."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:41:36.458Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "969ec6f8-2b3d-49b9-b783-95689bdb2781"
+    },
+    "createdAt": "2025-10-19T19:41:36.458Z",
+    "updatedAt": "2025-10-19T19:41:36.460Z"
+  },
+  "chain_1760903071945_1zn2qoau3": {
+    "chainId": "chain_1760903071945_1zn2qoau3",
+    "scenes": [
+      {
+        "id": "scene_1_1760903071945",
+        "order": 1,
+        "title": "Whispers in the Desolate Magical Ruins",
+        "objective": "Begin unraveling who maintains the silence while avoiding detection by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760903071945",
+        "order": 2,
+        "title": "Secrets of the Ancient Library",
+        "objective": "Unearth forbidden tomes that hint at the lost civilization's fate and political tensions between kingdoms."
+      },
+      {
+        "id": "scene_3_1760903071945",
+        "order": 3,
+        "title": "Echoes in the Empty City",
+        "objective": "Deepen the investigation into the purpose of the scattered warnings and the city's abandonment."
+      },
+      {
+        "id": "scene_4_1760903071945",
+        "order": 4,
+        "title": "Labyrinthine Mysteries Below",
+        "objective": "Decipher hidden symbols in underground labyrinths to prevent an impending catastrophe."
+      },
+      {
+        "id": "scene_5_1760903071945",
+        "order": 5,
+        "title": "The Whisperer's Shadow",
+        "objective": "Confront the figure behind the silence and uncover the lingering powers in the magical landscape."
+      },
+      {
+        "id": "scene_6_1760903071945",
+        "order": 6,
+        "title": "Revelations in the Whispering Forest",
+        "objective": "Piece together the truth of the lost civilization while navigating political tensions and surviving unseen threats."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:44:31.945Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "b03bd846-abfb-4adb-8593-b1ad8f5f7653"
+    },
+    "createdAt": "2025-10-19T19:44:31.945Z",
+    "updatedAt": "2025-10-19T19:44:31.947Z"
+  },
+  "chain_1760903137210_i5xkljh7p": {
+    "chainId": "chain_1760903137210_i5xkljh7p",
+    "scenes": [
+      {
+        "id": "scene_1_1760903137210",
+        "order": 1,
+        "title": "Whispers Among Desolate Ruins",
+        "objective": "Explore the ruins to uncover initial clues about the lost civilization while avoiding detection by unseen guardians."
+      },
+      {
+        "id": "scene_2_1760903137210",
+        "order": 2,
+        "title": "Secrets of the Forbidden Tomes",
+        "objective": "Investigate an ancient library to learn more about the warnings scattered across the ruins and the political tensions between kingdoms."
+      },
+      {
+        "id": "scene_3_1760903137210",
+        "order": 3,
+        "title": "Echoes in the Empty City",
+        "objective": "Delve deeper into the empty city to reveal the mysterious presence maintaining the silence and its connection to the lost civilization."
+      },
+      {
+        "id": "scene_4_1760903137210",
+        "order": 4,
+        "title": "Labyrinth's Shadowed Secrets",
+        "objective": "Navigate the hidden underground labyrinth to decipher ancient warnings that could prevent a looming catastrophe."
+      },
+      {
+        "id": "scene_5_1760903137210",
+        "order": 5,
+        "title": "The Whisperer's Veiled Intentions",
+        "objective": "Confront the Whisperer to uncover their role in the protection of the lands and the purpose behind the warnings."
+      },
+      {
+        "id": "scene_6_1760903137210",
+        "order": 6,
+        "title": "Revelations in the Whispering Forest",
+        "objective": "In the forest of whispering winds, piece together the final truths about the lingering powers and the fate of the lost civilization."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:45:37.210Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "9d44ac2b-a3b5-4561-b803-fbdcf74aab82"
+    },
+    "createdAt": "2025-10-19T19:45:37.210Z",
+    "updatedAt": "2025-10-19T19:45:37.212Z"
+  },
+  "chain_1760903326242_g32mau55e": {
+    "chainId": "chain_1760903326242_g32mau55e",
+    "scenes": [
+      {
+        "id": "scene_1_1760903326242",
+        "order": 1,
+        "title": "Whispers Among Desolate Ruins",
+        "objective": "Explore the desolate magical ruins to uncover initial signs of the lost civilization and hints of the Whisperer's presence."
+      },
+      {
+        "id": "scene_2_1760903326242",
+        "order": 2,
+        "title": "Secrets of the Echoing Library",
+        "objective": "Investigate the ancient library to find forbidden tomes that might explain the warnings scattered across the ruins."
+      },
+      {
+        "id": "scene_3_1760903326242",
+        "order": 3,
+        "title": "Tensions in the Empty City",
+        "objective": "Navigate the political tensions between explorers while deciphering symbols in the echoing empty city that suggest past conflicts."
+      },
+      {
+        "id": "scene_4_1760903326242",
+        "order": 4,
+        "title": "Whispering Winds in the Enchanted Forest",
+        "objective": "Listen to the forest's whispering winds to gain insight into why the lands were abandoned and protected by unseen guardians."
+      },
+      {
+        "id": "scene_5_1760903326242",
+        "order": 5,
+        "title": "Labyrinth of Shadows",
+        "objective": "Survive the hidden underground labyrinth while uncovering the purpose of ancient warnings to prevent impending catastrophe."
+      },
+      {
+        "id": "scene_6_1760903326242",
+        "order": 6,
+        "title": "Revelations of the Past",
+        "objective": "Confront the Whisperer to finally understand who maintains the silence and unravel the mysteries of the lost civilization."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:48:46.242Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "9c91afd1-1fb1-4816-915f-212efe5ec46e"
+    },
+    "createdAt": "2025-10-19T19:48:46.242Z",
+    "updatedAt": "2025-10-19T19:48:46.244Z"
+  },
+  "chain_1760903453180_18xys5i2t": {
+    "chainId": "chain_1760903453180_18xys5i2t",
+    "scenes": [
+      {
+        "id": "scene_1_1760903453181",
+        "order": 1,
+        "title": "Whispers Among Desolate Ruins",
+        "objective": "The explorers begin their journey, feeling the weight of ancient silence as they seek the first clues about the lost civilization while avoiding detection."
+      },
+      {
+        "id": "scene_2_1760903453181",
+        "order": 2,
+        "title": "Echoes in the Ancient Library",
+        "objective": "The group uncovers forbidden tomes that hint at the civilization's downfall and the presence of the Whisperer, deepening the mystery of the land's abandonment."
+      },
+      {
+        "id": "scene_3_1760903453181",
+        "order": 3,
+        "title": "Shadows Over the Empty City",
+        "objective": "The explorers navigate the echoing streets, piecing together signs and symbols that suggest an impending revelation about the guardians of these lands."
+      },
+      {
+        "id": "scene_4_1760903453181",
+        "order": 4,
+        "title": "Whispering Winds of the Enchanted Forest",
+        "objective": "The explorers must decipher the forest's warnings, balancing wonder and danger, to avoid traps and understand the powers still at play in the landscape."
+      },
+      {
+        "id": "scene_5_1760903453181",
+        "order": 5,
+        "title": "Labyrinth of Silent Guardians",
+        "objective": "Deep in the hidden underground, the explorers confront the reality of the unseen guardians, striving to uncover the truth before their presence is fully known."
+      },
+      {
+        "id": "scene_6_1760903453181",
+        "order": 6,
+        "title": "The Presence of The Whisperer Revealed",
+        "objective": "In the heart of the labyrinth, the explorers must navigate political tensions and subtle negotiations to understand the Whisperer's role and prevent catastrophe."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:50:53.181Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "07f4a7d8-8dd2-432a-817f-70305556771b"
+    },
+    "createdAt": "2025-10-19T19:50:53.181Z",
+    "updatedAt": "2025-10-19T19:50:53.181Z"
+  },
+  "chain_1760903574528_h3mfkbn9r": {
+    "chainId": "chain_1760903574528_h3mfkbn9r",
+    "scenes": [
+      {
+        "id": "scene_1_1760903574528",
+        "order": 1,
+        "title": "Whispers in the Desolate Magical Ruins",
+        "objective": "The explorers encounter signs of the lost civilization and feel the presence of unseen eyes, hinting at the mystery of who maintains the silence."
+      },
+      {
+        "id": "scene_2_1760903574528",
+        "order": 2,
+        "title": "Echoes of Knowledge in the Ancient Library",
+        "objective": "The adventurers discover forbidden tomes that reveal fragments of why the lands were abandoned, increasing the tension of discovery."
+      },
+      {
+        "id": "scene_3_1760903574528",
+        "order": 3,
+        "title": "Shadows of the Past in the Empty City",
+        "objective": "The group uncovers ancient warnings amidst the echoing streets, suggesting a catastrophe that once befell the civilization."
+      },
+      {
+        "id": "scene_4_1760903574528",
+        "order": 4,
+        "title": "The Forest of Whispering Winds",
+        "objective": "In the eerie forest, explorers must decode nature's subtle signs to avoid traps set by the unseen guardians."
+      },
+      {
+        "id": "scene_5_1760903574528",
+        "order": 5,
+        "title": "Labyrinth of Silent Guardians",
+        "objective": "Navigating the hidden underground labyrinth, the explorers confront political tensions while seeking to uncover the purpose of scattered warnings."
+      },
+      {
+        "id": "scene_6_1760903574528",
+        "order": 6,
+        "title": "Revelations of the Whisperer",
+        "objective": "The explorers come face-to-face with the rumored Whisperer, seeking to understand the lingering powers and the true reason behind the ancient silence."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:52:54.528Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "691873e9-bf40-411a-b691-f6a3e9be967b"
+    },
+    "createdAt": "2025-10-19T19:52:54.528Z",
+    "updatedAt": "2025-10-19T19:52:54.530Z"
+  },
+  "chain_1760903902944_l0wmel33y": {
+    "chainId": "chain_1760903902944_l0wmel33y",
+    "scenes": [
+      {
+        "id": "scene_1_1760903902944",
+        "order": 1,
+        "title": "Whispers Amongst Desolate Ruins",
+        "objective": "Explore the desolate magical ruins and uncover the first clues to the lost civilization, while avoiding detection."
+      },
+      {
+        "id": "scene_2_1760903902944",
+        "order": 2,
+        "title": "Echoes in the Ancient Library",
+        "objective": "Investigate the ancient library's forbidden tomes to decipher the initial warnings of the past, balancing wonder and danger."
+      },
+      {
+        "id": "scene_3_1760903902944",
+        "order": 3,
+        "title": "Shadows Over the Empty City",
+        "objective": "Delve into the echoing empty city to gather evidence of who or what maintains the silence, deepening the mystery."
+      },
+      {
+        "id": "scene_4_1760903902944",
+        "order": 4,
+        "title": "Wind's Secrets in Whispering Forests",
+        "objective": "Navigate the forests with whispering winds to uncover hidden warnings and avoid traps set by unseen guardians."
+      },
+      {
+        "id": "scene_5_1760903902944",
+        "order": 5,
+        "title": "Labyrinthine Revelations Underground",
+        "objective": "Solve the puzzles within the hidden underground labyrinth to reveal the purpose of scattered warnings and the stakes involved."
+      },
+      {
+        "id": "scene_6_1760903902944",
+        "order": 6,
+        "title": "Confrontation with The Whisperer",
+        "objective": "Engage in a tense negotiation with The Whisperer to address the political tensions and understand the lingering powers on the land."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T19:58:22.944Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "09bd7dc3-170a-4e09-803f-2448568ff855"
+    },
+    "createdAt": "2025-10-19T19:58:22.944Z",
+    "updatedAt": "2025-10-19T19:58:22.945Z"
+  },
+  "chain_1760904012018_9ex6i6of5": {
+    "chainId": "chain_1760904012018_9ex6i6of5",
+    "scenes": [
+      {
+        "id": "scene_1_1760904012018",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Begin the exploration of the ruins to uncover initial clues about the lost civilization and sense the presence of the Whisperer maintaining the silence."
+      },
+      {
+        "id": "scene_2_1760904012018",
+        "order": 2,
+        "title": "Secrets in the Ancient Library",
+        "objective": "Decipher forbidden tomes to reveal early traces of the civilization's fate and potential warnings scattered across the ruins."
+      },
+      {
+        "id": "scene_3_1760904012018",
+        "order": 3,
+        "title": "Echoes Through the Empty City",
+        "objective": "Investigate the echoing cities to piece together the reasons behind the lands' abandonment while evading traps set by unseen guardians."
+      },
+      {
+        "id": "scene_4_1760904012018",
+        "order": 4,
+        "title": "Whispering Winds of the Forest",
+        "objective": "Navigate the politically tense environment while interpreting the forest's cryptic signs to prevent a looming catastrophe."
+      },
+      {
+        "id": "scene_5_1760904012018",
+        "order": 5,
+        "title": "Labyrinth of Shadows and Revelations",
+        "objective": "Delve into the underground labyrinth to confront the lingering powers and uncover the truth behind the ancient warnings before detection."
+      },
+      {
+        "id": "scene_6_1760904012018",
+        "order": 6,
+        "title": "The Unseen Eyes of the Whisperer",
+        "objective": "Confront the presence of the Whisperer to resolve the mysteries of the silence and the lost civilization's ultimate purpose."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:00:12.018Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "e0a07e75-186e-4790-bc94-b5d1031e46c4"
+    },
+    "createdAt": "2025-10-19T20:00:12.018Z",
+    "updatedAt": "2025-10-19T20:00:12.019Z"
+  },
+  "chain_1760904085624_udskn0nnd": {
+    "chainId": "chain_1760904085624_udskn0nnd",
+    "scenes": [
+      {
+        "id": "scene_1_1760904085624",
+        "order": 1,
+        "title": "Whispers Among Desolate Ruins",
+        "objective": "Uncover initial clues about the lost civilization before their presence is detected by unseen eyes."
+      },
+      {
+        "id": "scene_2_1760904085624",
+        "order": 2,
+        "title": "The Forbidden Tomes of the Ancient Library",
+        "objective": "Decipher the ancient warnings hidden within the tomes to prevent impending catastrophe."
+      },
+      {
+        "id": "scene_3_1760904085624",
+        "order": 3,
+        "title": "Echoes in the Empty City",
+        "objective": "Investigate the city's silence to understand what happened to its inhabitants while avoiding traps set by unseen guardians."
+      },
+      {
+        "id": "scene_4_1760904085624",
+        "order": 4,
+        "title": "The Labyrinth's Shadowed Secrets",
+        "objective": "Navigate the hidden underground labyrinth to uncover truths about the presence maintaining the silence."
+      },
+      {
+        "id": "scene_5_1760904085624",
+        "order": 5,
+        "title": "Whispering Winds of the Enchanted Forest",
+        "objective": "Piece together the forest's warnings to prevent a disaster and reveal the purpose of the guardians."
+      },
+      {
+        "id": "scene_6_1760904085625",
+        "order": 6,
+        "title": "Confrontation with The Whisperer",
+        "objective": "Engage in a tense negotiation with The Whisperer to resolve political tensions and unveil the land's deepest mysteries."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:01:25.625Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "c6e0b75d-7a5f-40b1-aae3-44058c59e7be"
+    },
+    "createdAt": "2025-10-19T20:01:25.625Z",
+    "updatedAt": "2025-10-19T20:01:25.627Z"
+  },
+  "chain_1760904199955_jyn9sdobp": {
+    "chainId": "chain_1760904199955_jyn9sdobp",
+    "scenes": [
+      {
+        "id": "scene_1_1760904199956",
+        "order": 1,
+        "title": "Whispers in the Desolate Magical Ruins",
+        "objective": "Discover the first signs of the lost civilization's guardians while avoiding detection."
+      },
+      {
+        "id": "scene_2_1760904199956",
+        "order": 2,
+        "title": "Echoes from the Ancient Library",
+        "objective": "Unearth forbidden tomes that hint at the civilization's downfall and the origin of the whispers."
+      },
+      {
+        "id": "scene_3_1760904199956",
+        "order": 3,
+        "title": "Secrets of the Empty City",
+        "objective": "Investigate the empty city to uncover why it was abandoned and protected by ancient powers."
+      },
+      {
+        "id": "scene_4_1760904199956",
+        "order": 4,
+        "title": "The Labyrinth's Silent Guardians",
+        "objective": "Navigate the underground labyrinth while deciphering warnings to prevent triggering ancient defenses."
+      },
+      {
+        "id": "scene_5_1760904199956",
+        "order": 5,
+        "title": "The Forest's Whispering Winds",
+        "objective": "Decode the forest's signs to reveal the purpose of the warnings and the identity of The Whisperer."
+      },
+      {
+        "id": "scene_6_1760904199956",
+        "order": 6,
+        "title": "Revelations of the Hidden Presence",
+        "objective": "Confront the truth about the silence and the lingering powers that protect the lost lands."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:03:19.956Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "6b27b418-e3db-4bc0-b325-cb1c9034ba4b"
+    },
+    "createdAt": "2025-10-19T20:03:19.956Z",
+    "updatedAt": "2025-10-19T20:03:19.957Z"
+  },
+  "chain_1760904280409_pf11yawnn": {
+    "chainId": "chain_1760904280409_pf11yawnn",
+    "scenes": [
+      {
+        "id": "scene_1_1760904280410",
+        "order": 1,
+        "title": "Whispers Among Desolate Ruins",
+        "objective": "The explorers begin their journey by uncovering the first signs of the lost civilization while trying to remain undetected by the mysterious presence."
+      },
+      {
+        "id": "scene_2_1760904280410",
+        "order": 2,
+        "title": "Shadows in the Echoing Library",
+        "objective": "In an ancient library, the group discovers forbidden tomes hinting at the civilization's downfall and the forces now guarding the land."
+      },
+      {
+        "id": "scene_3_1760904280410",
+        "order": 3,
+        "title": "Silent Streets of the Empty City",
+        "objective": "While navigating the abandoned city, the explorers encounter symbols of warning and must decipher their meanings to avoid unseen traps."
+      },
+      {
+        "id": "scene_4_1760904280410",
+        "order": 4,
+        "title": "The Labyrinth's Whispered Warnings",
+        "objective": "Deep within a hidden labyrinth, they uncover fragmented stories of the past and the purpose behind the scattered warnings."
+      },
+      {
+        "id": "scene_5_1760904280410",
+        "order": 5,
+        "title": "Confronting The Whisperer in the Whispering Forest",
+        "objective": "The group must negotiate with The Whisperer, a figure maintaining the silence, to learn the truth of the past while balancing political tensions."
+      },
+      {
+        "id": "scene_6_1760904280410",
+        "order": 6,
+        "title": "Revelations in the Heart of Silence",
+        "objective": "In a final confrontation, the explorers unveil the mysteries of the lost civilization, understanding the lingering powers and the reasons for the lands' abandonment."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:04:40.410Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "e32dd7b2-b83c-4a78-9174-db0d2b6dd24d"
+    },
+    "createdAt": "2025-10-19T20:04:40.410Z",
+    "updatedAt": "2025-10-19T20:04:40.412Z"
+  },
+  "chain_1760904365634_5n2875jx2": {
+    "chainId": "chain_1760904365634_5n2875jx2",
+    "scenes": [
+      {
+        "id": "scene_1_1760904365635",
+        "order": 1,
+        "title": "Whispering Winds of the Forgotten Forest",
+        "objective": "The explorers seek the first clues of the lost civilization amidst the forest's ancient trees, wary of the whispering winds that hint at an unseen presence."
+      },
+      {
+        "id": "scene_2_1760904365635",
+        "order": 2,
+        "title": "Echoes in the Desolate Ruins",
+        "objective": "In the heart of the magical ruins, the explorers uncover cryptic symbols that suggest a hidden power still guarding the secrets of the past."
+      },
+      {
+        "id": "scene_3_1760904365635",
+        "order": 3,
+        "title": "The Empty City’s Silent Shadows",
+        "objective": "As tensions rise, the group navigates the political landscape while exploring an abandoned city echoing with signs of its former inhabitants."
+      },
+      {
+        "id": "scene_4_1760904365635",
+        "order": 4,
+        "title": "Labyrinth of Ancient Warnings",
+        "objective": "Deep within a hidden labyrinth, the explorers must decipher ancient warnings to avoid deadly traps and uncover the truth of the civilization's fate."
+      },
+      {
+        "id": "scene_5_1760904365635",
+        "order": 5,
+        "title": "The Whisperer's Veiled Presence",
+        "objective": "Confronting The Whisperer, the explorers must unravel the mystery of who maintains the silence and why these lands were forsaken yet protected."
+      },
+      {
+        "id": "scene_6_1760904365635",
+        "order": 6,
+        "title": "Revelation at the Forbidden Library",
+        "objective": "In an ancient library, forbidden tomes reveal the purpose of the warnings and the lingering powers, bringing the explorers closer to the truth."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:06:05.635Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "00bbc3b5-d540-411f-9880-86e994ee4b5a"
+    },
+    "createdAt": "2025-10-19T20:06:05.635Z",
+    "updatedAt": "2025-10-19T20:06:05.637Z"
+  },
+  "chain_1760904417594_7ekdre8m7": {
+    "chainId": "chain_1760904417594_7ekdre8m7",
+    "scenes": [
+      {
+        "id": "scene_1_1760904417594",
+        "order": 1,
+        "title": "Whispers in the Desolate Ruins",
+        "objective": "Investigate the ruins to uncover initial signs of the lost civilization and the unseen presence maintaining silence."
+      },
+      {
+        "id": "scene_2_1760904417594",
+        "order": 2,
+        "title": "Echoes in the Ancient Library",
+        "objective": "Decipher forbidden tomes to uncover warnings about the land's abandonment and its magical protections."
+      },
+      {
+        "id": "scene_3_1760904417594",
+        "order": 3,
+        "title": "Shadows in the Empty City",
+        "objective": "Explore the echoing city to find clues about the civilization's disappearance and the political tensions it left behind."
+      },
+      {
+        "id": "scene_4_1760904417594",
+        "order": 4,
+        "title": "Secrets of the Whispering Winds",
+        "objective": "Navigate the forest to piece together the symbols of warning and strengthen alliances despite growing tension."
+      },
+      {
+        "id": "scene_5_1760904417594",
+        "order": 5,
+        "title": "Labyrinth of Silent Guardians",
+        "objective": "Enter the hidden labyrinth to uncover the purpose of the ancient warnings and confront the presence of The Whisperer."
+      },
+      {
+        "id": "scene_6_1760904417594",
+        "order": 6,
+        "title": "Revelations in the Ancient Silence",
+        "objective": "Resolve the mysteries of the lingering powers and decide the explorers' fate amidst the political implications of their discoveries."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:06:57.594Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "7418d850-2e20-4beb-98af-f5d073cdabfd"
+    },
+    "createdAt": "2025-10-19T20:06:57.594Z",
+    "updatedAt": "2025-10-19T20:06:57.597Z"
+  },
+  "chain_1760904568177_89fp5gi4v": {
+    "chainId": "chain_1760904568177_89fp5gi4v",
+    "scenes": [
+      {
+        "id": "scene_1_1760904568177",
+        "order": 1,
+        "title": "Whispers in the Desolate Magical Ruins",
+        "objective": "Explore the ruins to uncover the first signs of the civilization's disappearance while maintaining stealth to avoid detection."
+      },
+      {
+        "id": "scene_2_1760904568177",
+        "order": 2,
+        "title": "Secrets of the Forbidden Library",
+        "objective": "Decipher the ancient tomes to unravel the beginnings of the land's abandonment without triggering the magical traps."
+      },
+      {
+        "id": "scene_3_1760904568177",
+        "order": 3,
+        "title": "Echoes in the Empty City",
+        "objective": "Investigate the empty streets and buildings for clues about the lost civilization's fate, navigating the lingering shadows of its past."
+      },
+      {
+        "id": "scene_4_1760904568177",
+        "order": 4,
+        "title": "The Labyrinth's Silent Watchers",
+        "objective": "Navigate the hidden underground labyrinth while evading the guardians and uncovering the purpose of the scattered warnings."
+      },
+      {
+        "id": "scene_5_1760904568177",
+        "order": 5,
+        "title": "The Whisperer's Shadow in the Whispering Forest",
+        "objective": "Confront the enigma of the Whisperer in the forest, balancing political tensions and the looming threat of the unseen presence."
+      },
+      {
+        "id": "scene_6_1760904568177",
+        "order": 6,
+        "title": "Revelations Beneath the Ancient Canopy",
+        "objective": "Piece together the remnants of the past to understand the warnings and prevent the looming catastrophe, revealing the land's true legacy."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:09:28.177Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "cf60b4c5-ad99-4034-bfc2-943e97a3ec11"
+    },
+    "createdAt": "2025-10-19T20:09:28.177Z",
+    "updatedAt": "2025-10-19T20:09:28.179Z"
+  },
+  "chain_1760904621534_ag9d89opt": {
+    "chainId": "chain_1760904621534_ag9d89opt",
+    "scenes": [
+      {
+        "id": "scene_1_1760904621534",
+        "order": 1,
+        "title": "Whispers in the Obsidian Ruins",
+        "objective": "Introduce explorers to the eerie atmosphere and reveal signs of recent activity, hinting at the hidden guardians."
+      },
+      {
+        "id": "scene_2_1760904621534",
+        "order": 2,
+        "title": "Echoes of the Whispering Forest",
+        "objective": "Unravel the mystery of the forest's stories, uncovering clues about the lost civilization and the silence maintained by unseen forces."
+      },
+      {
+        "id": "scene_3_1760904621534",
+        "order": 3,
+        "title": "Secrets Beneath the Crystal Caverns",
+        "objective": "Deepen the investigation into ancient magic, exploring how it still influences the area and discovering hidden doors."
+      },
+      {
+        "id": "scene_4_1760904621534",
+        "order": 4,
+        "title": "Shadows at the Fallen Spire",
+        "objective": "Confront the ominous presence of the tower, revealing the tension between rival kingdoms and the potential reawakening of destructive magic."
+      },
+      {
+        "id": "scene_5_1760904621534",
+        "order": 5,
+        "title": "Silence on the Void Plains",
+        "objective": "Address the threat of unseen forces, balancing the explorers' survival with the need to prevent the guardians from awakening ancient powers."
+      },
+      {
+        "id": "scene_6_1760904621534",
+        "order": 6,
+        "title": "The Clash of Ages",
+        "objective": "Resolve the conflict by preserving the explorers' lives and sanity, while uncovering the truth behind the guardians and ancient secrets."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:10:21.534Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "c662d5ab-91c3-4679-a265-76632b9d6655"
+    },
+    "createdAt": "2025-10-19T20:10:21.534Z",
+    "updatedAt": "2025-10-19T20:10:21.536Z"
+  },
+  "chain_1760904839445_rpf9ssmff": {
+    "chainId": "chain_1760904839445_rpf9ssmff",
+    "scenes": [
+      {
+        "id": "scene_1_1760904839445",
+        "order": 1,
+        "title": "Whispers of the Ruined City of Twilight",
+        "objective": "Explore the eerie streets of the Ruined City to uncover who or what is maintaining the land's silence."
+      },
+      {
+        "id": "scene_2_1760904839445",
+        "order": 2,
+        "title": "Echoes Beneath the Whispering Forest",
+        "objective": "Investigate the cryptic warnings emanating from the forest to reveal hints of the civilization's downfall."
+      },
+      {
+        "id": "scene_3_1760904839445",
+        "order": 3,
+        "title": "Secrets of the Shimmering Lake",
+        "objective": "Delve into the lake's depths to discover the lingering powers and ancient warnings hidden in its waters."
+      },
+      {
+        "id": "scene_4_1760904839445",
+        "order": 4,
+        "title": "Confrontation in the Echoing Caves",
+        "objective": "Navigate the treacherous caves to unravel the secrets of the past and confront Garin's ruthless pursuit of power."
+      },
+      {
+        "id": "scene_5_1760904839445",
+        "order": 5,
+        "title": "Revelations at the Abandoned Mage's Tower",
+        "objective": "Ascend the tower to uncover the truth of the ancient magic and determine the intentions of the Silent Guardian."
+      },
+      {
+        "id": "scene_6_1760904839445",
+        "order": 6,
+        "title": "The Silent Guardian's Decision",
+        "objective": "Face the Silent Guardian to determine the explorers' fate and the future of the powerful magic they have uncovered."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:13:59.445Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "441cb674-96f4-4529-809a-0a03b53dfdfb"
+    },
+    "createdAt": "2025-10-19T20:13:59.445Z",
+    "updatedAt": "2025-10-19T20:13:59.448Z"
+  },
+  "chain_1760904927740_jtb93nees": {
+    "chainId": "chain_1760904927740_jtb93nees",
+    "scenes": [
+      {
+        "id": "scene_1_1760904927740",
+        "order": 1,
+        "title": "Echoes in the Shrouded Forest",
+        "objective": "Begin the exploration by uncovering cryptic runes hinting at the silence's origins."
+      },
+      {
+        "id": "scene_2_1760904927740",
+        "order": 2,
+        "title": "Whispers of Eldoria's Ruins",
+        "objective": "Discover eerie warnings within the ruins, suggesting a present threat rather than relics."
+      },
+      {
+        "id": "scene_3_1760904927740",
+        "order": 3,
+        "title": "The Shadowed Halls of the Whispering Caves",
+        "objective": "Navigate the echoing voices to find clues about the lost civilization's fate and potential watchers."
+      },
+      {
+        "id": "scene_4_1760904927740",
+        "order": 4,
+        "title": "Secrets of the Obsidian Tower",
+        "objective": "Investigate the tower's dark corridors to unveil the source of the lingering magic and its protectors."
+      },
+      {
+        "id": "scene_5_1760904927740",
+        "order": 5,
+        "title": "Confrontation on the Silent Plains",
+        "objective": "Decide whether to challenge the unseen forces maintaining the silence and balance ambitions against safety."
+      },
+      {
+        "id": "scene_6_1760904927740",
+        "order": 6,
+        "title": "The Archivist's Revelation",
+        "objective": "Eldrin reveals the truth about the silence and its guardians, guiding the explorers' final choices."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:15:27.740Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "fec8947e-bdc1-4b88-a0e1-c796796fca0d"
+    },
+    "createdAt": "2025-10-19T20:15:27.740Z",
+    "updatedAt": "2025-10-19T20:15:27.743Z"
+  },
+  "chain_1760905006860_yqlprhw7g": {
+    "chainId": "chain_1760905006860_yqlprhw7g",
+    "scenes": [
+      {
+        "id": "scene_1_1760905006861",
+        "order": 1,
+        "title": "Whispers in the Shrouded Forest",
+        "objective": "Uncover the first hints of the lost civilization while avoiding the unseen forces that guard the forest."
+      },
+      {
+        "id": "scene_2_1760905006861",
+        "order": 2,
+        "title": "Echoes from the Ruined City of Eldoria",
+        "objective": "Discover warnings hidden among the ruins, revealing the urgency of the present threat."
+      },
+      {
+        "id": "scene_3_1760905006861",
+        "order": 3,
+        "title": "Voices of the Whispering Caves",
+        "objective": "Investigate the strange, disembodied voices to unveil clues about who maintains the silence."
+      },
+      {
+        "id": "scene_4_1760905006861",
+        "order": 4,
+        "title": "Secrets of the Obsidian Tower",
+        "objective": "Decipher ancient runes to learn about the source of remaining magic and the intentions behind the silence."
+      },
+      {
+        "id": "scene_5_1760905006861",
+        "order": 5,
+        "title": "Confrontation on the Silent Plains",
+        "objective": "Decide whether to disturb the silence after learning its true nature, balancing personal ambitions with the group's safety."
+      },
+      {
+        "id": "scene_6_1760905006861",
+        "order": 6,
+        "title": "Revelations with Seraphine the Silent",
+        "objective": "Engage with Seraphine to piece together the fate of the lost civilization and the role of the explorers in the present threat."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:16:46.861Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "bb349e93-d881-4caa-a232-efa932cbc07e"
+    },
+    "createdAt": "2025-10-19T20:16:46.861Z",
+    "updatedAt": "2025-10-19T20:16:46.864Z"
+  },
+  "chain_1760905018490_h5s2f0u0f": {
+    "chainId": "chain_1760905018490_h5s2f0u0f",
+    "scenes": [
+      {
+        "id": "scene_1_1760905018491",
+        "order": 1,
+        "title": "Whispers in the Shrouded Forest",
+        "objective": "Uncover the first signs of the ancient magic and realize the dangers of the silence as the explorers enter the mysterious forest."
+      },
+      {
+        "id": "scene_2_1760905018491",
+        "order": 2,
+        "title": "Echoes of Eldoria's Past",
+        "objective": "Discover cryptic warnings etched into the ruins of Eldoria, hinting at the fate of the lost civilization and the present threat."
+      },
+      {
+        "id": "scene_3_1760905018491",
+        "order": 3,
+        "title": "Secrets Beneath the Obsidian Tower",
+        "objective": "Investigate the dark spire to uncover its purpose and the source of the lingering magic that protects the lands."
+      },
+      {
+        "id": "scene_4_1760905018491",
+        "order": 4,
+        "title": "Voices of the Whispering Caves",
+        "objective": "Encounter the disembodied voices that reveal fragments of the truth and the presence of unseen watchers."
+      },
+      {
+        "id": "scene_5_1760905018491",
+        "order": 5,
+        "title": "Confronting Seraphine the Silent",
+        "objective": "Decide whether to ally with or oppose the enigmatic protector who holds the key to maintaining the land's silence."
+      },
+      {
+        "id": "scene_6_1760905018491",
+        "order": 6,
+        "title": "The Silent Plains' Verdict",
+        "objective": "Navigate the empty fields to ultimately decide the explorers' fate and the future of the lost civilization's legacy."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:16:58.491Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "f55ce2cc-f9ff-4b39-b178-6b2f943d16b8"
+    },
+    "createdAt": "2025-10-19T20:16:58.491Z",
+    "updatedAt": "2025-10-19T20:16:58.494Z"
+  },
+  "chain_1760905051526_s19d4cqnc": {
+    "chainId": "chain_1760905051526_s19d4cqnc",
+    "scenes": [
+      {
+        "id": "scene_1_1760905051527",
+        "order": 1,
+        "title": "Whispers in the Enchanted Forest",
+        "objective": "Uncover traces of dormant magic and hints of the lost civilization's fate."
+      },
+      {
+        "id": "scene_2_1760905051527",
+        "order": 2,
+        "title": "Echoes of the Ancient City",
+        "objective": "Navigate the ruins to reveal the first signs of warning etched in stone."
+      },
+      {
+        "id": "scene_3_1760905051527",
+        "order": 3,
+        "title": "Secrets of the Forgotten Temple",
+        "objective": "Investigate cryptic warnings with the Renegade Scholar to understand past threats."
+      },
+      {
+        "id": "scene_4_1760905051527",
+        "order": 4,
+        "title": "The Elder Warden's Silent Vigil",
+        "objective": "Confront the Elder Warden to learn about the magic maintaining the silence."
+      },
+      {
+        "id": "scene_5_1760905051527",
+        "order": 5,
+        "title": "Balance of Power at the Abandoned Fortress",
+        "objective": "Resolve the tensions among explorers while preventing dangerous secrets from resurfacing."
+      },
+      {
+        "id": "scene_6_1760905051527",
+        "order": 6,
+        "title": "Revelations on the Desolate Plains",
+        "objective": "Piece together the connection between past and present threats to preserve peace."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:17:31.527Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "aaf53e0e-61bf-4f0f-b963-8c779e324705"
+    },
+    "createdAt": "2025-10-19T20:17:31.527Z",
+    "updatedAt": "2025-10-19T20:17:31.529Z"
+  },
+  "chain_1760905145775_9pv56lbqq": {
+    "chainId": "chain_1760905145775_9pv56lbqq",
+    "scenes": [
+      {
+        "id": "scene_1_1760905145775",
+        "order": 1,
+        "title": "Whispers Among the Ruins",
+        "objective": "The explorers uncover warnings in the Whispering Ruins, hinting at the fate of the ancient inhabitants."
+      },
+      {
+        "id": "scene_2_1760905145775",
+        "order": 2,
+        "title": "Veiled Secrets of the Silent Spire",
+        "objective": "Eldric the Sage leads the group to the Silent Spire, seeking clues about the source of magical protections."
+      },
+      {
+        "id": "scene_3_1760905145775",
+        "order": 3,
+        "title": "Shadows in the Veiled Forest",
+        "objective": "Lady Isolde's hidden agendas unfold as the explorers face the Silent Watcher in the depths of the Veiled Forest."
+      },
+      {
+        "id": "scene_4_1760905145775",
+        "order": 4,
+        "title": "Echoes Across the Plains",
+        "objective": "Kara the Cartographer maps the Echoing Plains, deciphering whether the silence is a blessing or curse."
+      },
+      {
+        "id": "scene_5_1760905145775",
+        "order": 5,
+        "title": "Submerged Mysteries of the Sunken City",
+        "objective": "Darius the Warrior protects the group in the Sunken City as they confront the heart of the silent lands."
+      },
+      {
+        "id": "scene_6_1760905145775",
+        "order": 6,
+        "title": "The Silent Guardian Revealed",
+        "objective": "The explorers confront the true nature of the Silent Watcher and its connection to the lost civilization."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T20:19:05.776Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "4f106455-51ab-4f3b-801a-8dd2f41f4d7d"
+    },
+    "createdAt": "2025-10-19T20:19:05.776Z",
+    "updatedAt": "2025-10-19T20:19:05.778Z"
+  }
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Session</title>
+</head>
+<body>
+    <h1>Debug Session Context</h1>
+    <button onclick="checkSession()">Check Session Context</button>
+    <button onclick="generateChain()">Generate Chain</button>
+    <button onclick="lockChain()">Lock Chain</button>
+    <div id="result"></div>
+
+    <script>
+        const sessionId = 'debug-session-' + Date.now();
+        let chainId = '';
+
+        async function checkSession() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/context/get?sessionId=${sessionId}`);
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h3>Session Context:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Error:</h3>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        async function generateChain() {
+            try {
+                const response = await fetch('http://localhost:3000/api/generate_chain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        concept: 'A simple test chain',
+                        meta: { test: true }
+                    })
+                });
+                const data = await response.json();
+                chainId = data.data.chainId;
+                document.getElementById('result').innerHTML = `
+                    <h3>Chain Generated:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Error:</h3>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        async function lockChain() {
+            if (!chainId) {
+                alert('Generate a chain first!');
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost:3000/api/chain/lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        chainId: chainId
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h3>Lock Result:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Error:</h3>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

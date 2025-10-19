@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Skill Display Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .skill-check {
+            border-left: 4px solid #007bff;
+            padding-left: 16px;
+            margin: 16px 0;
+        }
+        .skill-check-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .skill-check-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .skill-badge {
+            padding: 2px 8px;
+            font-size: 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 4px;
+        }
+        .skill-details {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .skill-details div {
+            margin-bottom: 4px;
+        }
+        .skill-details strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Frontend Skill Display Test</h1>
+        <p>This test verifies that the frontend correctly displays the D&D skill name and DC value for skill checks.</p>
+        
+        <div class="test-section">
+            <h3>Test Scene Generation with Skill Checks</h3>
+            <p>Click the button below to test the generate_detail endpoint and see how skill checks are displayed.</p>
+            <button onclick="testSkillDisplay()" id="testBtn">Test Skill Display</button>
+            <div id="result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testSkillDisplay() {
+            const btn = document.getElementById('testBtn');
+            const result = document.getElementById('result');
+            
+            btn.disabled = true;
+            btn.textContent = 'Testing...';
+            result.style.display = 'block';
+            result.className = 'result';
+            result.textContent = 'Sending request...';
+            
+            try {
+                const testData = {
+                    sceneId: 'test-frontend-skill-001',
+                    macroScene: {
+                        id: 'test-frontend-skill-001',
+                        title: 'Frontend Skill Test Sahnesi',
+                        objective: 'Test frontend skill display',
+                        order: 1
+                    },
+                    effectiveContext: {
+                        keyEvents: [],
+                        revealedInfo: [],
+                        stateChanges: {},
+                        npcRelationships: {},
+                        environmentalState: {},
+                        plotThreads: [],
+                        playerDecisions: []
+                    }
+                };
+                
+                const response = await fetch('/api/generate_detail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.ok && data.data) {
+                    const sceneDetail = data.data;
+                    
+                    // Check if skillChallenges field exists and has the expected structure
+                    const hasChecks = sceneDetail.checks && Array.isArray(sceneDetail.checks);
+                    const checksCount = hasChecks ? sceneDetail.checks.length : 0;
+                    
+                    let validationResults = [];
+                    
+                    if (hasChecks) {
+                        validationResults.push(`✅ checks field exists with ${checksCount} checks`);
+                        
+                        // Display each skill check with D&D skill info
+                        sceneDetail.checks.forEach((check, index) => {
+                            const hasRequiredFields = check.skill && 
+                                                   typeof check.dc === 'number' && 
+                                                   check.trigger && 
+                                                   check.success && 
+                                                   check.failure;
+                            
+                            if (hasRequiredFields) {
+                                validationResults.push(`✅ Check ${index + 1}: All required fields present`);
+                                validationResults.push(`   - Skill: ${check.skill}`);
+                                validationResults.push(`   - D&D Skill: ${check.dnd_skill || 'MISSING'}`);
+                                validationResults.push(`   - DC: ${check.dc}`);
+                                validationResults.push(`   - When: ${check.when}`);
+                                validationResults.push(`   - Success: ${check.on_success}`);
+                                validationResults.push(`   - Failure: ${check.on_fail}`);
+                            } else {
+                                validationResults.push(`❌ Check ${index + 1}: Missing required fields`);
+                            }
+                        });
+                    } else {
+                        validationResults.push(`❌ checks field missing or not an array`);
+                    }
+                    
+                    result.className = 'result success';
+                    result.textContent = `Test Results:\n\n${validationResults.join('\n')}\n\nFull Response:\n${JSON.stringify(sceneDetail, null, 2)}`;
+                } else {
+                    throw new Error('Invalid response format');
+                }
+                
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `Error: ${error.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Test Skill Display';
+            }
+        }
+    </script>
+</body>
+</html>

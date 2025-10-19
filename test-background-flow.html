@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background-First Flow Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; background-color: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .status { margin: 10px 0; padding: 10px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Background-First Flow Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Generate Background</h2>
+        <p>Test the /api/generate_background endpoint</p>
+        <button onclick="testGenerateBackground()">Generate Background</button>
+        <div id="background-result" class="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Context Append</h2>
+        <p>Test appending background to session context</p>
+        <button onclick="testContextAppend()" disabled id="append-btn">Append to Context</button>
+        <div id="append-result" class="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Context Lock</h2>
+        <p>Test locking the background</p>
+        <button onclick="testContextLock()" disabled id="lock-btn">Lock Background</button>
+        <div id="lock-result" class="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Generate Chain with Background</h2>
+        <p>Test generating a chain with background context</p>
+        <button onclick="testGenerateChain()" disabled id="chain-btn">Generate Chain</button>
+        <div id="chain-result" class="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: Generate Detail with Background</h2>
+        <p>Test generating scene detail with background context</p>
+        <button onclick="testGenerateDetail()" disabled id="detail-btn">Generate Detail</button>
+        <div id="detail-result" class="status"></div>
+    </div>
+
+    <script>
+        const sessionId = 'test-session-' + Date.now();
+        let backgroundData = null;
+        let chainData = null;
+
+        async function testGenerateBackground() {
+            const resultDiv = document.getElementById('background-result');
+            resultDiv.innerHTML = '<div class="info">Generating background...</div>';
+            
+            try {
+                const response = await fetch('/api/generate_background', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        concept: 'A dark fantasy adventure where players must navigate political intrigue in a corrupt city while uncovering ancient secrets.',
+                        meta: { gameType: 'D&D', players: '4', level: '5' }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.ok) {
+                    backgroundData = data.data.background;
+                    resultDiv.innerHTML = `<div class="success">✅ Background generated successfully!</div><pre>${JSON.stringify(backgroundData, null, 2)}</pre>`;
+                    document.getElementById('append-btn').disabled = false;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function testContextAppend() {
+            const resultDiv = document.getElementById('append-result');
+            resultDiv.innerHTML = '<div class="info">Appending to context...</div>';
+            
+            try {
+                const response = await fetch('/api/context/append', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        blockType: 'background',
+                        data: backgroundData
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.ok) {
+                    resultDiv.innerHTML = '<div class="success">✅ Background appended to context successfully!</div>';
+                    document.getElementById('lock-btn').disabled = false;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function testContextLock() {
+            const resultDiv = document.getElementById('lock-result');
+            resultDiv.innerHTML = '<div class="info">Locking background...</div>';
+            
+            try {
+                const response = await fetch('/api/context/lock', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        blockType: 'background',
+                        locked: true
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.ok) {
+                    resultDiv.innerHTML = '<div class="success">✅ Background locked successfully!</div>';
+                    document.getElementById('chain-btn').disabled = false;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function testGenerateChain() {
+            const resultDiv = document.getElementById('chain-result');
+            resultDiv.innerHTML = '<div class="info">Generating chain with background...</div>';
+            
+            try {
+                const response = await fetch('/api/generate_chain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        concept: 'A dark fantasy adventure where players must navigate political intrigue in a corrupt city while uncovering ancient secrets.',
+                        meta: { gameType: 'D&D', players: '4', level: '5' }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.ok) {
+                    chainData = data.data;
+                    resultDiv.innerHTML = `<div class="success">✅ Chain generated with background context!</div><pre>${JSON.stringify(chainData, null, 2)}</pre>`;
+                    document.getElementById('detail-btn').disabled = false;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function testGenerateDetail() {
+            const resultDiv = document.getElementById('detail-result');
+            resultDiv.innerHTML = '<div class="info">Generating scene detail with background...</div>';
+            
+            if (!chainData || !chainData.scenes || chainData.scenes.length === 0) {
+                resultDiv.innerHTML = '<div class="error">❌ No chain data available</div>';
+                return;
+            }
+
+            const firstScene = chainData.scenes[0];
+            
+            try {
+                const response = await fetch('/api/generate_detail', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        sceneId: firstScene.id,
+                        macroScene: firstScene,
+                        effectiveContext: {}
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.ok) {
+                    resultDiv.innerHTML = `<div class="success">✅ Scene detail generated with background context!</div><pre>${JSON.stringify(data.data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

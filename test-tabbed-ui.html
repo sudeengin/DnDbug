@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabbed UI Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Tabbed UI Implementation Test</h1>
+    
+    <div class="test-section">
+        <h2>✅ Implementation Status</h2>
+        <ul>
+            <li class="success">✅ shadcn/ui components installed (Tabs, Badge, Button)</li>
+            <li class="success">✅ AppLayout with topbar and tab navigation</li>
+            <li class="success">✅ Page components created (Overview, Background, Macro Chain, Scenes, Context)</li>
+            <li class="success">✅ SessionId routing and state management</li>
+            <li class="success">✅ Status badges and banners</li>
+            <li class="success">✅ SceneList and SceneWorkspace components</li>
+            <li class="success">✅ SessionContextPanel component</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Key Features Implemented</h2>
+        <ul>
+            <li><strong>Topbar:</strong> Project title, sessionId badge, Phase badge</li>
+            <li><strong>Tabs:</strong> Overview | Background | Macro Chain | Scenes | Context | Export</li>
+            <li><strong>Scenes sub-tabs:</strong> Detail | Context Out | History</li>
+            <li><strong>Status badges:</strong> Draft / Generated / Edited / Needs Regen / Up-to-date</li>
+            <li><strong>Banners:</strong> Background not locked warning, Next scene ready</li>
+            <li><strong>Routing:</strong> sessionId from URL, tab persistence</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 API Integration Points</h2>
+        <ul>
+            <li><strong>Background Page:</strong> Generate + Lock background</li>
+            <li><strong>Macro Chain Page:</strong> Warning banner if background not locked</li>
+            <li><strong>Scenes Page:</strong> Scene list with status, workspace with sub-tabs</li>
+            <li><strong>Context Page:</strong> Context blocks with include/exclude chips</li>
+            <li><strong>Session Management:</strong> All pages use sessionId from URL</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>📁 File Structure</h2>
+        <pre>
+src/
+├── components/
+│   ├── AppLayout.tsx              # Main layout with tabs
+│   ├── pages/
+│   │   ├── OverviewPage.tsx      # Project overview
+│   │   ├── BackgroundPage.tsx    # Background generation
+│   │   ├── MacroChainPage.tsx    # Macro chain planning
+│   │   ├── ScenesPage.tsx        # Scene detailing
+│   │   └── ContextPage.tsx       # Context management
+│   ├── SceneList.tsx             # Scene list component
+│   ├── SceneWorkspace.tsx        # Scene workspace with sub-tabs
+│   ├── SessionContextPanel.tsx    # Context panel
+│   └── ui/                       # shadcn/ui components
+│       ├── tabs.tsx
+│       ├── badge.tsx
+│       └── button.tsx
+├── lib/
+│   ├── router.ts                 # URL routing utilities
+│   └── utils.ts                  # Utility functions
+└── types/
+    └── macro-chain.ts            # Type definitions
+        </pre>
+    </div>
+
+    <div class="test-section">
+        <h2>🚀 Next Steps</h2>
+        <ol>
+            <li>Test the application in browser</li>
+            <li>Verify tab navigation works</li>
+            <li>Test sessionId persistence</li>
+            <li>Verify API integrations</li>
+            <li>Test status badges and banners</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 Access Points</h2>
+        <ul>
+            <li><strong>Frontend:</strong> <a href="http://localhost:5173" target="_blank">http://localhost:5173</a></li>
+            <li><strong>Backend:</strong> <a href="http://localhost:3001" target="_blank">http://localhost:3001</a></li>
+        </ul>
+    </div>
+
+    <script>
+        console.log('Tabbed UI implementation completed!');
+        console.log('Key features:');
+        console.log('- Tabbed navigation with sessionId routing');
+        console.log('- Status badges and banners');
+        console.log('- Scene workspace with sub-tabs');
+        console.log('- Context management with include/exclude');
+        console.log('- Background-first workflow');
+    </script>
+</body>
+</html>

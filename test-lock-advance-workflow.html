@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Lock & Advance Workflow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .scene-list {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .scene-card {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .scene-card:hover {
+            border-color: #007bff;
+        }
+        .scene-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f8f9fa;
+        }
+        .scene-card.locked {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+        .scene-card.selected {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .status-draft { background: #f8f9fa; color: #6c757d; }
+        .status-generated { background: #d4edda; color: #155724; }
+        .status-edited { background: #fff3cd; color: #856404; }
+        .status-locked { background: #d1ecf1; color: #0c5460; }
+        .status-needsregen { background: #f8d7da; color: #721c24; }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        .log-success { color: #28a745; }
+        .log-error { color: #dc3545; }
+        .log-info { color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>🔒 Scene Lock & Advance Workflow Test</h1>
+    
+    <div class="container">
+        <h2>Scene List</h2>
+        <div class="scene-list" id="sceneList">
+            <!-- Scenes will be dynamically generated -->
+        </div>
+        
+        <div class="controls">
+            <button class="btn-primary" onclick="generateSceneDetail()" id="generateBtn">
+                Generate Detail
+            </button>
+            <button class="btn-success" onclick="lockScene()" id="lockBtn" disabled>
+                Lock Scene
+            </button>
+            <button class="btn-warning" onclick="unlockScene()" id="unlockBtn" disabled>
+                Unlock Scene
+            </button>
+            <button class="btn-primary" onclick="generateNext()" id="generateNextBtn" disabled>
+                Generate Next
+            </button>
+            <button class="btn-secondary" onclick="resetTest()">
+                Reset Test
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Test Log</h2>
+        <div class="log" id="log">
+            <div class="log-entry log-info">Ready to test Lock & Advance workflow...</div>
+        </div>
+    </div>
+
+    <script>
+        // Test configuration
+        const SESSION_ID = 'test-session-' + Date.now();
+        const API_BASE = 'http://localhost:3000/api';
+        
+        // Test state
+        let currentSceneIndex = 0;
+        let scenes = [
+            { id: 'scene-1', order: 1, title: 'The Tavern Meeting', objective: 'Players meet the quest giver' },
+            { id: 'scene-2', order: 2, title: 'The Forest Journey', objective: 'Travel to the mysterious forest' },
+            { id: 'scene-3', order: 3, title: 'The Ancient Ruins', objective: 'Explore the ruins and find clues' },
+            { id: 'scene-4', order: 4, title: 'The Final Confrontation', objective: 'Face the final boss' }
+        ];
+        
+        let sceneDetails = {};
+        
+        // Initialize the test
+        function initTest() {
+            renderScenes();
+            updateControls();
+            log('Test initialized with session ID: ' + SESSION_ID, 'info');
+        }
+        
+        // Render scenes
+        function renderScenes() {
+            const sceneList = document.getElementById('sceneList');
+            sceneList.innerHTML = '';
+            
+            scenes.forEach((scene, index) => {
+                const sceneCard = document.createElement('div');
+                sceneCard.className = 'scene-card';
+                sceneCard.id = `scene-${index}`;
+                
+                if (index === currentSceneIndex) {
+                    sceneCard.classList.add('selected');
+                }
+                
+                const detail = sceneDetails[scene.id];
+                const status = detail ? detail.status : 'Draft';
+                
+                if (status === 'Locked') {
+                    sceneCard.classList.add('locked');
+                }
+                
+                // Check if scene can be accessed
+                const canAccess = canAccessScene(index);
+                if (!canAccess) {
+                    sceneCard.classList.add('disabled');
+                }
+                
+                sceneCard.innerHTML = `
+                    <h4>Scene ${index + 1}</h4>
+                    <p><strong>${scene.title}</strong></p>
+                    <p>${scene.objective}</p>
+                    <div class="status-badge status-${status.toLowerCase()}">${status}</div>
+                    ${!canAccess ? '<p style="color: red; font-size: 12px;">Lock previous scene first</p>' : ''}
+                `;
+                
+                if (canAccess) {
+                    sceneCard.onclick = () => selectScene(index);
+                }
+                
+                sceneList.appendChild(sceneCard);
+            });
+        }
+        
+        // Check if a scene can be accessed
+        function canAccessScene(sceneIndex) {
+            if (sceneIndex === 0) return true; // First scene always accessible
+            
+            // Scene N can only be accessed if Scene N-1 is locked
+            const prevScene = scenes[sceneIndex - 1];
+            const prevDetail = sceneDetails[prevScene.id];
+            
+            return prevDetail && prevDetail.status === 'Locked';
+        }
+        
+        // Select a scene
+        function selectScene(index) {
+            if (!canAccessScene(index)) {
+                log(`Cannot access Scene ${index + 1}: previous scene not locked`, 'error');
+                return;
+            }
+            
+            currentSceneIndex = index;
+            renderScenes();
+            updateControls();
+            log(`Selected Scene ${index + 1}`, 'info');
+        }
+        
+        // Update control buttons
+        function updateControls() {
+            const currentScene = scenes[currentSceneIndex];
+            const detail = sceneDetails[currentScene.id];
+            const status = detail ? detail.status : 'Draft';
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const lockBtn = document.getElementById('lockBtn');
+            const unlockBtn = document.getElementById('unlockBtn');
+            const generateNextBtn = document.getElementById('generateNextBtn');
+            
+            // Generate Detail button
+            generateBtn.disabled = status !== 'Draft';
+            
+            // Lock Scene button
+            lockBtn.disabled = !detail || status === 'Locked';
+            
+            // Unlock Scene button
+            unlockBtn.disabled = status !== 'Locked';
+            
+            // Generate Next button
+            const canGenerateNext = status === 'Locked' && currentSceneIndex < scenes.length - 1;
+            generateNextBtn.disabled = !canGenerateNext;
+        }
+        
+        // Generate scene detail
+        async function generateSceneDetail() {
+            const scene = scenes[currentSceneIndex];
+            
+            try {
+                log(`Generating detail for Scene ${currentSceneIndex + 1}...`, 'info');
+                
+                const response = await fetch(`${API_BASE}/generate_detail`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sceneId: scene.id,
+                        macroScene: scene,
+                        effectiveContext: {
+                            keyEvents: [],
+                            revealedInfo: [],
+                            stateChanges: {}
+                        },
+                        sessionId: SESSION_ID
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
+                const result = await response.json();
+                sceneDetails[scene.id] = result.data;
+                
+                log(`Scene ${currentSceneIndex + 1} detail generated successfully`, 'success');
+                renderScenes();
+                updateControls();
+                
+            } catch (error) {
+                log(`Failed to generate scene detail: ${error.message}`, 'error');
+            }
+        }
+        
+        // Lock scene
+        async function lockScene() {
+            const scene = scenes[currentSceneIndex];
+            const detail = sceneDetails[scene.id];
+            
+            try {
+                log(`Locking Scene ${currentSceneIndex + 1}...`, 'info');
+                
+                const response = await fetch(`${API_BASE}/scene/lock`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: SESSION_ID,
+                        sceneId: scene.id
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
+                const result = await response.json();
+                sceneDetails[scene.id] = result.detail;
+                
+                log(`Scene ${currentSceneIndex + 1} locked successfully`, 'success');
+                renderScenes();
+                updateControls();
+                
+            } catch (error) {
+                log(`Failed to lock scene: ${error.message}`, 'error');
+            }
+        }
+        
+        // Unlock scene
+        async function unlockScene() {
+            const scene = scenes[currentSceneIndex];
+            
+            if (!confirm('Unlock this scene? Later scenes will require regeneration.')) {
+                return;
+            }
+            
+            try {
+                log(`Unlocking Scene ${currentSceneIndex + 1}...`, 'info');
+                
+                const response = await fetch(`${API_BASE}/scene/unlock`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: SESSION_ID,
+                        sceneId: scene.id
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
+                const result = await response.json();
+                sceneDetails[scene.id] = result.detail;
+                
+                // Mark affected scenes as NeedsRegen
+                result.affectedScenes.forEach(sceneId => {
+                    const affectedDetail = sceneDetails[sceneId];
+                    if (affectedDetail) {
+                        sceneDetails[sceneId] = {
+                            ...affectedDetail,
+                            status: 'NeedsRegen'
+                        };
+                    }
+                });
+                
+                log(`Scene ${currentSceneIndex + 1} unlocked successfully. Affected scenes: ${result.affectedScenes.join(', ')}`, 'success');
+                renderScenes();
+                updateControls();
+                
+            } catch (error) {
+                log(`Failed to unlock scene: ${error.message}`, 'error');
+            }
+        }
+        
+        // Generate next scene
+        async function generateNext() {
+            if (currentSceneIndex >= scenes.length - 1) {
+                log('No next scene to generate', 'error');
+                return;
+            }
+            
+            const nextSceneIndex = currentSceneIndex + 1;
+            const nextScene = scenes[nextSceneIndex];
+            
+            try {
+                log(`Generating Scene ${nextSceneIndex + 1}...`, 'info');
+                
+                // Compute effective context from locked scenes
+                const effectiveContext = {
+                    keyEvents: [],
+                    revealedInfo: [],
+                    stateChanges: {}
+                };
+                
+                // Merge context from all locked scenes
+                for (let i = 0; i < nextSceneIndex; i++) {
+                    const scene = scenes[i];
+                    const detail = sceneDetails[scene.id];
+                    
+                    if (detail && detail.status === 'Locked' && detail.contextOut) {
+                        if (detail.contextOut.keyEvents) {
+                            effectiveContext.keyEvents.push(...detail.contextOut.keyEvents);
+                        }
+                        if (detail.contextOut.revealedInfo) {
+                            effectiveContext.revealedInfo.push(...detail.contextOut.revealedInfo);
+                        }
+                        if (detail.contextOut.stateChanges) {
+                            effectiveContext.stateChanges = { ...effectiveContext.stateChanges, ...detail.contextOut.stateChanges };
+                        }
+                    }
+                }
+                
+                const response = await fetch(`${API_BASE}/generate_detail`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sceneId: nextScene.id,
+                        macroScene: nextScene,
+                        effectiveContext,
+                        sessionId: SESSION_ID
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
+                const result = await response.json();
+                sceneDetails[nextScene.id] = result.data;
+                
+                log(`Scene ${nextSceneIndex + 1} generated successfully`, 'success');
+                
+                // Select the next scene
+                selectScene(nextSceneIndex);
+                
+            } catch (error) {
+                log(`Failed to generate next scene: ${error.message}`, 'error');
+            }
+        }
+        
+        // Reset test
+        function resetTest() {
+            currentSceneIndex = 0;
+            sceneDetails = {};
+            renderScenes();
+            updateControls();
+            log('Test reset', 'info');
+        }
+        
+        // Log function
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Initialize on page load
+        window.onload = initTest;
+    </script>
+</body>
+</html>
