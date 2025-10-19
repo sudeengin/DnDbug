@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { getSessionIdFromUrl, getTabFromUrl, navigateToProjectCreate, navigateToTab } from '../lib/router';
 import OverviewPage from './pages/OverviewPage';
 import BackgroundPage from './pages/BackgroundPage';
+import CharactersPage from './pages/CharactersPage';
 import MacroChainPage from './pages/MacroChainPage';
 import ScenesPage from './pages/ScenesPage';
 import ContextPage from './pages/ContextPage';
@@ -153,6 +154,20 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
                   )}
                 </div>
               </TabsTrigger>
+              <TabsTrigger value="characters" className="px-6 py-4">
+                <div className="flex items-center space-x-2">
+                  <span>Characters</span>
+                  {context?.blocks.characters ? (
+                    context?.locks?.characters ? (
+                      <div className="w-2 h-2 rounded-full bg-green-500" title="Characters locked (finalized)" />
+                    ) : (
+                      <div className="w-2 h-2 rounded-full bg-yellow-400" title="Characters draft (not locked)" />
+                    )
+                  ) : (
+                    <div className="w-2 h-2 rounded-full bg-gray-300" title="Characters empty (no data yet)" />
+                  )}
+                </div>
+              </TabsTrigger>
               <TabsTrigger value="macro-chain" className="px-6 py-4">
                 <div className="flex items-center space-x-2">
                   <span>Macro Chain</span>
@@ -209,6 +224,14 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
 
           <TabsContent value="background" className="p-6">
             <BackgroundPage 
+              sessionId={sessionId}
+              context={context}
+              onContextUpdate={setContext}
+            />
+          </TabsContent>
+
+          <TabsContent value="characters" className="p-6">
+            <CharactersPage 
               sessionId={sessionId}
               context={context}
               onContextUpdate={setContext}

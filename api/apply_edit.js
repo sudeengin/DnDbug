@@ -1,6 +1,9 @@
 import { analyzeDelta } from './delta_service.js';
 import { buildDeltaAnalysisPrompt, validateDeltaResponse, createFallbackDelta } from './delta_prompt.js';
 import { validateApplyEditResponse } from './validation.js';
+import { invalidateDownstreamScenes, isTrivialEdit } from './lib/invalidation.js';
+import { getOrCreateSessionContext } from './context.js';
+import { saveSessionContext } from './storage.js';
 
 export default async function handler(req, res) {
   try {
@@ -15,7 +18,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { sceneId, oldDetail, newDetail } = body;
+    const { sceneId, oldDetail, newDetail, sessionId } = body;
 
     console.log('Apply Edit Request:', {
       sceneId,
@@ -26,6 +29,27 @@ export default async function handler(req, res) {
 
     // For now, use programmatic analysis since we don't have OpenAI setup
     const result = analyzeDelta(oldDetail, newDetail);
+
+    // Handle invalidation if sessionId is provided and edit is not trivial
+    if (sessionId && !isTrivialEdit(oldDetail, newDetail)) {
+      try {
+        const sessionContext = await getOrCreateSessionContext(sessionId);
+        const sceneOrder = oldDetail.order || newDetail.order;
+        
+        if (sceneOrder) {
+          // Invalidate downstream scenes
+          invalidateDownstreamScenes(sessionContext, sceneId, sceneOrder);
+          
+          // Save the updated context
+          await saveSessionContext(sessionId, sessionContext);
+          
+          console.log(`Invalidated downstream scenes after edit of scene ${sceneId}`);
+        }
+      } catch (error) {
+        console.warn('Failed to handle scene edit invalidation:', error);
+        // Continue even if invalidation fails
+      }
+    }
 
     const response = {
       ok: true,

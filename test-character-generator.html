@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Generator Test - D&D Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .character {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .character h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .character-field {
+            margin-bottom: 10px;
+        }
+
+        .character-field strong {
+            color: #667eea;
+            display: inline-block;
+            width: 150px;
+        }
+
+        .character-field ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #f44336;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 Character Generator Test</h1>
+            <p>Generate detailed D&D-style playable characters with rich backgrounds</p>
+        </div>
+        
+        <div class="content">
+            <form id="characterForm">
+                <div class="form-group">
+                    <label for="sessionId">Session ID:</label>
+                    <input type="text" id="sessionId" value="test-session-123" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="storyConcept">Story Concept:</label>
+                    <textarea id="storyConcept" placeholder="Enter your story concept here..." required>In a gothic manor hidden in the northern woods, mysterious invitations arrive to strangers who have never met. The manor's owner vanished years ago, but the letters bear his seal. Those who accept find themselves trapped in a web of secrets, where mirrors show more than reflections and every locked door leads to another mystery.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="tone">Tone:</label>
+                    <select id="tone">
+                        <option value="mysterious">Mysterious</option>
+                        <option value="gothic">Gothic</option>
+                        <option value="dark">Dark</option>
+                        <option value="eerie">Eerie</option>
+                        <option value="suspenseful">Suspenseful</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pacing">Pacing:</label>
+                    <select id="pacing">
+                        <option value="slow">Slow</option>
+                        <option value="balanced">Balanced</option>
+                        <option value="fast">Fast</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn" id="generateBtn">Generate Characters</button>
+            </form>
+
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('characterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            resultDiv.innerHTML = '<div class="loading">Generating characters with AI...</div>';
+            
+            try {
+                // First generate background context
+                const backgroundResponse = await fetch('/api/generate_background', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        storyConcept: document.getElementById('storyConcept').value
+                    })
+                });
+                
+                if (!backgroundResponse.ok) {
+                    throw new Error(`Background generation failed: ${backgroundResponse.statusText}`);
+                }
+                
+                const backgroundData = await backgroundResponse.json();
+                console.log('Background generated:', backgroundData);
+                
+                // Update tone and pacing if specified
+                if (backgroundData.data && backgroundData.data.background) {
+                    backgroundData.data.background.tone = document.getElementById('tone').value;
+                    backgroundData.data.background.pacing = document.getElementById('pacing').value;
+                }
+                
+                // Now generate characters
+                const characterResponse = await fetch('/api/characters/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sessionId: document.getElementById('sessionId').value
+                    })
+                });
+                
+                if (!characterResponse.ok) {
+                    const errorData = await characterResponse.json();
+                    throw new Error(`Character generation failed: ${errorData.error || characterResponse.statusText}`);
+                }
+                
+                const characterData = await characterResponse.json();
+                console.log('Characters generated:', characterData);
+                
+                // Display results
+                displayCharacters(characterData.characters);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate Characters';
+            }
+        });
+        
+        function displayCharacters(characters) {
+            const resultDiv = document.getElementById('result');
+            
+            if (!characters || characters.length === 0) {
+                resultDiv.innerHTML = '<div class="error">No characters generated</div>';
+                return;
+            }
+            
+            let html = '<div class="result"><h2>Generated Characters</h2>';
+            
+            characters.forEach((char, index) => {
+                html += `
+                    <div class="character">
+                        <h3>${char.name} - ${char.role}</h3>
+                        <div class="character-field">
+                            <strong>Race & Class:</strong> ${char.race} ${char.class}
+                        </div>
+                        <div class="character-field">
+                            <strong>Personality:</strong> ${char.personality}
+                        </div>
+                        <div class="character-field">
+                            <strong>Motivation:</strong> ${char.motivation}
+                        </div>
+                        <div class="character-field">
+                            <strong>Connection to Story:</strong> ${char.connectionToStory}
+                        </div>
+                        <div class="character-field">
+                            <strong>GM Secret:</strong> ${char.gmSecret}
+                        </div>
+                        <div class="character-field">
+                            <strong>Potential Conflict:</strong> ${char.potentialConflict}
+                        </div>
+                        <div class="character-field">
+                            <strong>Voice Tone:</strong> ${char.voiceTone}
+                        </div>
+                        <div class="character-field">
+                            <strong>Inventory Hint:</strong> ${char.inventoryHint}
+                        </div>
+                        <div class="character-field">
+                            <strong>Motif Alignment:</strong>
+                            <ul>
+                                ${char.motifAlignment.map(motif => `<li>${motif}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="character-field">
+                            <strong>Background History:</strong> ${char.backgroundHistory}
+                        </div>
+                        <div class="character-field">
+                            <strong>Key Relationships:</strong>
+                            <ul>
+                                ${char.keyRelationships.map(rel => `<li>${rel}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="character-field">
+                            <strong>Flaw or Weakness:</strong> ${char.flawOrWeakness}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

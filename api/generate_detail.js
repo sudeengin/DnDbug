@@ -1,5 +1,9 @@
 import OpenAI from 'openai'
 import { MODEL_ID } from './model.js'
+import { buildPromptContext, checkPreviousSceneLock, createContextSummary } from './lib/promptContext.js'
+import { isStale, validateSceneVersion, createStalenessError, createSceneVersionInfo } from './lib/versioning.js'
+import { getOrCreateSessionContext } from './context.js';
+import { saveSessionContext } from './storage.js';
 import dotenv from 'dotenv'
 
 // Load environment variables from .env.local
@@ -20,33 +24,17 @@ async function generateSceneDetail(req, res) {
       return
     }
 
-    const { sceneId, macroScene, effectiveContext, sessionId } = body
+    const { sceneId, macroScene, effectiveContext, sessionId, uses } = body
 
     // Lock validation guard: if generating Scene N > 1, require Scene N-1 be Locked
     if (macroScene.order > 1 && sessionId) {
       try {
-        const { getOrCreateSessionContext } = await import('./context.js');
-        const sessionContext = getOrCreateSessionContext(sessionId);
+        const sessionContext = await getOrCreateSessionContext(sessionId);
+        const lockCheck = checkPreviousSceneLock(sessionContext, macroScene.order);
         
-        // Find previous scene ID (assuming scenes are stored with order-based IDs)
-        const prevSceneOrder = macroScene.order - 1;
-        const prevSceneId = `scene-${prevSceneOrder}`; // Adjust this based on your ID format
-        
-        // Check if previous scene exists and is locked
-        if (sessionContext.sceneDetails && sessionContext.sceneDetails[prevSceneId]) {
-          const prevSceneDetail = sessionContext.sceneDetails[prevSceneId];
-          if (prevSceneDetail.status !== 'Locked') {
-            return NextResponse.json(
-              { error: 'Previous scene must be locked before generating this scene.' },
-              { status: 409 }
-            );
-          }
-        } else {
-          // Previous scene doesn't exist
-          return NextResponse.json(
-            { error: 'Previous scene must be generated and locked before generating this scene.' },
-            { status: 409 }
-          );
+        if (!lockCheck.canGenerate) {
+          res.status(409).json({ error: lockCheck.error });
+          return;
         }
       } catch (error) {
         console.warn('Failed to validate previous scene lock:', error.message);
@@ -54,28 +42,49 @@ async function generateSceneDetail(req, res) {
       }
     }
 
-    // Fetch session context if sessionId is provided
-    let backgroundContext = null;
+    // Staleness check if uses information is provided
+    if (uses && sessionId) {
+      try {
+        const sessionContext = await getOrCreateSessionContext(sessionId);
+        const validation = validateSceneVersion(uses, sessionContext.meta);
+        
+        if (validation.isStale) {
+          const errorMessage = createStalenessError(validation);
+          console.log('Stale context detected:', {
+            sceneId,
+            validation,
+            errorMessage
+          });
+          res.status(409).json({ error: errorMessage });
+          return;
+        }
+      } catch (error) {
+        console.warn('Failed to validate scene version:', error.message);
+        // Continue without validation if check fails
+      }
+    }
+
+    // Fetch session context using centralized builder
+    let promptContext = null;
     if (sessionId) {
       try {
-        const { getOrCreateSessionContext, processContextForPrompt } = await import('./context.js');
-        const sessionContext = getOrCreateSessionContext(sessionId);
-        const contextMemory = processContextForPrompt(sessionContext);
-        backgroundContext = contextMemory.background;
+        promptContext = await buildPromptContext(sessionId);
         
-        console.log('Background context loaded:', {
+        console.log('Prompt context loaded:', {
           sessionId,
-          hasBackground: !!backgroundContext
+          hasBackground: !!promptContext.background,
+          hasCharacters: !!promptContext.characters,
+          versions: promptContext.versions
         });
       } catch (error) {
-        console.warn('Failed to load background context:', error.message);
-        // Continue without background if loading fails
+        console.warn('Failed to load prompt context:', error.message);
+        // Continue without context if loading fails
       }
     }
 
     const system = 'You are a DnD GM assistant that writes scene details consistent with previous context. All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. Do not use Turkish words or local idioms.'
 
-    const prompt = buildContextAwarePrompt(macroScene, effectiveContext, backgroundContext)
+    const prompt = buildContextAwarePrompt(macroScene, effectiveContext, promptContext?.background, promptContext?.characters, promptContext?.numberOfPlayers)
     
     const resp = await client.chat.completions.create({
       model: MODEL_ID,
@@ -89,12 +98,43 @@ async function generateSceneDetail(req, res) {
     const text = resp.choices[0]?.message?.content ?? ''
     const sceneDetail = tryParseSceneDetail(text, sceneId, macroScene)
 
-    // Add new status fields to the generated scene detail
+    // Add version tracking and status fields to the generated scene detail
     const enrichedSceneDetail = {
       ...sceneDetail,
       status: 'Generated',
       version: 1,
-      lastUpdatedAt: new Date().toISOString()
+      lastUpdatedAt: new Date().toISOString(),
+      uses: promptContext ? createSceneVersionInfo(promptContext.versions, {}) : undefined
+    }
+
+    // Store the scene detail in session context if sessionId is provided
+    if (sessionId) {
+      try {
+        const sessionContext = await getOrCreateSessionContext(sessionId);
+        
+        // Initialize sceneDetails if it doesn't exist
+        if (!sessionContext.sceneDetails) {
+          sessionContext.sceneDetails = {};
+        }
+        
+        // Store the generated scene detail
+        sessionContext.sceneDetails[sceneId] = enrichedSceneDetail;
+        sessionContext.updatedAt = new Date().toISOString();
+        
+        // Save to storage
+        await saveSessionContext(sessionId, sessionContext);
+        
+        console.log(`Scene detail ${sceneId} stored in session context for ${sessionId}`, {
+          sceneId,
+          sessionId,
+          hasSceneDetails: !!sessionContext.sceneDetails,
+          sceneDetailsKeys: Object.keys(sessionContext.sceneDetails || {}),
+          sceneStatus: enrichedSceneDetail.status
+        });
+      } catch (contextError) {
+        console.warn('Failed to store scene detail in session context:', contextError);
+        // Continue even if context storage fails
+      }
     }
 
     res.status(200).json({ ok: true, data: enrichedSceneDetail })
@@ -105,7 +145,7 @@ async function generateSceneDetail(req, res) {
   }
 }
 
-function buildContextAwarePrompt(macroScene, effectiveContext, backgroundContext = null) {
+function buildContextAwarePrompt(macroScene, effectiveContext, backgroundContext = null, charactersContext = null, numberOfPlayers = 4) {
   const languageDirective = "All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. Do not use Turkish words or local idioms."
   
   const contextSummary = createContextSummary(effectiveContext)
@@ -124,10 +164,35 @@ CONSTRAINTS:
 
 `
     : ''
+
+  // Build characters context block
+  const charactersBlock = charactersContext && charactersContext.list
+    ? `CHARACTERS:
+${charactersContext.list.map(char => `- ${char.name} (${char.class || 'Unknown class'}): ${char.publicMotivation}
+  Conflict: ${char.narrativeConflict}
+  Connection: ${char.connectionToStory}`).join('\n')}
+
+CHARACTER_GUIDANCE:
+- Use character motivations to shape scene beats and objectives
+- Incorporate character conflicts into scene tension
+- Reference character connections to story elements
+- Consider how each character would react to scene events
+
+`
+    : ''
+
+  // Add player count information
+  const playerCountBlock = `PLAYER COUNT: ${numberOfPlayers}
+- Generate scene details that work well for a group of ${numberOfPlayers} players
+- Consider encounter complexity and dialogue spread appropriate for this party size
+- Balance scene beats to engage all ${numberOfPlayers} characters
+- Use "A group of ${numberOfPlayers} adventurers approaches..." style language when appropriate
+
+`
   
   return `Return JSON only.
 
-${backgroundBlock}MACRO_SCENE:
+${backgroundBlock}${charactersBlock}${playerCountBlock}MACRO_SCENE:
 - title: "${macroScene.title}"
 - objective: "${macroScene.objective}"
 
@@ -229,43 +294,6 @@ IMPORTANT:
 ${languageDirective}`
 }
 
-function createContextSummary(effectiveContext) {
-  if (!effectiveContext || Object.keys(effectiveContext).length === 0) {
-    return "No previous scenes - this is the first scene."
-  }
-
-  const summary = []
-  
-  if (effectiveContext.keyEvents && effectiveContext.keyEvents.length > 0) {
-    summary.push(`Key Events: ${effectiveContext.keyEvents.join(', ')}`)
-  }
-  
-  if (effectiveContext.revealedInfo && effectiveContext.revealedInfo.length > 0) {
-    summary.push(`Revealed Info: ${effectiveContext.revealedInfo.join(', ')}`)
-  }
-  
-  if (effectiveContext.stateChanges && Object.keys(effectiveContext.stateChanges).length > 0) {
-    summary.push(`State Changes: ${JSON.stringify(effectiveContext.stateChanges)}`)
-  }
-  
-  if (effectiveContext.npcRelationships && Object.keys(effectiveContext.npcRelationships).length > 0) {
-    summary.push(`NPC Relationships: ${JSON.stringify(effectiveContext.npcRelationships)}`)
-  }
-  
-  if (effectiveContext.environmentalState && Object.keys(effectiveContext.environmentalState).length > 0) {
-    summary.push(`Environmental State: ${JSON.stringify(effectiveContext.environmentalState)}`)
-  }
-  
-  if (effectiveContext.plotThreads && effectiveContext.plotThreads.length > 0) {
-    summary.push(`Plot Threads: ${effectiveContext.plotThreads.map(t => t.title).join(', ')}`)
-  }
-  
-  if (effectiveContext.playerDecisions && effectiveContext.playerDecisions.length > 0) {
-    summary.push(`Player Decisions: ${effectiveContext.playerDecisions.map(d => d.choice).join(', ')}`)
-  }
-
-  return summary.length > 0 ? summary.join('\n') : "No significant context from previous scenes."
-}
 
 function tryParseSceneDetail(text, sceneId, macroScene) {
   try {

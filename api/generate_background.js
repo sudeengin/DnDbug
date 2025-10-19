@@ -29,6 +29,9 @@ ${concept}
 STRUCTURAL_PREFERENCES:
 ${JSON.stringify(meta || {})}
 
+PLAYER COUNT REQUIREMENT:
+Generate the background for ${meta?.numberOfPlayers || 4} players. This will influence the complexity and scope of the story elements.`
+
 Generate a compact Story Background JSON with these fields:
 - premise: string (core story premise in 1-2 sentences)
 - tone_rules: string[] (3-5 tone guidelines)
@@ -40,6 +43,7 @@ Generate a compact Story Background JSON with these fields:
 - motifs: string[] (3-5 recurring themes/symbols)
 - doNots: string[] (3-5 things to avoid)
 - playstyle_implications: string[] (3-5 playstyle considerations)
+- numberOfPlayers: number (how many players will participate, default 4, range 3-6)
 
 CONSTRAINTS:
 - Keep each field concise (1-2 sentences max per item)
@@ -77,16 +81,68 @@ Valid JSON only.`;
     }
 
     // Validate required fields
-    const requiredFields = [
+    const requiredArrayFields = [
       'premise', 'tone_rules', 'stakes', 'mysteries', 
       'factions', 'location_palette', 'npc_roster_skeleton', 
       'motifs', 'doNots', 'playstyle_implications'
     ];
 
-    for (const field of requiredFields) {
+    for (const field of requiredArrayFields) {
       if (!parsedResponse[field] || !Array.isArray(parsedResponse[field])) {
         throw new Error(`Missing or invalid field: ${field}`);
       }
+    }
+
+    // Validate numberOfPlayers - use meta value if provided, otherwise use parsed response or default
+    const requestedPlayers = meta?.numberOfPlayers;
+    console.log('numberOfPlayers validation:', {
+      requestedPlayers,
+      parsedResponseNumberOfPlayers: parsedResponse.numberOfPlayers,
+      metaNumberOfPlayers: meta?.numberOfPlayers
+    });
+    
+    if (typeof requestedPlayers === 'number' && requestedPlayers >= 3 && requestedPlayers <= 6) {
+      parsedResponse.numberOfPlayers = requestedPlayers;
+      console.log('Using requested numberOfPlayers:', requestedPlayers);
+    } else if (typeof parsedResponse.numberOfPlayers !== 'number' || 
+        parsedResponse.numberOfPlayers < 3 || 
+        parsedResponse.numberOfPlayers > 6) {
+      // Set default if invalid
+      parsedResponse.numberOfPlayers = 4;
+      console.log('Using default numberOfPlayers: 4');
+    } else {
+      console.log('Using parsed numberOfPlayers:', parsedResponse.numberOfPlayers);
+    }
+
+    // Save background to session context
+    try {
+      const { getOrCreateSessionContext } = await import('../context.js');
+      const { saveSessionContext } = await import('../storage.js');
+      const sessionContext = await getOrCreateSessionContext(sessionId);
+      
+      console.log('Session context before saving background:', {
+        sessionId,
+        hasBlocks: !!sessionContext.blocks,
+        blocksKeys: sessionContext.blocks ? Object.keys(sessionContext.blocks) : []
+      });
+      
+      // Store background in session context
+      sessionContext.blocks = sessionContext.blocks || {};
+      sessionContext.blocks.background = parsedResponse;
+      sessionContext.version = (sessionContext.version || 0) + 1;
+      sessionContext.updatedAt = new Date().toISOString();
+      
+      await saveSessionContext(sessionId, sessionContext);
+      
+      console.log('Background saved to session context:', {
+        sessionId,
+        hasBackground: !!sessionContext.blocks.background,
+        numberOfPlayers: sessionContext.blocks.background?.numberOfPlayers,
+        version: sessionContext.version
+      });
+    } catch (saveError) {
+      console.error('Error saving background to session context:', saveError);
+      // Don't fail the request, just log the error
     }
 
     // Log telemetry
@@ -94,6 +150,7 @@ Valid JSON only.`;
       sessionId,
       conceptLength: concept.length,
       hasMeta: !!meta,
+      numberOfPlayers: parsedResponse.numberOfPlayers,
       timestamp: Date.now(),
     });
 

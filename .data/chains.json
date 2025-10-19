@@ -1826,5 +1826,299 @@
     },
     "createdAt": "2025-10-19T20:19:05.776Z",
     "updatedAt": "2025-10-19T20:19:05.778Z"
+  },
+  "chain_1760908242300_yrrld9a1z": {
+    "chainId": "chain_1760908242300_yrrld9a1z",
+    "scenes": [
+      {
+        "id": "scene_1_1760908242300",
+        "order": 1,
+        "title": "Whispers Among the Overgrown Ruins",
+        "objective": "Explore the abandoned city to uncover initial clues about the lost civilization's fate."
+      },
+      {
+        "id": "scene_2_1760908242300",
+        "order": 2,
+        "title": "Echoes in the Misty Forest",
+        "objective": "Navigate the eerie forest to encounter hints of the silent guardian and deepen the sense of unease."
+      },
+      {
+        "id": "scene_3_1760908242300",
+        "order": 3,
+        "title": "Carvings of Ominous Secrets",
+        "objective": "Investigate the mysterious carvings in the ruins to reveal warnings that hint at ancient powers."
+      },
+      {
+        "id": "scene_4_1760908242300",
+        "order": 4,
+        "title": "Whispers of Ancient Rituals in the Desolate Plains",
+        "objective": "Uncover the connection between the whispers and the rituals that maintain the land's silence."
+      },
+      {
+        "id": "scene_5_1760908242300",
+        "order": 5,
+        "title": "The Silent Guardian's Hidden Temple",
+        "objective": "Confront the guardian at the hidden temple to unlock the secrets and balance curiosity with caution."
+      },
+      {
+        "id": "scene_6_1760908242300",
+        "order": 6,
+        "title": "The Shadow of Forgotten Powers",
+        "objective": "Resolve the conflict between kingdoms over the newfound knowledge, ensuring the explorers' survival."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T21:10:42.300Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "327250a9-6e26-45e5-86fb-b158532976bc"
+    },
+    "createdAt": "2025-10-19T21:10:42.300Z",
+    "updatedAt": "2025-10-19T21:10:42.301Z"
+  },
+  "chain_1760913155440_nngyr8j2g": {
+    "chainId": "chain_1760913155440_nngyr8j2g",
+    "scenes": [
+      {
+        "id": "scene_1_1760913155440",
+        "order": 1,
+        "title": "Whispers in the Silent Ruins of Eldor",
+        "objective": "Uncover initial clues about the lost civilization while evading ancient defenses."
+      },
+      {
+        "id": "scene_2_1760913155440",
+        "order": 2,
+        "title": "Shadows of the Whispering Forests",
+        "objective": "Investigate the forest's mysterious warnings and the presence of hidden guardians."
+      },
+      {
+        "id": "scene_3_1760913155440",
+        "order": 3,
+        "title": "Echoes Within the Echoing Caves",
+        "objective": "Delve deeper to discover who maintains the silence and the nature of ancient magic."
+      },
+      {
+        "id": "scene_4_1760913155440",
+        "order": 4,
+        "title": "Secrets of the Forgotten Watchtowers",
+        "objective": "Unravel the purpose of the watchtowers and their connection to the lands' guardians."
+      },
+      {
+        "id": "scene_5_1760913155440",
+        "order": 5,
+        "title": "Mysteries of the Eternal Lake",
+        "objective": "Confront the heart of the lands and uncover the true powers of ancient magic."
+      },
+      {
+        "id": "scene_6_1760913155440",
+        "order": 6,
+        "title": "The Guardian's Revelation",
+        "objective": "Survive the ominous warnings and understand who or what is guarding these lands."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T22:32:35.440Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "94dcb26c-d67a-4872-98f5-05bd75f9c20e"
+    },
+    "createdAt": "2025-10-19T22:32:35.440Z",
+    "updatedAt": "2025-10-19T22:32:35.442Z"
+  },
+  "chain_1760913902523_g5udcznlz": {
+    "chainId": "chain_1760913902523_g5udcznlz",
+    "scenes": [
+      {
+        "id": "scene_1_1760913902523",
+        "order": 1,
+        "title": "Mysteries of the Silent Ruins of Eldor",
+        "objective": "Begin unraveling the secrets of the lost civilization and avoid triggering ancient defenses."
+      },
+      {
+        "id": "scene_2_1760913902523",
+        "order": 2,
+        "title": "Echoes in the Whispering Forests",
+        "objective": "Discover who is guarding the silence while navigating the hauntingly beautiful yet foreboding landscape."
+      },
+      {
+        "id": "scene_3_1760913902523",
+        "order": 3,
+        "title": "Secrets Beneath the Echoing Caves",
+        "objective": "Deepen the investigation into the true powers of the ancient magic hidden within the caves."
+      },
+      {
+        "id": "scene_4_1760913902523",
+        "order": 4,
+        "title": "Sentinels of the Forgotten Watchtowers",
+        "objective": "Unveil why every location carries a silent warning and learn more about the hidden guardians."
+      },
+      {
+        "id": "scene_5_1760913902523",
+        "order": 5,
+        "title": "Reflections at the Eternal Lake",
+        "objective": "Confront the ominous warnings and uncover what lies at the heart of these lands."
+      },
+      {
+        "id": "scene_6_1760913902523",
+        "order": 6,
+        "title": "Confronting Shadows of Ancient Magic",
+        "objective": "Prevent rival kingdoms from exploiting the lands while discovering the truth behind the guarded secrets."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T22:45:02.523Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "7a4c711b-3942-4452-b80f-e22999560011"
+    },
+    "createdAt": "2025-10-19T22:45:02.523Z",
+    "updatedAt": "2025-10-19T22:45:02.527Z"
+  },
+  "chain_1760913910953_cgkm0wezp": {
+    "chainId": "chain_1760913910953_cgkm0wezp",
+    "scenes": [
+      {
+        "id": "scene_1_1760913910954",
+        "order": 1,
+        "title": "Whispers in the Silent Ruins of Eldor",
+        "objective": "Begin unraveling the secrets of the lost civilization while avoiding ancient defenses."
+      },
+      {
+        "id": "scene_2_1760913910954",
+        "order": 2,
+        "title": "Echoes Among the Whispering Forests",
+        "objective": "Investigate the source of hauntingly beautiful warnings and discover who guards these lands."
+      },
+      {
+        "id": "scene_3_1760913910954",
+        "order": 3,
+        "title": "Secrets Beneath the Echoing Caves",
+        "objective": "Delve deeper into the mysteries of ancient magic and encounter hidden guardians."
+      },
+      {
+        "id": "scene_4_1760913910954",
+        "order": 4,
+        "title": "Shadows of the Forgotten Watchtowers",
+        "objective": "Uncover the silent warnings and prevent rival kingdoms from exploiting these lands."
+      },
+      {
+        "id": "scene_5_1760913910954",
+        "order": 5,
+        "title": "The Heart of the Eternal Lake",
+        "objective": "Confront the ominous warnings and finally understand what lies at the heart of these lands."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T22:45:10.954Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "5f898976-63dd-4e54-888b-f5f053da704e"
+    },
+    "createdAt": "2025-10-19T22:45:10.954Z",
+    "updatedAt": "2025-10-19T22:45:10.955Z"
+  },
+  "chain_1760913920515_7lbswe27n": {
+    "chainId": "chain_1760913920515_7lbswe27n",
+    "scenes": [
+      {
+        "id": "scene_1_1760913920515",
+        "order": 1,
+        "title": "Whispers in the Silent Ruins of Eldor",
+        "objective": "Investigate the eerie echoes of the past to uncover what befell the lost civilization."
+      },
+      {
+        "id": "scene_2_1760913920515",
+        "order": 2,
+        "title": "Shadows Beneath Whispering Forests",
+        "objective": "Avoid triggering the ancient defenses while seeking clues about the mysterious guardians of silence."
+      },
+      {
+        "id": "scene_3_1760913920515",
+        "order": 3,
+        "title": "The Echoing Caves' Haunting Call",
+        "objective": "Deepen the investigation into the true powers of the ancient magic hidden within the caves."
+      },
+      {
+        "id": "scene_4_1760913920515",
+        "order": 4,
+        "title": "Secrets of the Forgotten Watchtowers",
+        "objective": "Discover who or what maintains the silence and prevents the knowledge from escaping these lands."
+      },
+      {
+        "id": "scene_5_1760913920515",
+        "order": 5,
+        "title": "Revelations at the Eternal Lake",
+        "objective": "Confront the ominous warnings and uncover what lies at the heart of these lands, balancing the threat of rival kingdoms."
+      },
+      {
+        "id": "scene_6_1760913920515",
+        "order": 6,
+        "title": "Confronting the Hidden Guardians",
+        "objective": "Survive the final encounter with the guardians and decide the fate of the forgotten land's secrets."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T22:45:20.515Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "54d96d17-b07d-43bc-9d94-6a3768fb326b"
+    },
+    "createdAt": "2025-10-19T22:45:20.515Z",
+    "updatedAt": "2025-10-19T22:45:20.516Z"
+  },
+  "chain_1760913950477_r5jhg0u26": {
+    "chainId": "chain_1760913950477_r5jhg0u26",
+    "scenes": [
+      {
+        "id": "scene_1_1760913950478",
+        "order": 1,
+        "title": "Echoes in the Silent Ruins of Eldor",
+        "objective": "Uncover the initial signs of the lost civilization while avoiding ancient defenses."
+      },
+      {
+        "id": "scene_2_1760913950478",
+        "order": 2,
+        "title": "Whispers Among the Trees of the Whispering Forest",
+        "objective": "Discover who or what is maintaining the silence as the shadows of ancient magic loom."
+      },
+      {
+        "id": "scene_3_1760913950478",
+        "order": 3,
+        "title": "Secrets Beneath the Echoing Caves",
+        "objective": "Delve deeper into the mysteries of the ancient magic and its true powers hidden within the caves."
+      },
+      {
+        "id": "scene_4_1760913950478",
+        "order": 4,
+        "title": "Guardians of the Forgotten Watchtowers",
+        "objective": "Investigate the hidden guardians and their connection to the ominous warnings that permeate the land."
+      },
+      {
+        "id": "scene_5_1760913950478",
+        "order": 5,
+        "title": "Reflections on the Eternal Lake",
+        "objective": "Piece together the fate of the lost civilization and confront the heart of the lands' guarded secrets."
+      },
+      {
+        "id": "scene_6_1760913950478",
+        "order": 6,
+        "title": "The Haunting Silence Unveiled",
+        "objective": "Face the final revelation of who guards the silence and ensure the rival kingdoms cannot exploit the lands."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-19T22:45:50.478Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "5364f067-1bc4-4d37-9137-46874509bcb6"
+    },
+    "createdAt": "2025-10-19T22:45:50.478Z",
+    "updatedAt": "2025-10-19T22:45:50.480Z"
   }
 }

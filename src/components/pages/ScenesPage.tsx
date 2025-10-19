@@ -108,6 +108,10 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   const scenes = chain?.scenes || [];
   const sceneIds = scenes.map(s => s.id);
   const highestLocked = highestLockedIndex(sceneDetails, sceneIds);
+  
+  // Version information
+  const backgroundV = context?.meta?.backgroundV || 0;
+  const charactersV = context?.meta?.charactersV || 0;
 
   // Keyboard navigation
   useEffect(() => {
@@ -135,9 +139,24 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   }, [selectedScene, scenes, sceneDetails, sceneIds]);
 
   return (
-    <div className="flex h-full">
-      {/* Left Pane - Scene List */}
-      <aside className="w-80 border-r bg-white">
+    <div className="flex h-full flex-col">
+      {/* Header with version indicators */}
+      <div className="bg-white border-b px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Scene Details</h2>
+            <p className="text-sm text-gray-600">Generate and manage individual scene content</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline">Background v{backgroundV}</Badge>
+            <Badge variant="outline">Characters v{charactersV}</Badge>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex h-full">
+        {/* Left Pane - Scene List */}
+        <aside className="w-80 border-r bg-white">
         <SceneList
           items={scenes}
           statusMap={sceneDetails}
@@ -185,6 +204,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {loading && (

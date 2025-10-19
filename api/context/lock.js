@@ -15,9 +15,9 @@ export default async function handler(req, res) {
       });
     }
 
-    if (!['blueprint', 'player_hooks', 'world_seeds', 'style_prefs', 'custom', 'background', 'story_concept'].includes(blockType)) {
+    if (!['blueprint', 'player_hooks', 'world_seeds', 'style_prefs', 'custom', 'background', 'story_concept', 'characters'].includes(blockType)) {
       return res.status(400).json({ 
-        error: 'Invalid blockType. Must be one of: blueprint, player_hooks, world_seeds, style_prefs, custom, background, story_concept' 
+        error: 'Invalid blockType. Must be one of: blueprint, player_hooks, world_seeds, style_prefs, custom, background, story_concept, characters' 
       });
     }
 

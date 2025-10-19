@@ -10,10 +10,12 @@
   "test": {
     "sessionId": "test",
     "blocks": {},
-    "locks": {},
+    "locks": {
+      "background": true
+    },
     "version": 0,
     "createdAt": "2025-10-19T18:35:13.444Z",
-    "updatedAt": "2025-10-19T19:35:18.514Z",
+    "updatedAt": "2025-10-19T22:06:08.589Z",
     "macroChains": {
       "chain_1760902475209_g8qny01xr": {
         "chainId": "chain_1760902475209_g8qny01xr",
@@ -66,6 +68,12 @@
         "updatedAt": "2025-10-19T19:34:35.212Z",
         "lockedAt": "2025-10-19T19:35:18.514Z"
       }
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:06:08.588Z"
     }
   },
   "direct-test-1760898972487": {
@@ -2596,9 +2604,9 @@
     "locks": {
       "background": true
     },
-    "version": 13,
+    "version": 14,
     "createdAt": "2025-10-19T20:18:41.486Z",
-    "updatedAt": "2025-10-19T20:28:55.262Z",
+    "updatedAt": "2025-10-19T21:02:25.326Z",
     "macroChains": {
       "chain_1760905145775_9pv56lbqq": {
         "chainId": "chain_1760905145775_9pv56lbqq",
@@ -2652,5 +2660,2864 @@
         "lockedAt": "2025-10-19T20:19:07.740Z"
       }
     }
+  },
+  "project_1760907754208_mn5topqgx": {
+    "sessionId": "project_1760907754208_mn5topqgx",
+    "blocks": {
+      "story_concept": {
+        "concept": "Yüzyıllar süren savaşların ardından, bir zamanlar büyüyle korunan topraklar sessizliğe gömülür. Şimdi, farklı krallıklardan gelen bir grup kâşif, bu unutulmuş diyarlarda kaybolan bir medeniyetin izini sürmektedir. Fakat keşfettikleri kalıntılar, tarihten çok daha yakın bir gerçeğe işaret eder: birileri bu sessizliği korumak için hâlâ oradadır.\n\nAdım attıkları her şehir, her harabe, geçmişin değil; uyarının izlerini taşır.",
+        "timestamp": "2025-10-19T21:02:37.778Z"
+      },
+      "background": {
+        "premise": "A group of explorers from various kingdoms seeks the traces of a lost civilization in a land once protected by magic, now shrouded in silence, where someone still guards its secrets.",
+        "tone_rules": [
+          "Mysterious and foreboding atmosphere",
+          "Tension between discovery and danger",
+          "Echoes of a forgotten past",
+          "Subtle menace lurking in the silence",
+          "Exploration with a sense of unease"
+        ],
+        "stakes": [
+          "Uncovering the truth about the lost civilization",
+          "The explorers' survival amidst hidden dangers",
+          "Potential awakening of ancient powers",
+          "Conflict between kingdoms over newfound knowledge",
+          "Maintaining the balance between curiosity and caution"
+        ],
+        "mysteries": [
+          "What happened to the ancient civilization?",
+          "Who is maintaining the silence of the land?",
+          "What secrets do the ruins hold?",
+          "Why are there warnings instead of history in the relics?",
+          "What power still resides in these forgotten lands?"
+        ],
+        "factions": [
+          "The Explorers from various kingdoms",
+          "The Silent Guardians of the land",
+          "Kingdoms vying for control of the discoveries",
+          "Mysterious order protecting ancient secrets",
+          "Nomadic tribes with ancient knowledge"
+        ],
+        "location_palette": [
+          "Abandoned cities overgrown with nature",
+          "Ruins with ominous carvings",
+          "Eerie forests shrouded in mist",
+          "Desolate plains echoing with whispers",
+          "Hidden temples with locked doors"
+        ],
+        "npc_roster_skeleton": [],
+        "motifs": [
+          "The interplay of light and shadow",
+          "Whispers in the wind",
+          "Symbols of forgotten languages",
+          "Echoes of ancient rituals",
+          "The tension between past and present"
+        ],
+        "doNots": [
+          "Avoid clear-cut good vs. evil narratives",
+          "Do not reveal mysteries too quickly",
+          "Avoid modern technology themes",
+          "Do not make exploration too straightforward",
+          "Avoid reducing factions to stereotypes"
+        ],
+        "playstyle_implications": [
+          "Encourage investigative and exploratory gameplay",
+          "Favor atmospheric and immersive experiences",
+          "Allow for moral ambiguity and complex decisions",
+          "Balance character development with plot progression",
+          "Facilitate teamwork and negotiation among players"
+        ]
+      },
+      "characters": {
+        "list": [
+          {
+            "id": "char_1760907950614_0sxdbtbw2",
+            "name": "Elandra Whisperwind",
+            "ancestry": "Elf",
+            "class": "Ranger",
+            "background": "Outlander",
+            "alignment": "Chaotic Neutral",
+            "publicMotivation": "Seek the truth about the lost civilization to unite the kingdoms through shared knowledge.",
+            "hiddenTruthOrFlaw": "Secretly haunted by visions that suggest her own people might have played a role in the civilization's downfall.",
+            "narrativeConflict": "Torn between loyalty to her kingdom and the unsettling revelations about her ancestry.",
+            "connectionToStory": "Elandra's visions contain cryptic symbols from the ruins, hinting at her deeper connection to the ancient civilization.",
+            "notes": "Her presence often brings an eerie calm, as if the wind itself whispers her secrets."
+          },
+          {
+            "id": "char_1760907950614_5qosr7zm7",
+            "name": "Thorne Stormbreaker",
+            "ancestry": "Human",
+            "class": "Paladin",
+            "background": "Knight",
+            "alignment": "Lawful Good",
+            "publicMotivation": "Protect the explorers from the dangers in the land and ensure the knowledge is used for the benefit of all kingdoms.",
+            "hiddenTruthOrFlaw": "His faith is shaken by the silent menace of the land, leading to moments of doubt in his mission.",
+            "narrativeConflict": "Struggling with the silent guardians who challenge his understanding of justice and protection.",
+            "connectionToStory": "Thorne's family crest is eerily similar to symbols found in the ruins, suggesting ancestral ties to the guardians themselves.",
+            "notes": "Thorne's steadfast resolve is both his strength and his vulnerability, casting long shadows in the mysterious land."
+          },
+          {
+            "id": "char_1760907950614_2rzhsufci",
+            "name": "Lira Moonsong",
+            "ancestry": "Half-Elf",
+            "class": "Bard",
+            "background": "Scholar",
+            "alignment": "True Neutral",
+            "publicMotivation": "Document the history and legends of the lost civilization to enrich all knowledge.",
+            "hiddenTruthOrFlaw": "Possesses a forbidden tome that hints at dark rituals practiced by the lost civilization.",
+            "narrativeConflict": "Conflicted between sharing her findings and the danger it poses if the tome's secrets are revealed.",
+            "connectionToStory": "Her songs are imbued with echoes of ancient rituals, resonating deeply in the ruins' eerie silence.",
+            "notes": "Lira's melodies carry the weight of untold stories, blending past and present in haunting harmony."
+          },
+          {
+            "id": "char_1760907950614_yl88jq6eq",
+            "name": "Gorim Stoneheart",
+            "ancestry": "Dwarf",
+            "class": "Cleric",
+            "background": "Hermit",
+            "alignment": "Neutral Good",
+            "publicMotivation": "Heal the land and its scars, restoring the balance disrupted by the civilization's fall.",
+            "hiddenTruthOrFlaw": "Once a part of a secretive order that sought to keep the land's powers hidden from the world.",
+            "narrativeConflict": "Faces inner turmoil between his past allegiance to the order and his current mission to heal and uncover truths.",
+            "connectionToStory": "Gorim's prayers awaken whispers of the past, subtly guiding the explorers toward hidden truths.",
+            "notes": "Gorim's presence evokes a sense of ancient wisdom, as if the land itself listens to his words."
+          },
+          {
+            "id": "char_1760907950614_drqgqi64u",
+            "name": "Ayla Shadowstep",
+            "ancestry": "Halfling",
+            "class": "Rogue",
+            "background": "Urchin",
+            "alignment": "Chaotic Good",
+            "publicMotivation": "Retrieve relics of the lost civilization to ensure they're not abused by power-hungry factions.",
+            "hiddenTruthOrFlaw": "Driven by personal vendetta against those who would exploit the civilization's secrets for warfare.",
+            "narrativeConflict": "Struggles with the moral ambiguity of theft for the greater good against the dangers of hoarding power.",
+            "connectionToStory": "Ayla's knack for slipping unnoticed into hidden temples reveals the intricate traps and secrets within.",
+            "notes": "Her footsteps are as silent as the whispers of the ancients, guided by a mysterious sense of purpose."
+          }
+        ],
+        "locked": true,
+        "version": 1760907950614,
+        "lockedAt": "2025-10-19T21:07:33.444Z"
+      },
+      "custom": {
+        "macroChain": {
+          "chainId": "chain_1760908242300_yrrld9a1z",
+          "scenes": [
+            {
+              "id": "scene_1_1760908242300",
+              "order": 1,
+              "title": "Whispers Among the Overgrown Ruins",
+              "objective": "Explore the abandoned city to uncover initial clues about the lost civilization's fate."
+            },
+            {
+              "id": "scene_2_1760908242300",
+              "order": 2,
+              "title": "Echoes in the Misty Forest",
+              "objective": "Navigate the eerie forest to encounter hints of the silent guardian and deepen the sense of unease."
+            },
+            {
+              "id": "scene_3_1760908242300",
+              "order": 3,
+              "title": "Carvings of Ominous Secrets",
+              "objective": "Investigate the mysterious carvings in the ruins to reveal warnings that hint at ancient powers."
+            },
+            {
+              "id": "scene_4_1760908242300",
+              "order": 4,
+              "title": "Whispers of Ancient Rituals in the Desolate Plains",
+              "objective": "Uncover the connection between the whispers and the rituals that maintain the land's silence."
+            },
+            {
+              "id": "scene_5_1760908242300",
+              "order": 5,
+              "title": "The Silent Guardian's Hidden Temple",
+              "objective": "Confront the guardian at the hidden temple to unlock the secrets and balance curiosity with caution."
+            },
+            {
+              "id": "scene_6_1760908242300",
+              "order": 6,
+              "title": "The Shadow of Forgotten Powers",
+              "objective": "Resolve the conflict between kingdoms over the newfound knowledge, ensuring the explorers' survival."
+            }
+          ],
+          "status": "Generated",
+          "version": 1,
+          "lastUpdatedAt": "2025-10-19T21:10:42.300Z",
+          "meta": {
+            "source": "macroChainTab",
+            "requestId": "327250a9-6e26-45e5-86fb-b158532976bc"
+          },
+          "createdAt": "2025-10-19T21:10:42.300Z",
+          "updatedAt": "2025-10-19T21:10:42.300Z"
+        },
+        "macro_index": [
+          "Whispers Among the Overgrown Ruins",
+          "Echoes in the Misty Forest",
+          "Carvings of Ominous Secrets",
+          "Whispers of Ancient Rituals in the Desolate Plains",
+          "The Silent Guardian's Hidden Temple",
+          "The Shadow of Forgotten Powers"
+        ]
+      }
+    },
+    "locks": {
+      "background": true,
+      "characters": true
+    },
+    "version": 13,
+    "createdAt": "2025-10-19T21:02:34.256Z",
+    "updatedAt": "2025-10-19T21:37:54.876Z",
+    "macroChains": {
+      "chain_1760908242300_yrrld9a1z": {
+        "chainId": "chain_1760908242300_yrrld9a1z",
+        "scenes": [
+          {
+            "id": "scene_1_1760908242300",
+            "order": 1,
+            "title": "Whispers Among the Overgrown Ruins",
+            "objective": "Explore the abandoned city to uncover initial clues about the lost civilization's fate."
+          },
+          {
+            "id": "scene_2_1760908242300",
+            "order": 2,
+            "title": "Echoes in the Misty Forest",
+            "objective": "Navigate the eerie forest to encounter hints of the silent guardian and deepen the sense of unease."
+          },
+          {
+            "id": "scene_3_1760908242300",
+            "order": 3,
+            "title": "Carvings of Ominous Secrets",
+            "objective": "Investigate the mysterious carvings in the ruins to reveal warnings that hint at ancient powers."
+          },
+          {
+            "id": "scene_4_1760908242300",
+            "order": 4,
+            "title": "Whispers of Ancient Rituals in the Desolate Plains",
+            "objective": "Uncover the connection between the whispers and the rituals that maintain the land's silence."
+          },
+          {
+            "id": "scene_5_1760908242300",
+            "order": 5,
+            "title": "The Silent Guardian's Hidden Temple",
+            "objective": "Confront the guardian at the hidden temple to unlock the secrets and balance curiosity with caution."
+          },
+          {
+            "id": "scene_6_1760908242300",
+            "order": 6,
+            "title": "The Shadow of Forgotten Powers",
+            "objective": "Resolve the conflict between kingdoms over the newfound knowledge, ensuring the explorers' survival."
+          }
+        ],
+        "status": "Locked",
+        "version": 2,
+        "lastUpdatedAt": "2025-10-19T21:10:49.957Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "327250a9-6e26-45e5-86fb-b158532976bc"
+        },
+        "createdAt": "2025-10-19T21:10:42.300Z",
+        "updatedAt": "2025-10-19T21:10:42.300Z",
+        "lockedAt": "2025-10-19T21:10:49.957Z"
+      }
+    }
+  },
+  "test-cascading-prompt-impact-1760909800924": {
+    "sessionId": "test-cascading-prompt-impact-1760909800924",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 5
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:36:40.935Z",
+    "updatedAt": "2025-10-19T21:36:40.938Z"
+  },
+  "test-cascading-prompt-impact-1760909800924-no-players": {
+    "sessionId": "test-cascading-prompt-impact-1760909800924-no-players",
+    "blocks": {
+      "background": {
+        "premise": "Test background without numberOfPlayers",
+        "tone_rules": [
+          "Test rule"
+        ],
+        "stakes": [
+          "Test stake"
+        ],
+        "mysteries": [
+          "Test mystery"
+        ],
+        "factions": [
+          "Test faction"
+        ],
+        "location_palette": [
+          "Test location"
+        ],
+        "npc_roster_skeleton": [
+          "Test NPC"
+        ],
+        "motifs": [
+          "Test motif"
+        ],
+        "doNots": [
+          "Test constraint"
+        ],
+        "playstyle_implications": [
+          "Test implication"
+        ]
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:36:40.941Z",
+    "updatedAt": "2025-10-19T21:36:40.943Z"
+  },
+  "test-cascading-prompt-impact-1760909800924-boundary-3": {
+    "sessionId": "test-cascading-prompt-impact-1760909800924-boundary-3",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 3
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:36:40.944Z",
+    "updatedAt": "2025-10-19T21:36:40.946Z"
+  },
+  "test-cascading-prompt-impact-1760909800924-boundary-6": {
+    "sessionId": "test-cascading-prompt-impact-1760909800924-boundary-6",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 6
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:36:40.948Z",
+    "updatedAt": "2025-10-19T21:36:40.950Z"
+  },
+  "test-cascading-prompt-impact-1760909800924-boundary-1": {
+    "sessionId": "test-cascading-prompt-impact-1760909800924-boundary-1",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 1
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:36:40.951Z",
+    "updatedAt": "2025-10-19T21:36:40.953Z"
+  },
+  "test-cascading-prompt-impact-1760909822232": {
+    "sessionId": "test-cascading-prompt-impact-1760909822232",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 5
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:37:02.236Z",
+    "updatedAt": "2025-10-19T21:37:02.239Z"
+  },
+  "test-cascading-prompt-impact-1760909822232-no-players": {
+    "sessionId": "test-cascading-prompt-impact-1760909822232-no-players",
+    "blocks": {
+      "background": {
+        "premise": "Test background without numberOfPlayers",
+        "tone_rules": [
+          "Test rule"
+        ],
+        "stakes": [
+          "Test stake"
+        ],
+        "mysteries": [
+          "Test mystery"
+        ],
+        "factions": [
+          "Test faction"
+        ],
+        "location_palette": [
+          "Test location"
+        ],
+        "npc_roster_skeleton": [
+          "Test NPC"
+        ],
+        "motifs": [
+          "Test motif"
+        ],
+        "doNots": [
+          "Test constraint"
+        ],
+        "playstyle_implications": [
+          "Test implication"
+        ]
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:37:02.242Z",
+    "updatedAt": "2025-10-19T21:37:02.244Z"
+  },
+  "test-cascading-prompt-impact-1760909822232-boundary-3": {
+    "sessionId": "test-cascading-prompt-impact-1760909822232-boundary-3",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 3
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:37:02.246Z",
+    "updatedAt": "2025-10-19T21:37:02.248Z"
+  },
+  "test-cascading-prompt-impact-1760909822232-boundary-6": {
+    "sessionId": "test-cascading-prompt-impact-1760909822232-boundary-6",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 6
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:37:02.250Z",
+    "updatedAt": "2025-10-19T21:37:02.252Z"
+  },
+  "test-cascading-prompt-impact-1760909822232-boundary-1": {
+    "sessionId": "test-cascading-prompt-impact-1760909822232-boundary-1",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 1
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:37:02.254Z",
+    "updatedAt": "2025-10-19T21:37:02.255Z"
+  },
+  "test-cascading-prompt-impact-1760909822232-boundary-10": {
+    "sessionId": "test-cascading-prompt-impact-1760909822232-boundary-10",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers must investigate mysterious disappearances in a cursed village.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere",
+          "Emphasis on investigation and discovery",
+          "Tension builds gradually"
+        ],
+        "stakes": [
+          "Villagers' lives at risk",
+          "Ancient curse spreading",
+          "Heroes' reputation on the line"
+        ],
+        "mysteries": [
+          "Who is causing the disappearances?",
+          "What is the source of the curse?",
+          "Why does the curse target specific people?"
+        ],
+        "factions": [
+          "Village elders",
+          "Cult of the old gods",
+          "Merchant guild"
+        ],
+        "location_palette": [
+          "Cursed village square",
+          "Ancient temple ruins",
+          "Mysterious forest"
+        ],
+        "npc_roster_skeleton": [
+          "Village mayor - suspicious",
+          "Old hermit - knows secrets",
+          "Missing child - key witness"
+        ],
+        "motifs": [
+          "Ravens as omens",
+          "Fading light",
+          "Whispers in the dark"
+        ],
+        "doNots": [
+          "Don't make it too obvious",
+          "Avoid clichéd horror tropes",
+          "Don't rush the mystery"
+        ],
+        "playstyle_implications": [
+          "Heavy roleplay focus",
+          "Investigation mechanics",
+          "Character-driven decisions"
+        ],
+        "numberOfPlayers": 10
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T21:37:02.257Z",
+    "updatedAt": "2025-10-19T21:37:02.259Z"
+  },
+  "project_1760909882261_6g10mcv29": {
+    "sessionId": "project_1760909882261_6g10mcv29",
+    "blocks": {
+      "story_concept": {
+        "concept": "Yüzyıllar süren savaşların ardından, bir zamanlar büyüyle korunan topraklar sessizliğe gömülür. Şimdi, farklı krallıklardan gelen bir grup kâşif, bu unutulmuş diyarlarda kaybolan bir medeniyetin izini sürmektedir. Fakat keşfettikleri kalıntılar, tarihten çok daha yakın bir gerçeğe işaret eder: birileri bu sessizliği korumak için hâlâ oradadır.\n\nAdım attıkları her şehir, her harabe, geçmişin değil; uyarının izlerini taşır.",
+        "timestamp": "2025-10-19T21:55:01.784Z"
+      },
+      "background": {
+        "premise": "A group of explorers from different kingdoms venture into forgotten lands, searching for traces of a lost civilization, only to find that someone is guarding these lands' silence.",
+        "tone_rules": [
+          "Mysterious and suspenseful",
+          "Dark and foreboding",
+          "Cautious and investigative",
+          "Ancient yet immediate",
+          "Hauntingly beautiful"
+        ],
+        "stakes": [
+          "Unravel the secrets of the lost civilization",
+          "Avoid triggering ancient defenses",
+          "Discover who is guarding the silence",
+          "Prevent rival kingdoms from exploiting the lands",
+          "Survive the ominous warnings"
+        ],
+        "mysteries": [
+          "What happened to the lost civilization?",
+          "Who is maintaining the silence?",
+          "What are the true powers of the ancient magic?",
+          "Why does every location carry a warning?",
+          "What lies at the heart of these lands?"
+        ],
+        "factions": [
+          "The Kingdom of Eldoria",
+          "The Shadow Guardians",
+          "The Seekers of the Forgotten",
+          "Rogue Treasure Hunters",
+          "The Ancient Wardens"
+        ],
+        "location_palette": [
+          "The Silent Ruins of Eldor",
+          "Whispering Forests",
+          "The Echoing Caves",
+          "Forgotten Watchtowers",
+          "The Eternal Lake"
+        ],
+        "npc_roster_skeleton": [],
+        "motifs": [
+          "Echoes of the past",
+          "Silent warnings",
+          "Hidden guardians",
+          "Shadows of ancient magic",
+          "Guarded secrets"
+        ],
+        "doNots": [
+          "Do not reveal all secrets too early",
+          "Avoid modern technology references",
+          "Do not make the guardians easily defeatable",
+          "Avoid clear-cut villainy",
+          "Do not simplify the ancient magic"
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and discovery",
+          "Foster tension and suspense",
+          "Incentivize careful decision-making",
+          "Promote teamwork and collaboration",
+          "Balance combat with investigation"
+        ],
+        "numberOfPlayers": 5
+      },
+      "characters": {
+        "characters": [
+          {
+            "name": "Elaris Windwhisper",
+            "role": "Wandering Scholar",
+            "race": "Elf",
+            "class": "Wizard",
+            "personality": "Elaris is introspective and curious, often lost in thought as he unearths answers from ancient tomes. He is compassionate but carries an air of aloofness, keeping others at a distance.",
+            "motivation": "To uncover the secrets of the lost civilization and document their forgotten knowledge.",
+            "connectionToStory": "Elaris seeks to unravel the mysteries shrouding the Silent Ruins of Eldor, driven by a vision of a forgotten library calling to him.",
+            "gmSecret": "Elaris is the reincarnation of an ancient scholar from the lost civilization, whose spirit guides him. Unknown to Elaris, his past life's unfinished work threatens the balance between the realms.",
+            "potentialConflict": "His scholarly obsession sometimes blinds him to immediate dangers, putting the group at risk.",
+            "voiceTone": "Soft and deliberate",
+            "inventoryHint": "An aged journal with cryptic notes",
+            "motifAlignment": [
+              "Echoes of the past",
+              "Silent warnings",
+              "Guarded secrets"
+            ],
+            "backgroundHistory": "Raised in the libraries of Eldoria, Elaris was groomed to become a chronicler of history. A defining moment came when he discovered a hidden manuscript detailing the lost civilization, igniting his quest for knowledge. His journey into the forgotten lands is both a personal and academic venture.",
+            "keyRelationships": [
+              "Mentor - Aegis Thorn, an elder librarian",
+              "Rival - Lyra Darksong, a rogue treasure hunter",
+              "The Seekers of the Forgotten"
+            ],
+            "flawOrWeakness": "His insatiable thirst for knowledge can lead him into perilous situations without regard for his safety.",
+            "id": "char_1760912995977_jnqvfvrwi"
+          },
+          {
+            "name": "Kaelin Stoneheart",
+            "role": "Mercenary Captain",
+            "race": "Human",
+            "class": "Fighter",
+            "personality": "Kaelin is pragmatic and stoic, with a keen sense of duty to protect his companions. His military background makes him disciplined and strategic, often seeing the world in terms of challenges to overcome.",
+            "motivation": "To ensure the safety of his group while discovering the tactical significance of ancient defenses.",
+            "connectionToStory": "Kaelin was hired to protect the explorers after a rival kingdom expressed interest in the lands, fearing they might exploit the lost civilization's secrets.",
+            "gmSecret": "Kaelin's family has ancient ties to the Shadow Guardians, unbeknownst to him. This lineage grants him a mysterious affinity with the lands' defenses.",
+            "potentialConflict": "His loyalty to his companions may clash with unearthing his family's hidden past.",
+            "voiceTone": "Gruff and direct",
+            "inventoryHint": "A rusted locket with an inscription",
+            "motifAlignment": [
+              "Hidden guardians",
+              "Shadows of ancient magic",
+              "Echoes of the past"
+            ],
+            "backgroundHistory": "Born into a family of soldiers in Eldoria, Kaelin rose through the ranks to become a respected captain. A mission gone awry left him disillusioned, leading him to take up mercenary work. The mission to the forgotten lands is a chance to redeem his lost honor.",
+            "keyRelationships": [
+              "Commander - Ser Bronn, former superior officer",
+              "Family - The Stoneheart Clan",
+              "The Kingdom of Eldoria"
+            ],
+            "flawOrWeakness": "His past failures haunt him, occasionally clouding his judgment in critical situations.",
+            "id": "char_1760912995977_ywhfh8t4a"
+          },
+          {
+            "name": "Vaela Nightshade",
+            "role": "Shadowy Rogue",
+            "race": "Half-Elf",
+            "class": "Rogue",
+            "personality": "Vaela is enigmatic and cunning, always a step ahead in her schemes. She has a sharp wit and a penchant for sarcasm, often using humor to mask her true intentions.",
+            "motivation": "To uncover and exploit the treasures of the lost civilization for personal gain.",
+            "connectionToStory": "Vaela was drawn to the forgotten lands by rumors of hidden wealth and ancient relics that could tip the scales of power.",
+            "gmSecret": "Vaela's mother was a high-ranking member of the Ancient Wardens, who vanished under mysterious circumstances. Vaela's journey is as much about finding her mother as it is about riches.",
+            "potentialConflict": "Her personal agenda might conflict with the group's goals, leading to mistrust.",
+            "voiceTone": "Smooth and sarcastic",
+            "inventoryHint": "A silver dagger with intricate runes",
+            "motifAlignment": [
+              "Hidden guardians",
+              "Guarded secrets",
+              "Shadows of ancient magic"
+            ],
+            "backgroundHistory": "Raised in the underbelly of a bustling city, Vaela learned the art of stealth and manipulation early on. A defining moment was when she found a relic believed to be linked to the lost civilization, sparking her ambition to seek more.",
+            "keyRelationships": [
+              "Contact - Nix, a black-market dealer",
+              "The Ancient Wardens",
+              "Mother - Elara Nightshade"
+            ],
+            "flawOrWeakness": "Her greed often leads her to take unnecessary risks, endangering herself and others.",
+            "id": "char_1760912995977_2p28jy688"
+          },
+          {
+            "name": "Thorin Ironfoot",
+            "role": "Dwarven Miner",
+            "race": "Dwarf",
+            "class": "Barbarian",
+            "personality": "Thorin is boisterous and hearty, with a love for ale and adventure. His jovial nature hides a fierce temper, especially when his friends are threatened.",
+            "motivation": "To find rare minerals and treasures beneath the forgotten lands, which could restore his family's honor.",
+            "connectionToStory": "Thorin's clan was disgraced after a mining expedition failed, and he believes the forgotten lands hold the key to their redemption.",
+            "gmSecret": "Thorin's ancestors were among the first to discover the Echoing Caves, but their greed unleashed ancient defenses that caused their downfall, a truth hidden in clan legends.",
+            "potentialConflict": "His desire to prove his worth could lead to reckless actions.",
+            "voiceTone": "Loud and hearty",
+            "inventoryHint": "A pickaxe engraved with his clan's emblem",
+            "motifAlignment": [
+              "Echoes of the past",
+              "Silent warnings",
+              "Hidden guardians"
+            ],
+            "backgroundHistory": "A proud member of the Ironfoot Clan, Thorin was raised in the mountains, learning the ways of mining and metallurgy. After his clan's disgrace, he vowed to restore their honor by finding the legendary ore rumored to lie within the forgotten lands.",
+            "keyRelationships": [
+              "Clan - The Ironfoot Clan",
+              "Friend - Balin, fellow miner",
+              "Rival - Thrain Stonebreaker, competing miner"
+            ],
+            "flawOrWeakness": "His pride can blind him to caution, often leading him into perilous situations.",
+            "id": "char_1760912995977_rntcncsix"
+          },
+          {
+            "name": "Lirael Moonshadow",
+            "role": "Mystic Druid",
+            "race": "Tiefling",
+            "class": "Druid",
+            "personality": "Lirael is serene and enigmatic, often speaking in riddles and metaphors. Her connection to nature gives her a calming presence, though her eyes reflect a world of secrets.",
+            "motivation": "To protect the natural balance and uncover the truths hidden within the Whispering Forests.",
+            "connectionToStory": "Lirael has sensed disturbances in the natural order, drawing her to the forgotten lands to seek the source and restore harmony.",
+            "gmSecret": "Lirael is unknowingly a descendant of the Ancient Wardens, and her presence in the lands awakens dormant magics, intertwining her fate with the land's mysteries.",
+            "potentialConflict": "Her cryptic nature can alienate others, making her difficult to trust.",
+            "voiceTone": "Ethereal and melodic",
+            "inventoryHint": "A wooden staff entwined with living vines",
+            "motifAlignment": [
+              "Shadows of ancient magic",
+              "Silent warnings",
+              "Guarded secrets"
+            ],
+            "backgroundHistory": "Born under a blood moon, Lirael was marked by destiny. Raised by a secluded druidic circle, she learned to commune with nature and harness its power. A vision of the Whispering Forests burning compelled her to journey into the forgotten lands.",
+            "keyRelationships": [
+              "Mentor - Elder Gwydion, druidic leader",
+              "The Ancient Wardens",
+              "Friend - Sylvan, a forest spirit"
+            ],
+            "flawOrWeakness": "Her cryptic foresight can lead to indecision, particularly when clarity is most needed.",
+            "id": "char_1760912995977_80qvge3uc"
+          }
+        ],
+        "locked": false,
+        "version": 1760912995977
+      },
+      "custom": {
+        "macroChain": {
+          "chainId": "chain_1760913950477_r5jhg0u26",
+          "scenes": [
+            {
+              "id": "scene_1_1760913950478",
+              "order": 1,
+              "title": "Echoes in the Silent Ruins of Eldor",
+              "objective": "Uncover the initial signs of the lost civilization while avoiding ancient defenses."
+            },
+            {
+              "id": "scene_2_1760913950478",
+              "order": 2,
+              "title": "Whispers Among the Trees of the Whispering Forest",
+              "objective": "Discover who or what is maintaining the silence as the shadows of ancient magic loom."
+            },
+            {
+              "id": "scene_3_1760913950478",
+              "order": 3,
+              "title": "Secrets Beneath the Echoing Caves",
+              "objective": "Delve deeper into the mysteries of the ancient magic and its true powers hidden within the caves."
+            },
+            {
+              "id": "scene_4_1760913950478",
+              "order": 4,
+              "title": "Guardians of the Forgotten Watchtowers",
+              "objective": "Investigate the hidden guardians and their connection to the ominous warnings that permeate the land."
+            },
+            {
+              "id": "scene_5_1760913950478",
+              "order": 5,
+              "title": "Reflections on the Eternal Lake",
+              "objective": "Piece together the fate of the lost civilization and confront the heart of the lands' guarded secrets."
+            },
+            {
+              "id": "scene_6_1760913950478",
+              "order": 6,
+              "title": "The Haunting Silence Unveiled",
+              "objective": "Face the final revelation of who guards the silence and ensure the rival kingdoms cannot exploit the lands."
+            }
+          ],
+          "status": "Generated",
+          "version": 1,
+          "lastUpdatedAt": "2025-10-19T22:45:50.478Z",
+          "meta": {
+            "source": "macroChainTab",
+            "requestId": "5364f067-1bc4-4d37-9137-46874509bcb6"
+          },
+          "createdAt": "2025-10-19T22:45:50.478Z",
+          "updatedAt": "2025-10-19T22:45:50.478Z"
+        },
+        "macro_index": [
+          "Echoes in the Silent Ruins of Eldor",
+          "Whispers Among the Trees of the Whispering Forest",
+          "Secrets Beneath the Echoing Caves",
+          "Guardians of the Forgotten Watchtowers",
+          "Reflections on the Eternal Lake",
+          "The Haunting Silence Unveiled"
+        ]
+      }
+    },
+    "locks": {
+      "background": true,
+      "characters": true
+    },
+    "version": 47,
+    "createdAt": "2025-10-19T21:38:02.308Z",
+    "updatedAt": "2025-10-19T22:45:54.931Z",
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 1,
+      "macroSnapshotV": 1,
+      "updatedAt": "2025-10-19T22:45:50.486Z"
+    },
+    "macroChains": {
+      "chain_1760913155440_nngyr8j2g": {
+        "chainId": "chain_1760913155440_nngyr8j2g",
+        "scenes": [
+          {
+            "id": "scene_1_1760913155440",
+            "order": 1,
+            "title": "Whispers in the Silent Ruins of Eldor",
+            "objective": "Uncover initial clues about the lost civilization while evading ancient defenses."
+          },
+          {
+            "id": "scene_2_1760913155440",
+            "order": 2,
+            "title": "Shadows of the Whispering Forests",
+            "objective": "Investigate the forest's mysterious warnings and the presence of hidden guardians."
+          },
+          {
+            "id": "scene_3_1760913155440",
+            "order": 3,
+            "title": "Echoes Within the Echoing Caves",
+            "objective": "Delve deeper to discover who maintains the silence and the nature of ancient magic."
+          },
+          {
+            "id": "scene_4_1760913155440",
+            "order": 4,
+            "title": "Secrets of the Forgotten Watchtowers",
+            "objective": "Unravel the purpose of the watchtowers and their connection to the lands' guardians."
+          },
+          {
+            "id": "scene_5_1760913155440",
+            "order": 5,
+            "title": "Mysteries of the Eternal Lake",
+            "objective": "Confront the heart of the lands and uncover the true powers of ancient magic."
+          },
+          {
+            "id": "scene_6_1760913155440",
+            "order": 6,
+            "title": "The Guardian's Revelation",
+            "objective": "Survive the ominous warnings and understand who or what is guarding these lands."
+          }
+        ],
+        "status": "Generated",
+        "version": 1,
+        "lastUpdatedAt": "2025-10-19T22:32:35.440Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "94dcb26c-d67a-4872-98f5-05bd75f9c20e"
+        },
+        "createdAt": "2025-10-19T22:32:35.440Z",
+        "updatedAt": "2025-10-19T22:32:35.440Z"
+      },
+      "chain_1760913902523_g5udcznlz": {
+        "chainId": "chain_1760913902523_g5udcznlz",
+        "scenes": [
+          {
+            "id": "scene_1_1760913902523",
+            "order": 1,
+            "title": "Mysteries of the Silent Ruins of Eldor",
+            "objective": "Begin unraveling the secrets of the lost civilization and avoid triggering ancient defenses."
+          },
+          {
+            "id": "scene_2_1760913902523",
+            "order": 2,
+            "title": "Echoes in the Whispering Forests",
+            "objective": "Discover who is guarding the silence while navigating the hauntingly beautiful yet foreboding landscape."
+          },
+          {
+            "id": "scene_3_1760913902523",
+            "order": 3,
+            "title": "Secrets Beneath the Echoing Caves",
+            "objective": "Deepen the investigation into the true powers of the ancient magic hidden within the caves."
+          },
+          {
+            "id": "scene_4_1760913902523",
+            "order": 4,
+            "title": "Sentinels of the Forgotten Watchtowers",
+            "objective": "Unveil why every location carries a silent warning and learn more about the hidden guardians."
+          },
+          {
+            "id": "scene_5_1760913902523",
+            "order": 5,
+            "title": "Reflections at the Eternal Lake",
+            "objective": "Confront the ominous warnings and uncover what lies at the heart of these lands."
+          },
+          {
+            "id": "scene_6_1760913902523",
+            "order": 6,
+            "title": "Confronting Shadows of Ancient Magic",
+            "objective": "Prevent rival kingdoms from exploiting the lands while discovering the truth behind the guarded secrets."
+          }
+        ],
+        "status": "Generated",
+        "version": 1,
+        "lastUpdatedAt": "2025-10-19T22:45:02.523Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "7a4c711b-3942-4452-b80f-e22999560011"
+        },
+        "createdAt": "2025-10-19T22:45:02.523Z",
+        "updatedAt": "2025-10-19T22:45:02.523Z"
+      },
+      "chain_1760913910953_cgkm0wezp": {
+        "chainId": "chain_1760913910953_cgkm0wezp",
+        "scenes": [
+          {
+            "id": "scene_1_1760913910954",
+            "order": 1,
+            "title": "Whispers in the Silent Ruins of Eldor",
+            "objective": "Begin unraveling the secrets of the lost civilization while avoiding ancient defenses."
+          },
+          {
+            "id": "scene_2_1760913910954",
+            "order": 2,
+            "title": "Echoes Among the Whispering Forests",
+            "objective": "Investigate the source of hauntingly beautiful warnings and discover who guards these lands."
+          },
+          {
+            "id": "scene_3_1760913910954",
+            "order": 3,
+            "title": "Secrets Beneath the Echoing Caves",
+            "objective": "Delve deeper into the mysteries of ancient magic and encounter hidden guardians."
+          },
+          {
+            "id": "scene_4_1760913910954",
+            "order": 4,
+            "title": "Shadows of the Forgotten Watchtowers",
+            "objective": "Uncover the silent warnings and prevent rival kingdoms from exploiting these lands."
+          },
+          {
+            "id": "scene_5_1760913910954",
+            "order": 5,
+            "title": "The Heart of the Eternal Lake",
+            "objective": "Confront the ominous warnings and finally understand what lies at the heart of these lands."
+          }
+        ],
+        "status": "Generated",
+        "version": 1,
+        "lastUpdatedAt": "2025-10-19T22:45:10.954Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "5f898976-63dd-4e54-888b-f5f053da704e"
+        },
+        "createdAt": "2025-10-19T22:45:10.954Z",
+        "updatedAt": "2025-10-19T22:45:10.954Z"
+      },
+      "chain_1760913920515_7lbswe27n": {
+        "chainId": "chain_1760913920515_7lbswe27n",
+        "scenes": [
+          {
+            "id": "scene_1_1760913920515",
+            "order": 1,
+            "title": "Whispers in the Silent Ruins of Eldor",
+            "objective": "Investigate the eerie echoes of the past to uncover what befell the lost civilization."
+          },
+          {
+            "id": "scene_2_1760913920515",
+            "order": 2,
+            "title": "Shadows Beneath Whispering Forests",
+            "objective": "Avoid triggering the ancient defenses while seeking clues about the mysterious guardians of silence."
+          },
+          {
+            "id": "scene_3_1760913920515",
+            "order": 3,
+            "title": "The Echoing Caves' Haunting Call",
+            "objective": "Deepen the investigation into the true powers of the ancient magic hidden within the caves."
+          },
+          {
+            "id": "scene_4_1760913920515",
+            "order": 4,
+            "title": "Secrets of the Forgotten Watchtowers",
+            "objective": "Discover who or what maintains the silence and prevents the knowledge from escaping these lands."
+          },
+          {
+            "id": "scene_5_1760913920515",
+            "order": 5,
+            "title": "Revelations at the Eternal Lake",
+            "objective": "Confront the ominous warnings and uncover what lies at the heart of these lands, balancing the threat of rival kingdoms."
+          },
+          {
+            "id": "scene_6_1760913920515",
+            "order": 6,
+            "title": "Confronting the Hidden Guardians",
+            "objective": "Survive the final encounter with the guardians and decide the fate of the forgotten land's secrets."
+          }
+        ],
+        "status": "Locked",
+        "version": 2,
+        "lastUpdatedAt": "2025-10-19T22:45:32.146Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "54d96d17-b07d-43bc-9d94-6a3768fb326b"
+        },
+        "createdAt": "2025-10-19T22:45:20.515Z",
+        "updatedAt": "2025-10-19T22:45:20.515Z",
+        "lockedAt": "2025-10-19T22:45:32.146Z"
+      },
+      "chain_1760913950477_r5jhg0u26": {
+        "chainId": "chain_1760913950477_r5jhg0u26",
+        "scenes": [
+          {
+            "id": "scene_1_1760913950478",
+            "order": 1,
+            "title": "Echoes in the Silent Ruins of Eldor",
+            "objective": "Uncover the initial signs of the lost civilization while avoiding ancient defenses."
+          },
+          {
+            "id": "scene_2_1760913950478",
+            "order": 2,
+            "title": "Whispers Among the Trees of the Whispering Forest",
+            "objective": "Discover who or what is maintaining the silence as the shadows of ancient magic loom."
+          },
+          {
+            "id": "scene_3_1760913950478",
+            "order": 3,
+            "title": "Secrets Beneath the Echoing Caves",
+            "objective": "Delve deeper into the mysteries of the ancient magic and its true powers hidden within the caves."
+          },
+          {
+            "id": "scene_4_1760913950478",
+            "order": 4,
+            "title": "Guardians of the Forgotten Watchtowers",
+            "objective": "Investigate the hidden guardians and their connection to the ominous warnings that permeate the land."
+          },
+          {
+            "id": "scene_5_1760913950478",
+            "order": 5,
+            "title": "Reflections on the Eternal Lake",
+            "objective": "Piece together the fate of the lost civilization and confront the heart of the lands' guarded secrets."
+          },
+          {
+            "id": "scene_6_1760913950478",
+            "order": 6,
+            "title": "The Haunting Silence Unveiled",
+            "objective": "Face the final revelation of who guards the silence and ensure the rival kingdoms cannot exploit the lands."
+          }
+        ],
+        "status": "Locked",
+        "version": 2,
+        "lastUpdatedAt": "2025-10-19T22:45:54.929Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "5364f067-1bc4-4d37-9137-46874509bcb6"
+        },
+        "createdAt": "2025-10-19T22:45:50.478Z",
+        "updatedAt": "2025-10-19T22:45:50.478Z",
+        "lockedAt": "2025-10-19T22:45:54.929Z"
+      }
+    }
+  },
+  "debug-session-1760910438138": {
+    "sessionId": "debug-session-1760910438138",
+    "blocks": {},
+    "locks": {
+      "background": true
+    },
+    "version": 1,
+    "createdAt": "2025-10-19T21:47:25.448Z",
+    "updatedAt": "2025-10-19T21:47:25.453Z"
+  },
+  "debug-session-1760910479377": {
+    "sessionId": "debug-session-1760910479377",
+    "blocks": {},
+    "locks": {
+      "background": true
+    },
+    "version": 1,
+    "createdAt": "2025-10-19T21:48:08.340Z",
+    "updatedAt": "2025-10-19T21:48:08.344Z"
+  },
+  "debug-session-1760910504386": {
+    "sessionId": "debug-session-1760910504386",
+    "blocks": {},
+    "locks": {
+      "background": true
+    },
+    "version": 1,
+    "createdAt": "2025-10-19T21:48:31.898Z",
+    "updatedAt": "2025-10-19T21:48:31.904Z"
+  },
+  "debug-session-1760910575890": {
+    "sessionId": "debug-session-1760910575890",
+    "blocks": {},
+    "locks": {
+      "background": true
+    },
+    "version": 1,
+    "createdAt": "2025-10-19T21:49:49.917Z",
+    "updatedAt": "2025-10-19T21:49:49.929Z"
+  },
+  "debug-session-1760910602363": {
+    "sessionId": "debug-session-1760910602363",
+    "blocks": {},
+    "locks": {
+      "background": true
+    },
+    "version": 1,
+    "createdAt": "2025-10-19T21:50:11.114Z",
+    "updatedAt": "2025-10-19T21:50:11.129Z"
+  },
+  "test-debug-final": {
+    "sessionId": "test-debug-final",
+    "blocks": {
+      "background": {
+        "premise": "The adventurers are tasked with investigating a malfunctioning magical server affecting the fabric of reality, where the number of players directly correlates to its stability.",
+        "tone_rules": [
+          "Maintain a sense of urgency and suspense.",
+          "Incorporate elements of mystery and discovery.",
+          "Balance between light-hearted banter and serious undertones."
+        ],
+        "stakes": [
+          "The server's failure could unravel the magical balance of the world.",
+          "Players risk losing their magical abilities if the server crashes.",
+          "A rival group seeks to exploit the server's vulnerabilities for personal gain."
+        ],
+        "mysteries": [
+          "What is causing the server malfunction?",
+          "Who created the server and for what purpose?",
+          "What lies within the server's hidden core?"
+        ],
+        "factions": [
+          "The Arcane Regulators, tasked with maintaining magical order.",
+          "The Debuggers, a rogue group seeking to control the server.",
+          "The Guild of Technomancers, pioneers in magical technology."
+        ],
+        "location_palette": [
+          "The Server Chamber, a mystical hub of magic and technology.",
+          "The Debugger's Hideout, filled with illicit magical contraptions.",
+          "The Technomancer's Library, housing ancient texts on server lore."
+        ],
+        "npc_roster_skeleton": [
+          "Eldrin, a wise technomancer with insights into server mechanics.",
+          "Lira, a cunning leader of the Debuggers with a personal vendetta.",
+          "Mira, a regulator who believes in strict adherence to magical laws."
+        ],
+        "motifs": [
+          "Glowing runes symbolizing the flow of magic.",
+          "Shattered mirrors representing fractured realities.",
+          "Tangled wires as a metaphor for complex interconnections."
+        ],
+        "doNots": [
+          "Avoid overly convoluted technical jargon.",
+          "Do not introduce deus ex machina solutions.",
+          "Avoid breaking the established magical laws without reason."
+        ],
+        "playstyle_implications": [
+          "Encourage problem-solving and strategic thinking.",
+          "Foster collaborative exploration of magical mechanics.",
+          "Balance combat with investigative and puzzle elements."
+        ],
+        "numberOfPlayers": 5
+      }
+    },
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T21:53:49.948Z"
+    },
+    "version": 1,
+    "createdAt": "2025-10-19T21:53:49.949Z",
+    "updatedAt": "2025-10-19T21:53:49.956Z"
+  },
+  "debug-session-1760910833598": {
+    "sessionId": "debug-session-1760910833598",
+    "blocks": {
+      "background": {
+        "premise": "A group of adventurers delves into the secrets of a cursed village to uncover the truth behind a series of mysterious disappearances.",
+        "tone_rules": [
+          "Maintain an atmosphere of suspense and foreboding.",
+          "Incorporate elements of gothic horror.",
+          "Balance moments of tension with opportunities for heroism.",
+          "Highlight the eerie tranquility of the cursed village.",
+          "Keep a sense of urgency in the investigation."
+        ],
+        "stakes": [
+          "Unraveling the mystery to save the remaining villagers.",
+          "Preventing the curse from spreading beyond the village.",
+          "Rescuing those who have disappeared if they can still be found.",
+          "Uncovering the source of the curse before it claims more victims."
+        ],
+        "mysteries": [
+          "What is the origin of the village's curse?",
+          "Who or what is behind the disappearances?",
+          "Why are only certain villagers targeted?",
+          "What secrets does the village hold beneath its surface?"
+        ],
+        "factions": [
+          "The Village Elders, who guard the village's secrets.",
+          "The Cursed Ones, villagers who have been affected by the curse.",
+          "The Order of the Shrouded Light, a group seeking to lift the curse.",
+          "The Shadow Cult, rumored to have summoned the curse."
+        ],
+        "location_palette": [
+          "The Abandoned Chapel, a place of forgotten worship.",
+          "The Whispering Woods, where many have vanished.",
+          "The Village Square, heart of the community.",
+          "The Old Manor, rumored to be haunted."
+        ],
+        "npc_roster_skeleton": [
+          "Elder Mora, a wise but secretive village leader.",
+          "Brother Tylan, a member of the Order of the Shrouded Light.",
+          "Mira, a young villager who escaped a disappearance attempt.",
+          "Gareth, a local hunter familiar with the woods."
+        ],
+        "motifs": [
+          "Shadows and light.",
+          "Lost time and forgotten memories.",
+          "Echoes of past lives.",
+          "Symbols of protection and curse."
+        ],
+        "doNots": [
+          "Avoid making the curse easy to break.",
+          "Do not overuse jump scares; focus on atmosphere instead.",
+          "Avoid clear-cut villains; keep motivations complex.",
+          "Do not let the story become too linear."
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and investigation.",
+          "Foster a sense of teamwork and collaboration.",
+          "Allow for creative problem-solving.",
+          "Emphasize role-playing and character development."
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "characters": [
+          {
+            "name": "Elara Voss",
+            "role": "Seeker of the Lost",
+            "race": "Half-Elf",
+            "class": "Ranger",
+            "personality": "Reserved and observant, with a steadfast determination.",
+            "motivation": "To uncover the truth behind her sister's disappearance.",
+            "connectionToStory": "Elara's sister vanished in the Whispering Woods, making her determined to solve the mystery of the village.",
+            "gmSecret": "Elara possesses a map with eerie markings that seem to shift, hinting at hidden paths within the woods.",
+            "potentialConflict": "Her distrust of the Village Elders could lead to tension with those seeking their guidance.",
+            "voiceTone": "Soft-spoken but with a hint of urgency.",
+            "inventoryHint": "A locket containing a faded portrait of her sister.",
+            "motifAlignment": [
+              "Echoes of past lives",
+              "Shadows and light"
+            ],
+            "backgroundHistory": "Raised on the outskirts of the village, Elara grew up exploring the eerie woods with her sister. When her sister disappeared, she dedicated herself to tracking the forest's secrets, becoming a skilled ranger.",
+            "keyRelationships": [
+              "Gareth, the hunter who shares her knowledge of the woods",
+              "Elder Mora, who she suspects knows more than she reveals"
+            ],
+            "flawOrWeakness": "Haunted by guilt that she could not protect her sister.",
+            "id": "char_1760910859634_tdpdepfc0"
+          },
+          {
+            "name": "Dorian Thorne",
+            "role": "Cursed Scholar",
+            "race": "Human",
+            "class": "Wizard",
+            "personality": "Inquisitive and driven, with an air of melancholy.",
+            "motivation": "To find a cure for the curse that slowly consumes him.",
+            "connectionToStory": "Dorian is one of the Cursed Ones, and his time is running out unless he finds a solution.",
+            "gmSecret": "Dorian has glimpsed visions of the Shadow Cult's rituals in his dreams.",
+            "potentialConflict": "His obsession with the Shadow Cult's secrets might lead him into dangerous alliances.",
+            "voiceTone": "Measured and thoughtful, with a hint of desperation.",
+            "inventoryHint": "A journal filled with cryptic notes and sketches of arcane symbols.",
+            "motifAlignment": [
+              "Lost time and forgotten memories",
+              "Symbols of protection and curse"
+            ],
+            "backgroundHistory": "Once a respected scholar in the village, Dorian's thirst for knowledge led him to delve into forbidden texts. This curiosity resulted in him being marked by the curse, which he now seeks to lift before it claims his life.",
+            "keyRelationships": [
+              "Brother Tylan, who aids him in researching the curse",
+              "Mira, who fears Dorian's knowledge of dark rituals"
+            ],
+            "flawOrWeakness": "An insatiable curiosity that borders on recklessness.",
+            "id": "char_1760910859634_7mozzf8yw"
+          },
+          {
+            "name": "Rhiannon Gale",
+            "role": "Guardian of the Shadows",
+            "race": "Tiefling",
+            "class": "Cleric",
+            "personality": "Compassionate yet stern, with a strong sense of duty.",
+            "motivation": "To protect the villagers and restore peace to the cursed land.",
+            "connectionToStory": "Rhiannon is a member of the Order of the Shrouded Light, dedicated to lifting the curse.",
+            "gmSecret": "She once saved a villager from an attempted abduction by the Shadow Cult.",
+            "potentialConflict": "Her past encounter with the Shadow Cult leaves her wary of any who might sympathize with them.",
+            "voiceTone": "Commanding with an undertone of warmth.",
+            "inventoryHint": "A pendant etched with a symbol of the Shrouded Light.",
+            "motifAlignment": [
+              "Symbols of protection and curse",
+              "Shadows and light"
+            ],
+            "backgroundHistory": "Born under an ominous sky, Rhiannon was raised by the Order of the Shrouded Light. She grew into a formidable cleric, devoted to protecting the village from the growing darkness and healing those touched by the curse.",
+            "keyRelationships": [
+              "Elder Mora, who provides guidance and wisdom",
+              "Brother Tylan, with whom she shares a sacred bond"
+            ],
+            "flawOrWeakness": "A deep fear of failing her sacred duty.",
+            "id": "char_1760910859634_ctkc13ifz"
+          },
+          {
+            "name": "Kael Windrider",
+            "role": "Rogue of the Forgotten Paths",
+            "race": "Halfling",
+            "class": "Rogue",
+            "personality": "Witty and charming, with a knack for uncovering secrets.",
+            "motivation": "To unearth hidden truths and gain wealth and glory.",
+            "connectionToStory": "Kael stumbled upon the village while following rumors of a hidden treasure connected to the curse.",
+            "gmSecret": "He possesses a map that leads to an ancient vault beneath the Old Manor.",
+            "potentialConflict": "His opportunistic nature might clash with the group's more altruistic goals.",
+            "voiceTone": "Playful and teasing, yet serious when necessary.",
+            "inventoryHint": "A set of lockpicks and a mysterious key.",
+            "motifAlignment": [
+              "Echoes of past lives",
+              "Lost time and forgotten memories"
+            ],
+            "backgroundHistory": "A wanderer by nature, Kael's life has been a series of travels and escapades. His latest adventure brought him to the cursed village, where he hopes to uncover both its secrets and his fortune.",
+            "keyRelationships": [
+              "Mira, who he saved from a trap laid by the curse",
+              "Gareth, who is wary of Kael's intentions"
+            ],
+            "flawOrWeakness": "A tendency to prioritize personal gain over the greater good.",
+            "id": "char_1760910859634_ho8nf8zn2"
+          }
+        ],
+        "locked": false,
+        "version": 1760910859634
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T21:54:01.185Z"
+    },
+    "version": 3,
+    "createdAt": "2025-10-19T21:54:01.185Z",
+    "updatedAt": "2025-10-19T21:54:19.637Z"
+  },
+  "undefined": {
+    "blocks": {
+      "background": {
+        "premise": "Strangers receive mysterious invitations to a gothic manor where they become entangled in a web of secrets and supernatural phenomena.",
+        "tone_rules": [
+          "Maintain an atmosphere of eerie suspense.",
+          "Incorporate gothic and supernatural elements.",
+          "Focus on psychological tension and intrigue.",
+          "Use dramatic and vivid descriptions.",
+          "Include moments of quiet horror."
+        ],
+        "stakes": [
+          "Escape the manor before becoming part of its mysteries.",
+          "Uncover the truth about the vanished owner.",
+          "Navigate the dangers posed by the manor's supernatural elements.",
+          "Protect personal secrets from being revealed by the manor.",
+          "Survive the manipulations of unseen forces."
+        ],
+        "mysteries": [
+          "The origin of the invitations bearing the owner's seal.",
+          "The fate of the vanished manor owner.",
+          "The purpose behind the manor's supernatural mirrors.",
+          "The significance of the locked doors and their connections.",
+          "The true nature of the manor's enchantment."
+        ],
+        "factions": [
+          "The invited strangers, each with their own agendas.",
+          "The vanished owner's loyal but mysterious servants.",
+          "A secretive society interested in the manor's secrets.",
+          "The spirits haunting the manor, each with a story.",
+          "A rival group seeking to exploit the manor's powers."
+        ],
+        "location_palette": [
+          "The grand foyer with its imposing staircase.",
+          "The library filled with ancient tomes and secrets.",
+          "A mirror-filled ballroom that distorts reality.",
+          "The garden shrouded in perpetual mist.",
+          "The hidden basement with forbidden artifacts."
+        ],
+        "npc_roster_skeleton": [
+          "Eliot, the enigmatic butler with a hidden agenda.",
+          "Lady Seraphine, a ghostly apparition with a tragic past.",
+          "Dr. Moreau, a scholar obsessed with the manor's secrets.",
+          "Mara, a spirited guest with a mysterious connection to the owner.",
+          "The Shadow, an elusive figure manipulating events from the shadows."
+        ],
+        "motifs": [
+          "Mirrors reflecting hidden truths.",
+          "Creeping shadows and flickering candlelight.",
+          "Locked doors symbolizing hidden knowledge.",
+          "Echoes of past tragedies.",
+          "The contrast between light and darkness."
+        ],
+        "doNots": [
+          "Avoid clear-cut explanations for supernatural events.",
+          "Do not rely on overt horror; focus on subtle fear.",
+          "Avoid breaking the gothic atmosphere with humor.",
+          "Do not reveal all secrets too quickly.",
+          "Avoid simplistic character motivations."
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and interaction with the environment.",
+          "Focus on character development through personal secrets.",
+          "Allow for multiple solutions to mysteries.",
+          "Prioritize cooperative problem-solving.",
+          "Prepare for adaptive storytelling based on player actions."
+        ],
+        "numberOfPlayers": 4
+      }
+    },
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:05:29.211Z"
+    },
+    "version": 3,
+    "createdAt": "2025-10-19T22:05:29.211Z",
+    "updatedAt": "2025-10-19T22:06:24.538Z"
+  },
+  "debug-session-1760911653850": {
+    "sessionId": "debug-session-1760911653850",
+    "blocks": {
+      "background": {
+        "premise": "Strangers are summoned to a forgotten gothic manor by mysterious invitations, only to uncover a realm of secrets where mirrors reveal hidden truths and every locked door presents a new mystery.",
+        "tone_rules": [
+          "Gothic and mysterious",
+          "Suspenseful with a sense of dread",
+          "Intriguing yet unsettling",
+          "Whispers of the supernatural",
+          "Dark and atmospheric"
+        ],
+        "stakes": [
+          "Discover the fate of the manor's owner",
+          "Unravel the web of secrets before it's too late",
+          "Survive the supernatural horrors lurking within",
+          "Escape the manor's clutches",
+          "Protect one's sanity amidst the eerie happenings"
+        ],
+        "mysteries": [
+          "The true origin of the invitations",
+          "The fate of the missing manor owner",
+          "The purpose of the enchanted mirrors",
+          "The reason for the manor's abandonment",
+          "The secrets behind each locked door"
+        ],
+        "factions": [
+          "The Lost Guests, seeking answers and escape",
+          "The Manor's Spirits, bound to the house",
+          "The Secret Keepers, those who know but won't tell",
+          "The Mirror Watchers, entities within the reflections",
+          "The Unknown Benefactor, sender of the invitations"
+        ],
+        "location_palette": [
+          "The Grand Ballroom, with eerily still chandeliers",
+          "The Library of Forgotten Tomes",
+          "The Mirror Hall, where reflections deceive",
+          "The Abandoned Chapel, echoing with whispers",
+          "The Secret Garden, overgrown and wild"
+        ],
+        "npc_roster_skeleton": [
+          "The Vanished Owner, a shadowy figure with a hidden past",
+          "The Ghostly Butler, bound to serve the manor forever",
+          "The Mysterious Hermit, living in the manor's woods",
+          "The Enigmatic Scholar, obsessed with the manor's secrets",
+          "The Haunted Child, a spirit trapped in time"
+        ],
+        "motifs": [
+          "Mirrors revealing hidden truths",
+          "Locked doors with cryptic keys",
+          "Echoes of the past in the present",
+          "Shadows concealing deeper secrets",
+          "The interplay of light and darkness"
+        ],
+        "doNots": [
+          "Avoid using modern technology",
+          "Do not simplify the manor's mysteries",
+          "Avoid clear-cut villains or heroes",
+          "Do not resolve all mysteries immediately",
+          "Avoid breaking the gothic atmosphere with humor"
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and problem-solving",
+          "Emphasize atmosphere over combat",
+          "Promote collaborative storytelling",
+          "Focus on mystery and suspense",
+          "Allow for character-driven narratives"
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "characters": [
+          {
+            "name": "Elias Thorn",
+            "role": "Wandering Scholar",
+            "race": "Human",
+            "class": "Wizard",
+            "personality": "Curious and driven, Elias is always seeking knowledge, yet he is haunted by the mysteries he cannot solve. His demeanor is calm but his eyes reveal a mind constantly at work.",
+            "motivation": "To uncover the secrets of the manor and find the truth behind the invitations.",
+            "connectionToStory": "Elias received an invitation with a cryptic note referencing an ancient tome he once studied.",
+            "gmSecret": "Elias once belonged to the Secret Keepers, a faction that knows more about the manor than it lets on.",
+            "potentialConflict": "His obsession with the manor's secrets may lead him to make dangerous decisions.",
+            "voiceTone": "Soft and deliberate",
+            "inventoryHint": "An aged journal filled with cryptic entries",
+            "motifAlignment": [
+              "Mirrors revealing hidden truths",
+              "Echoes of the past in the present"
+            ],
+            "backgroundHistory": "Born into a family of scholars, Elias was always surrounded by books and tales of ancient mysteries. A defining moment in his life was the discovery of a long-lost manuscript that hinted at a place where mirrors hide truths. This manuscript led him to the manor, driven by a thirst for knowledge that could both enlighten and ensnare.",
+            "keyRelationships": [
+              "The Enigmatic Scholar, a former mentor who warned him of the manor",
+              "The Lost Guests, fellow seekers of truth",
+              "The Mirror Watchers, entities he seeks to understand"
+            ],
+            "flawOrWeakness": "His insatiable curiosity often blinds him to immediate dangers.",
+            "id": "char_1760911685694_nyqarjnv7"
+          },
+          {
+            "name": "Seraphina Blackwood",
+            "role": "Cursed Noble",
+            "race": "Half-Elf",
+            "class": "Warlock",
+            "personality": "Seraphina is enigmatic, with an air of melancholy that surrounds her. She is fiercely independent, yet sometimes the shadows in her eyes betray a deep-seated fear.",
+            "motivation": "To break the curse that has bound her family to the manor for generations.",
+            "connectionToStory": "The manor is tied to her lineage, and she received an invitation as an heirloom resurfaced.",
+            "gmSecret": "Seraphina's ancestor made a pact with the spirits of the manor, binding her bloodline to its fate.",
+            "potentialConflict": "Her desire to sever the curse might conflict with the needs or goals of the party.",
+            "voiceTone": "Eloquent and hauntingly melodic",
+            "inventoryHint": "A rusted locket containing a portrait of her ancestor",
+            "motifAlignment": [
+              "Locked doors with cryptic keys",
+              "Shadows concealing deeper secrets"
+            ],
+            "backgroundHistory": "Raised in a crumbling estate on the outskirts of town, Seraphina discovered a family secret: a pact with entities within the manor mirrors. When a strange invitation arrived, she saw it as a chance to free her family from its dark legacy. Her journey is one of redemption, not just for herself, but for her entire bloodline.",
+            "keyRelationships": [
+              "The Vanished Owner, possibly her ancestor",
+              "The Manor's Spirits, her accursed kin",
+              "The Ghostly Butler, who recognizes her lineage"
+            ],
+            "flawOrWeakness": "Her fear of the supernatural often paralyzes her in critical moments.",
+            "id": "char_1760911685694_tnuq34358"
+          },
+          {
+            "name": "Thorn Ironclad",
+            "role": "Reluctant Mercenary",
+            "race": "Dwarf",
+            "class": "Fighter",
+            "personality": "Gruff and straightforward, Thorn prefers action over words. He is loyal to those he trusts, but his stubbornness can sometimes lead to conflict.",
+            "motivation": "To find the truth behind the disappearance of a former employer who vanished near the manor.",
+            "connectionToStory": "He was hired to protect a scholar who went missing after entering the manor.",
+            "gmSecret": "Thorn has been secretly communicating with the Unknown Benefactor, hoping for answers.",
+            "potentialConflict": "His mistrust of magic and supernatural forces could put him at odds with other party members.",
+            "voiceTone": "Gruff and direct",
+            "inventoryHint": "A dented shield with an unfamiliar crest",
+            "motifAlignment": [
+              "The interplay of light and darkness",
+              "Shadows concealing deeper secrets"
+            ],
+            "backgroundHistory": "Once a soldier in a distant war, Thorn turned to mercenary work to escape his past. He was employed by a scholar obsessed with the manor's secrets, only to lose him to its shadows. Now, Thorn seeks to fulfill his contract and uncover what happened, driven by a sense of duty and a need to prove himself.",
+            "keyRelationships": [
+              "The Enigmatic Scholar, his missing employer",
+              "The Unknown Benefactor, his mysterious contact",
+              "The Lost Guests, potential allies in his quest"
+            ],
+            "flawOrWeakness": "His aversion to magic often blinds him to its potential benefits.",
+            "id": "char_1760911685694_etlds7bt9"
+          },
+          {
+            "name": "Lira Moonshadow",
+            "role": "Elusive Rogue",
+            "race": "Elf",
+            "class": "Rogue",
+            "personality": "Lira is sly and cunning, with a wit as sharp as her blades. She is charming but always seems to be holding back something.",
+            "motivation": "To uncover the hidden treasures rumored to be within the manor.",
+            "connectionToStory": "A stolen map led her to the manor, promising secrets and wealth.",
+            "gmSecret": "Lira once worked for the Secret Keepers but left after a betrayal.",
+            "potentialConflict": "Her self-serving nature might lead her to prioritize personal gain over group goals.",
+            "voiceTone": "Whispering and playful",
+            "inventoryHint": "A small, ornate dagger inscribed with runes",
+            "motifAlignment": [
+              "Locked doors with cryptic keys",
+              "The interplay of light and darkness"
+            ],
+            "backgroundHistory": "Growing up in the bustling streets of a distant city, Lira learned the art of thievery early on. A stolen map from a shady dealer spoke of hidden treasures within a forgotten manor. Her skills and curiosity led her to accept the challenge, seeing the manor as the ultimate prize.",
+            "keyRelationships": [
+              "The Secret Keepers, her former associates",
+              "The Mysterious Hermit, an old contact",
+              "The Mirror Watchers, potential adversaries"
+            ],
+            "flawOrWeakness": "Her greed often puts her in dangerous situations.",
+            "id": "char_1760911685694_q3asehs0o"
+          }
+        ],
+        "locked": false,
+        "version": 1760911685694
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:07:45.350Z"
+    },
+    "version": 2,
+    "createdAt": "2025-10-19T22:07:45.327Z",
+    "updatedAt": "2025-10-19T22:08:05.698Z"
+  },
+  "test-details-123": {
+    "sessionId": "test-details-123",
+    "blocks": {},
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:10:55.968Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T22:10:55.968Z",
+    "updatedAt": "2025-10-19T22:10:55.969Z"
+  },
+  "debug-session-1760911942513": {
+    "sessionId": "debug-session-1760911942513",
+    "blocks": {
+      "background": {
+        "premise": "Strangers are lured to a gothic manor with mysterious invitations, only to find themselves ensnared in a web of secrets and supernatural phenomena.",
+        "tone_rules": [
+          "Maintain an atmosphere of suspense and unease.",
+          "Emphasize the eerie and otherworldly nature of the manor.",
+          "Incorporate a sense of timelessness and mystery.",
+          "Highlight the isolation of the location.",
+          "Balance tension with moments of introspection."
+        ],
+        "stakes": [
+          "Uncover the truth behind the manor owner's disappearance.",
+          "Escape the manor's supernatural grip.",
+          "Prevent the malevolent force within from spreading.",
+          "Unravel personal secrets that link each guest to the manor.",
+          "Survive encounters with restless spirits."
+        ],
+        "mysteries": [
+          "The true fate of the vanished manor owner.",
+          "The origins and purpose of the mysterious invitations.",
+          "The nature of the mirrors and their powers.",
+          "What lies behind the locked doors.",
+          "The connection between the guests and the manor."
+        ],
+        "factions": [
+          "The Restless Spirits haunting the manor.",
+          "The Secret Society that once operated from the manor.",
+          "The Loyal Servants who remained long after the owner's disappearance.",
+          "The Guests, each with their own hidden agendas.",
+          "The Shadowy Entity manipulating events within the manor."
+        ],
+        "location_palette": [
+          "The Grand Foyer with its ominous chandelier.",
+          "The Library filled with arcane tomes and secrets.",
+          "The Mirror Hall where reflections do not match reality.",
+          "The Locked West Wing rumored to hold dark secrets.",
+          "The Overgrown Garden that hides ancient paths."
+        ],
+        "npc_roster_skeleton": [
+          "The Mysterious Butler who seems to know more than he reveals.",
+          "The Elusive Housemaid who whispers warnings to those who listen.",
+          "The Ghostly Child seeking lost family members.",
+          "The Eccentric Scholar obsessed with the manor's history.",
+          "The Shadowy Figure glimpsed only in mirrors."
+        ],
+        "motifs": [
+          "Mirrors reflecting hidden truths.",
+          "Keys and locks symbolizing secrets and revelations.",
+          "Candlelight casting both illumination and shadow.",
+          "Whispers echoing through empty halls.",
+          "Timepieces stopped at the same hour."
+        ],
+        "doNots": [
+          "Avoid clear-cut resolutions for every mystery.",
+          "Do not introduce modern technology into the manor.",
+          "Avoid overtly humorous elements that break tone.",
+          "Do not allow any character to easily escape the manor.",
+          "Avoid reducing supernatural elements to mere illusions."
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and interaction with the environment.",
+          "Promote collaborative puzzle-solving among players.",
+          "Facilitate character-driven narratives and backstory reveals.",
+          "Allow for tension-filled encounters with supernatural forces.",
+          "Balance player autonomy with narrative guidance."
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "characters": [
+          {
+            "name": "Eveline Ravenshade",
+            "role": "Wandering Scholar",
+            "race": "Human",
+            "class": "Wizard",
+            "personality": "Eveline is introspective and curious, often lost in thought, pondering the mysteries of the arcane. She displays a calm demeanor but is driven by an insatiable quest for knowledge.",
+            "motivation": "Driven by the desire to uncover the secrets of the manor and its supernatural phenomena.",
+            "connectionToStory": "Eveline received an invitation addressed to her late mentor, drawing her to the manor to understand its significance.",
+            "gmSecret": "Eveline's mentor was a member of the Secret Society that once operated from the manor.",
+            "potentialConflict": "Her obsession with uncovering the truth can lead to reckless decisions.",
+            "voiceTone": "Soft and deliberate, often pausing to consider her words.",
+            "inventoryHint": "An aged journal filled with cryptic notes and sketches of arcane symbols.",
+            "motifAlignment": [
+              "Mirrors reflecting hidden truths",
+              "Candlelight casting both illumination and shadow"
+            ],
+            "backgroundHistory": "Raised in a secluded village, Eveline was always fascinated by the arcane. Her mentor, a mysterious wizard, took her under his wing, teaching her the ways of magic. His sudden disappearance left her with more questions than answers, and when she found an invitation to the manor among his belongings, she knew she had to follow in his footsteps.",
+            "keyRelationships": [
+              "The Mysterious Butler who seems to know more than he reveals",
+              "The Eccentric Scholar obsessed with the manor's history"
+            ],
+            "flawOrWeakness": "Her pursuit of knowledge often blinds her to immediate dangers.",
+            "id": "char_1760911989975_ejstothnt"
+          },
+          {
+            "name": "Thorne Blackwood",
+            "role": "Mercenary Captain",
+            "race": "Half-Orc",
+            "class": "Fighter",
+            "personality": "Gruff and direct, Thorne is a man of few words, preferring action over lengthy discussions. He has a protective streak, especially towards those he considers allies.",
+            "motivation": "To protect the guests from the manor's dangers and find a way out.",
+            "connectionToStory": "Hired under mysterious circumstances to ensure the safety of the manor's guests.",
+            "gmSecret": "Thorne's past is tied to the manor through a cursed artifact he once acquired.",
+            "potentialConflict": "His distrust of magic users may cause friction with other party members.",
+            "voiceTone": "Gruff and direct, with a hint of impatience.",
+            "inventoryHint": "A rusted locket containing a faded photograph.",
+            "motifAlignment": [
+              "Keys and locks symbolizing secrets and revelations",
+              "Whispers echoing through empty halls"
+            ],
+            "backgroundHistory": "Growing up on the outskirts of a bustling city, Thorne quickly learned that strength and cunning were necessary for survival. His mercenary band provided him with purpose and camaraderie, but a fateful encounter with a cursed artifact brought misfortune upon them. Determined to lift the curse, he accepted the invitation, hoping the manor holds the answers he seeks.",
+            "keyRelationships": [
+              "The Loyal Servants who remained long after the owner's disappearance",
+              "A former mercenary comrade who vanished under mysterious circumstances"
+            ],
+            "flawOrWeakness": "His past failures haunt him, leading to moments of self-doubt.",
+            "id": "char_1760911989975_fo1tv1u1l"
+          },
+          {
+            "name": "Liora Willow",
+            "role": "Mystic Seer",
+            "race": "Elf",
+            "class": "Cleric",
+            "personality": "Liora is serene and mystical, often speaking in riddles and metaphors. She has an unwavering faith in the divine, believing in destiny and the interconnectedness of all things.",
+            "motivation": "To fulfill a prophecy that ties her fate to the manor and its inhabitants.",
+            "connectionToStory": "A vision revealed the manor as the place where her destiny would be realized.",
+            "gmSecret": "Liora's visions are sometimes manipulated by the Shadowy Entity.",
+            "potentialConflict": "Her cryptic nature can frustrate those seeking clear answers.",
+            "voiceTone": "Ethereal and melodic, with a soothing rhythm.",
+            "inventoryHint": "A silver key that glows faintly in the moonlight.",
+            "motifAlignment": [
+              "Candlelight casting both illumination and shadow",
+              "Timepieces stopped at the same hour"
+            ],
+            "backgroundHistory": "Liora grew up in a secluded forest community, revered as a seer destined to guide her people. Her visions, however, led her away from home, showing her glimpses of a shadowed manor and the role she must play in its fate. With faith as her guide, she embarked on a journey to fulfill the prophecy.",
+            "keyRelationships": [
+              "The Ghostly Child seeking lost family members",
+              "The Shadowy Figure glimpsed only in mirrors"
+            ],
+            "flawOrWeakness": "Her reliance on visions can cloud her judgment in critical moments.",
+            "id": "char_1760911989975_mw2rb5cpn"
+          },
+          {
+            "name": "Dorian Nightshade",
+            "role": "Rogue Investigator",
+            "race": "Tiefling",
+            "class": "Rogue",
+            "personality": "Dorian is charming and cunning, with a knack for uncovering secrets. He is driven by a personal code of justice, often bending the rules to achieve his goals.",
+            "motivation": "To solve the mystery of the manor owner's disappearance and claim a reward.",
+            "connectionToStory": "He was hired by a mysterious benefactor to investigate the manor's secrets.",
+            "gmSecret": "Dorian has a hidden connection to the Secret Society through a family member.",
+            "potentialConflict": "His pursuit of the truth may put him at odds with others' objectives.",
+            "voiceTone": "Smooth and persuasive, with a hint of mischief.",
+            "inventoryHint": "A set of lockpicks made from silver.",
+            "motifAlignment": [
+              "Keys and locks symbolizing secrets and revelations",
+              "Mirrors reflecting hidden truths"
+            ],
+            "backgroundHistory": "Born into a family with a history of scandal, Dorian learned early on how to navigate social intricacies and deceit. His talents as an investigator led him to success in uncovering hidden truths, but a personal vendetta against a shadowy organization has driven him to the manor, where he hopes to find answers and redemption.",
+            "keyRelationships": [
+              "The Elusive Housemaid who whispers warnings to those who listen",
+              "A former client who betrayed him in the past"
+            ],
+            "flawOrWeakness": "His desire for vengeance can cloud his judgment, leading to risky decisions.",
+            "id": "char_1760911989975_ak7anp4vh"
+          }
+        ],
+        "locked": false,
+        "version": 1760911989975
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:12:33.109Z"
+    },
+    "version": 2,
+    "createdAt": "2025-10-19T22:12:33.097Z",
+    "updatedAt": "2025-10-19T22:13:09.994Z"
+  },
+  "debug-session-1760912237043": {
+    "sessionId": "debug-session-1760912237043",
+    "blocks": {
+      "background": {
+        "premise": "Invited to a secluded gothic manor, strangers must unravel its secrets after discovering they are trapped within its eerie walls.",
+        "tone_rules": [
+          "Maintain a sense of foreboding and mystery.",
+          "Incorporate gothic horror elements.",
+          "Balance suspense with moments of introspection.",
+          "Use atmospheric descriptions to enhance immersion.",
+          "Emphasize the isolation of the manor."
+        ],
+        "stakes": [
+          "Unravel the manor's mysteries or remain trapped forever.",
+          "Avoid falling victim to the manor's supernatural dangers.",
+          "Discover the true intentions behind the invitations.",
+          "Navigate alliances and betrayals among the guests.",
+          "Resist the allure of the manor's dark temptations."
+        ],
+        "mysteries": [
+          "Why do the mirrors reveal more than just reflections?",
+          "Who is sending the invitations using the vanished owner's seal?",
+          "What happened to the manor's owner?",
+          "Why do the locked doors lead to unexpected places?",
+          "What secrets do the other guests harbor?"
+        ],
+        "factions": [
+          "The vanished owner's loyal servants, still lurking in the shadows.",
+          "A group of guests who wish to escape at all costs.",
+          "An entity that manipulates the manor's supernatural elements.",
+          "A secretive society with ties to the manor's history."
+        ],
+        "location_palette": [
+          "The grand ballroom filled with spectral echoes.",
+          "The library with tomes of forbidden knowledge.",
+          "The mirror hall where reflections deceive.",
+          "The overgrown garden with hidden paths.",
+          "The locked tower that stands ominously over the manor."
+        ],
+        "npc_roster_skeleton": [
+          "The elusive caretaker who knows more than he shares.",
+          "An eccentric historian obsessed with the manor's past.",
+          "A mysterious guest with their own hidden agenda.",
+          "The spectral apparition of the manor's owner.",
+          "A disoriented servant who claims to have seen the impossible."
+        ],
+        "motifs": [
+          "Reflections and duality.",
+          "Isolation and entrapment.",
+          "Secrets hidden in plain sight.",
+          "The passage of time and forgotten histories.",
+          "The interplay of light and shadow."
+        ],
+        "doNots": [
+          "Avoid straightforward resolutions to mysteries.",
+          "Do not introduce overly comedic elements.",
+          "Avoid modern technology references.",
+          "Do not dilute the gothic atmosphere.",
+          "Avoid simple good vs. evil narratives."
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and puzzle-solving.",
+          "Foster role-playing and character interaction.",
+          "Balance narrative with moments of tension and action.",
+          "Allow for multiple interpretations of events.",
+          "Emphasize ambiance and mood through description."
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "characters": [
+          {
+            "name": "Evelyn Thorne",
+            "role": "Wandering Scholar",
+            "race": "Human",
+            "class": "Wizard",
+            "personality": "Evelyn is contemplative and observant, often lost in thought as she connects dots others overlook. Her curiosity can occasionally lead her into dangerous situations, driven by a thirst for knowledge that borders on obsession.",
+            "motivation": "Evelyn seeks to discover the secrets of the manor, particularly the forbidden knowledge hidden within its walls, to further her own studies.",
+            "connectionToStory": "She received a mysterious invitation sealed with a sigil she recognized from an ancient tome, compelling her to accept the invitation.",
+            "gmSecret": "Evelyn once belonged to a secretive society that coveted the manor's rumored arcane library.",
+            "potentialConflict": "Her obsession with knowledge may lead her to make risky decisions, endangering herself and others.",
+            "voiceTone": "Soft and deliberate, with a hint of intrigue in her voice.",
+            "inventoryHint": "An aged journal filled with cryptic notes and sketches.",
+            "motifAlignment": [
+              "Secrets hidden in plain sight",
+              "The passage of time and forgotten histories"
+            ],
+            "backgroundHistory": "Born to a family of scholars, Evelyn's childhood was spent amidst dusty tomes and ancient manuscripts. A defining moment came when she deciphered a long-lost spell, which drew the attention of a clandestine group. Her pursuit of arcane knowledge led her to the manor, where she hopes to uncover secrets that have eluded her for years.",
+            "keyRelationships": [
+              "The elusive caretaker",
+              "An eccentric historian",
+              "A mysterious guest"
+            ],
+            "flawOrWeakness": "Her insatiable curiosity often blinds her to immediate dangers.",
+            "id": "char_1760912268255_255c9weip"
+          },
+          {
+            "name": "Gideon Blackwood",
+            "role": "Mercenary Captain",
+            "race": "Half-Orc",
+            "class": "Fighter",
+            "personality": "Gruff and direct, Gideon speaks with the authority of one who has seen many battles. He is fiercely protective of those he considers allies, yet wary of strangers and their intentions.",
+            "motivation": "Gideon attends the manor gathering to protect a wealthy patron who is also among the guests, driven by a sense of duty and the promise of a generous reward.",
+            "connectionToStory": "He was hired to ensure the safety of a guest, who is convinced the manor holds treasures worth any risk.",
+            "gmSecret": "Gideon is secretly investigating the disappearance of a friend who last visited the manor.",
+            "potentialConflict": "His loyalty to his patron might clash with the group's objectives, especially if their goals diverge.",
+            "voiceTone": "Gruff and direct, with an undercurrent of tension.",
+            "inventoryHint": "A rusted locket containing a faded photograph.",
+            "motifAlignment": [
+              "Isolation and entrapment",
+              "Reflections and duality"
+            ],
+            "backgroundHistory": "Gideon grew up in the harsh streets, learning to fight to survive. His skills earned him a place in a mercenary company, where he rose through the ranks. A loyal friend vanished after receiving an invitation to the manor, prompting Gideon to take on his current assignment, hoping to uncover the truth.",
+            "keyRelationships": [
+              "A mysterious guest",
+              "The vanished owner's loyal servants",
+              "The spectral apparition"
+            ],
+            "flawOrWeakness": "His stubbornness and adherence to duty can make him inflexible.",
+            "id": "char_1760912268255_skb7cnq4i"
+          },
+          {
+            "name": "Elara Moonshadow",
+            "role": "Rogue Adventurer",
+            "race": "Elf",
+            "class": "Rogue",
+            "personality": "Elara is quick-witted and resourceful, with an enigmatic charm that often puts others at ease. She is skilled at navigating social circles, using her allure to gather information.",
+            "motivation": "Elara seeks to uncover the identity of the person behind the invitations, believing it to be someone from her past.",
+            "connectionToStory": "The invitation bore the same seal as a letter she once received from a long-lost sibling.",
+            "gmSecret": "Elara is hiding a stolen artifact that she believes is connected to the manor's mysteries.",
+            "potentialConflict": "Her past as a thief might cause distrust among the other guests, especially if her secret is revealed.",
+            "voiceTone": "Playful and enigmatic, often weaving tales and half-truths.",
+            "inventoryHint": "A small, ornate dagger with a hidden compartment.",
+            "motifAlignment": [
+              "Reflections and duality",
+              "The interplay of light and shadow"
+            ],
+            "backgroundHistory": "Raised in a nomadic elven clan, Elara learned the art of stealth and deception from a young age. A rift with her family led her to a life of adventure and thievery. The invitation to the manor came with a familiar seal, reigniting her hope to reconnect with her estranged sibling.",
+            "keyRelationships": [
+              "A disoriented servant",
+              "The elusive caretaker",
+              "An eccentric historian"
+            ],
+            "flawOrWeakness": "Her tendency to withhold the truth can alienate potential allies.",
+            "id": "char_1760912268255_xgps77xks"
+          },
+          {
+            "name": "Lucian Graves",
+            "role": "Haunted Bard",
+            "race": "Half-Elf",
+            "class": "Bard",
+            "personality": "Lucian is melancholic and introspective, with a deep connection to the supernatural. His music often reflects the eerie beauty of the unknown, drawing others into his haunting melodies.",
+            "motivation": "Lucian is drawn to the manor by a vision of the spectral apparition, believing it holds the key to his mysterious past.",
+            "connectionToStory": "A ghostly figure appeared in his dreams, whispering secrets of the manor that he cannot ignore.",
+            "gmSecret": "Lucian's music is a conduit for the spirits, allowing him to communicate with the manor's restless souls.",
+            "potentialConflict": "His connection to the supernatural might lead others to distrust him, fearing what he might unknowingly reveal.",
+            "voiceTone": "Melancholic and melodic, with a hint of the ethereal.",
+            "inventoryHint": "A silver flute that emits an otherworldly tune.",
+            "motifAlignment": [
+              "The passage of time and forgotten histories",
+              "Isolation and entrapment"
+            ],
+            "backgroundHistory": "Lucian's childhood was marked by tragedy, losing his parents to a mysterious illness. Raised by a traveling minstrel, he found solace in music, which seemed to draw the spirits to him. A recurring vision led him to the manor, where he hopes to find answers to his past and the spectral figure haunting his dreams.",
+            "keyRelationships": [
+              "The spectral apparition of the manor's owner",
+              "The vanished owner's loyal servants",
+              "An eccentric historian"
+            ],
+            "flawOrWeakness": "His preoccupation with the supernatural often distracts him from the present.",
+            "id": "char_1760912268255_az1g4fz6e"
+          }
+        ],
+        "locked": false,
+        "version": 1760912268255
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:17:27.753Z"
+    },
+    "version": 2,
+    "createdAt": "2025-10-19T22:17:27.687Z",
+    "updatedAt": "2025-10-19T22:17:48.259Z"
+  },
+  "debug-session-1760912307801": {
+    "sessionId": "debug-session-1760912307801",
+    "blocks": {
+      "background": {
+        "premise": "Strangers are drawn to a gothic manor in the northern woods by mysterious invitations, only to find themselves ensnared in a labyrinth of secrets and supernatural phenomena.",
+        "tone_rules": [
+          "Maintain an atmosphere of suspense and mystery.",
+          "Focus on gothic horror elements.",
+          "Emphasize isolation and paranoia.",
+          "Use shadows and dim lighting to enhance eeriness.",
+          "Incorporate elements of the supernatural subtly."
+        ],
+        "stakes": [
+          "Unravel the manor's secrets before being consumed by them.",
+          "Survive encounters with supernatural entities.",
+          "Discover the true identity of the manor's missing owner.",
+          "Escape the manor's confining grasp.",
+          "Protect one's sanity against the haunting illusions."
+        ],
+        "mysteries": [
+          "Who sent the invitations bearing the vanished owner's seal?",
+          "What is the purpose of the mysterious mirrors throughout the manor?",
+          "Why do the locked doors lead to unexpected places?",
+          "What happened to the manor's owner years ago?",
+          "What is the source of the ghostly phenomena?"
+        ],
+        "factions": [
+          "The Guests: Strangers trying to uncover the manor's secrets.",
+          "The Manor Spirits: Ghostly apparitions haunting the manor.",
+          "The Loyal Servants: Mysterious staff still tending the manor.",
+          "The Order of the Mirror: A secretive cult with interests in the manor.",
+          "The Lost Souls: Previous victims of the manor's mysteries."
+        ],
+        "location_palette": [
+          "The Grand Hall: An imposing entry with high ceilings and dark wood.",
+          "The Mirror Gallery: A hallway lined with unsettling mirrors.",
+          "The Library: Filled with ancient tomes and hidden doorways.",
+          "The Abandoned Wing: A decaying section of the manor.",
+          "The Owner's Study: Sealed and filled with personal artifacts."
+        ],
+        "npc_roster_skeleton": [
+          "The Butler: A seemingly loyal servant with a hidden agenda.",
+          "The Ghost of Lady Eleanor: A spirit seeking peace.",
+          "The Mysterious Stranger: An enigmatic figure with knowledge of the manor.",
+          "The Groundskeeper: A reclusive figure with deep ties to the land.",
+          "The Mirror Artisan: A creator of the manor's strange mirrors."
+        ],
+        "motifs": [
+          "Reflections: Mirrors showing more than reality.",
+          "Isolation: The sense of being trapped and alone.",
+          "Secrets: Hidden truths waiting to be uncovered.",
+          "Decay: The fading grandeur of the once opulent manor.",
+          "Illusions: Reality often being deceiving."
+        ],
+        "doNots": [
+          "Avoid resolving all mysteries too quickly.",
+          "Do not introduce modern technology.",
+          "Avoid overly explicit horror; maintain subtlety.",
+          "Do not break the atmosphere with humor.",
+          "Avoid straightforward solutions to complex puzzles."
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and investigation.",
+          "Facilitate cooperation among players.",
+          "Reward creative problem-solving over combat.",
+          "Pace the revelation of mysteries.",
+          "Maintain tension and suspense throughout."
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "characters": [
+          {
+            "name": "Elara Thornfield",
+            "role": "Wandering Scholar",
+            "race": "Human",
+            "class": "Wizard",
+            "personality": "Elara is inquisitive and observant, always seeking to uncover the hidden truths of the world. Her curiosity often leads her into dangerous situations, but her intellect and calm demeanor help her navigate them.",
+            "motivation": "Elara is driven by an insatiable thirst for knowledge, particularly the arcane secrets rumored to be hidden within the manor.",
+            "connectionToStory": "Elara received a mysterious invitation bearing the seal of the vanished owner, promising insights into forgotten magical lore.",
+            "gmSecret": "Elara's ancestor was the original architect of the manor, who embedded a magical seal within its walls. This seal is the source of the supernatural phenomena plaguing the manor. Unbeknownst to her, only a blood descendant can either reinforce or break the seal.",
+            "potentialConflict": "Elara's relentless pursuit of knowledge can cause friction with others who prioritize safety over discovery.",
+            "voiceTone": "Soft and deliberate, with a hint of scholarly detachment.",
+            "inventoryHint": "An aged journal filled with cryptic notes and sketches.",
+            "motifAlignment": [
+              "Secrets",
+              "Reflections",
+              "Illusions"
+            ],
+            "backgroundHistory": "Raised in a family of scholars, Elara's fascination with the arcane blossomed early. A defining moment came when she discovered a hidden library in her family's estate, filled with tomes on forgotten magic. She now travels the land, drawn to places of mystery and power, leading her to the manor by unusual means.",
+            "keyRelationships": [
+              "The Mysterious Stranger: A fellow seeker of knowledge with whom she shares a cautious alliance",
+              "The Order of the Mirror: An enigmatic cult interested in her family's legacy",
+              "Her Mentor: An old scholar who warned her of the manor's dangers"
+            ],
+            "flawOrWeakness": "Her obsession with uncovering secrets blinds her to the immediate dangers around her.",
+            "id": "char_1760912341972_oofgenczy"
+          },
+          {
+            "name": "Gideon Blackwood",
+            "role": "Mercenary Captain",
+            "race": "Half-Orc",
+            "class": "Fighter",
+            "personality": "Gruff and direct, Gideon is a no-nonsense individual guided by a strong sense of duty. Though outwardly tough, he harbors a deep loyalty to those he respects.",
+            "motivation": "Gideon seeks to uncover the fate of his lost comrades, who vanished during an expedition to the manor years ago.",
+            "connectionToStory": "Gideon received an anonymous letter hinting that his missing comrades' fate is tied to the manor's mysteries.",
+            "gmSecret": "Gideon's former commander was secretly a member of the Order of the Mirror, using their mercenary band to further the cult's goals. Unbeknownst to Gideon, his own actions might inadvertently aid the cult's plans.",
+            "potentialConflict": "His past failures haunt him, and his drive for redemption can lead to reckless decisions.",
+            "voiceTone": "Gruff and direct, with a hint of military discipline.",
+            "inventoryHint": "An old, rusted locket containing a portrait of his missing comrades.",
+            "motifAlignment": [
+              "Isolation",
+              "Decay",
+              "Secrets"
+            ],
+            "backgroundHistory": "Gideon grew up in the rough streets of a bustling city, finding purpose and discipline in a mercenary band. A disastrous mission led his squad to the manor, where they disappeared without a trace. Haunted by their loss, Gideon now seeks answers, driven by a need to make amends for past failures.",
+            "keyRelationships": [
+              "The Groundskeeper: A figure with cryptic knowledge of the manor's past",
+              "The Loyal Servants: Mysterious staff who may hold clues to his comrades' fate",
+              "His Former Commander: A hidden link to the Order of the Mirror"
+            ],
+            "flawOrWeakness": "A deep-seated guilt over his lost comrades blinds him to the true intentions of those around him.",
+            "id": "char_1760912341972_t6agosn4m"
+          },
+          {
+            "name": "Lysandra Moonshadow",
+            "role": "Occultist",
+            "race": "Tiefling",
+            "class": "Warlock",
+            "personality": "Mysterious and enigmatic, Lysandra exudes an aura of quiet confidence. Her knowledge of the occult is vast, but she often speaks in riddles and metaphors.",
+            "motivation": "Lysandra seeks to commune with the spirits of the manor, hoping to unlock the secrets of her own mysterious heritage.",
+            "connectionToStory": "Drawn by the whispers of the manor's spirits, Lysandra believes they hold the key to understanding her own supernatural lineage.",
+            "gmSecret": "Lysandra's patron is none other than the spirit of Lady Eleanor, who seeks to escape her spectral prison. If freed, Eleanor could either become a powerful ally or a vengeful force against the living.",
+            "potentialConflict": "Her cryptic nature can alienate others, and her reliance on her patron could lead to unforeseen consequences.",
+            "voiceTone": "Soft and ethereal, with a tendency to speak in riddles.",
+            "inventoryHint": "An ornate mirror shard that seems to reflect otherworldly images.",
+            "motifAlignment": [
+              "Reflections",
+              "Supernatural",
+              "Illusions"
+            ],
+            "backgroundHistory": "Lysandra was raised by a coven of seers who taught her the ways of the occult. Her life changed when she made a pact with an unknown entity, granting her visions of a grand manor. Following these visions, she arrives at the manor, hoping to unravel the mysteries of her past.",
+            "keyRelationships": [
+              "The Ghost of Lady Eleanor: Her mysterious patron seeking freedom",
+              "The Manor Spirits: Entities she hopes to commune with",
+              "The Mirror Artisan: A potential ally in understanding her visions"
+            ],
+            "flawOrWeakness": "Her reliance on her patron blinds her to the intentions of others, potentially leading to betrayal.",
+            "id": "char_1760912341972_sne79fdd5"
+          },
+          {
+            "name": "Thaddeus Grey",
+            "role": "Reclusive Alchemist",
+            "race": "Gnome",
+            "class": "Artificer",
+            "personality": "Thaddeus is eccentric and reclusive, preferring the company of his experiments over people. He is meticulous and detail-oriented, always tinkering with his creations.",
+            "motivation": "Thaddeus is determined to uncover the alchemical secrets hidden within the manor, hoping they will aid his quest for eternal life.",
+            "connectionToStory": "Thaddeus received an anonymous invitation promising alchemical knowledge beyond his wildest dreams, tied to the manor's history.",
+            "gmSecret": "Thaddeus's experiments unknowingly tap into the manor's supernatural energies, creating unstable concoctions that could either aid or endanger the party. The manor itself seems to react to his presence, suggesting a deeper connection.",
+            "potentialConflict": "His obsession with alchemy can lead to dangerous and unforeseen consequences for himself and others.",
+            "voiceTone": "Quick and excitable, with a penchant for technical jargon.",
+            "inventoryHint": "A small vial of glowing liquid, its purpose unknown.",
+            "motifAlignment": [
+              "Decay",
+              "Illusions",
+              "Secrets"
+            ],
+            "backgroundHistory": "Growing up in a family of renowned alchemists, Thaddeus always sought to surpass his forebears. A failed experiment scarred him, driving him into seclusion. When he received the mysterious invitation, he saw it as a chance to redeem his failures and achieve immortality.",
+            "keyRelationships": [
+              "The Loyal Servants: Potential allies in his alchemical pursuits",
+              "The Order of the Mirror: A shadowy group interested in his experiments",
+              "His Former Apprentice: A bitter rival who seeks his downfall"
+            ],
+            "flawOrWeakness": "His single-minded focus on alchemy can alienate others and lead to reckless decisions.",
+            "id": "char_1760912341972_6hjw8fqg9"
+          }
+        ],
+        "locked": false,
+        "version": 1760912341972
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:18:39.282Z"
+    },
+    "version": 2,
+    "createdAt": "2025-10-19T22:18:39.258Z",
+    "updatedAt": "2025-10-19T22:19:01.977Z"
+  },
+  "debug-session-1760912363238": {
+    "sessionId": "debug-session-1760912363238",
+    "blocks": {
+      "background": {
+        "premise": "Strangers gather at a gothic manor in the northern woods, lured by mysterious invitations. They find themselves ensnared in a labyrinth of secrets where mirrors reveal more than reflections.",
+        "tone_rules": [
+          "Maintain a sense of suspense and intrigue.",
+          "Embrace a gothic and eerie atmosphere.",
+          "Balance mystery with moments of horror.",
+          "Encourage curiosity and exploration.",
+          "Keep the narrative unpredictable."
+        ],
+        "stakes": [
+          "Unravel the truth behind the manor's owner and their disappearance.",
+          "Escape the manor's supernatural grip.",
+          "Avoid the sinister fate that befell previous guests.",
+          "Decipher the manor's past to prevent personal doom.",
+          "Survive the dangerous entities lurking within."
+        ],
+        "mysteries": [
+          "The origin and purpose of the mysterious invitations.",
+          "The fate of the manor's enigmatic owner.",
+          "The true nature of the reflections in the mirrors.",
+          "The significance of the locked doors leading to new secrets.",
+          "The hidden history of the manor itself."
+        ],
+        "factions": [
+          "The Manor's Servants: Loyal to the vanished owner.",
+          "The Curious Guests: Strangers seeking answers.",
+          "The Lost Spirits: Past victims trapped within the manor.",
+          "The Shadowy Watchers: Entities observing from the dark.",
+          "The Portrait Council: Paintings that come to life."
+        ],
+        "location_palette": [
+          "The Enchanted Foyer: The entrance to mystery.",
+          "The Hall of Mirrors: A place of revelations and illusions.",
+          "The Cryptic Library: Holds forbidden knowledge.",
+          "The Forbidden Wing: Sealed and forgotten rooms.",
+          "The Moonlit Courtyard: A deceptive area of tranquility."
+        ],
+        "npc_roster_skeleton": [
+          "The Mysterious Butler: Knows more than he reveals.",
+          "Lady of Shadows: A ghostly figure seeking redemption.",
+          "The Enigmatic Gardener: Tends to the manor's secrets.",
+          "The Vanished Owner: Central to the manor's mystery.",
+          "The Painter: Artist who captures souls in portraits."
+        ],
+        "motifs": [
+          "Reflections and Duality",
+          "Secrets behind Locked Doors",
+          "Vanishing and Disappearance",
+          "Eerie Silence",
+          "Unseen Watchers"
+        ],
+        "doNots": [
+          "Avoid straightforward resolutions.",
+          "Do not introduce modern technology.",
+          "Avoid clear-cut heroes or villains.",
+          "Do not remove the sense of isolation.",
+          "Avoid overly comedic elements."
+        ],
+        "playstyle_implications": [
+          "Encourage exploratory gameplay.",
+          "Focus on role-playing and character interaction.",
+          "Facilitate puzzle-solving and clue-finding.",
+          "Allow for player-driven narrative choices.",
+          "Maintain a flexible approach to player actions."
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "characters": [
+          {
+            "name": "Eldrin Ashvale",
+            "role": "Wandering Scholar",
+            "race": "Half-Elf",
+            "class": "Wizard",
+            "personality": "Eldrin is curious to a fault, always seeking knowledge where others see peril. His calm demeanor hides a mind racing with questions and theories.",
+            "motivation": "To uncover the hidden truths of the manor and its mysterious owner.",
+            "connectionToStory": "Eldrin received an invitation with a cryptic note referencing a tome he once saw in the Cryptic Library.",
+            "gmSecret": "Eldrin's ancestor was the original architect of the manor, who imbued it with arcane secrets. His bloodline is key to unlocking the manor's true potential, a fact known only to the Shadowy Watchers.",
+            "potentialConflict": "His insatiable curiosity often leads him into dangerous situations, putting himself and others at risk.",
+            "voiceTone": "Soft and deliberate, with a hint of an academic accent.",
+            "inventoryHint": "An aged journal filled with sketches and notes on arcane symbols.",
+            "motifAlignment": [
+              "Reflections and Duality",
+              "Secrets behind Locked Doors"
+            ],
+            "backgroundHistory": "Raised in a secluded library by his scholarly mother, Eldrin spent his youth surrounded by tomes and scrolls. A chance encounter with a mysterious, enchanted mirror during his studies ignited his obsession with the arcane and the unknown.",
+            "keyRelationships": [
+              "The Enigmatic Gardener, who he suspects knows more about the manor's magical flora",
+              "An old mentor who vanished during a quest for forbidden knowledge"
+            ],
+            "flawOrWeakness": "His relentless pursuit of knowledge often blinds him to immediate dangers.",
+            "id": "char_1760912409640_1fqwq0dru"
+          },
+          {
+            "name": "Seraphina Mourn",
+            "role": "Vengeful Spirit",
+            "race": "Human (Revenant)",
+            "class": "Rogue",
+            "personality": "Seraphina is driven by an unquenchable thirst for vengeance, her every action calculated and intense. She harbors a deep-seated mistrust of others but is fiercely loyal to those she deems worthy.",
+            "motivation": "To find the entity responsible for her untimely death and reclaim her stolen soul.",
+            "connectionToStory": "She awoke in the manor's Moonlit Courtyard, her only memory a whisper of betrayal by the Portrait Council.",
+            "gmSecret": "Seraphina's death was orchestrated by the Manor's Servants, who feared her uncovering their dark rituals. Her spirit is bound to the manor until the truth is revealed.",
+            "potentialConflict": "Her singular focus on revenge might blind her to potential allies, causing friction within the group.",
+            "voiceTone": "Cold and cutting, with a hint of sorrowful melody.",
+            "inventoryHint": "A rusted locket containing a faded portrait of her former self.",
+            "motifAlignment": [
+              "Vanishing and Disappearance",
+              "Eerie Silence"
+            ],
+            "backgroundHistory": "Once a cunning thief, Seraphina's life ended abruptly when she attempted to steal a mysterious artifact from the manor. Now a revenant, she wanders in search of answers and retribution.",
+            "keyRelationships": [
+              "The Mysterious Butler, who she believes knows more than he lets on",
+              "The Lost Spirits, with whom she shares a bond of shared suffering"
+            ],
+            "flawOrWeakness": "Her inability to trust others makes collaboration difficult, isolating her in critical moments.",
+            "id": "char_1760912409640_gb2mlk87k"
+          },
+          {
+            "name": "Thorne Blackwood",
+            "role": "Reluctant Heir",
+            "race": "Human",
+            "class": "Fighter",
+            "personality": "Thorne is stoic and reserved, with a strong sense of duty overshadowed by a deep-seated fear of his family's legacy. He is protective, though his stern exterior often masks his compassion.",
+            "motivation": "To learn the truth about his family's connection to the manor and break the cycle of darkness.",
+            "connectionToStory": "Thorne's family crest appeared on the invitation he received, hinting at a forgotten bond to the manor.",
+            "gmSecret": "Thorne's lineage is cursed, his ancestors having made a pact with the manor's original owner. This curse ties him to the manor's fate, unbeknownst to him.",
+            "potentialConflict": "Struggles with the fear of his family's past actions catching up with him, potentially endangering those around him.",
+            "voiceTone": "Gruff and direct, with an underlying tone of reluctance.",
+            "inventoryHint": "A tarnished family crest ring linked to ancient oaths.",
+            "motifAlignment": [
+              "Unseen Watchers",
+              "Vanishing and Disappearance"
+            ],
+            "backgroundHistory": "Born into a family of noble repute, Thorne grew up listening to whispered tales of a dark past. A fateful encounter with a shadowy figure in the woods led him to the manor, where he hopes to find redemption for his kin.",
+            "keyRelationships": [
+              "The Painter, who seeks to capture his soul in a portrait",
+              "An estranged sibling who vanished after exploring the manor"
+            ],
+            "flawOrWeakness": "His fear of repeating his family's mistakes causes hesitation in critical moments.",
+            "id": "char_1760912409640_0z3g772d4"
+          },
+          {
+            "name": "Lilith Nightshade",
+            "role": "Occult Investigator",
+            "race": "Tiefling",
+            "class": "Warlock",
+            "personality": "Lilith is enigmatic and persuasive, often using her charm to uncover hidden truths. She possesses a keen intellect and a flair for the dramatic.",
+            "motivation": "To unravel the manor’s mysteries and harness its supernatural powers for her own ends.",
+            "connectionToStory": "Lilith's invitation bore the symbol of an ancient power she has long sought to commune with.",
+            "gmSecret": "Lilith was unknowingly chosen by the manor's Vanished Owner as a vessel for their return. Her presence is key to the owner's resurrection.",
+            "potentialConflict": "Her ambition for power might lead her to make dangerous alliances, risking the group's safety.",
+            "voiceTone": "Silken and beguiling, with an air of mystery.",
+            "inventoryHint": "A silver mirror imbued with faint arcane runes.",
+            "motifAlignment": [
+              "Reflections and Duality",
+              "Secrets behind Locked Doors"
+            ],
+            "backgroundHistory": "Born under an ominous star, Lilith was drawn to the occult from a young age. Her pact with a forgotten entity granted her powers beyond mortal comprehension, leading her to the manor in search of greater secrets.",
+            "keyRelationships": [
+              "Lady of Shadows, who offers cryptic guidance",
+              "A rival occultist seeking the same power"
+            ],
+            "flawOrWeakness": "Her ambition blinds her to the dangers of the arcane, often leading her into perilous situations.",
+            "id": "char_1760912409640_dhojyvmdw"
+          }
+        ],
+        "locked": false,
+        "version": 1760912409640
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 1,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:19:37.675Z"
+    },
+    "version": 2,
+    "createdAt": "2025-10-19T22:19:37.646Z",
+    "updatedAt": "2025-10-19T22:20:09.643Z"
+  },
+  "test-lock": {
+    "sessionId": "test-lock",
+    "blocks": {},
+    "locks": {
+      "characters": true
+    },
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 1,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:25:32.098Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T22:25:32.095Z",
+    "updatedAt": "2025-10-19T22:25:32.099Z"
+  },
+  "test-lock-2": {
+    "sessionId": "test-lock-2",
+    "blocks": {},
+    "locks": {
+      "characters": false
+    },
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:26:08.269Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T22:26:08.269Z",
+    "updatedAt": "2025-10-19T22:26:08.286Z"
+  },
+  "test-frontend-fix": {
+    "sessionId": "test-frontend-fix",
+    "blocks": {},
+    "locks": {
+      "characters": true
+    },
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 1,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:28:43.973Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T22:28:43.969Z",
+    "updatedAt": "2025-10-19T22:28:43.975Z"
+  },
+  "debug-session-1760912341972": {
+    "sessionId": "debug-session-1760912341972",
+    "blocks": {},
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-19T22:31:03.226Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-19T22:31:03.227Z",
+    "updatedAt": "2025-10-19T22:31:03.228Z"
   }
 }

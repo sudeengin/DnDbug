@@ -3,6 +3,7 @@ import {
   loadSessionContext, 
   updateSessionContext 
 } from './storage.js';
+import { invalidateMacroChain, invalidateAllScenes } from './lib/invalidation.js';
 
 // Helper function to create or get session context
 async function getOrCreateSessionContext(sessionId) {
@@ -13,11 +14,27 @@ async function getOrCreateSessionContext(sessionId) {
       sessionId,
       blocks: {},
       locks: {},
+      meta: {
+        backgroundV: 0,
+        charactersV: 0,
+        macroSnapshotV: 0,
+        updatedAt: new Date().toISOString()
+      },
       version: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
     await saveSessionContext(sessionId, sessionContext);
+  }
+  
+  // Ensure meta exists for existing sessions
+  if (!sessionContext.meta) {
+    sessionContext.meta = {
+      backgroundV: 0,
+      charactersV: 0,
+      macroSnapshotV: 0,
+      updatedAt: new Date().toISOString()
+    };
   }
   
   return sessionContext;
@@ -82,6 +99,10 @@ function mergeContextData(existing, newData, blockType) {
     
     case 'story_concept':
       // Story concept always has highest priority - replace completely
+      return { ...newData };
+    
+    case 'characters':
+      // Characters always has highest priority - replace completely
       return { ...newData };
     
     default:
@@ -180,6 +201,15 @@ function processContextForPrompt(sessionContext) {
     };
   }
 
+  // Process characters
+  if (blocks.characters) {
+    processed.characters = {
+      list: blocks.characters.list?.slice(0, 5) || [], // Limit to 5 characters
+      locked: blocks.characters.locked || false,
+      version: blocks.characters.version || 0
+    };
+  }
+
   return processed;
 }
 
@@ -198,9 +228,9 @@ export default async function handler(req, res) {
         });
       }
 
-      if (!['blueprint', 'player_hooks', 'world_seeds', 'style_prefs', 'custom', 'background', 'story_concept'].includes(blockType)) {
+      if (!['blueprint', 'player_hooks', 'world_seeds', 'style_prefs', 'custom', 'background', 'story_concept', 'characters'].includes(blockType)) {
         return res.status(400).json({ 
-          error: 'Invalid blockType. Must be one of: blueprint, player_hooks, world_seeds, style_prefs, custom, background, story_concept' 
+          error: 'Invalid blockType. Must be one of: blueprint, player_hooks, world_seeds, style_prefs, custom, background, story_concept, characters' 
         });
       }
 
@@ -214,6 +244,23 @@ export default async function handler(req, res) {
       sessionContext.blocks[blockType] = mergedData;
       sessionContext.version += 1;
       sessionContext.updatedAt = new Date().toISOString();
+      
+      // Bump version numbers for specific block types and invalidate downstream
+      if (blockType === 'background') {
+        sessionContext.meta.backgroundV = (sessionContext.meta.backgroundV || 0) + 1;
+        sessionContext.meta.updatedAt = new Date().toISOString();
+        
+        // Invalidate Macro Chain and all Scenes when Background changes
+        invalidateMacroChain(sessionContext, 'background');
+        invalidateAllScenes(sessionContext, 'background');
+      } else if (blockType === 'characters') {
+        sessionContext.meta.charactersV = (sessionContext.meta.charactersV || 0) + 1;
+        sessionContext.meta.updatedAt = new Date().toISOString();
+        
+        // Invalidate Macro Chain and all Scenes when Characters change
+        invalidateMacroChain(sessionContext, 'characters');
+        invalidateAllScenes(sessionContext, 'characters');
+      }
       
       // Save the updated context
       await updateSessionContext(sessionId, sessionContext);

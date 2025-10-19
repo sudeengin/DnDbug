@@ -1,6 +1,9 @@
 import OpenAI from 'openai';
-import { processContextForPrompt } from './context.js';
+import { buildPromptContext, checkMacroChainLocks } from './lib/promptContext.js';
+import { makeMacroSnapshotV } from './lib/versioning.js';
 import { saveChain } from './storage.js';
+import { getOrCreateSessionContext } from './context.js';
+import { saveSessionContext } from './storage.js';
 
 // Initialize OpenAI client lazily to ensure environment variables are loaded
 let openai = null;
@@ -37,46 +40,40 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Fetch session context if sessionId is provided
-    let contextMemory = {};
+    // Fetch session context and validate locks
+    let promptContext = null;
     if (sessionId) {
       try {
-        // Import the context module dynamically to avoid circular dependencies
-        const { getOrCreateSessionContext, processContextForPrompt } = await import('./context.js');
         const sessionContext = await getOrCreateSessionContext(sessionId);
-        contextMemory = processContextForPrompt(sessionContext);
         
-        console.log('Context memory loaded:', {
-          sessionId,
-          hasBlueprint: !!contextMemory.blueprint,
-          hasPlayerHooks: !!contextMemory.player_hooks,
-          hasWorldSeeds: !!contextMemory.world_seeds,
-          hasStylePrefs: !!contextMemory.style_prefs,
-          hasBackground: !!contextMemory.background
-        });
-
-        // Check if background is locked before proceeding
-        const bg = sessionContext?.blocks?.background;
-        const isLocked = sessionContext?.locks?.background === true;
-        if (!bg || !isLocked) {
-          console.log('Background lock check failed:', {
-            hasBackground: !!bg,
-            isLocked: isLocked,
-            locks: sessionContext?.locks,
-            sessionId
+        // Check lock requirements using centralized function
+        const lockCheck = checkMacroChainLocks(sessionContext);
+        if (!lockCheck.canGenerate) {
+          console.log('Lock check failed:', {
+            error: lockCheck.error,
+            sessionId,
+            locks: sessionContext?.locks
           });
-          res.status(409).json({ 
-            error: 'Background must be locked before generating the Macro Chain.' 
-          });
+          res.status(409).json({ error: lockCheck.error });
           return;
         }
 
+        // Build prompt context using centralized builder
+        promptContext = await buildPromptContext(sessionId);
+        
+        console.log('Prompt context loaded:', {
+          sessionId,
+          hasBackground: !!promptContext.background,
+          hasCharacters: !!promptContext.characters,
+          versions: promptContext.versions
+        });
+
         // Warn if background is missing
-        if (!contextMemory.background) {
+        if (!promptContext.background) {
           console.warn('BACKGROUND missing; proceeding with concept only');
         }
       } catch (error) {
-        console.warn('Failed to load context memory:', error.message);
+        console.warn('Failed to load prompt context:', error.message);
         // Continue without context if loading fails
       }
     }
@@ -90,10 +87,10 @@ All text output must be in English. Use clear, natural language suitable for tab
 
     // Build enhanced context memory block with background awareness
     let contextMemoryBlock = '';
-    if (Object.keys(contextMemory).length > 0) {
-      if (contextMemory.background) {
+    if (promptContext) {
+      if (promptContext.background) {
         // Format background context in a more readable way for the AI
-        const bg = contextMemory.background;
+        const bg = promptContext.background;
         console.log('Background object:', JSON.stringify(bg, null, 2));
         contextMemoryBlock = `BACKGROUND_CONTEXT:
 PREMISE: ${bg.premise || 'No premise provided'}
@@ -121,8 +118,31 @@ ${(bg.doNots || []).map(constraint => `- ${constraint}`).join('\n')}
 
 PLAYSTYLE (consider these implications):
 ${(bg.playstyle_implications || []).map(implication => `- ${implication}`).join('\n')}`;
+
+        // Add characters data if available
+        if (promptContext.characters && promptContext.characters.list) {
+          const characters = promptContext.characters.list;
+          contextMemoryBlock += `
+
+CHARACTERS (these PCs will be in the scenes):
+${characters.map(char => `- ${char.name} (${char.class || 'Unknown class'}): ${char.publicMotivation} - ${char.narrativeConflict}`).join('\n')}
+
+CHARACTER MOTIVATIONS (use these to shape scene objectives):
+${characters.map(char => `- ${char.name}: ${char.publicMotivation}`).join('\n')}
+
+CHARACTER CONFLICTS (these tensions should influence scene dynamics):
+${characters.map(char => `- ${char.name}: ${char.narrativeConflict}`).join('\n')}`;
+        }
+
+        // Add player count information
+        contextMemoryBlock += `
+
+PLAYER COUNT: ${promptContext.numberOfPlayers || 4}
+- Generate scenes that work well for a group of ${promptContext.numberOfPlayers || 4} players
+- Consider encounter complexity and dialogue spread appropriate for this party size
+- Balance scene beats to engage all ${promptContext.numberOfPlayers || 4} characters`;
       } else {
-        contextMemoryBlock = `BACKGROUND_CONTEXT: ${JSON.stringify(contextMemory, null, 2)}`;
+        contextMemoryBlock = `BACKGROUND_CONTEXT: ${JSON.stringify(promptContext, null, 2)}`;
       }
     } else {
       contextMemoryBlock = 'BACKGROUND_CONTEXT: No background context provided';
@@ -130,12 +150,12 @@ ${(bg.playstyle_implications || []).map(implication => `- ${implication}`).join(
 
     // Debug: Log the context being sent to AI
     console.log('=== CONTEXT BEING SENT TO AI ===');
-    console.log('Context Memory Keys:', Object.keys(contextMemory));
-    console.log('Background Present:', !!contextMemory.background);
-    if (contextMemory.background) {
-      console.log('Background Keys:', Object.keys(contextMemory.background));
-      console.log('Background Premise:', contextMemory.background.premise);
-      console.log('Background Tone Rules:', contextMemory.background.tone_rules);
+    console.log('Prompt Context Keys:', promptContext ? Object.keys(promptContext) : 'None');
+    console.log('Background Present:', !!promptContext?.background);
+    if (promptContext?.background) {
+      console.log('Background Keys:', Object.keys(promptContext.background));
+      console.log('Background Premise:', promptContext.background.premise);
+      console.log('Background Tone Rules:', promptContext.background.tone_rules);
     }
     console.log('Full Context Block:', contextMemoryBlock);
     console.log('================================');
@@ -263,9 +283,6 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
     // Also store in session context if sessionId is provided
     if (sessionId) {
       try {
-        const { getOrCreateSessionContext } = await import('./context.js');
-        const { saveSessionContext } = await import('./storage.js');
-        
         const sessionContext = await getOrCreateSessionContext(sessionId);
         
         // Initialize macroChains if it doesn't exist
@@ -277,6 +294,12 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
         sessionContext.macroChains[chainId] = macroChain;
         sessionContext.updatedAt = new Date().toISOString();
         
+        // Update macro snapshot version
+        if (promptContext) {
+          sessionContext.meta.macroSnapshotV = makeMacroSnapshotV(sessionContext.meta);
+          sessionContext.meta.updatedAt = new Date().toISOString();
+        }
+        
         // Save to storage
         await saveSessionContext(sessionId, sessionContext);
         
@@ -285,7 +308,8 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
           sessionId,
           hasMacroChains: !!sessionContext.macroChains,
           macroChainsKeys: Object.keys(sessionContext.macroChains || {}),
-          chainStatus: macroChain.status
+          chainStatus: macroChain.status,
+          macroSnapshotV: sessionContext.meta.macroSnapshotV
         });
       } catch (contextError) {
         console.warn('Failed to store chain in session context:', contextError);

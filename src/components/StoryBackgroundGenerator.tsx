@@ -13,6 +13,7 @@ interface StoryBackgroundGeneratorProps {
 
 export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChainGenerated, onLockToggle, loading = false, sessionId, isLocked = false }: StoryBackgroundGeneratorProps) {
   const [storyConcept, setStoryConcept] = useState('');
+  const [numberOfPlayers, setNumberOfPlayers] = useState<number>(4);
   const [background, setBackground] = useState<BackgroundData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +37,10 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
         // Load background
         if (response.data.blocks && response.data.blocks.background) {
           setBackground(response.data.blocks.background);
+          // Load numberOfPlayers from existing background
+          if (response.data.blocks.background.numberOfPlayers) {
+            setNumberOfPlayers(response.data.blocks.background.numberOfPlayers);
+          }
           onBackgroundGenerated?.(response.data.blocks.background);
         }
         
@@ -78,7 +83,10 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
 
       const response = await postJSON<GenerateBackgroundResponse>('/api/generate_background', {
         sessionId,
-        concept: storyConcept.trim()
+        concept: storyConcept.trim(),
+        meta: {
+          numberOfPlayers: numberOfPlayers
+        }
       });
 
       if (!response.ok) {
@@ -108,6 +116,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
 
   const handleClear = () => {
     setStoryConcept('');
+    setNumberOfPlayers(4);
     setBackground(null);
     setError(null);
   };
@@ -223,6 +232,24 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                 Story concept loaded from context. To modify, clear and re-enter.
               </p>
             )}
+          </div>
+
+          <div>
+            <label htmlFor="numberOfPlayers" className="block text-sm font-medium text-gray-700 mb-2">
+              Number of Players
+            </label>
+            <input
+              type="number"
+              id="numberOfPlayers"
+              min="3"
+              max="6"
+              value={numberOfPlayers}
+              onChange={(e) => setNumberOfPlayers(parseInt(e.target.value) || 4)}
+              placeholder="4"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-500"
+              disabled={isGenerating || loading}
+            />
+            <p className="mt-1 text-xs text-gray-500">How many players will participate? (3-6 recommended)</p>
           </div>
 
           <div className="flex space-x-3">

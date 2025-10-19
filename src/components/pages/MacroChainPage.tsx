@@ -137,7 +137,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
   };
 
   const handleGenerateChain = async () => {
-    if (!isLocked || generatingChain) return;
+    if (!isBackgroundLocked || !isCharactersLocked || generatingChain) return;
     
     try {
       setGeneratingChain(true);
@@ -239,9 +239,21 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
 
   // Compute state from fresh context
   const bg = context?.blocks?.background;
+  const characters = context?.blocks?.characters;
   const hasBg = !!bg;
-  const isLocked = context?.locks?.background === true;
+  const hasCharacters = !!characters && characters.characters && characters.characters.length > 0;
+  const isBackgroundLocked = context?.locks?.background === true;
+  const isCharactersLocked = context?.locks?.characters === true;
   const hasChain = chain.length > 0;
+  
+  // Version information
+  const backgroundV = context?.meta?.backgroundV || 0;
+  const charactersV = context?.meta?.charactersV || 0;
+  const macroSnapshotV = context?.meta?.macroSnapshotV || 0;
+  
+  // Check if macro chain is stale
+  const isMacroChainStale = hasChain && macroSnapshotV > 0 && 
+    (macroSnapshotV !== (backgroundV * 1000 + charactersV));
 
 
   // No Background → Empty state + CTA
@@ -265,23 +277,73 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
     );
   }
 
+  // No Characters → Empty state + CTA
+  if (!hasCharacters) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Macro Chain</h2>
+            <p className="text-gray-600">Plan your story sequence and scene flow.</p>
+          </div>
+        </div>
+        
+        <EmptyState
+          title="No Characters yet"
+          description="Generate and lock Characters to create a Macro Chain."
+          actionLabel="Go to Characters"
+          onAction={() => navigateToTab(sessionId, 'characters')}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Macro Chain</h2>
           <p className="text-gray-600">Plan your story sequence and scene flow.</p>
+          {/* Version indicators */}
+          <div className="flex items-center space-x-2 mt-2">
+            <Badge variant="outline">Background v{backgroundV}</Badge>
+            <Badge variant="outline">Characters v{charactersV}</Badge>
+            {hasChain && (
+              <Badge variant="outline">Macro v{Math.floor(macroSnapshotV / 1000)}.{macroSnapshotV % 1000}</Badge>
+            )}
+          </div>
         </div>
         <div className="flex items-center space-x-2">
           {hasChain && (
-            <Badge variant="generated">Generated</Badge>
+            <Badge variant={isMacroChainStale ? "destructive" : "generated"}>
+              {isMacroChainStale ? "Needs Regeneration" : "Generated"}
+            </Badge>
           )}
         </div>
       </div>
 
       <div className="space-y-4">
+        {/* Stale context warning */}
+        {isMacroChainStale && (
+          <Alert variant="destructive">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">Context has changed — regenerate Macro Chain.</h3>
+                <p className="text-sm text-red-700 mt-1">
+                  Background or Characters were updated. The current Macro Chain is based on outdated context.
+                </p>
+              </div>
+            </div>
+          </Alert>
+        )}
+
         {/* Background not locked → Yellow banner + disabled button */}
-        {!isLocked && (
+        {!isBackgroundLocked && (
           <Alert variant="warning">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -296,10 +358,26 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
           </Alert>
         )}
 
+        {/* Characters not locked → Yellow banner + disabled button */}
+        {!isCharactersLocked && (
+          <Alert variant="warning">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-yellow-800">Characters are not locked — lock them first.</h3>
+              </div>
+            </div>
+          </Alert>
+        )}
+
         {/* Create Macro Chain Button */}
         <Button 
           onClick={handleGenerateChain} 
-          disabled={!isLocked || generatingChain}
+          disabled={!isBackgroundLocked || !isCharactersLocked || generatingChain}
           className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {generatingChain ? (
@@ -351,9 +429,9 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Macro Chain Generated</h3>
               <p className="text-gray-600 mb-4">
-                {isLocked 
+                {isBackgroundLocked && isCharactersLocked
                   ? "Click 'Create Macro Chain' above to generate your story scenes."
-                  : "Lock your background first, then create your macro chain."
+                  : "Lock your background and characters first, then create your macro chain."
                 }
               </p>
             </div>

@@ -11,6 +11,32 @@ export interface Playstyle {
   improv?: boolean;
 }
 
+export interface Character {
+  id: string;
+  name: string;
+  role: string;
+  race: string;
+  class: string;
+  personality: string; // 2–3 sentences
+  motivation: string; // what drives them in the story
+  connectionToStory: string; // direct link to background
+  gmSecret: string; // hidden truth or past connection
+  potentialConflict: string; // internal or external tension
+  voiceTone: string; // how they speak or behave
+  inventoryHint: string; // small symbolic item
+  motifAlignment: string[]; // motifs from background
+  backgroundHistory: string; // full backstory paragraph (1–2 short paragraphs)
+  keyRelationships: string[]; // other people, factions, or NPCs they know
+  flawOrWeakness: string; // defining flaw, vice, or vulnerability
+}
+
+export interface CharactersBlock {
+  characters: Character[]; // 3–5
+  locked: boolean;
+  lockedAt?: string;
+  version: number;
+}
+
 export interface MacroChain {
   chainId: string;
   scenes: MacroScene[];
@@ -93,6 +119,12 @@ export interface SceneDetail {
   version: number;
   lockedAt?: string;
   lastUpdatedAt: string;
+  uses?: {
+    backgroundV: number;
+    charactersV: number;
+    prevSceneV: Record<string, number>;
+    version: number;
+  };
   // Additional scene detail fields
   openingStateAndTrigger?: {
     state: string;
@@ -311,12 +343,24 @@ export interface SessionContext {
     custom?: Record<string, any>;
     background?: BackgroundData;
     story_concept?: StoryConcept;
+    characters?: CharactersBlock;
+    story_facts?: any[];
+    world_state?: Record<string, any>;
   };
   locks?: {
     [key: string]: boolean;
   };
+  meta?: {
+    backgroundV: number;
+    charactersV: number;
+    macroSnapshotV?: number;
+    updatedAt: string;
+  };
   version: number;
   updatedAt: string;
+  createdAt?: string;
+  sceneDetails?: Record<string, SceneDetail>;
+  macroChains?: Record<string, MacroChain>;
 }
 
 export interface BackgroundData {
@@ -334,7 +378,7 @@ export interface BackgroundData {
 
 export interface ContextAppendRequest {
   sessionId: string;
-  blockType: 'blueprint' | 'player_hooks' | 'world_seeds' | 'style_prefs' | 'custom' | 'background' | 'story_concept';
+  blockType: 'blueprint' | 'player_hooks' | 'world_seeds' | 'style_prefs' | 'custom' | 'background' | 'story_concept' | 'characters';
   data: any;
 }
 

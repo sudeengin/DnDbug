@@ -12,6 +12,7 @@ interface BackgroundData {
   motifs: string[];
   doNots: string[];
   playstyle_implications: string[];
+  numberOfPlayers?: number;
 }
 
 interface BackgroundPanelProps {
@@ -285,6 +286,22 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
                       />
                     </div>
                     <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Number of Players</label>
+                      <input
+                        type="number"
+                        min="3"
+                        max="6"
+                        value={editingBackground?.numberOfPlayers || 4}
+                        onChange={(e) => setEditingBackground({
+                          ...editingBackground!,
+                          numberOfPlayers: parseInt(e.target.value) || 4
+                        })}
+                        placeholder="4"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">How many players will participate? (3-6 recommended)</p>
+                    </div>
+                    <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Tone Rules (one per line)</label>
                       <textarea
                         value={editingBackground?.tone_rules?.join('\n') || ''}
@@ -401,6 +418,11 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <h4 className="text-md font-semibold text-blue-900 mb-2">Premise</h4>
                   <p className="text-blue-800">{background.premise}</p>
+                </div>
+
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="text-md font-semibold text-green-900 mb-2">Number of Players</h4>
+                  <p className="text-green-800">{background.numberOfPlayers || 4} players</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
