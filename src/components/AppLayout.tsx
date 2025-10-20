@@ -29,6 +29,8 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
     const urlSessionId = getSessionIdFromUrl();
     const urlTab = getTabFromUrl();
     
+    console.log('AppLayout sessionId from URL:', urlSessionId);
+    
     if (urlSessionId) {
       setSessionId(urlSessionId);
       setActiveTab(urlTab);
@@ -191,11 +193,30 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
               <TabsTrigger value="scenes" className="px-6 py-4">
                 <div className="flex items-center space-x-2">
                   <span>Scenes</span>
-                  {context?.blocks.story_facts && context.blocks.story_facts.length > 0 ? (
-                    <div className="w-2 h-2 rounded-full bg-yellow-400" title="Scenes generated" />
-                  ) : (
-                    <div className="w-2 h-2 rounded-full bg-gray-300" title="No scenes yet" />
-                  )}
+                  {(() => {
+                    // Check if we have scenes and their lock status
+                    const macroChain = context?.blocks.custom?.macroChain;
+                    const hasScenes = macroChain?.scenes && macroChain.scenes.length > 0;
+                    const hasSceneDetails = context?.sceneDetails && Object.keys(context.sceneDetails).length > 0;
+                    
+                    if (!hasScenes) {
+                      return <div className="w-2 h-2 rounded-full bg-gray-300" title="No scenes yet" />;
+                    }
+                    
+                    if (hasSceneDetails) {
+                      // Check if any scenes are locked
+                      const sceneDetails = context.sceneDetails;
+                      const hasLockedScenes = Object.values(sceneDetails).some((detail: any) => detail.status === 'Locked');
+                      
+                      if (hasLockedScenes) {
+                        return <div className="w-2 h-2 rounded-full bg-green-500" title="Scenes locked (finalized)" />;
+                      } else {
+                        return <div className="w-2 h-2 rounded-full bg-yellow-400" title="Scenes generated (not locked)" />;
+                      }
+                    } else {
+                      return <div className="w-2 h-2 rounded-full bg-yellow-400" title="Scenes generated" />;
+                    }
+                  })()}
                 </div>
               </TabsTrigger>
               <TabsTrigger value="context" className="px-6 py-4">

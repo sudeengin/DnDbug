@@ -13,7 +13,8 @@ const useAI = process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.trim() !=
 console.log('useAI:', useAI);
 
 if (!useAI) {
-  console.log('✅ Should use mock data');
+  console.log('❌ OpenAI API key is required for the system to function');
+  console.log('   Please set OPENAI_API_KEY in your .env.local file');
 } else {
-  console.log('❌ Should use AI');
+  console.log('✅ OpenAI API key is configured - system will use AI generation');
 }

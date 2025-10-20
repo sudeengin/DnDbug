@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { postJSON } from '../../lib/api';
+import { postJSON, getJSON } from '../../lib/api';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
 import CharactersTable from '../CharactersTable';
 import CharacterForm from '../CharacterForm';
@@ -25,12 +25,26 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   const isBackgroundLocked = context?.locks?.background === true;
   const hasBackground = !!context?.blocks?.background;
 
-  // Load characters on mount
+  // Load context and characters on mount
   useEffect(() => {
+    if (sessionId && !context) {
+      fetchContext();
+    }
     if (sessionId) {
       loadCharacters();
     }
   }, [sessionId]);
+
+  const fetchContext = async () => {
+    try {
+      const response = await getJSON<{ ok: boolean; data: SessionContext | null }>(`/api/context/get?sessionId=${sessionId}`);
+      if (response.ok && response.data) {
+        onContextUpdate(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch context:', error);
+    }
+  };
 
   const loadCharacters = async () => {
     try {
@@ -38,7 +52,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       const data = await response.json();
       
       if (data.ok) {
-        setCharacters(data.characters || []);
+        setCharacters(data.list || []);
         setIsLocked(data.locked || false);
       } else {
         setError(data.error || 'Failed to load characters');
@@ -62,13 +76,13 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       const response = await postJSON('/api/characters/generate', { sessionId });
       
       if (response.ok) {
-        setCharacters(response.characters || []);
+        setCharacters(response.list || []);
         setIsLocked(false);
         // Refresh context
         if (context) {
           const updatedContext = { ...context };
           updatedContext.blocks.characters = {
-            list: response.characters || [],
+            list: response.list || [],
             locked: false,
             version: Date.now()
           };
@@ -136,14 +150,14 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       });
       
       if (response.ok) {
-        setCharacters(response.characters);
+        setCharacters(response.list);
         setShowForm(false);
         setEditingCharacter(null);
         // Refresh context
         if (context) {
           const updatedContext = { ...context };
           if (updatedContext.blocks.characters) {
-            updatedContext.blocks.characters.characters = response.characters;
+            updatedContext.blocks.characters.list = response.list;
             updatedContext.blocks.characters.version = Date.now();
           }
           onContextUpdate(updatedContext);

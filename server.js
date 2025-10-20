@@ -71,171 +71,79 @@ Return only valid JSON.`;
   }
 }
 
-// Function to generate dynamic scenes based on concept
+// Function to generate dynamic scenes based on concept using AI
 async function generateDynamicScenes(concept) {
-  const conceptLower = concept.toLowerCase();
   const timestamp = Date.now();
   
-  // Try to extract keywords using AI first
-  console.log('🔍 Starting keyword extraction for concept:', concept.substring(0, 50) + '...');
-  const extractedKeywords = await extractStoryKeywords(concept);
-  console.log('✅ Extracted keywords:', extractedKeywords);
-  
-  // Multiple template sets for variety
-  const allTemplates = [
-    // Forest templates
-    [
-      { title: 'The Whispering Grove', objective: 'Discover the source of the ancient whispers' },
-      { title: 'The Guardian Trees', objective: 'Navigate through the protective forest guardians' },
-      { title: 'The Heart of the Forest', objective: 'Reach the central clearing where the oldest tree stands' },
-      { title: 'The Ancient Secret', objective: 'Uncover the hidden knowledge within the tree' },
-      { title: 'The Forest\'s Choice', objective: 'Decide whether to preserve or share the forest\'s secret' }
-    ],
-    // Dungeon templates
-    [
-      { title: 'The Cave Entrance', objective: 'Find and enter the mysterious cave system' },
-      { title: 'The Ancient Halls', objective: 'Navigate through the crumbling underground corridors' },
-      { title: 'The Guardian Chamber', objective: 'Face the ancient guardian of the dungeon' },
-      { title: 'The Hidden Vault', objective: 'Discover the secret treasure chamber' },
-      { title: 'The Escape Route', objective: 'Find a way out before the dungeon collapses' }
-    ],
-    // Castle templates
-    [
-      { title: 'The Castle Gates', objective: 'Gain entry to the heavily guarded fortress' },
-      { title: 'The Great Hall', objective: 'Navigate the grand halls and avoid detection' },
-      { title: 'The Throne Room', objective: 'Confront the ruler or discover their fate' },
-      { title: 'The Secret Passage', objective: 'Find the hidden passage to the treasure' },
-      { title: 'The Final Choice', objective: 'Decide the fate of the kingdom' }
-    ],
-    // City templates
-    [
-      { title: 'The City Gates', objective: 'Enter the bustling city and gather information' },
-      { title: 'The Market Square', objective: 'Investigate the rumors and find allies' },
-      { title: 'The Noble District', objective: 'Navigate the political landscape of the upper class' },
-      { title: 'The Underground', objective: 'Discover the city\'s hidden secrets' },
-      { title: 'The Final Showdown', objective: 'Confront the mastermind behind the plot' }
-    ],
-    // Sea templates
-    [
-      { title: 'The Harbor', objective: 'Board the ship and set sail on the adventure' },
-      { title: 'The Open Sea', objective: 'Navigate through treacherous waters and storms' },
-      { title: 'The Mysterious Island', objective: 'Discover the hidden island and its secrets' },
-      { title: 'The Ancient Temple', objective: 'Explore the underwater temple ruins' },
-      { title: 'The Return Journey', objective: 'Make it back home with the treasure' }
-    ],
-    // Mystery/Investigation templates
-    [
-      { title: 'The Gathering', objective: 'Meet the other characters and establish relationships' },
-      { title: 'The First Clue', objective: 'Discover the initial evidence that starts the investigation' },
-      { title: 'The Deeper Mystery', objective: 'Uncover more complex layers of the conspiracy' },
-      { title: 'The Revelation', objective: 'Learn the truth behind the mysterious events' },
-      { title: 'The Resolution', objective: 'Confront the mastermind and resolve the conflict' }
-    ],
-    // Horror templates
-    [
-      { title: 'The Arrival', objective: 'Enter the haunted location and sense something is wrong' },
-      { title: 'The First Encounter', objective: 'Experience the first supernatural phenomenon' },
-      { title: 'The Investigation', objective: 'Search for clues about the haunting\'s origin' },
-      { title: 'The Confrontation', objective: 'Face the source of the supernatural threat' },
-      { title: 'The Escape', objective: 'Survive and escape from the haunted location' }
-    ],
-    // Adventure templates
-    [
-      { title: 'The Call to Adventure', objective: 'Receive the mission and gather your party' },
-      { title: 'The Journey Begins', objective: 'Start the quest and face initial challenges' },
-      { title: 'The Trials', objective: 'Overcome major obstacles and gain experience' },
-      { title: 'The Climax', objective: 'Face the ultimate challenge or antagonist' },
-      { title: 'The Return', objective: 'Complete the quest and return with rewards' }
-    ]
-  ];
-  
-  // Determine which template to use based on extracted keywords or fallback to concept analysis
-  let templateIndex = 0;
-  
-  if (extractedKeywords) {
-    // Use AI-extracted keywords for better matching
-    const themes = extractedKeywords.themes || [];
-    const genre = extractedKeywords.genre || '';
-    const keywords = extractedKeywords.keywords || [];
-    const mood = extractedKeywords.mood || '';
-    
-    console.log('🎯 Template selection - Themes:', themes, 'Genre:', genre, 'Keywords:', keywords);
-    
-    // Check themes and genre for template selection
-    if (themes.some(theme => ['horror', 'mystery', 'supernatural'].includes(theme.toLowerCase())) || 
-        genre.toLowerCase().includes('horror') || 
-        keywords.some(k => ['haunted', 'ghost', 'supernatural', 'scary', 'spooky'].includes(k.toLowerCase()))) {
-      templateIndex = 6; // Horror template
-      console.log('🎭 Selected HORROR template (index 6)');
-    } else if (themes.some(theme => ['mystery', 'investigation'].includes(theme.toLowerCase())) || 
-               keywords.some(k => ['mystery', 'investigation', 'detective', 'conspiracy', 'strangers'].includes(k.toLowerCase()))) {
-      templateIndex = 5; // Mystery template
-      console.log('🔍 Selected MYSTERY template (index 5)');
-    } else if (keywords.some(k => ['forest', 'wood', 'tree', 'grove'].includes(k.toLowerCase()))) {
-      templateIndex = 0; // Forest template
-    } else if (keywords.some(k => ['dungeon', 'cave', 'underground', 'tunnel'].includes(k.toLowerCase()))) {
-      templateIndex = 1; // Dungeon template
-    } else if (keywords.some(k => ['castle', 'palace', 'fortress', 'tower'].includes(k.toLowerCase()))) {
-      templateIndex = 2; // Castle template
-    } else if (keywords.some(k => ['city', 'town', 'village', 'street'].includes(k.toLowerCase()))) {
-      templateIndex = 3; // City template
-    } else if (keywords.some(k => ['sea', 'ocean', 'ship', 'water'].includes(k.toLowerCase()))) {
-      templateIndex = 4; // Sea template
-    } else {
-      // Use timestamp to randomly select a template for variety
-      templateIndex = Math.floor(Math.random() * allTemplates.length);
-    }
-  } else {
-    // Fallback to original keyword matching if AI extraction fails
-    if (conceptLower.includes('horror') || conceptLower.includes('haunted') || conceptLower.includes('ghost') || conceptLower.includes('supernatural') || conceptLower.includes('scary') || conceptLower.includes('mansion') || conceptLower.includes('spooky')) {
-      templateIndex = 6;
-    } else if (conceptLower.includes('forest') || conceptLower.includes('wood') || conceptLower.includes('tree') || conceptLower.includes('grove')) {
-      templateIndex = 0;
-    } else if (conceptLower.includes('dungeon') || conceptLower.includes('cave') || conceptLower.includes('underground') || conceptLower.includes('tunnel')) {
-      templateIndex = 1;
-    } else if (conceptLower.includes('castle') || conceptLower.includes('palace') || conceptLower.includes('fortress') || conceptLower.includes('tower')) {
-      templateIndex = 2;
-    } else if (conceptLower.includes('city') || conceptLower.includes('town') || conceptLower.includes('village') || conceptLower.includes('street')) {
-      templateIndex = 3;
-    } else if (conceptLower.includes('sea') || conceptLower.includes('ocean') || conceptLower.includes('ship') || conceptLower.includes('water')) {
-      templateIndex = 4;
-    } else if (conceptLower.includes('mystery') || conceptLower.includes('investigation') || conceptLower.includes('detective') || conceptLower.includes('strangers') || conceptLower.includes('conspiracy')) {
-      templateIndex = 5;
-    } else {
-      // Use timestamp to randomly select a template for variety
-      templateIndex = Math.floor(Math.random() * allTemplates.length);
-    }
+  try {
+    const openai = new (await import('openai')).default({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const prompt = `Generate 5-6 scenes for a D&D story based on this concept. Each scene should have a compelling title and clear objective.
+
+Story Concept: "${concept}"
+
+Return a JSON array with this exact structure:
+[
+  {
+    "title": "Scene Title",
+    "objective": "What the players need to accomplish in this scene"
   }
-  
-  const sceneTemplates = allTemplates[templateIndex];
-  
-  // Add randomness to make each generation unique
-  const randomSuffixes = ['Ancient', 'Mysterious', 'Forgotten', 'Hidden', 'Sacred', 'Cursed', 'Lost', 'Legendary', 'Enchanted', 'Dark'];
-  const randomSuffix = randomSuffixes[Math.floor(Math.random() * randomSuffixes.length)];
-  
-  // Generate scenes with dynamic IDs and variations
-  return sceneTemplates.map((template, index) => {
-    // Add random variations to some scenes
-    const shouldVary = Math.random() < 0.3; // 30% chance of variation
-    const variationIndex = Math.floor(Math.random() * 3); // Which scene to vary
-    
-    let finalTitle = template.title;
-    let finalObjective = template.objective;
-    
-    if (shouldVary && index === variationIndex) {
-      finalTitle = `${randomSuffix} ${template.title}`;
+]
+
+Requirements:
+- Generate exactly 5-6 scenes
+- Each scene should build upon the previous one
+- Create a logical narrative progression
+- Make titles evocative and engaging
+- Make objectives clear and actionable
+- Ensure scenes are appropriate for the story concept
+- Vary the types of challenges (social, exploration, combat, investigation, etc.)
+
+Return only valid JSON.`;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'You are a D&D story expert. Generate compelling scenes that create engaging narratives for tabletop roleplaying games.' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.8,
+    });
+
+    const responseText = completion.choices[0]?.message?.content;
+    if (!responseText) {
+      throw new Error('No response from OpenAI');
     }
-    
-    return {
-      id: `scene_${index + 1}_${timestamp}_${Math.random().toString(36).substr(2, 6)}`,
-      order: index + 1,
-      title: finalTitle,
-      objective: finalObjective
-    };
-  });
+
+    // Parse the JSON response
+    try {
+      const cleaned = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const scenes = JSON.parse(cleaned);
+      
+      if (!Array.isArray(scenes)) {
+        throw new Error('Response is not an array');
+      }
+      
+      // Generate scenes with dynamic IDs
+      return scenes.map((scene, index) => ({
+        id: `scene_${index + 1}_${timestamp}_${Math.random().toString(36).substr(2, 6)}`,
+        order: index + 1,
+        title: scene.title,
+        objective: scene.objective
+      }));
+    } catch (parseError) {
+      console.error('Failed to parse scene generation response:', parseError);
+      throw new Error('Invalid response format from AI');
+    }
+  } catch (error) {
+    console.error('Error in AI scene generation:', error);
+    throw new Error('Failed to generate scenes using AI');
+  }
 }
 
-// Mock API endpoints for local development
+// API endpoints for local development
 // Import the proper generate_chain handler - use dynamic import to avoid caching
 app.post('/api/generate_chain', async (req, res) => {
   const { default: handler } = await import('./api/generate_chain.js?' + Date.now());
@@ -261,16 +169,11 @@ app.post('/api/update_chain', async (req, res) => {
       }
     }
 
-    // If not found in session context, create a mock chain
+    // If not found in session context, return error
     if (!chain) {
-      chain = {
-        chainId,
-        scenes: [],
-        status: 'Edited',
-        version: 1,
-        lastUpdatedAt: new Date().toISOString(),
-        meta: {}
-      };
+      return res.status(404).json({ 
+        error: `Chain ${chainId} not found. Please generate a chain first.` 
+      });
     }
 
     // Process each edit
@@ -366,132 +269,31 @@ app.post('/api/update_chain', async (req, res) => {
 // Scene Detail Generation endpoint
 app.post('/api/generate_detail', async (req, res) => {
   try {
+    console.log('Generate detail API called with:', {
+      sessionId: req.body.sessionId,
+      sceneId: req.body.sceneId,
+      hasSessionId: !!req.body.sessionId,
+      bodyKeys: Object.keys(req.body)
+    });
+    
     const { sceneId, macroScene, effectiveContext } = req.body;
 
     if (!sceneId || !macroScene || !effectiveContext) {
       return res.status(400).json({ error: 'sceneId, macroScene, and effectiveContext are required' });
     }
 
-    // Check if we should use AI or mock data
-    const useAI = process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.trim() !== '';
-    
-    if (!useAI) {
-      console.log('No OpenAI API key found, using mock data for development');
-      
-      // Mock response for local development
-      const mockSceneDetail = {
-        sceneId,
-        title: macroScene.title,
-        objective: macroScene.objective,
-        keyEvents: [
-          'Players arrive at the scene',
-          'Initial environmental observation',
-          'First interaction or discovery'
-        ],
-        revealedInfo: [
-          'Scene-specific information revealed',
-          'Clues discovered during exploration'
-        ],
-        stateChanges: {
-          scene_visited: true,
-          time_elapsed: '1 hour',
-          ...effectiveContext.stateChanges
-        },
-        contextOut: {
-          keyEvents: [
-            'Scene completed successfully',
-            'Key decisions made by players'
-          ],
-          revealedInfo: [
-            'New information about the world',
-            'Important plot revelations'
-          ],
-          stateChanges: {
-            trust_level_host: effectiveContext.stateChanges?.trust_level_host || 0,
-            environmental_state: 'modified',
-            scene_completion: true
-          },
-          npcRelationships: effectiveContext.npcRelationships || {},
-          environmentalState: effectiveContext.environmentalState || {},
-          plotThreads: effectiveContext.plotThreads || [],
-          playerDecisions: effectiveContext.playerDecisions || []
-        },
-        openingStateAndTrigger: {
-          state: 'The scene begins with players entering the area',
-          trigger: 'Players approach the designated location'
-        },
-        environmentAndSensory: {
-          visual: ['Atmospheric visual elements'],
-          auditory: ['Ambient sounds'],
-          olfactory: ['Environmental smells'],
-          tactile_or_thermal: ['Physical sensations'],
-          other: ['Other sensory details']
-        },
-        epicIntro: 'An epic introduction to the scene that sets the mood and atmosphere.',
-        setting: 'Detailed description of the scene setting',
-        atmosphere: 'The overall mood and feeling of the scene',
-        gmNarrative: 'GM narrative text that describes what happens in the scene',
-        beats: [
-          'Scene beat 1',
-          'Scene beat 2',
-          'Scene beat 3'
-        ],
-        checks: [
-          {
-            type: 'skill',
-            ability: 'Wisdom',
-            skill: 'Perception',
-            dc_suggested_range: [12, 15],
-            dc: 14,
-            check_label: 'Wisdom (Perception) DC 14',
-            when: 'When players search the area',
-            on_success: 'Players notice important details',
-            on_fail: 'Players miss subtle clues',
-            advantage_hints: ['Look for unusual patterns', 'Pay attention to details']
-          }
-        ],
-        cluesAndForeshadowing: {
-          clues: ['Important clues for the players'],
-          foreshadowing: ['Hints about future events']
-        },
-        npcMiniCards: [
-          {
-            name: 'Sample NPC',
-            role: 'Important character',
-            demeanor: 'Friendly',
-            quirk: 'Always speaks in riddles',
-            goal: 'Help the players',
-            secret: 'Knows more than they let on'
-          }
-        ],
-        combatProbabilityAndBalance: {
-          likelihood: 'low',
-          enemies: ['Potential threats'],
-          balance_notes: 'Combat is unlikely but possible',
-          escape_or_alt_paths: ['Ways to avoid or escape combat']
-        },
-        exitConditionsAndTransition: {
-          exit_conditions: ['Players complete their objective'],
-          transition_to_next: 'Transition to the next scene'
-        },
-        rewards: ['Experience points', 'Treasure', 'Information']
-      };
-
-      console.log('Mock Generate Detail:', {
-        sceneId,
-        title: macroScene.title,
-        hasContext: Object.keys(effectiveContext).length > 0,
-        contextKeys: Object.keys(effectiveContext),
-        timestamp: Date.now(),
+    // Check if OpenAI API key is available
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.trim() === '') {
+      return res.status(500).json({ 
+        error: 'OpenAI API key is required for scene detail generation. Please configure OPENAI_API_KEY environment variable.' 
       });
-
-      return res.status(200).json({ ok: true, data: mockSceneDetail });
     }
 
     // Use the actual AI generation logic from generate_detail.js
     const { generateSceneDetailForServer } = await import('./api/generate_detail.js');
     
     console.log('Using AI generation for scene detail:', {
+      sessionId: req.body.sessionId,
       sceneId,
       title: macroScene.title,
       hasContext: Object.keys(effectiveContext).length > 0,
@@ -601,82 +403,11 @@ app.post('/api/generate_background', async (req, res) => {
       return res.status(400).json({ error: 'Story concept is required' });
     }
 
-    // Check if we should use AI or mock data
-    const useAI = process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.trim() !== '';
-    
-    console.log('🔍 Debug: OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY);
-    console.log('🔍 Debug: OPENAI_API_KEY value:', process.env.OPENAI_API_KEY ? 'SET' : 'NOT SET');
-    console.log('🔍 Debug: useAI:', useAI);
-    
-    if (!useAI) {
-      console.log('No OpenAI API key found, using mock data for development');
-      
-      // Mock compact background for development
-      const mockBackground = {
-        premise: "A dark fantasy adventure where players must navigate political intrigue in a corrupt city while uncovering ancient secrets.",
-        tone_rules: [
-          "Maintain a dark, mysterious atmosphere",
-          "Focus on political intrigue and moral ambiguity",
-          "Use Gothic horror elements sparingly",
-          "Keep dialogue sharp and meaningful"
-        ],
-        stakes: [
-          "The city's fate hangs in the balance",
-          "Ancient evil threatens to return",
-          "Political power could corrupt the heroes",
-          "Innocent lives are at risk"
-        ],
-        mysteries: [
-          "Who is really pulling the strings?",
-          "What ancient power lies beneath the city?",
-          "Why are the nobles so secretive?",
-          "What happened to the previous heroes?"
-        ],
-        factions: [
-          "The Noble Houses - Corrupt but powerful",
-          "The Underground Resistance - Fighting for justice",
-          "The Cult of the Ancient - Seeking forbidden knowledge",
-          "The City Guard - Divided loyalties"
-        ],
-        location_palette: [
-          "The Grand Cathedral - Sacred and mysterious",
-          "The Noble Quarter - Opulent but dangerous",
-          "The Underground Tunnels - Dark and treacherous",
-          "The Market District - Bustling with secrets"
-        ],
-        npc_roster_skeleton: [
-          "Lord Blackthorne - Corrupt noble with hidden agenda",
-          "Captain Valeria - Honest guard captain",
-          "The Oracle - Mysterious fortune teller",
-          "Master Thorne - Underground resistance leader"
-        ],
-        motifs: [
-          "Corrupted symbols of power",
-          "Shadows that move independently",
-          "Ancient texts with forbidden knowledge",
-          "Whispers in the darkness"
-        ],
-        doNots: [
-          "Don't make the corruption too obvious",
-          "Avoid clichéd evil overlord tropes",
-          "Don't reveal all secrets at once",
-          "Avoid making the heroes too powerful too quickly"
-        ],
-        playstyle_implications: [
-          "Emphasize investigation and social interaction",
-          "Include moral choices with consequences",
-          "Use environmental storytelling",
-          "Balance combat with roleplay"
-        ]
-      };
-
-      console.log('Mock Generate Background:', {
-        concept: concept.substring(0, 50) + '...',
-        hasPremise: !!mockBackground.premise,
-        timestamp: Date.now(),
+    // Check if OpenAI API key is available
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.trim() === '') {
+      return res.status(500).json({ 
+        error: 'OpenAI API key is required for background generation. Please configure OPENAI_API_KEY environment variable.' 
       });
-
-      return res.status(200).json({ ok: true, data: { background: mockBackground } });
     }
 
     // Use the actual AI generation logic
@@ -1231,6 +962,23 @@ app.post('/api/chain/lock', async (req, res) => {
       sessionContext.macroChains = {};
     }
     sessionContext.macroChains[chainId] = lockedChain;
+    
+    // CRITICAL: Also update the context.blocks.custom.macroChain to keep UI in sync
+    if (!sessionContext.blocks.custom) {
+      sessionContext.blocks.custom = {};
+    }
+    sessionContext.blocks.custom.macroChain = {
+      chainId: lockedChain.chainId,
+      scenes: lockedChain.scenes,
+      status: lockedChain.status,
+      version: lockedChain.version,
+      lastUpdatedAt: lockedChain.lastUpdatedAt,
+      meta: lockedChain.meta,
+      createdAt: lockedChain.createdAt,
+      updatedAt: lockedChain.updatedAt,
+      lockedAt: lockedChain.lockedAt
+    };
+    
     sessionContext.updatedAt = new Date().toISOString();
     
     // Save to storage
@@ -1314,6 +1062,22 @@ app.post('/api/chain/unlock', async (req, res) => {
     }
     sessionContext.macroChains[chainId] = unlockedChain;
     
+    // CRITICAL: Also update the context.blocks.custom.macroChain to keep UI in sync
+    if (!sessionContext.blocks.custom) {
+      sessionContext.blocks.custom = {};
+    }
+    sessionContext.blocks.custom.macroChain = {
+      chainId: unlockedChain.chainId,
+      scenes: unlockedChain.scenes,
+      status: unlockedChain.status,
+      version: unlockedChain.version,
+      lastUpdatedAt: unlockedChain.lastUpdatedAt,
+      meta: unlockedChain.meta,
+      createdAt: unlockedChain.createdAt,
+      updatedAt: unlockedChain.updatedAt,
+      lockedAt: unlockedChain.lockedAt
+    };
+    
     // Mark all scene details as NeedsRegen since chain was unlocked
     const affectedScenes = [];
     if (sessionContext.sceneDetails) {
@@ -1352,6 +1116,24 @@ app.post('/api/chain/unlock', async (req, res) => {
   }
 });
 
+// Debug endpoint to check session context
+app.get('/api/debug/session/:sessionId', async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { getOrCreateSessionContext } = await import('./api/context.js');
+    const sessionContext = await getOrCreateSessionContext(sessionId);
+    
+    res.json({
+      sessionId,
+      hasSceneDetails: !!sessionContext.sceneDetails,
+      sceneDetailsKeys: sessionContext.sceneDetails ? Object.keys(sessionContext.sceneDetails) : [],
+      sceneDetails: sessionContext.sceneDetails || {}
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Scene Lock/Unlock API Routes
 app.post('/api/scene/lock', async (req, res) => {
   try {
@@ -1371,6 +1153,15 @@ app.post('/api/scene/lock', async (req, res) => {
     if (sessionContext.sceneDetails && sessionContext.sceneDetails[sceneId]) {
       sceneDetail = sessionContext.sceneDetails[sceneId];
     }
+    
+    // Debug logging
+    console.log('Scene lock debug:', {
+      sessionId,
+      sceneId,
+      hasSceneDetails: !!sessionContext.sceneDetails,
+      sceneDetailsKeys: sessionContext.sceneDetails ? Object.keys(sessionContext.sceneDetails) : [],
+      foundSceneDetail: !!sceneDetail
+    });
     
     // Validate that scene detail exists
     if (!sceneDetail) {

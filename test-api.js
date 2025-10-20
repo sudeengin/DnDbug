@@ -1,5 +1,9 @@
-// Simple test script for the Macro Chain API
-const testGenerateChain = async () => {
+// Test script for the Macro Chain API
+const testGenerateChain = async (concept, meta = {}) => {
+  if (!concept) {
+    throw new Error('Story concept is required for testing. Please provide a concept.');
+  }
+  
   try {
     const response = await fetch('/api/generate_chain', {
       method: 'POST',
@@ -7,11 +11,12 @@ const testGenerateChain = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        concept: 'A mysterious forest where ancient trees whisper secrets to those who listen carefully',
+        concept: concept,
         meta: {
           gameType: 'one-shot',
           players: '3-4 players',
-          level: 'beginner'
+          level: 'beginner',
+          ...meta
         }
       })
     });
@@ -72,7 +77,16 @@ const testUpdateChain = async (chainId) => {
 (async () => {
   console.log('🧪 Testing Macro Chain API...\n');
   
-  const generateResult = await testGenerateChain();
+  // Example concept for testing - replace with your own
+  const testConcept = process.argv[2] || 'A mysterious forest where ancient trees whisper secrets to those who listen carefully';
+  
+  if (!testConcept) {
+    console.log('❌ Please provide a story concept as an argument or set it in the code.');
+    console.log('Usage: node test-api.js "Your story concept here"');
+    process.exit(1);
+  }
+  
+  const generateResult = await testGenerateChain(testConcept);
   
   if (generateResult && generateResult.data) {
     console.log('\n🧪 Testing Update Chain API...\n');

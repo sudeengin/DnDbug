@@ -120,7 +120,7 @@ export default async function handler(req, res) {
 
     // Get prompt context and check if background is locked
     const promptContext = await buildPromptContext(sessionId);
-    let bg = promptContext.background;
+    const bg = promptContext.background;
     const playerCount = promptContext.numberOfPlayers;
     
     // Debug logging
@@ -136,12 +136,6 @@ export default async function handler(req, res) {
     // Get session context to check lock status
     const sessionContext = await getOrCreateSessionContext(sessionId);
     const isBackgroundLocked = sessionContext?.locks?.background === true;
-    
-    // Fallback: if promptContext doesn't have background, try sessionContext directly
-    if (!bg && sessionContext?.blocks?.background) {
-      bg = sessionContext.blocks.background;
-      console.log('Using fallback background from sessionContext');
-    }
     
     if (!bg || !isBackgroundLocked) {
       res.status(409).json({ 
@@ -239,7 +233,7 @@ export default async function handler(req, res) {
 
     // Store characters in session context
     const charactersBlock = {
-      characters: characters,
+      list: characters,
       locked: false,
       version: Date.now()
     };
@@ -258,7 +252,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({ 
       ok: true, 
-      characters: characters 
+      list: characters,
+      playerCount: clampedPlayerCount
     });
 
   } catch (error) {

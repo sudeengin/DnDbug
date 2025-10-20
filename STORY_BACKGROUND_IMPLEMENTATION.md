@@ -112,7 +112,7 @@ Each 5N1K field includes:
 ### Files Created/Modified
 
 1. **`/api/generate_background.js`** - Main API handler with OpenAI integration
-2. **`/server.js`** - Added new endpoint with mock data fallback
+2. **`/server.js`** - Added new endpoint with OpenAI integration
 3. **`/src/types/macro-chain.ts`** - Added TypeScript interfaces
 4. **`/src/components/StoryBackgroundGenerator.tsx`** - React component
 5. **`/src/components/MacroChainApp.tsx`** - Integrated into main app
@@ -127,9 +127,9 @@ The system uses a carefully crafted Turkish prompt that:
 - Maintains mystery while providing useful GM context
 - Uses Turkish language throughout for consistency
 
-### Mock Data Support
+### API Key Requirement
 
-When no OpenAI API key is available, the system provides rich mock data that demonstrates the expected structure and functionality.
+The system requires an OpenAI API key to function. Without it, appropriate error messages are returned.
 
 ## Usage Examples
 
@@ -178,7 +178,7 @@ function MyApp() {
 
 1. **Valid Concept**: Should generate complete background with all fields
 2. **Empty Concept**: Should return validation error
-3. **No API Key**: Should fallback to mock data
+3. **No API Key**: Should return error message
 4. **Network Error**: Should handle gracefully with error messages
 
 ## Integration with MacroChain System
@@ -216,7 +216,7 @@ The Story Background Generator integrates seamlessly with the existing MacroChai
 
 ### Common Issues
 
-1. **API Key Missing**: System falls back to mock data
+1. **API Key Missing**: System returns error message
 2. **Invalid JSON**: Check OpenAI response parsing
 3. **Network Errors**: Verify server is running on port 3000
 4. **TypeScript Errors**: Ensure all interfaces are properly imported
@@ -232,7 +232,7 @@ Enable debug logging by setting `NODE_ENV=development` and check browser console
 - [x] "Why" can safely remain "unknown" or "speculative"
 - [x] GM receives both factual and interpretive context
 - [x] Output remains suitable as upstream context for /api/generate_chain
-- [x] Mock data support for development
+- [x] OpenAI API integration for AI generation
 - [x] React component integration
 - [x] TypeScript type safety
 - [x] Error handling and validation

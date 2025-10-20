@@ -21,12 +21,12 @@ export async function buildPromptContext(sessionId) {
     // Return empty context with default versions
     return {
       background: null,
-      numberOfPlayers: 4, // default
       characters: { list: [], locked: false, version: 0 },
       style_prefs: null,
       story_facts: null,
       world_state: null,
       world_seeds: null,
+      numberOfPlayers: 4, // default
       versions: {
         backgroundV: 0,
         charactersV: 0,
@@ -49,12 +49,12 @@ export async function buildPromptContext(sessionId) {
 
   return {
     background: sessionContext.blocks?.background || null,
-    numberOfPlayers, // inject here with proper clamping
     characters: sessionContext.blocks?.characters || { list: [], locked: false, version: 0 },
     style_prefs: sessionContext.blocks?.style_prefs || null,
     story_facts: sessionContext.blocks?.story_facts || null,
     world_state: sessionContext.blocks?.world_state || null,
     world_seeds: sessionContext.blocks?.world_seeds || null,
+    numberOfPlayers: numberOfPlayers, // inject here with proper clamping
     versions: {
       backgroundV,
       charactersV,
@@ -127,14 +127,32 @@ export function checkMacroChainLocks(sessionContext) {
  * @returns {Object} Lock status and error message if not locked
  */
 export function checkPreviousSceneLock(sessionContext, sceneOrder) {
+  console.log('checkPreviousSceneLock called with:', {
+    sceneOrder,
+    hasSceneDetails: !!sessionContext.sceneDetails,
+    sceneDetailsKeys: sessionContext.sceneDetails ? Object.keys(sessionContext.sceneDetails) : []
+  });
+
   if (sceneOrder <= 1) {
     return { canGenerate: true, error: null };
   }
 
   const prevSceneOrder = sceneOrder - 1;
-  const prevSceneId = `scene-${prevSceneOrder}`;
   
-  if (!sessionContext.sceneDetails || !sessionContext.sceneDetails[prevSceneId]) {
+  // Find the previous scene by order (scene IDs are in format scene_${order}_${timestamp})
+  const prevSceneId = Object.keys(sessionContext.sceneDetails || {}).find(id => {
+    const match = id.match(/^scene_(\d+)_/);
+    return match && parseInt(match[1]) === prevSceneOrder;
+  });
+  
+  console.log('Scene lock validation:', {
+    prevSceneOrder,
+    prevSceneId,
+    foundScene: !!prevSceneId,
+    sceneStatus: prevSceneId ? sessionContext.sceneDetails[prevSceneId]?.status : 'not found'
+  });
+  
+  if (!sessionContext.sceneDetails || !prevSceneId || !sessionContext.sceneDetails[prevSceneId]) {
     return {
       canGenerate: false,
       error: 'Previous scene must be generated and locked before generating this scene.'

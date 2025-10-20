@@ -67,6 +67,10 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
         } else {
           console.log('refetchContext: No macro chain found in context');
           console.log('refetchContext: Custom blocks:', response.data.blocks.custom);
+          // Reset chain state if no macro chain found
+          setChain([]);
+          setCurrentChainId(null);
+          setChainStatus('Generated');
         }
       }
     } catch (error) {
@@ -218,7 +222,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
               lastUpdatedAt: updatedChain.lastUpdatedAt,
               meta: updatedChain.meta,
               createdAt: updatedChain.createdAt,
-              updatedAt: updatedChain.updatedAt
+              updatedAt: updatedChain.updatedAt,
+              lockedAt: updatedChain.lockedAt
             }
           }
         }
@@ -226,6 +231,30 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
       console.log('handleChainUpdate: Updating context with macro chain status:', updatedChain.status);
       console.log('handleChainUpdate: Full updated context macro chain:', updatedContext.blocks.custom.macroChain);
       onContextUpdate(updatedContext);
+      
+      // Also update the server context to persist the status
+      try {
+        await postJSON('/api/context/append', {
+          sessionId,
+          blockType: 'custom',
+          data: { 
+            macroChain: {
+              chainId: updatedChain.chainId,
+              scenes: updatedChain.scenes,
+              status: updatedChain.status,
+              version: updatedChain.version,
+              lastUpdatedAt: updatedChain.lastUpdatedAt,
+              meta: updatedChain.meta,
+              createdAt: updatedChain.createdAt,
+              updatedAt: updatedChain.updatedAt,
+              lockedAt: updatedChain.lockedAt
+            }
+          }
+        });
+        console.log('handleChainUpdate: Updated server context with status:', updatedChain.status);
+      } catch (error) {
+        console.error('handleChainUpdate: Failed to update server context:', error);
+      }
     } else {
       console.log('handleChainUpdate: No onContextUpdate callback available');
     }
@@ -241,7 +270,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
   const bg = context?.blocks?.background;
   const characters = context?.blocks?.characters;
   const hasBg = !!bg;
-  const hasCharacters = !!characters && characters.characters && characters.characters.length > 0;
+  const hasCharacters = !!characters && characters.list && characters.list.length > 0;
   const isBackgroundLocked = context?.locks?.background === true;
   const isCharactersLocked = context?.locks?.characters === true;
   const hasChain = chain.length > 0;

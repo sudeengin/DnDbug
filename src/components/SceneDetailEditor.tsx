@@ -3,6 +3,7 @@ import { postJSON } from '../lib/api';
 import type { MacroScene, SceneDetail, GenerateDetailRequest, EffectiveContext, ApplyEditRequest, ApplyEditResponse, AffectedScene, PropagateRequest, PropagateResponse } from '../types/macro-chain';
 
 interface SceneDetailEditorProps {
+  sessionId?: string;
   macroScene: MacroScene;
   previousSceneDetails: SceneDetail[];
   onSceneDetailGenerated: (sceneDetail: SceneDetail) => void;
@@ -12,6 +13,7 @@ interface SceneDetailEditorProps {
 }
 
 export default function SceneDetailEditor({ 
+  sessionId,
   macroScene, 
   previousSceneDetails, 
   onSceneDetailGenerated,
@@ -53,7 +55,8 @@ export default function SceneDetailEditor({
       const request: GenerateDetailRequest = {
         sceneId: macroScene.id,
         macroScene,
-        effectiveContext
+        effectiveContext,
+        sessionId
       };
 
       console.log('Sending request:', request);
@@ -210,30 +213,40 @@ export default function SceneDetailEditor({
           <p className="text-sm text-gray-600">
             Generate detailed scene content with context awareness from previous scenes
           </p>
+          {readOnly && (
+            <div className="mt-2 flex items-center text-sm text-amber-600">
+              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
+              Scene is locked - no edits allowed
+            </div>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           {sceneDetail && !editingSceneDetail && (
             <button
               onClick={startEditing}
-              className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition-colors"
+              disabled={readOnly}
+              className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Edit Scene
+              {readOnly ? 'Scene Locked' : 'Edit Scene'}
             </button>
           )}
           {editingSceneDetail && (
             <>
               <button
                 onClick={saveEdit}
-                disabled={loading}
-                className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 transition-colors"
+                disabled={loading || readOnly}
+                className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {loading ? 'Analyzing...' : 'Save Changes'}
+                {loading ? 'Analyzing...' : readOnly ? 'Scene Locked' : 'Save Changes'}
               </button>
               <button
                 onClick={cancelEdit}
-                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                disabled={readOnly}
+                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Cancel
+                {readOnly ? 'Scene Locked' : 'Cancel'}
               </button>
             </>
           )}
@@ -247,10 +260,10 @@ export default function SceneDetailEditor({
           )}
           <button
             onClick={generateSceneDetail}
-            disabled={loading}
+            disabled={loading || readOnly}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Generating...' : 'Generate Scene Content'}
+            {loading ? 'Generating...' : readOnly ? 'Scene Locked' : 'Generate Scene Content'}
           </button>
         </div>
       </div>
@@ -366,14 +379,77 @@ export default function SceneDetailEditor({
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">GM Narrative</label>
-                      <textarea
-                        value={editingSceneDetail.gmNarrative || ''}
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Narrative Core - Goal</label>
+                      <input
+                        type="text"
+                        value={editingSceneDetail.narrativeCore?.goal || ''}
                         onChange={(e) => setEditingSceneDetail({
                           ...editingSceneDetail,
-                          gmNarrative: e.target.value
+                          narrativeCore: {
+                            ...editingSceneDetail.narrativeCore,
+                            goal: e.target.value
+                          }
                         })}
-                        rows={4}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Narrative Core - Conflict</label>
+                      <input
+                        type="text"
+                        value={editingSceneDetail.narrativeCore?.conflict || ''}
+                        onChange={(e) => setEditingSceneDetail({
+                          ...editingSceneDetail,
+                          narrativeCore: {
+                            ...editingSceneDetail.narrativeCore,
+                            conflict: e.target.value
+                          }
+                        })}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Narrative Core - Revelation</label>
+                      <input
+                        type="text"
+                        value={editingSceneDetail.narrativeCore?.revelation || ''}
+                        onChange={(e) => setEditingSceneDetail({
+                          ...editingSceneDetail,
+                          narrativeCore: {
+                            ...editingSceneDetail.narrativeCore,
+                            revelation: e.target.value
+                          }
+                        })}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Narrative Core - Transition</label>
+                      <input
+                        type="text"
+                        value={editingSceneDetail.narrativeCore?.transition || ''}
+                        onChange={(e) => setEditingSceneDetail({
+                          ...editingSceneDetail,
+                          narrativeCore: {
+                            ...editingSceneDetail.narrativeCore,
+                            transition: e.target.value
+                          }
+                        })}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Environment</label>
+                      <textarea
+                        value={editingSceneDetail.dynamicElements?.environment || ''}
+                        onChange={(e) => setEditingSceneDetail({
+                          ...editingSceneDetail,
+                          dynamicElements: {
+                            ...editingSceneDetail.dynamicElements,
+                            environment: e.target.value
+                          }
+                        })}
+                        rows={3}
                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
@@ -473,17 +549,85 @@ export default function SceneDetailEditor({
                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                   <div><strong>Title:</strong> {sceneDetail.title}</div>
                   <div><strong>Objective:</strong> {sceneDetail.objective}</div>
-                  {sceneDetail.epicIntro && (
-                    <div><strong>Epic Intro:</strong> {sceneDetail.epicIntro}</div>
+                  {sceneDetail.sceneType && (
+                    <div><strong>Scene Type:</strong> {sceneDetail.sceneType}</div>
                   )}
-                  {sceneDetail.setting && (
-                    <div><strong>Setting:</strong> {sceneDetail.setting}</div>
-                  )}
-                  {sceneDetail.atmosphere && (
-                    <div><strong>Atmosphere:</strong> {sceneDetail.atmosphere}</div>
+                  {sceneDetail.sequence && (
+                    <div><strong>Sequence:</strong> {sceneDetail.sequence}</div>
                   )}
                 </div>
               </div>
+
+              {/* Narrative Core */}
+              {sceneDetail.narrativeCore && (
+                <div>
+                  <h4 className="text-md font-semibold text-gray-900 mb-3">Narrative Core</h4>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    <div><strong>Goal:</strong> {sceneDetail.narrativeCore.goal}</div>
+                    <div><strong>Conflict:</strong> {sceneDetail.narrativeCore.conflict}</div>
+                    <div><strong>Revelation:</strong> {sceneDetail.narrativeCore.revelation}</div>
+                    <div><strong>Transition:</strong> {sceneDetail.narrativeCore.transition}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Dynamic Elements */}
+              {sceneDetail.dynamicElements && (
+                <div>
+                  <h4 className="text-md font-semibold text-gray-900 mb-3">Dynamic Elements</h4>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    {sceneDetail.dynamicElements.environment && (
+                      <div><strong>Environment:</strong> {sceneDetail.dynamicElements.environment}</div>
+                    )}
+                    {sceneDetail.dynamicElements.challenge && (
+                      <div>
+                        <strong>Challenge:</strong>
+                        <div className="ml-4 mt-1 space-y-1">
+                          <div><strong>Type:</strong> {sceneDetail.dynamicElements.challenge.type}</div>
+                          {sceneDetail.dynamicElements.challenge.dc && (
+                            <div><strong>DC:</strong> {sceneDetail.dynamicElements.challenge.dc}</div>
+                          )}
+                          {sceneDetail.dynamicElements.challenge.failureConsequence && (
+                            <div><strong>Failure Consequence:</strong> {sceneDetail.dynamicElements.challenge.failureConsequence}</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {sceneDetail.dynamicElements.revealedInfo && sceneDetail.dynamicElements.revealedInfo.length > 0 && (
+                      <div>
+                        <strong>Revealed Info:</strong>
+                        <ul className="mt-1 space-y-1">
+                          {sceneDetail.dynamicElements.revealedInfo.map((info, index) => (
+                            <li key={index} className="text-gray-700">• {info}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* NPC Profiles */}
+              {sceneDetail.dynamicElements?.npcProfiles && sceneDetail.dynamicElements.npcProfiles.length > 0 && (
+                <div>
+                  <h4 className="text-md font-semibold text-gray-900 mb-3">NPC Profiles</h4>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+                    {sceneDetail.dynamicElements.npcProfiles.map((npc, index) => (
+                      <div key={index} className="border border-gray-200 rounded-lg p-3 bg-white">
+                        <div className="font-semibold text-gray-900 mb-2">{npc.name}</div>
+                        <div className="space-y-1 text-sm">
+                          {npc.motivation && (
+                            <div><strong>Motivation:</strong> {npc.motivation}</div>
+                          )}
+                          {npc.personality && (
+                            <div><strong>Personality:</strong> {npc.personality}</div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* GM Narrative */}
               {sceneDetail.gmNarrative && (
@@ -778,24 +922,30 @@ export default function SceneDetailEditor({
               )}
 
               {/* Context Out */}
-              {sceneDetail.contextOut && (
+              {(sceneDetail.contextOut || sceneDetail.dynamicElements?.contextOut) && (
                 <div>
                   <h4 className="text-md font-semibold text-gray-900 mb-3">Context Output</h4>
                   <div className="bg-blue-50 rounded-lg p-4">
                     <div className="space-y-3">
-                      {sceneDetail.contextOut.keyEvents && sceneDetail.contextOut.keyEvents.length > 0 && (
+                      {(sceneDetail.contextOut?.keyEvents || sceneDetail.dynamicElements?.contextOut?.story_facts || sceneDetail.dynamicElements?.contextOut?.characterMoments) && (
                         <div>
-                          <strong className="text-blue-900">New Key Events:</strong>
+                          <strong className="text-blue-900">Key Events:</strong>
                           <ul className="mt-1 space-y-1">
-                            {sceneDetail.contextOut.keyEvents.map((event, index) => (
+                            {(sceneDetail.contextOut?.keyEvents || []).map((event, index) => (
                               <li key={index} className="text-blue-800 text-sm">• {event}</li>
+                            ))}
+                            {(sceneDetail.dynamicElements?.contextOut?.story_facts || []).map((event, index) => (
+                              <li key={`story_${index}`} className="text-blue-800 text-sm">• {event}</li>
+                            ))}
+                            {(sceneDetail.dynamicElements?.contextOut?.characterMoments || []).map((event, index) => (
+                              <li key={`char_${index}`} className="text-blue-800 text-sm">• {event}</li>
                             ))}
                           </ul>
                         </div>
                       )}
-                      {sceneDetail.contextOut.revealedInfo && sceneDetail.contextOut.revealedInfo.length > 0 && (
+                      {sceneDetail.contextOut?.revealedInfo && sceneDetail.contextOut.revealedInfo.length > 0 && (
                         <div>
-                          <strong className="text-blue-900">New Revealed Info:</strong>
+                          <strong className="text-blue-900">Revealed Information:</strong>
                           <ul className="mt-1 space-y-1">
                             {sceneDetail.contextOut.revealedInfo.map((info, index) => (
                               <li key={index} className="text-blue-800 text-sm">• {info}</li>
@@ -803,12 +953,52 @@ export default function SceneDetailEditor({
                           </ul>
                         </div>
                       )}
-                      {sceneDetail.contextOut.stateChanges && Object.keys(sceneDetail.contextOut.stateChanges).length > 0 && (
+                      {(sceneDetail.contextOut?.stateChanges && Object.keys(sceneDetail.contextOut.stateChanges).length > 0) || (sceneDetail.dynamicElements?.contextOut?.world_state && Object.keys(sceneDetail.dynamicElements.contextOut.world_state).length > 0) && (
                         <div>
-                          <strong className="text-blue-900">New State Changes:</strong>
+                          <strong className="text-blue-900">State Changes:</strong>
                           <pre className="mt-1 text-sm text-blue-800 whitespace-pre-wrap">
-                            {JSON.stringify(sceneDetail.contextOut.stateChanges, null, 2)}
+                            {JSON.stringify({...sceneDetail.contextOut?.stateChanges, ...sceneDetail.dynamicElements?.contextOut?.world_state}, null, 2)}
                           </pre>
+                        </div>
+                      )}
+                      {sceneDetail.contextOut?.npcRelationships && Object.keys(sceneDetail.contextOut.npcRelationships).length > 0 && (
+                        <div>
+                          <strong className="text-blue-900">NPC Relationships:</strong>
+                          <div className="mt-1 space-y-2">
+                            {Object.entries(sceneDetail.contextOut.npcRelationships).map(([npcName, relationship]) => (
+                              <div key={npcName} className="text-blue-800 text-sm">
+                                <strong>{npcName}:</strong> Trust {relationship.trust_level}/10, {relationship.attitude} attitude
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {(sceneDetail.contextOut?.environmentalState && Object.keys(sceneDetail.contextOut.environmentalState).length > 0) || (sceneDetail.dynamicElements?.contextOut?.world_seeds && Object.keys(sceneDetail.dynamicElements.contextOut.world_seeds).length > 0) && (
+                        <div>
+                          <strong className="text-blue-900">Environmental State:</strong>
+                          <pre className="mt-1 text-sm text-blue-800 whitespace-pre-wrap">
+                            {JSON.stringify({...sceneDetail.contextOut?.environmentalState, ...sceneDetail.dynamicElements?.contextOut?.world_seeds}, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+                      {sceneDetail.contextOut?.plotThreads && sceneDetail.contextOut.plotThreads.length > 0 && (
+                        <div>
+                          <strong className="text-blue-900">Plot Threads:</strong>
+                          <ul className="mt-1 space-y-1">
+                            {sceneDetail.contextOut.plotThreads.map((thread, index) => (
+                              <li key={index} className="text-blue-800 text-sm">• {thread.title}: {thread.description}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {sceneDetail.contextOut?.playerDecisions && sceneDetail.contextOut.playerDecisions.length > 0 && (
+                        <div>
+                          <strong className="text-blue-900">Player Decisions:</strong>
+                          <ul className="mt-1 space-y-1">
+                            {sceneDetail.contextOut.playerDecisions.map((decision, index) => (
+                              <li key={index} className="text-blue-800 text-sm">• {decision.choice}: {decision.context}</li>
+                            ))}
+                          </ul>
                         </div>
                       )}
                     </div>

@@ -295,10 +295,9 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
         sessionContext.updatedAt = new Date().toISOString();
         
         // Update macro snapshot version
-        if (promptContext) {
-          sessionContext.meta.macroSnapshotV = makeMacroSnapshotV(sessionContext.meta);
-          sessionContext.meta.updatedAt = new Date().toISOString();
-        }
+        sessionContext.meta = sessionContext.meta || {};
+        sessionContext.meta.macroSnapshotV = makeMacroSnapshotV(sessionContext.meta);
+        sessionContext.meta.updatedAt = new Date().toISOString();
         
         // Save to storage
         await saveSessionContext(sessionId, sessionContext);

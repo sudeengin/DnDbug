@@ -2120,5 +2120,155 @@
     },
     "createdAt": "2025-10-19T22:45:50.478Z",
     "updatedAt": "2025-10-19T22:45:50.480Z"
+  },
+  "chain_1760985611145_o8ly359f6": {
+    "chainId": "chain_1760985611145_o8ly359f6",
+    "scenes": [
+      {
+        "id": "scene_1_1760985611146",
+        "order": 1,
+        "title": "Whispers of Eldor: Unveiling the Silent Ruins",
+        "objective": "Begin exploration of the Silent Ruins of Eldor to uncover initial clues about the lost civilization while avoiding ancient defenses."
+      },
+      {
+        "id": "scene_2_1760985611146",
+        "order": 2,
+        "title": "Echoes in the Whispering Forests",
+        "objective": "Navigate the hauntingly beautiful Whispering Forests to discover who or what is guarding the silence of the ancient lands."
+      },
+      {
+        "id": "scene_3_1760985611146",
+        "order": 3,
+        "title": "Murmurs Beneath the Echoing Caves",
+        "objective": "Delve deeper into the Echoing Caves to unravel the true powers of ancient magic and its silent warnings."
+      },
+      {
+        "id": "scene_4_1760985611146",
+        "order": 4,
+        "title": "The Watchful Eyes of Forgotten Towers",
+        "objective": "Investigate the Forgotten Watchtowers to understand the shadows of ancient magic and the guarded secrets within."
+      },
+      {
+        "id": "scene_5_1760985611146",
+        "order": 5,
+        "title": "The Eternal Lake's Ominous Revelations",
+        "objective": "Confront the mysteries at the heart of the Eternal Lake to reveal the fate of the lost civilization and the identity of its silent guardians."
+      },
+      {
+        "id": "scene_6_1760985611146",
+        "order": 6,
+        "title": "Guardians of Silence: The Final Stand",
+        "objective": "Survive the ominous warnings and prevent rival kingdoms from exploiting the lands, ensuring the secrets remain protected."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-20T18:40:11.146Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "972be664-5757-485d-aa1a-9bf65cc6b687"
+    },
+    "createdAt": "2025-10-20T18:40:11.146Z",
+    "updatedAt": "2025-10-20T18:40:11.148Z"
+  },
+  "chain_1760986585957_wwy9bkvza": {
+    "chainId": "chain_1760986585957_wwy9bkvza",
+    "scenes": [
+      {
+        "id": "scene_1_1760986585958",
+        "order": 1,
+        "title": "Whispers in the Silent Ruins of Eldor",
+        "objective": "Begin exploring the ruins to uncover initial clues about the lost civilization while avoiding triggering ancient defenses."
+      },
+      {
+        "id": "scene_2_1760986585958",
+        "order": 2,
+        "title": "Echoes in the Whispering Forests",
+        "objective": "Investigate the resonant whispers and hidden guardians in the forest to reveal more about who maintains the silence."
+      },
+      {
+        "id": "scene_3_1760986585958",
+        "order": 3,
+        "title": "Dark Secrets of the Echoing Caves",
+        "objective": "Delve into the caves to uncover the shadows of ancient magic and the powers that guard the lands' secrets."
+      },
+      {
+        "id": "scene_4_1760986585958",
+        "order": 4,
+        "title": "The Forgotten Watchtower's Haunting Warning",
+        "objective": "Explore the watchtower to understand the ominous warnings and the true stakes of rival kingdoms exploiting these lands."
+      },
+      {
+        "id": "scene_5_1760986585958",
+        "order": 5,
+        "title": "Mysteries of the Eternal Lake",
+        "objective": "Confront the hauntingly beautiful and immediate challenges at the lake, pushing towards the heart of these lands' mysteries."
+      },
+      {
+        "id": "scene_6_1760986585958",
+        "order": 6,
+        "title": "Confronting the Guardians of Silence",
+        "objective": "Face the silent guardians to finally unravel the secrets of the lost civilization and secure the explorers' survival."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-20T18:56:25.958Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "22db67c9-7c18-410c-ae73-ad99c81c073c"
+    },
+    "createdAt": "2025-10-20T18:56:25.958Z",
+    "updatedAt": "2025-10-20T18:56:25.962Z"
+  },
+  "chain_1760998613341_tx86f86sx": {
+    "chainId": "chain_1760998613341_tx86f86sx",
+    "scenes": [
+      {
+        "id": "scene_1_1760998613341",
+        "order": 1,
+        "title": "Whispers of the Shattered Oracle",
+        "objective": "The party seeks the Oracle in a shattered temple to uncover why the silence twists minds."
+      },
+      {
+        "id": "scene_2_1760998613341",
+        "order": 2,
+        "title": "Echoes in the Ruined Fortress",
+        "objective": "Explore a ruined fortress to find clues about who or what created the silence."
+      },
+      {
+        "id": "scene_3_1760998613341",
+        "order": 3,
+        "title": "The Drifter's Hidden Past",
+        "objective": "The party encounters the Drifter in the desolate wilderness, unraveling his connection to the relic's guardian."
+      },
+      {
+        "id": "scene_4_1760998613341",
+        "order": 4,
+        "title": "Secrets Beneath the Oracle Stones",
+        "objective": "Discover hidden truths beneath cracked oracle stones, unveiling whether the silence is a safeguard or weapon."
+      },
+      {
+        "id": "scene_5_1760998613341",
+        "order": 5,
+        "title": "Confrontation with the Cursed Warrior",
+        "objective": "Face the Cursed Warrior to learn what he knows about the relic's true purpose."
+      },
+      {
+        "id": "scene_6_1760998613341",
+        "order": 6,
+        "title": "The Warden's Final Stand",
+        "objective": "Decide the fate of the lands by confronting the Warden, determining if the silence can ever be lifted."
+      }
+    ],
+    "status": "Generated",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-20T22:16:53.341Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "fb9f4f29-949f-456c-8b14-0afe56bda090"
+    },
+    "createdAt": "2025-10-20T22:16:53.341Z",
+    "updatedAt": "2025-10-20T22:16:53.343Z"
   }
 }

@@ -147,5 +147,11 @@ export interface GenerateDetailResponse {
 }
 
 export async function generateDetail(request: GenerateDetailRequest): Promise<GenerateDetailResponse> {
+  console.log('API generateDetail called with:', {
+    sessionId: request.sessionId,
+    sceneId: request.sceneId,
+    hasSessionId: !!request.sessionId,
+    requestKeys: Object.keys(request)
+  });
   return postJSON<GenerateDetailResponse>('/api/generate_detail', request);
 }

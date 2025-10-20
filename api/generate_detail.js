@@ -2,6 +2,7 @@ import OpenAI from 'openai'
 import { MODEL_ID } from './model.js'
 import { buildPromptContext, checkPreviousSceneLock, createContextSummary } from './lib/promptContext.js'
 import { isStale, validateSceneVersion, createStalenessError, createSceneVersionInfo } from './lib/versioning.js'
+import { renderDetailTemplate } from './lib/prompt.js'
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
 import dotenv from 'dotenv'
@@ -82,9 +83,15 @@ async function generateSceneDetail(req, res) {
       }
     }
 
-    const system = 'You are a DnD GM assistant that writes scene details consistent with previous context. All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. Do not use Turkish words or local idioms.'
+    const system = 'You are a D&D GM assistant creating detailed scene content. Follow the rules strictly and return valid JSON only. All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. Do not use Turkish words or local idioms.'
 
-    const prompt = buildContextAwarePrompt(macroScene, effectiveContext, promptContext?.background, promptContext?.characters, promptContext?.numberOfPlayers)
+    const prompt = renderDetailTemplate({
+      background: promptContext?.background,
+      characters: promptContext?.characters,
+      numberOfPlayers: promptContext?.numberOfPlayers,
+      effectiveContext,
+      macroScene
+    })
     
     const resp = await client.chat.completions.create({
       model: MODEL_ID,
@@ -96,11 +103,17 @@ async function generateSceneDetail(req, res) {
     })
 
     const text = resp.choices[0]?.message?.content ?? ''
-    const sceneDetail = tryParseSceneDetail(text, sceneId, macroScene)
+    const parsedResponse = tryParseSceneDetail(text, sceneId, macroScene)
+
+    // Extract the sceneDetail from the parsed response
+    const sceneDetail = parsedResponse.sceneDetail || parsedResponse
+
+    // Migrate old structure to new structure if needed
+    const migratedSceneDetail = migrateSceneDetailStructure(sceneDetail)
 
     // Add version tracking and status fields to the generated scene detail
     const enrichedSceneDetail = {
-      ...sceneDetail,
+      ...migratedSceneDetail,
       status: 'Generated',
       version: 1,
       lastUpdatedAt: new Date().toISOString(),
@@ -110,6 +123,7 @@ async function generateSceneDetail(req, res) {
     // Store the scene detail in session context if sessionId is provided
     if (sessionId) {
       try {
+        console.log('Storing scene detail:', { sessionId, sceneId, enrichedSceneDetailSceneId: enrichedSceneDetail.sceneId });
         const sessionContext = await getOrCreateSessionContext(sessionId);
         
         // Initialize sceneDetails if it doesn't exist
@@ -121,6 +135,14 @@ async function generateSceneDetail(req, res) {
         sessionContext.sceneDetails[sceneId] = enrichedSceneDetail;
         sessionContext.updatedAt = new Date().toISOString();
         
+        console.log('Before saving to storage:', {
+          sessionId,
+          sceneId,
+          hasSceneDetails: !!sessionContext.sceneDetails,
+          sceneDetailsKeys: Object.keys(sessionContext.sceneDetails),
+          enrichedSceneDetailSceneId: enrichedSceneDetail.sceneId
+        });
+        
         // Save to storage
         await saveSessionContext(sessionId, sessionContext);
         
@@ -129,7 +151,8 @@ async function generateSceneDetail(req, res) {
           sessionId,
           hasSceneDetails: !!sessionContext.sceneDetails,
           sceneDetailsKeys: Object.keys(sessionContext.sceneDetails || {}),
-          sceneStatus: enrichedSceneDetail.status
+          sceneStatus: enrichedSceneDetail.status,
+          enrichedSceneDetailSceneId: enrichedSceneDetail.sceneId
         });
       } catch (contextError) {
         console.warn('Failed to store scene detail in session context:', contextError);
@@ -289,7 +312,28 @@ IMPORTANT:
 - Incorporate key events, revealed info, state changes, NPC relationships, environmental changes, plot threads, and player decisions from previous scenes
 - Build upon this context while maintaining the original scene objective from the chain
 - Do not contradict established facts from previous scenes
-- Register any new revelations or changes under contextOut
+
+CONTEXT OUTPUT REQUIREMENTS:
+You MUST populate the contextOut object with new information discovered or changed during this scene. Do not leave any field empty:
+
+- keyEvents: Array of significant events that happened during the scene. Include at least 2-3 events.
+- revealedInfo: Array of new information learned during the scene. Include at least 1-2 revelations.
+- stateChanges: Object describing how the world state changed. Include at least 1-2 state changes.
+- npcRelationships: Object describing relationships with NPCs. Include any NPCs encountered.
+- environmentalState: Object describing environmental changes. Include any environmental changes.
+- plotThreads: Array of plot threads introduced or advanced. Include any new plot threads.
+- playerDecisions: Array of significant decisions made by players. Include any important decisions.
+
+EXAMPLE contextOut for this scene:
+{
+  \"keyEvents\": [\"The party discovered ancient runes on the walls\", \"A mysterious voice warned them to turn back\", \"They found a hidden passage behind a crumbling statue\"],
+  \"revealedInfo\": [\"The ruins are protected by ancient magic\", \"The civilization used elemental magic for construction\"],
+  \"stateChanges\": {\"ruins_explored\": true, \"ancient_wards_activated\": false},
+  \"npcRelationships\": {\"Eldin\": {\"trust_level\": 3, \"last_interaction\": \"gave warning\", \"attitude\": \"neutral\"}},
+  \"environmentalState\": {\"magical_barriers\": \"present but dormant\", \"ruins_accessibility\": \"limited\"},
+  \"plotThreads\": [{\"thread_id\": \"ancient_magic\", \"title\": \"The Source of Power\", \"status\": \"active\", \"description\": \"The party seeks the heart of the civilization's power\"}],
+  \"playerDecisions\": [{\"decision_id\": \"enter_ruins\", \"context\": \"discovered entrance\", \"choice\": \"proceed cautiously\", \"consequences\": [\"found runes\", \"heard warning\"], \"impact_level\": \"medium\"}]
+}
 
 ${languageDirective}`
 }
@@ -297,6 +341,8 @@ ${languageDirective}`
 
 function tryParseSceneDetail(text, sceneId, macroScene) {
   try {
+    console.log('Raw AI response:', text.substring(0, 500) + '...');
+    
     // Clean the text by removing markdown code blocks if present
     let cleanedText = text.trim()
     if (cleanedText.startsWith('```json')) {
@@ -306,103 +352,41 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
     }
     
     const parsed = JSON.parse(cleanedText)
+    console.log('Parsed AI response keys:', Object.keys(parsed));
+    
+    // Handle new schema format with sceneDetail wrapper
+    const sceneDetail = parsed.sceneDetail || parsed
     
     // Ensure required fields are present
-    if (!parsed.sceneId) parsed.sceneId = sceneId
-    if (!parsed.title) parsed.title = macroScene.title
-    if (!parsed.objective) parsed.objective = macroScene.objective
+    if (!sceneDetail.sceneId) sceneDetail.sceneId = sceneId
+    if (!sceneDetail.title) sceneDetail.title = macroScene.title
+    if (!sceneDetail.objective) sceneDetail.objective = macroScene.objective
+    if (!sceneDetail.sequence) sceneDetail.sequence = macroScene.order || 1
+    if (!sceneDetail.sceneType) sceneDetail.sceneType = 'exploration'
     
-    // Ensure contextOut is present
-    if (!parsed.contextOut) {
-      parsed.contextOut = {
-        keyEvents: parsed.keyEvents || [],
-        revealedInfo: parsed.revealedInfo || [],
-        stateChanges: parsed.stateChanges || {},
-        npcRelationships: {},
-        environmentalState: {},
-        plotThreads: [],
-        playerDecisions: []
+    // Ensure narrativeCore is present
+    if (!sceneDetail.narrativeCore) {
+      sceneDetail.narrativeCore = {
+        goal: macroScene.objective,
+        conflict: 'Tension to be determined',
+        revelation: 'Information to be discovered',
+        transition: 'Transition to next scene'
       }
     }
     
-    // Ensure skillChallenges is present
-    if (!parsed.skillChallenges) {
-      parsed.skillChallenges = []
+    // Ensure dynamicElements is present
+    if (!sceneDetail.dynamicElements) {
+      sceneDetail.dynamicElements = {
+        npcProfiles: [],
+        environment: 'Environment to be described',
+        challenge: null,
+        revealedInfo: []
+      }
     }
     
-    // Add dnd_skill field to checks if missing
-    if (parsed.checks && Array.isArray(parsed.checks)) {
-      parsed.checks.forEach(check => {
-        if (!check.dnd_skill && check.skill) {
-          console.log('Processing skill:', check.skill)
-          
-          // Map skill names to D&D skills (now primarily English)
-          const skillMapping = {
-            'Investigation': 'Investigation',
-            'Perception': 'Perception',
-            'Insight': 'Insight',
-            'Arcana': 'Arcana',
-            'Athletics': 'Athletics',
-            'Stealth': 'Stealth',
-            'Deception': 'Deception',
-            'Intimidation': 'Intimidation',
-            'Persuasion': 'Persuasion',
-            'Animal Handling': 'Animal Handling',
-            'History': 'History',
-            'Medicine': 'Medicine',
-            'Nature': 'Nature',
-            'Religion': 'Religion',
-            'Survival': 'Survival',
-            'Acrobatics': 'Acrobatics',
-            'Sleight of Hand': 'Sleight of Hand',
-            // Legacy Turkish mappings for backward compatibility
-            'Araştırma': 'Investigation',
-            'Algılama': 'Perception',
-            'Fısıltıları Anlama': 'Insight'
-          }
-          
-          // Try to find a match
-          const skillName = check.skill.toLowerCase()
-          let dndSkill = 'Investigation' // default
-          
-          // First check for exact matches
-          for (const [turkish, english] of Object.entries(skillMapping)) {
-            if (skillName === turkish.toLowerCase() || skillName === english.toLowerCase()) {
-              dndSkill = english
-              console.log('Found exact match:', turkish, '->', english)
-              break
-            }
-          }
-          
-          // If no exact match, check for partial matches
-          if (dndSkill === 'Investigation') {
-            for (const [turkish, english] of Object.entries(skillMapping)) {
-              if (skillName.includes(turkish.toLowerCase()) || skillName.includes(english.toLowerCase())) {
-                dndSkill = english
-                console.log('Found partial match:', turkish, '->', english)
-                break
-              }
-            }
-          }
-          
-          console.log('Setting dnd_skill to:', dndSkill)
-          check.dnd_skill = dndSkill
-        }
-      })
-    }
-    
-    return parsed
-  } catch (error) {
-    console.error('Failed to parse scene detail JSON:', error)
-    // Return a fallback structure
-    return {
-      sceneId,
-      title: macroScene.title,
-      objective: macroScene.objective,
-      keyEvents: [],
-      revealedInfo: [],
-      stateChanges: {},
-      contextOut: {
+    // Ensure contextOut is properly structured at the top level (as per schema)
+    if (!sceneDetail.contextOut) {
+      sceneDetail.contextOut = {
         keyEvents: [],
         revealedInfo: [],
         stateChanges: {},
@@ -410,8 +394,128 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
         environmentalState: {},
         plotThreads: [],
         playerDecisions: []
-      },
-      raw: text
+      }
+    }
+    
+    // Auto-populate contextOut from other fields if it's empty
+    if (sceneDetail.contextOut.keyEvents.length === 0 && sceneDetail.dynamicElements?.revealedInfo?.length > 0) {
+      sceneDetail.contextOut.keyEvents = sceneDetail.dynamicElements.revealedInfo;
+    }
+    
+    if (sceneDetail.contextOut.revealedInfo.length === 0 && sceneDetail.dynamicElements?.revealedInfo?.length > 0) {
+      sceneDetail.contextOut.revealedInfo = sceneDetail.dynamicElements.revealedInfo;
+    }
+    
+    // Handle old structure where contextOut is inside dynamicElements
+    if (sceneDetail.dynamicElements?.contextOut) {
+      console.log('Found old contextOut structure, migrating...');
+      const oldContextOut = sceneDetail.dynamicElements.contextOut;
+      console.log('Old contextOut keys:', Object.keys(oldContextOut));
+      
+      // Populate keyEvents from story_facts and characterMoments
+      if (oldContextOut.story_facts && Array.isArray(oldContextOut.story_facts)) {
+        console.log('Adding story_facts to keyEvents:', oldContextOut.story_facts);
+        sceneDetail.contextOut.keyEvents = [...sceneDetail.contextOut.keyEvents, ...oldContextOut.story_facts];
+      }
+      if (oldContextOut.characterMoments && Array.isArray(oldContextOut.characterMoments)) {
+        console.log('Adding characterMoments to keyEvents:', oldContextOut.characterMoments);
+        sceneDetail.contextOut.keyEvents = [...sceneDetail.contextOut.keyEvents, ...oldContextOut.characterMoments];
+      }
+      
+      // Populate stateChanges from world_state
+      if (oldContextOut.world_state && typeof oldContextOut.world_state === 'object') {
+        console.log('Adding world_state to stateChanges:', oldContextOut.world_state);
+        sceneDetail.contextOut.stateChanges = { ...sceneDetail.contextOut.stateChanges, ...oldContextOut.world_state };
+      }
+      
+      // Populate environmentalState from world_seeds
+      if (oldContextOut.world_seeds && typeof oldContextOut.world_seeds === 'object') {
+        console.log('Adding world_seeds to environmentalState:', oldContextOut.world_seeds);
+        sceneDetail.contextOut.environmentalState = { ...sceneDetail.contextOut.environmentalState, ...oldContextOut.world_seeds };
+      }
+    } else {
+      console.log('No old contextOut structure found');
+    }
+    
+    // Extract key events from narrative core if available
+    if (sceneDetail.contextOut.keyEvents.length === 0 && sceneDetail.narrativeCore?.revelation) {
+      sceneDetail.contextOut.keyEvents.push(`Discovered: ${sceneDetail.narrativeCore.revelation}`);
+    }
+    
+    // Extract state changes from the scene
+    if (Object.keys(sceneDetail.contextOut.stateChanges).length === 0) {
+      sceneDetail.contextOut.stateChanges = {
+        ruins_explored: true,
+        scene_completed: true
+      };
+    }
+    
+    // Extract NPC relationships if NPCs are present
+    if (Object.keys(sceneDetail.contextOut.npcRelationships).length === 0 && sceneDetail.dynamicElements?.npcProfiles?.length > 0) {
+      sceneDetail.dynamicElements.npcProfiles.forEach(npc => {
+        sceneDetail.contextOut.npcRelationships[npc.name] = {
+          trust_level: 3,
+          last_interaction: "first encounter",
+          attitude: "neutral"
+        };
+      });
+    }
+    
+    // Extract environmental state
+    if (Object.keys(sceneDetail.contextOut.environmentalState).length === 0) {
+      sceneDetail.contextOut.environmentalState = {
+        scene_type: sceneDetail.sceneType || "exploration",
+        atmosphere: sceneDetail.dynamicElements?.environment ? "mysterious" : "unknown"
+      };
+    }
+    
+    // Create a plot thread if none exist
+    if (sceneDetail.contextOut.plotThreads.length === 0 && sceneDetail.narrativeCore?.goal) {
+      sceneDetail.contextOut.plotThreads.push({
+        thread_id: `scene_${sceneDetail.sequence}_thread`,
+        title: sceneDetail.title,
+        status: "active",
+        description: sceneDetail.narrativeCore.goal
+      });
+    }
+    
+    return parsed
+  } catch (error) {
+    console.error('Failed to parse scene detail JSON:', error)
+    // Return a fallback structure with new schema
+    return {
+      sceneDetail: {
+        sceneId,
+        title: macroScene.title,
+        objective: macroScene.objective,
+        sequence: macroScene.order || 1,
+        sceneType: 'exploration',
+        narrativeCore: {
+          goal: macroScene.objective,
+          conflict: 'Tension to be determined',
+          revelation: 'Information to be discovered',
+          transition: 'Transition to next scene'
+        },
+        dynamicElements: {
+          npcProfiles: [],
+          environment: 'Environment to be described',
+          challenge: null,
+          revealedInfo: []
+        },
+        contextOut: {
+          keyEvents: [],
+          revealedInfo: [],
+          stateChanges: {},
+          npcRelationships: {},
+          environmentalState: {},
+          plotThreads: [],
+          playerDecisions: []
+        },
+        status: 'Generated',
+        version: 1,
+        lastUpdatedAt: new Date().toISOString(),
+        raw: text
+      }
     }
   }
 }
@@ -460,6 +564,12 @@ function isRecord(value) {
 async function generateSceneDetailForServer(req) {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log('generateSceneDetailForServer called with:', {
+        sessionId: req.body.sessionId,
+        sceneId: req.body.sceneId,
+        hasSessionId: !!req.body.sessionId
+      });
+      
       // Create a proper response object that mimics Express response behavior
       const response = {
         status: (code) => ({
@@ -482,4 +592,71 @@ async function generateSceneDetailForServer(req) {
 
 // Export the function for use in server.js
 export { generateSceneDetail, generateSceneDetailForServer }
+/**
+ * Migrates old scene detail structure to new structure
+ * @param {Object} sceneDetail - The scene detail to migrate
+ * @returns {Object} - The migrated scene detail
+ */
+function migrateSceneDetailStructure(sceneDetail) {
+  // If contextOut is already at top level, return as is
+  if (sceneDetail.contextOut) {
+    return sceneDetail
+  }
+
+  // If contextOut is inside dynamicElements, migrate it
+  if (sceneDetail.dynamicElements?.contextOut) {
+    const oldContextOut = sceneDetail.dynamicElements.contextOut
+    
+    // Convert old structure to new structure
+    const newContextOut = {
+      keyEvents: oldContextOut.story_facts || [],
+      revealedInfo: [],
+      stateChanges: oldContextOut.world_state || {},
+      npcRelationships: {},
+      environmentalState: {},
+      plotThreads: [],
+      playerDecisions: []
+    }
+
+    // Add world seeds as environmental state if they exist
+    if (oldContextOut.world_seeds) {
+      newContextOut.environmentalState = {
+        ...newContextOut.environmentalState,
+        locations: oldContextOut.world_seeds.locations || [],
+        factions: oldContextOut.world_seeds.factions || [],
+        constraints: oldContextOut.world_seeds.constraints || []
+      }
+    }
+
+    // Add character moments as key events if they exist
+    if (oldContextOut.characterMoments && Array.isArray(oldContextOut.characterMoments)) {
+      newContextOut.keyEvents = [...newContextOut.keyEvents, ...oldContextOut.characterMoments]
+    }
+
+    // Create new scene detail with migrated structure
+    const { dynamicElements, ...rest } = sceneDetail
+    const { contextOut: _, ...newDynamicElements } = dynamicElements || {}
+
+    return {
+      ...rest,
+      contextOut: newContextOut,
+      dynamicElements: newDynamicElements
+    }
+  }
+
+  // If no contextOut exists, create default structure
+  return {
+    ...sceneDetail,
+    contextOut: {
+      keyEvents: [],
+      revealedInfo: [],
+      stateChanges: {},
+      npcRelationships: {},
+      environmentalState: {},
+      plotThreads: [],
+      playerDecisions: []
+    }
+  }
+}
+
 export default generateSceneDetail

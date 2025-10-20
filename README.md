@@ -22,5 +22,5 @@ To enable AI-powered scene generation, you need to set up your OpenAI API key:
 2. Start the development server: `npm run dev`
 3. Start the API server: `node server.js`
 
-The application will use mock data if no OpenAI API key is provided, and real AI-generated content when the API key is configured.
+The application requires an OpenAI API key to function. Without it, the system will return appropriate error messages.
 

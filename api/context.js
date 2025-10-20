@@ -299,6 +299,35 @@ export default async function handler(req, res) {
         });
       }
 
+      // Migrate scene details to new structure if needed
+      if (sessionContext.sceneDetails) {
+        console.log('Checking scene details for migration:', Object.keys(sessionContext.sceneDetails));
+        let needsMigration = false;
+        const migratedSceneDetails = {};
+        for (const [sceneId, sceneDetail] of Object.entries(sessionContext.sceneDetails)) {
+          console.log(`Checking scene ${sceneId} for migration:`, {
+            hasContextOut: !!sceneDetail.contextOut,
+            hasDynamicElementsContextOut: !!sceneDetail.dynamicElements?.contextOut
+          });
+          const migrated = migrateSceneDetailStructure(sceneDetail);
+          migratedSceneDetails[sceneId] = migrated;
+          // Check if migration was needed
+          if (!sceneDetail.contextOut && migrated.contextOut) {
+            console.log(`Migration needed for scene ${sceneId}`);
+            needsMigration = true;
+          }
+        }
+        sessionContext.sceneDetails = migratedSceneDetails;
+        
+        // If migration was needed, save the updated context back to storage
+        if (needsMigration) {
+          console.log('Migrating scene details to new structure and saving to storage');
+          await saveSessionContext(sessionId, sessionContext);
+        } else {
+          console.log('No migration needed for scene details');
+        }
+      }
+
       console.log('Context retrieved:', {
         sessionId,
         version: sessionContext.version,
@@ -349,5 +378,72 @@ export default async function handler(req, res) {
   }
 }
 
+/**
+ * Migrates old scene detail structure to new structure
+ * @param {Object} sceneDetail - The scene detail to migrate
+ * @returns {Object} - The migrated scene detail
+ */
+function migrateSceneDetailStructure(sceneDetail) {
+  // If contextOut is already at top level, return as is
+  if (sceneDetail.contextOut) {
+    return sceneDetail
+  }
+
+  // If contextOut is inside dynamicElements, migrate it
+  if (sceneDetail.dynamicElements?.contextOut) {
+    const oldContextOut = sceneDetail.dynamicElements.contextOut
+    
+    // Convert old structure to new structure
+    const newContextOut = {
+      keyEvents: oldContextOut.story_facts || [],
+      revealedInfo: [],
+      stateChanges: oldContextOut.world_state || {},
+      npcRelationships: {},
+      environmentalState: {},
+      plotThreads: [],
+      playerDecisions: []
+    }
+
+    // Add world seeds as environmental state if they exist
+    if (oldContextOut.world_seeds) {
+      newContextOut.environmentalState = {
+        ...newContextOut.environmentalState,
+        locations: oldContextOut.world_seeds.locations || [],
+        factions: oldContextOut.world_seeds.factions || [],
+        constraints: oldContextOut.world_seeds.constraints || []
+      }
+    }
+
+    // Add character moments as key events if they exist
+    if (oldContextOut.characterMoments && Array.isArray(oldContextOut.characterMoments)) {
+      newContextOut.keyEvents = [...newContextOut.keyEvents, ...oldContextOut.characterMoments]
+    }
+
+    // Create new scene detail with migrated structure
+    const { dynamicElements, ...rest } = sceneDetail
+    const { contextOut: _, ...newDynamicElements } = dynamicElements || {}
+
+    return {
+      ...rest,
+      contextOut: newContextOut,
+      dynamicElements: newDynamicElements
+    }
+  }
+
+  // If no contextOut exists, create default structure
+  return {
+    ...sceneDetail,
+    contextOut: {
+      keyEvents: [],
+      revealedInfo: [],
+      stateChanges: {},
+      npcRelationships: {},
+      environmentalState: {},
+      plotThreads: [],
+      playerDecisions: []
+    }
+  }
+}
+
 // Export helper functions for use in other modules
-export { processContextForPrompt, getOrCreateSessionContext, mergeContextData };
+export { processContextForPrompt, getOrCreateSessionContext, mergeContextData, migrateSceneDetailStructure };

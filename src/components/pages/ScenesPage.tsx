@@ -39,12 +39,21 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   const fetchContext = async () => {
     try {
       setLoading(true);
+      console.log('Fetching context for sessionId:', effectiveSessionId);
       const response = await getJSON<{ ok: boolean; data: SessionContext | null }>(`/api/context/get?sessionId=${effectiveSessionId}`);
+      console.log('Context response:', response);
       if (response.ok && response.data) {
         onContextUpdate(response.data);
         // Extract macro chain from context
         if (response.data.blocks.custom?.macroChain) {
           setChain(response.data.blocks.custom.macroChain);
+        }
+        // Extract scene details from context
+        if (response.data.sceneDetails) {
+          console.log('Loading scene details from context:', response.data.sceneDetails);
+          setSceneDetails(response.data.sceneDetails);
+        } else {
+          console.log('No scene details found in context');
         }
       }
     } catch (error) {
@@ -58,6 +67,11 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   useEffect(() => {
     if (context && context.blocks.custom?.macroChain) {
       setChain(context.blocks.custom.macroChain);
+    }
+    // Extract scene details from context when it changes
+    if (context && context.sceneDetails) {
+      console.log('Loading scene details from context (parent update):', context.sceneDetails);
+      setSceneDetails(context.sceneDetails);
     }
   }, [context]);
 
@@ -75,6 +89,10 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   };
 
   const handleSceneDetailUpdate = (detail: SceneDetail) => {
+    console.log('handleSceneDetailUpdate:', {
+      detailSceneId: detail.sceneId,
+      detail: detail
+    });
     setSceneDetails(prev => ({
       ...prev,
       [detail.sceneId]: detail

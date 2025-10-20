@@ -9,64 +9,15 @@ const fetch = require('node-fetch');
 
 const API_BASE = 'http://localhost:3000';
 
-// Mock background context data that matches the expected input structure
-const mockBackgroundContext = {
-  fiveWoneH: {
-    who: {
-      value: "The mysterious owner of Esmond Manor",
-      status: "known",
-      revealPlan: "early",
-      confidence: 0.9
-    },
-    what: {
-      value: "A group of strangers receiving mysterious invitations",
-      status: "known", 
-      revealPlan: "early",
-      confidence: 1.0
-    },
-    where: {
-      value: "Esmond Manor in the Northern Woods",
-      status: "known",
-      revealPlan: "early", 
-      confidence: 0.95
-    },
-    when: {
-      value: "Mid-winter, on the anniversary of death",
-      status: "known",
-      revealPlan: "mid",
-      confidence: 0.85
-    },
-    why: {
-      value: "The true purpose of the invitation is unknown",
-      status: "unknown",
-      revealPlan: "late",
-      confidence: 0.3
-    },
-    how: {
-      value: "Invitations delivered secretly in unsealed envelopes",
-      status: "known",
-      revealPlan: "early",
-      confidence: 0.9
-    }
-  },
-  backgroundSummary: "In the depths of the Northern Woods stands Esmond Manor, a gothic estate shrouded in mystery and whispered legends. The manor's owner vanished years ago under mysterious circumstances, yet invitations bearing his personal seal continue to arrive at the doors of strangers. Those who accept find themselves drawn into a web of secrets where nothing is as it seems, and every reflection holds a hidden truth.",
-  anchors: [
-    "The manor remains a fixed location throughout the story",
-    "All invitations arrive on the same day",
-    "The owner's seal is authentic but his fate is unknown"
-  ],
-  gmSecrets: [
-    "The real invitation sender is still alive",
-    "The manor contains a hidden chamber with ancient artifacts",
-    "One of the invited guests has a secret connection to the original owner"
-  ],
-  motifs: ["unsealed envelopes", "mirrors", "dark woods", "sealed letters", "stormlight"],
-  tone: "mysterious",
-  pacing: "balanced"
-};
+// Test requires a real background context to be generated first
+// This test should be run after generating a background using the /api/generate_background endpoint
 
-async function testCharacterGeneration() {
+async function testCharacterGeneration(backgroundContext) {
   console.log('🧙‍♂️ Testing D&D Character Generation API...\n');
+  
+  if (!backgroundContext) {
+    throw new Error('Background context is required. Please generate a background first using /api/generate_background endpoint.');
+  }
   
   try {
     // Test the character generation endpoint
@@ -79,7 +30,7 @@ async function testCharacterGeneration() {
       },
       body: JSON.stringify({
         sessionId: 'test-session-' + Date.now(),
-        backgroundContext: mockBackgroundContext
+        backgroundContext: backgroundContext
       })
     });
 
@@ -178,7 +129,10 @@ async function testCharacterGeneration() {
 
 // Run the test
 if (require.main === module) {
-  testCharacterGeneration();
+  console.log('❌ This test requires a background context to be provided.');
+  console.log('Please generate a background first using the /api/generate_background endpoint,');
+  console.log('then pass the background context to this test function.');
+  process.exit(1);
 }
 
-module.exports = { testCharacterGeneration, mockBackgroundContext };
+module.exports = { testCharacterGeneration };

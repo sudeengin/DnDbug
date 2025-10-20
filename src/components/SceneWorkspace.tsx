@@ -43,11 +43,18 @@ export default function SceneWorkspace({
 
   useEffect(() => {
     // Load existing detail from sceneDetails prop
+    console.log('SceneWorkspace useEffect:', {
+      sceneId: scene.id,
+      sceneDetailsKeys: Object.keys(sceneDetails),
+      sceneDetails: sceneDetails
+    });
     const existingDetail = sceneDetails[scene.id];
     if (existingDetail) {
+      console.log('Found existing detail:', existingDetail);
       setDetail(existingDetail);
-      setContextOut(existingDetail.contextOut);
+      setContextOut(existingDetail.contextOut || existingDetail.dynamicElements?.contextOut);
     } else {
+      console.log('No existing detail found for scene:', scene.id);
       setDetail(null);
       setContextOut(null);
     }
@@ -56,6 +63,8 @@ export default function SceneWorkspace({
   const handleGenerateDetail = async () => {
     if (!context) return;
     
+    console.log('SceneWorkspace sessionId:', sessionId, 'Type:', typeof sessionId);
+    
     try {
       setLoading(true);
       
@@ -63,7 +72,15 @@ export default function SceneWorkspace({
       const sceneIds = Object.keys(sceneDetails);
       const effectiveContext = mergeLockedContexts(sceneIndex - 1, sceneDetails, sceneIds);
       
-      const response = await generateDetail({
+      console.log('Context building for scene generation:', {
+        sceneIndex,
+        sceneIds,
+        sceneDetailsKeys: Object.keys(sceneDetails),
+        effectiveContextKeys: Object.keys(effectiveContext),
+        effectiveContext
+      });
+      
+      const requestData = {
         sceneId: scene.id,
         macroScene: {
           id: scene.id,
@@ -73,9 +90,31 @@ export default function SceneWorkspace({
         },
         effectiveContext,
         sessionId
+      };
+      
+      console.log('Request data before API call:', {
+        sessionId,
+        sceneId: scene.id,
+        hasSessionId: !!sessionId,
+        requestDataKeys: Object.keys(requestData)
       });
       
+      console.log('SceneWorkspace generateDetail request:', {
+        sessionId,
+        sceneId: scene.id,
+        requestData
+      });
+      
+      console.log('SessionId value:', sessionId, 'Type:', typeof sessionId);
+      
+      const response = await generateDetail(requestData);
+      
       if (response.ok) {
+        console.log('GenerateDetail response:', {
+          responseData: response.data,
+          responseDataSceneId: response.data.sceneId,
+          sceneId: scene.id
+        });
         setDetail(response.data);
         setContextOut(response.data.contextOut);
         onDetailUpdate(response.data);
@@ -122,7 +161,8 @@ export default function SceneWorkspace({
     
     try {
       setLoading(true);
-      const response = await lockScene({ sessionId, sceneId: detail.sceneId });
+      console.log('Locking scene with:', { sessionId, sceneId: scene.id, detailSceneId: detail.sceneId });
+      const response = await lockScene({ sessionId, sceneId: scene.id });
       if (response.ok) {
         setDetail(response.detail);
         onDetailUpdate(response.detail);
@@ -144,7 +184,7 @@ export default function SceneWorkspace({
     
     try {
       setLoading(true);
-      const response = await unlockScene({ sessionId, sceneId: detail.sceneId });
+      const response = await unlockScene({ sessionId, sceneId: scene.id });
       if (response.ok) {
         setDetail(response.detail);
         onDetailUpdate(response.detail);
@@ -211,8 +251,14 @@ export default function SceneWorkspace({
 
         <TabsContent value="detail" className="flex-1 p-6">
           <SceneDetailEditor
+            sessionId={sessionId}
             macroScene={scene}
-            previousSceneDetails={[]} // TODO: Get actual previous scene details
+            previousSceneDetails={Object.values(sceneDetails).filter(d => {
+              // Only include scenes that come before the current scene in sequence
+              const currentSceneOrder = scene.order;
+              const detailSceneOrder = d.sequence;
+              return detailSceneOrder < currentSceneOrder;
+            })}
             onSceneDetailGenerated={onDetailUpdate}
             existingDetail={detail}
             readOnly={detail?.status === 'Locked'}

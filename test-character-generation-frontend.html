@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Generation Frontend Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .result {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <h1>Character Generation Frontend Test</h1>
+    <p>This page tests the character generation functionality from the frontend perspective.</p>
+
+    <div class="container">
+        <h2>Test Configuration</h2>
+        <label>Session ID: <input type="text" id="sessionId" value="test_frontend_123"></label>
+        <button onclick="generateSessionId()">Generate New Session</button>
+    </div>
+
+    <div class="container">
+        <h2>Step 1: Generate Background</h2>
+        <label>Story Concept: <textarea id="concept" placeholder="A dark gothic mansion with mysterious disappearances">A dark gothic mansion with mysterious disappearances</textarea></label>
+        <label>Game Type: <input type="text" id="gameType" value="D&D 5e"></label>
+        <label>Player Count: <input type="number" id="playerCount" value="4"></label>
+        <label>Level: <input type="text" id="level" value="3-5"></label>
+        <button onclick="generateBackground()">Generate Background</button>
+        <div id="background-result" class="result"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 2: Lock Background</h2>
+        <button onclick="lockBackground()">Lock Background</button>
+        <div id="lock-result" class="result"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 3: Generate Characters</h2>
+        <button onclick="generateCharacters()">Generate Characters</button>
+        <div id="characters-result" class="result"></div>
+    </div>
+
+    <div class="container">
+        <h2>Step 4: Test Frontend API Call (Like React Component)</h2>
+        <p>This simulates exactly what the React component does:</p>
+        <button onclick="testFrontendAPI()">Test Frontend API Call</button>
+        <div id="frontend-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let currentSessionId = 'test_frontend_123';
+
+        function generateSessionId() {
+            currentSessionId = `test_frontend_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+            document.getElementById('sessionId').value = currentSessionId;
+        }
+
+        function getSessionId() {
+            return document.getElementById('sessionId').value || currentSessionId;
+        }
+
+        async function makeRequest(url, method = 'GET', body = null) {
+            const fullUrl = url.startsWith('http') ? url : `${API_BASE}${url}`;
+            console.log(`Making ${method} request to:`, fullUrl);
+            
+            try {
+                const options = {
+                    method,
+                    headers: { 'Content-Type': 'application/json' }
+                };
+                if (body) options.body = JSON.stringify(body);
+                
+                console.log('Request options:', options);
+                const response = await fetch(fullUrl, options);
+                
+                console.log('Response status:', response.status, 'ok:', response.ok);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+                
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Error response:', text);
+                    return { success: false, error: text, status: response.status };
+                }
+                
+                const result = await response.json();
+                console.log('Response data:', result);
+                return { success: true, data: result };
+            } catch (error) {
+                console.error('Request error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function generateBackground() {
+            const sessionId = getSessionId();
+            const concept = document.getElementById('concept').value;
+            const gameType = document.getElementById('gameType').value;
+            const playerCount = parseInt(document.getElementById('playerCount').value);
+            const level = document.getElementById('level').value;
+
+            console.log('Generating background with:', { sessionId, concept, gameType, playerCount, level });
+
+            const result = await makeRequest('/generate_background', 'POST', {
+                sessionId,
+                concept,
+                meta: { gameType, players: playerCount, level }
+            });
+
+            document.getElementById('background-result').textContent = 
+                result.success ? JSON.stringify(result.data, null, 2) : `Error: ${result.error}`;
+            
+            document.getElementById('background-result').className = 
+                result.success ? 'result success' : 'result error';
+        }
+
+        async function lockBackground() {
+            const sessionId = getSessionId();
+            console.log('Locking background for session:', sessionId);
+
+            const result = await makeRequest('/background/lock', 'POST', {
+                sessionId,
+                locked: true
+            });
+
+            document.getElementById('lock-result').textContent = 
+                result.success ? JSON.stringify(result.data, null, 2) : `Error: ${result.error}`;
+            
+            document.getElementById('lock-result').className = 
+                result.success ? 'result success' : 'result error';
+        }
+
+        async function generateCharacters() {
+            const sessionId = getSessionId();
+            console.log('Generating characters for session:', sessionId);
+
+            const result = await makeRequest('/characters/generate', 'POST', {
+                sessionId
+            });
+
+            document.getElementById('characters-result').textContent = 
+                result.success ? JSON.stringify(result.data, null, 2) : `Error: ${result.error}`;
+            
+            document.getElementById('characters-result').className = 
+                result.success ? 'result success' : 'result error';
+        }
+
+        // This simulates exactly what the React component does
+        async function testFrontendAPI() {
+            const sessionId = getSessionId();
+            console.log('Testing frontend API call (like React component) for session:', sessionId);
+
+            // This is exactly what the React component does
+            async function postJSON(url, body) {
+                const fullUrl = url.startsWith('http') ? url : `http://localhost:3000${url}`;
+                console.log('Making POST request to:', fullUrl);
+                
+                const res = await fetch(fullUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                
+                console.log('Response status:', res.status, 'ok:', res.ok);
+                
+                if (!res.ok) {
+                    const text = await res.text();
+                    console.error('Error response:', text);
+                    throw new Error(text || `HTTP ${res.status}`);
+                }
+                
+                return res.json();
+            }
+
+            try {
+                const response = await postJSON('/api/characters/generate', { sessionId });
+                document.getElementById('frontend-result').textContent = 
+                    JSON.stringify(response, null, 2);
+                document.getElementById('frontend-result').className = 'result success';
+            } catch (error) {
+                document.getElementById('frontend-result').textContent = 
+                    `Error: ${error.message}`;
+                document.getElementById('frontend-result').className = 'result error';
+            }
+        }
+
+        // Initialize
+        generateSessionId();
+    </script>
+</body>
+</html>

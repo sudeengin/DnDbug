@@ -1,25 +1,28 @@
-import { NextResponse } from 'next/server';
 import { getOrCreateSessionContext } from '../context.js';
+import { saveSessionContext } from '../storage.js';
 
 /**
  * POST /api/scene/lock
  * Locks a scene, preventing further edits and enabling next scene generation
  */
-export async function POST(request) {
+export default async function handler(req, res) {
   try {
-    const body = await request.json();
+    if (req.method !== 'POST') {
+      res.status(405).json({ error: 'Use POST' });
+      return;
+    }
+
+    const { sessionId, sceneId } = req.body;
     
-    if (!body.sessionId || !body.sceneId) {
-      return NextResponse.json(
-        { error: 'Missing required fields: sessionId, sceneId' },
-        { status: 400 }
-      );
+    if (!sessionId || !sceneId) {
+      res.status(400).json({ 
+        error: 'Missing required fields: sessionId, sceneId' 
+      });
+      return;
     }
     
-    const { sessionId, sceneId } = body;
-    
     // Get session context
-    const sessionContext = getOrCreateSessionContext(sessionId);
+    const sessionContext = await getOrCreateSessionContext(sessionId);
     
     // Find the scene detail in the session context
     let sceneDetail = null;
@@ -29,18 +32,18 @@ export async function POST(request) {
     
     // Validate that scene detail exists
     if (!sceneDetail) {
-      return NextResponse.json(
-        { error: 'Scene detail not found. Generate scene detail first.' },
-        { status: 404 }
-      );
+      res.status(404).json({ 
+        error: 'Scene detail not found. Generate scene detail first.' 
+      });
+      return;
     }
     
     // Check if already locked
     if (sceneDetail.status === 'Locked') {
-      return NextResponse.json(
-        { error: 'Scene is already locked' },
-        { status: 409 }
-      );
+      res.status(409).json({ 
+        error: 'Scene is already locked' 
+      });
+      return;
     }
     
     // Lock the scene
@@ -57,20 +60,67 @@ export async function POST(request) {
       sessionContext.sceneDetails = {};
     }
     sessionContext.sceneDetails[sceneId] = lockedDetail;
+    
+    // Append contextOut to SessionContext if it exists
+    if (sceneDetail.dynamicElements && sceneDetail.dynamicElements.contextOut) {
+      const contextOut = sceneDetail.dynamicElements.contextOut;
+      
+      // Append to story_facts
+      if (contextOut.story_facts && contextOut.story_facts.length > 0) {
+        if (!sessionContext.blocks.story_facts) {
+          sessionContext.blocks.story_facts = [];
+        }
+        sessionContext.blocks.story_facts.push(...contextOut.story_facts);
+      }
+      
+      // Append to world_state
+      if (contextOut.world_state && Object.keys(contextOut.world_state).length > 0) {
+        if (!sessionContext.blocks.world_state) {
+          sessionContext.blocks.world_state = {};
+        }
+        sessionContext.blocks.world_state = {
+          ...sessionContext.blocks.world_state,
+          ...contextOut.world_state
+        };
+      }
+      
+      // Append to world_seeds
+      if (contextOut.world_seeds) {
+        if (!sessionContext.blocks.world_seeds) {
+          sessionContext.blocks.world_seeds = {
+            locations: [],
+            factions: [],
+            constraints: []
+          };
+        }
+        if (contextOut.world_seeds.locations) {
+          sessionContext.blocks.world_seeds.locations.push(...contextOut.world_seeds.locations);
+        }
+        if (contextOut.world_seeds.factions) {
+          sessionContext.blocks.world_seeds.factions.push(...contextOut.world_seeds.factions);
+        }
+        if (contextOut.world_seeds.constraints) {
+          sessionContext.blocks.world_seeds.constraints.push(...contextOut.world_seeds.constraints);
+        }
+      }
+    }
+    
     sessionContext.updatedAt = new Date().toISOString();
+    
+    // Save the updated context
+    await saveSessionContext(sessionId, sessionContext);
     
     console.log(`Scene ${sceneId} locked for session ${sessionId}`);
     
-    return NextResponse.json({
+    res.status(200).json({
       ok: true,
-      detail: lockedDetail
+      data: lockedDetail
     });
     
   } catch (error) {
     console.error('Error locking scene:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    res.status(500).json({ 
+      error: error.message 
+    });
   }
 }

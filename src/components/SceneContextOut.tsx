@@ -21,14 +21,35 @@ export default function SceneContextOut({ data }: SceneContextOutProps) {
     );
   }
 
+  // Handle old data structure - convert to new structure for display
+  const keyEvents = data.keyEvents || [];
+  const revealedInfo = data.revealedInfo || [];
+  const stateChanges = data.stateChanges || {};
+  const npcRelationships = data.npcRelationships || {};
+  const environmentalState = data.environmentalState || {};
+  const plotThreads = data.plotThreads || [];
+  const playerDecisions = data.playerDecisions || [];
+
+  // If we have the old structure, extract data from it
+  if (!keyEvents.length && (data.story_facts || data.characterMoments)) {
+    keyEvents.push(...(data.story_facts || []));
+    keyEvents.push(...(data.characterMoments || []));
+  }
+  if (!Object.keys(stateChanges).length && data.world_state) {
+    Object.assign(stateChanges, data.world_state);
+  }
+  if (!Object.keys(environmentalState).length && data.world_seeds) {
+    Object.assign(environmentalState, data.world_seeds);
+  }
+
   return (
     <div className="space-y-4">
       <div>
         <h4 className="text-sm font-medium text-gray-900 mb-2">Key Events</h4>
         <div className="bg-gray-50 rounded-lg p-3">
-          {data.keyEvents.length > 0 ? (
+          {keyEvents.length > 0 ? (
             <div className="space-y-2">
-              {data.keyEvents.map((event, index) => (
+              {keyEvents.map((event, index) => (
                 <div key={index} className="flex items-start border-l-4 border-blue-200 pl-3">
                   <span className="text-blue-500 mr-2 font-bold">▶</span>
                   <span className="text-gray-700">{event}</span>
@@ -44,9 +65,9 @@ export default function SceneContextOut({ data }: SceneContextOutProps) {
       <div>
         <h4 className="text-sm font-medium text-gray-900 mb-2">Revealed Information</h4>
         <div className="bg-gray-50 rounded-lg p-3">
-          {data.revealedInfo.length > 0 ? (
+          {revealedInfo.length > 0 ? (
             <div className="space-y-2">
-              {data.revealedInfo.map((info, index) => (
+              {revealedInfo.map((info, index) => (
                 <div key={index} className="flex items-start border-l-4 border-green-200 pl-3">
                   <span className="text-green-500 mr-2 font-bold">💡</span>
                   <span className="text-gray-700">{info}</span>
@@ -62,9 +83,9 @@ export default function SceneContextOut({ data }: SceneContextOutProps) {
       <div>
         <h4 className="text-sm font-medium text-gray-900 mb-2">State Changes</h4>
         <div className="bg-gray-50 rounded-lg p-3">
-          {Object.keys(data.stateChanges).length > 0 ? (
+          {Object.keys(stateChanges).length > 0 ? (
             <div className="space-y-2">
-              {Object.entries(data.stateChanges).map(([key, value]) => (
+              {Object.entries(stateChanges).map(([key, value]) => (
                 <div key={key} className="flex items-start">
                   <span className="font-medium text-gray-800 mr-2">{key}:</span>
                   <span className="text-gray-700">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
@@ -77,12 +98,12 @@ export default function SceneContextOut({ data }: SceneContextOutProps) {
         </div>
       </div>
 
-      {data.npcRelationships && Object.keys(data.npcRelationships).length > 0 && (
+      {npcRelationships && Object.keys(npcRelationships).length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-gray-900 mb-2">NPC Relationships</h4>
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="space-y-3">
-              {Object.entries(data.npcRelationships).map(([npcName, relationship]) => (
+              {Object.entries(npcRelationships).map(([npcName, relationship]) => (
                 <div key={npcName} className="border-l-4 border-blue-200 pl-3">
                   <div className="font-medium text-gray-800">{npcName}</div>
                   <div className="text-sm text-gray-600 mt-1">
@@ -97,12 +118,12 @@ export default function SceneContextOut({ data }: SceneContextOutProps) {
         </div>
       )}
 
-      {data.environmentalState && Object.keys(data.environmentalState).length > 0 && (
+      {environmentalState && Object.keys(environmentalState).length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-gray-900 mb-2">Environmental State</h4>
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="space-y-2">
-              {Object.entries(data.environmentalState).map(([key, value]) => (
+              {Object.entries(environmentalState).map(([key, value]) => (
                 <div key={key} className="flex items-start">
                   <span className="font-medium text-gray-800 mr-2">{key}:</span>
                   <span className="text-gray-700">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
@@ -113,12 +134,12 @@ export default function SceneContextOut({ data }: SceneContextOutProps) {
         </div>
       )}
 
-      {data.plotThreads && data.plotThreads.length > 0 && (
+      {plotThreads && plotThreads.length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-gray-900 mb-2">Plot Threads</h4>
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="space-y-3">
-              {data.plotThreads.map((thread, index) => (
+              {plotThreads.map((thread, index) => (
                 <div key={index} className="border-l-4 border-green-200 pl-3">
                   <div className="flex items-center justify-between">
                     <div className="font-medium text-gray-800">{thread.title}</div>
@@ -138,12 +159,12 @@ export default function SceneContextOut({ data }: SceneContextOutProps) {
         </div>
       )}
 
-      {data.playerDecisions && data.playerDecisions.length > 0 && (
+      {playerDecisions && playerDecisions.length > 0 && (
         <div>
           <h4 className="text-sm font-medium text-gray-900 mb-2">Player Decisions</h4>
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="space-y-3">
-              {data.playerDecisions.map((decision, index) => (
+              {playerDecisions.map((decision, index) => (
                 <div key={index} className="border-l-4 border-purple-200 pl-3">
                   <div className="flex items-center justify-between">
                     <div className="font-medium text-gray-800">{decision.choice}</div>

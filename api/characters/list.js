@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     res.status(200).json({ 
       ok: true, 
       list: charactersBlock.list || [], 
-      locked: charactersBlock.locked || false, 
+      locked: sessionContext.locks?.characters || false, 
       version: charactersBlock.version || 0 
     });
 

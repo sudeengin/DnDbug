@@ -1,25 +1,28 @@
-import { NextResponse } from 'next/server';
 import { getOrCreateSessionContext } from '../context.js';
+import { saveSessionContext } from '../storage.js';
 
 /**
  * POST /api/scene/unlock
  * Unlocks a scene, allowing edits and marking later scenes as NeedsRegen
  */
-export async function POST(request) {
+export default async function handler(req, res) {
   try {
-    const body = await request.json();
+    if (req.method !== 'POST') {
+      res.status(405).json({ error: 'Use POST' });
+      return;
+    }
+
+    const { sessionId, sceneId } = req.body;
     
-    if (!body.sessionId || !body.sceneId) {
-      return NextResponse.json(
-        { error: 'Missing required fields: sessionId, sceneId' },
-        { status: 400 }
-      );
+    if (!sessionId || !sceneId) {
+      res.status(400).json({ 
+        error: 'Missing required fields: sessionId, sceneId' 
+      });
+      return;
     }
     
-    const { sessionId, sceneId } = body;
-    
     // Get session context
-    const sessionContext = getOrCreateSessionContext(sessionId);
+    const sessionContext = await getOrCreateSessionContext(sessionId);
     
     // Find the scene detail in the session context
     let sceneDetail = null;
@@ -29,18 +32,18 @@ export async function POST(request) {
     
     // Validate that scene detail exists
     if (!sceneDetail) {
-      return NextResponse.json(
-        { error: 'Scene detail not found' },
-        { status: 404 }
-      );
+      res.status(404).json({ 
+        error: 'Scene detail not found' 
+      });
+      return;
     }
     
     // Check if already unlocked
     if (sceneDetail.status !== 'Locked') {
-      return NextResponse.json(
-        { error: 'Scene is not locked' },
-        { status: 409 }
-      );
+      res.status(409).json({ 
+        error: 'Scene is not locked' 
+      });
+      return;
     }
     
     // Unlock the scene - set to Edited (or Generated if unchanged from original generation)
@@ -61,39 +64,44 @@ export async function POST(request) {
     // Mark all later scenes as NeedsRegen
     const affectedScenes = [];
     if (sessionContext.sceneDetails) {
-      const currentSceneOrder = sceneDetail.order || 0;
+      const currentSceneOrder = sceneDetail.sequence || sceneDetail.order || 0;
       
       for (const [otherSceneId, otherDetail] of Object.entries(sessionContext.sceneDetails)) {
-        if (otherSceneId !== sceneId && otherDetail && otherDetail.order > currentSceneOrder) {
-          // Mark as NeedsRegen
-          const updatedDetail = {
-            ...otherDetail,
-            status: 'NeedsRegen',
-            lastUpdatedAt: new Date().toISOString(),
-            version: (otherDetail.version || 0) + 1
-          };
-          
-          sessionContext.sceneDetails[otherSceneId] = updatedDetail;
-          affectedScenes.push(otherSceneId);
+        if (otherSceneId !== sceneId && otherDetail) {
+          const otherSceneOrder = otherDetail.sequence || otherDetail.order || 0;
+          if (otherSceneOrder > currentSceneOrder) {
+            // Mark as NeedsRegen
+            const updatedDetail = {
+              ...otherDetail,
+              status: 'NeedsRegen',
+              lastUpdatedAt: new Date().toISOString(),
+              version: (otherDetail.version || 0) + 1
+            };
+            
+            sessionContext.sceneDetails[otherSceneId] = updatedDetail;
+            affectedScenes.push(otherSceneId);
+          }
         }
       }
     }
     
     sessionContext.updatedAt = new Date().toISOString();
     
+    // Save the updated context
+    await saveSessionContext(sessionId, sessionContext);
+    
     console.log(`Scene ${sceneId} unlocked for session ${sessionId}, affected scenes:`, affectedScenes);
     
-    return NextResponse.json({
+    res.status(200).json({
       ok: true,
-      detail: unlockedDetail,
+      data: unlockedDetail,
       affectedScenes
     });
     
   } catch (error) {
     console.error('Error unlocking scene:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    res.status(500).json({ 
+      error: error.message 
+    });
   }
 }

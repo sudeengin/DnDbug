@@ -31,12 +31,14 @@ export default function SceneList({ items, statusMap, selected, onSelect, highes
       <div className="flex-1 overflow-y-auto">
         <div className="divide-y divide-gray-200">
           {items.map((scene, index) => {
-            const status = getSceneStatus(scene.id, statusMap);
-            const isSelected = selected === index;
             const sceneIds = items.map(s => s.id);
             const canAccess = canAccessScene(index, statusMap, sceneIds);
             const disabled = !canAccess;
             const isFirstScene = index === 0;
+            const isSelected = selected === index;
+            
+            // If scene can't be accessed, it should show as Draft regardless of actual status
+            const status = canAccess ? getSceneStatus(scene.id, statusMap) : 'Draft';
             const isDraft = status === 'Draft';
             
             return (

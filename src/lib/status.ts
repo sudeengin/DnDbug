@@ -167,7 +167,7 @@ export function mergeLockedContexts(
 /**
  * Get status badge variant for UI
  */
-export function getStatusBadgeVariant(status: SceneStatus): 'default' | 'secondary' | 'destructive' | 'outline' {
+export function getStatusBadgeVariant(status: SceneStatus): 'default' | 'secondary' | 'destructive' | 'outline' | 'locked' {
   switch (status) {
     case 'Draft':
       return 'outline';
@@ -176,7 +176,7 @@ export function getStatusBadgeVariant(status: SceneStatus): 'default' | 'seconda
     case 'Edited':
       return 'default';
     case 'Locked':
-      return 'default';
+      return 'locked'; // Use the new locked variant with yellow background
     case 'NeedsRegen':
       return 'destructive';
     default:
