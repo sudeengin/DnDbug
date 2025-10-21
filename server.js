@@ -13,6 +13,15 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
+// Request logging middleware - log all incoming POST/PUT/DELETE requests
+app.use((req, res, next) => {
+  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
+    const bodyPreview = JSON.stringify(req.body).substring(0, 150);
+    console.log(`📨 ${req.method} ${req.url} ${bodyPreview ? '- Body: ' + bodyPreview : ''}`);
+  }
+  next();
+});
+
 // Function to extract keywords from story concept using AI
 async function extractStoryKeywords(concept) {
   try {
@@ -150,6 +159,11 @@ app.post('/api/generate_chain', async (req, res) => {
   return handler(req, res);
 });
 
+app.post('/api/generate_next_scene', async (req, res) => {
+  const { default: handler } = await import('./api/generate_next_scene.js?' + Date.now());
+  return handler(req, res);
+});
+
 app.post('/api/update_chain', async (req, res) => {
   try {
     const { chainId, edits, sessionId } = req.body;
@@ -158,19 +172,40 @@ app.post('/api/update_chain', async (req, res) => {
       return res.status(400).json({ error: 'chainId and edits array are required' });
     }
 
+    console.log('update_chain: Received request', { chainId, sessionId, editCount: edits.length });
+
     // Try to get the chain from session context first
     let chain = null;
     if (sessionId) {
       const { getOrCreateSessionContext } = await import('./api/context.js');
       const sessionContext = await getOrCreateSessionContext(sessionId);
       
-      if (sessionContext.macroChains && sessionContext.macroChains[chainId]) {
+      console.log('update_chain: Session context loaded', {
+        hasBlocks: !!sessionContext.blocks,
+        hasCustom: !!sessionContext.blocks?.custom,
+        hasMacroChain: !!sessionContext.blocks?.custom?.macroChain,
+        macroChainId: sessionContext.blocks?.custom?.macroChain?.chainId,
+        hasMacroChains: !!sessionContext.macroChains,
+        requestedChainId: chainId
+      });
+      
+      // Check both locations: new location (blocks.custom.macroChain) and legacy location (macroChains)
+      if (sessionContext.blocks?.custom?.macroChain?.chainId === chainId) {
+        console.log('update_chain: Found chain in blocks.custom.macroChain');
+        chain = sessionContext.blocks.custom.macroChain;
+      } else if (sessionContext.macroChains && sessionContext.macroChains[chainId]) {
+        console.log('update_chain: Found chain in macroChains');
         chain = sessionContext.macroChains[chainId];
+      } else {
+        console.log('update_chain: Chain not found in either location');
       }
+    } else {
+      console.log('update_chain: No sessionId provided');
     }
 
     // If not found in session context, return error
     if (!chain) {
+      console.error('update_chain: Chain not found', { chainId, sessionId });
       return res.status(404).json({ 
         error: `Chain ${chainId} not found. Please generate a chain first.` 
       });
@@ -235,21 +270,32 @@ app.post('/api/update_chain', async (req, res) => {
 
     // Save back to session context if sessionId is provided
     if (sessionId) {
-      const { getOrCreateSessionContext } = await import('./api/context.js');
-      const { saveSessionContext } = await import('./api/storage.js');
+      const { updateSessionContext } = await import('./api/storage.js');
       
-      const sessionContext = await getOrCreateSessionContext(sessionId);
+      console.log('update_chain: About to save chain with', chain.scenes.length, 'scenes');
+      console.log('update_chain: Scene IDs:', chain.scenes.map(s => s.id));
       
-      if (!sessionContext.macroChains) {
-        sessionContext.macroChains = {};
+      // Prepare the updates - only update the macroChain within custom block
+      const updates = {
+        blocks: {
+          custom: {
+            macroChain: chain
+          }
+        },
+        macroChains: {
+          [chainId]: chain
+        }
+      };
+      
+      try {
+        await updateSessionContext(sessionId, updates);
+        console.log(`✅ Macro chain ${chainId} updated successfully in session context for ${sessionId} with ${chain.scenes.length} scenes`);
+      } catch (error) {
+        console.error('❌ update_chain: Failed to update session context', error);
+        return res.status(500).json({ error: 'Failed to update session context' });
       }
-      
-      sessionContext.macroChains[chainId] = chain;
-      sessionContext.updatedAt = new Date().toISOString();
-      
-      await saveSessionContext(sessionId, sessionContext);
-      
-      console.log(`Macro chain ${chainId} updated in session context for ${sessionId}`);
+    } else {
+      console.warn('⚠️  update_chain: No sessionId provided, changes will not be saved!');
     }
 
     console.log('Update Chain:', {
@@ -321,6 +367,7 @@ app.get('/', (req, res) => {
       'POST /api/projects',
       'GET /api/projects',
       'POST /api/generate_chain',
+      'POST /api/generate_next_scene',
       'POST /api/update_chain', 
       'POST /api/generate_detail',
       'POST /api/apply_edit',
@@ -897,15 +944,22 @@ app.post('/api/chain/lock', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields: sessionId, chainId' });
     }
     
-    // Get session context
-    const { getOrCreateSessionContext } = await import('./api/context.js');
+    // CRITICAL: Force fresh reload of session context to avoid stale data
+    // This ensures we get the latest version after any recent edits
+    const { loadSessionContext } = await import('./api/storage.js');
     const { saveSessionContext } = await import('./api/storage.js');
-    const sessionContext = await getOrCreateSessionContext(sessionId);
+    const sessionContext = await loadSessionContext(sessionId);
+    
+    if (!sessionContext) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
     
     // Find the macro chain in the session context first
     let macroChain = null;
     if (sessionContext.macroChains && sessionContext.macroChains[chainId]) {
       macroChain = sessionContext.macroChains[chainId];
+    } else if (sessionContext.blocks?.custom?.macroChain?.chainId === chainId) {
+      macroChain = sessionContext.blocks.custom.macroChain;
     }
     
     // If not found in session context, try the old storage system
@@ -1327,6 +1381,7 @@ app.listen(PORT, () => {
   console.log(`   GET  /api/projects`);
   console.log(`   DELETE /api/projects/:id`);
   console.log(`   POST /api/generate_chain`);
+  console.log(`   POST /api/generate_next_scene`);
   console.log(`   POST /api/update_chain`);
   console.log(`   POST /api/generate_detail`);
   console.log(`   POST /api/apply_edit`);

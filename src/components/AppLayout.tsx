@@ -12,6 +12,9 @@ import ContextPage from './pages/ContextPage';
 import ProjectCreate from './ProjectCreate';
 import ProjectList from './ProjectList';
 import type { Project, SessionContext } from '../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.ui;
 
 interface AppLayoutProps {
   project?: Project | null;
@@ -29,7 +32,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
     const urlSessionId = getSessionIdFromUrl();
     const urlTab = getTabFromUrl();
     
-    console.log('AppLayout sessionId from URL:', urlSessionId);
+    log.info('AppLayout sessionId from URL:', urlSessionId);
     
     if (urlSessionId) {
       setSessionId(urlSessionId);
@@ -175,8 +178,8 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
                   <span>Macro Chain</span>
                   {(() => {
                     const macroChain = context?.blocks.custom?.macroChain;
-                    console.log('AppLayout: Macro chain status:', macroChain?.status);
-                    console.log('AppLayout: Full macro chain:', macroChain);
+                    log.info('AppLayout: Macro chain status:', macroChain?.status);
+                    log.info('AppLayout: Full macro chain:', macroChain);
                     
                     if (macroChain) {
                       if (macroChain.status === 'Locked') {

@@ -2270,5 +2270,566 @@
     },
     "createdAt": "2025-10-20T22:16:53.341Z",
     "updatedAt": "2025-10-20T22:16:53.343Z"
+  },
+  "chain_1761074612910_0uwzd4z95": {
+    "chainId": "chain_1761074612910_0uwzd4z95",
+    "scenes": [
+      {
+        "id": "scene_1_1761074612910",
+        "order": 1,
+        "title": "Echoes of Silence in the Ruined Fortress",
+        "objective": "Explore the fortress to uncover initial clues about the curse's origin while contending with twisted reflections of its past."
+      },
+      {
+        "id": "scene_2_1761074612910",
+        "order": 2,
+        "title": "Whispers from the Cracked Oracle Stones",
+        "objective": "Consult the Oracle to seek fragmented prophecies, unveiling hints about who or what created the silence."
+      },
+      {
+        "id": "scene_3_1761074612910",
+        "order": 3,
+        "title": "The Cursed Warrior's Haunting Lament",
+        "objective": "Confront the Cursed Warrior to learn more about the relic's guardian and the malign influence twisting minds."
+      },
+      {
+        "id": "scene_4_1761074612910",
+        "order": 4,
+        "title": "Unraveling Secrets in the Abandoned Library",
+        "objective": "Delve into the library's fragmented texts to piece together forgotten prophecies and hidden truths about the relic's true purpose."
+      },
+      {
+        "id": "scene_5_1761074612910",
+        "order": 5,
+        "title": "A Showdown at the Timeless Relic",
+        "objective": "Face the Warden to decide whether the silence is a safeguard or a weapon, determining the fate of the cursed lands."
+      },
+      {
+        "id": "scene_6_1761074612910",
+        "order": 6,
+        "title": "The Drifter's Hidden Past Revealed",
+        "objective": "Uncover the Drifter's secrets to gain crucial insight into whether the silence could ever be lifted and what it truly means for the world."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T19:23:32.910Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "836655a9-14ba-4442-bbb8-f324460b18ee",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T19:23:32.910Z",
+    "updatedAt": "2025-10-21T19:23:32.913Z"
+  },
+  "chain_1761075182469_qfmq8ezi6": {
+    "chainId": "chain_1761075182469_qfmq8ezi6",
+    "scenes": [
+      {
+        "id": "scene_1_1761075182471",
+        "order": 1,
+        "title": "Echoes of the Ruined Fortress",
+        "objective": "The party explores a ruined fortress to uncover whispers from the past and the first hints of the ancient curse."
+      },
+      {
+        "id": "scene_2_1761075182471",
+        "order": 2,
+        "title": "Prophecies in the Shattered Temple",
+        "objective": "Discover fragmented prophecies on cracked oracle stones that suggest the silence's origin and purpose."
+      },
+      {
+        "id": "scene_3_1761075182471",
+        "order": 3,
+        "title": "Encounter with the Cursed Warrior",
+        "objective": "The group faces the Cursed Warrior, seeking to understand how the silence turned him into a twisted guardian."
+      },
+      {
+        "id": "scene_4_1761075182471",
+        "order": 4,
+        "title": "The Scholar's Desperate Plea",
+        "objective": "Meet the Scholar in the abandoned library, who reveals forgotten knowledge that deepens the mystery of the curse."
+      },
+      {
+        "id": "scene_5_1761075182471",
+        "order": 5,
+        "title": "Confronting the Warden at the Timeless Relic",
+        "objective": "Engage with the Warden who guards the relic, uncovering clues about its true purpose and the silence's dual nature."
+      },
+      {
+        "id": "scene_6_1761075182471",
+        "order": 6,
+        "title": "Revelations from the Oracle",
+        "objective": "Consult the Oracle to piece together visions clouded by silence, leading to a choice that may alter the fate of the cursed lands."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T19:33:02.471Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "3a38f31c-3449-40b9-8468-ee06a874c913",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T19:33:02.471Z",
+    "updatedAt": "2025-10-21T19:33:02.476Z"
+  },
+  "chain_1761076143058_v1mmqoppa": {
+    "chainId": "chain_1761076143058_v1mmqoppa",
+    "scenes": [
+      {
+        "id": "scene_1_1761076143059",
+        "order": 1,
+        "title": "Whispers in the Ruined Fortress",
+        "objective": "Uncover the first clues about the cursed silence amidst the echoing halls of a fallen kingdom."
+      },
+      {
+        "id": "scene_2_1761076143059",
+        "order": 2,
+        "title": "Echoes of Prophecy in the Charred Library",
+        "objective": "Decipher remnants of ancient lore that hint at the silence's origin and the explorers' own hidden motives."
+      },
+      {
+        "id": "scene_3_1761076143059",
+        "order": 3,
+        "title": "Confronting Shadows in the Desolate Temple",
+        "objective": "Investigate the cracked oracle stones to unravel the identity of the entity still guarding the silence."
+      },
+      {
+        "id": "scene_4_1761076143059",
+        "order": 4,
+        "title": "Secrets of the Heart of the Dead Lands",
+        "objective": "Discover the nature of an ancient relic that holds the key to breaking the silence's hold."
+      },
+      {
+        "id": "scene_5_1761076143059",
+        "order": 5,
+        "title": "The Forest of Silent Creatures",
+        "objective": "Navigate the foreboding forest to prevent the resurgence of the silence and protect the explorers' sanity."
+      },
+      {
+        "id": "scene_6_1761076143059",
+        "order": 6,
+        "title": "Final Confrontation: The Guardian's Revelation",
+        "objective": "Face the entity guarding the silence and resolve the conspiracy that spans centuries to save the remaining kingdoms."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T19:49:03.059Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "6e7bcc6a-9695-4cb2-a136-32432668bc90",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T19:49:03.059Z",
+    "updatedAt": "2025-10-21T19:49:03.064Z"
+  },
+  "chain_1761078616772_pv67pt4o8": {
+    "chainId": "chain_1761078616772_pv67pt4o8",
+    "scenes": [
+      {
+        "id": "scene_1_1761078616773",
+        "order": 1,
+        "title": "Whispers of the Ruined Fortress",
+        "objective": "Uncover the first signs of the curse's origin and explore the echoes of the past within the crumbling walls."
+      },
+      {
+        "id": "scene_2_1761078616773",
+        "order": 2,
+        "title": "The Eerie Halls of the Ancient Library",
+        "objective": "Discover fragmented prophecies and glimpse the nature of the living design while maintaining sanity."
+      },
+      {
+        "id": "scene_3_1761078616773",
+        "order": 3,
+        "title": "Shadows Across the Dead Lands",
+        "objective": "Navigate the cursed terrain while confronting personal pasts, seeking the truth behind the silence."
+      },
+      {
+        "id": "scene_4_1761078616773",
+        "order": 4,
+        "title": "The Oracle's Enigmatic Stone",
+        "objective": "Consult the oracle stone to reveal the guardians of the silence and piece together the explorers' hidden motivations."
+      },
+      {
+        "id": "scene_5_1761078616773",
+        "order": 5,
+        "title": "Revelations at the Temple Ruins",
+        "objective": "Confront the living secret of the curse and choose between preventing its spread or reconciling with its origins."
+      },
+      {
+        "id": "scene_6_1761078616773",
+        "order": 6,
+        "title": "The Light and Shadow of War and Peace",
+        "objective": "Resolve the tension between past conflicts and present choices, determining the fate of the cursed lands."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T20:30:16.773Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "1c74d5f8-d210-4580-a8dc-f87739dfc76a",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T20:30:16.773Z",
+    "updatedAt": "2025-10-21T20:30:16.789Z"
+  },
+  "chain_1761080304063_axd2wtr3a": {
+    "chainId": "chain_1761080304063_axd2wtr3a",
+    "scenes": [
+      {
+        "id": "scene_1_1761080304064",
+        "order": 1,
+        "title": "Whispers of the Ruined Fortress",
+        "objective": "Explore the fallen kingdoms' fortresses to uncover the first clues about the curse's origin and introduce the entity known as The Silent Guardian."
+      },
+      {
+        "id": "scene_2_1761080304064",
+        "order": 2,
+        "title": "Echoes in the Crumbling Library",
+        "objective": "Investigate the ancient, decaying library for fragmented prophecies and encounter The Forsaken Librarian, revealing hints of the explorers' connection to the curse."
+      },
+      {
+        "id": "scene_3_1761080304064",
+        "order": 3,
+        "title": "The Prophet's Shadowed Riddles",
+        "objective": "Seek out the Prophet of Shadows within the temple of faded whispers, deepening the mystery of who or what created the living design."
+      },
+      {
+        "id": "scene_4_1761080304064",
+        "order": 4,
+        "title": "The Silent Heart of the Dead Lands",
+        "objective": "Journey to the heart of the dead lands where the silence is strongest, risking the explorers' sanity to uncover its ties to their personal scars."
+      },
+      {
+        "id": "scene_5_1761080304064",
+        "order": 5,
+        "title": "Revelations of the Forgotten Relic",
+        "objective": "At a relic untouched by time, confront the implications of the old prophecies and the potential spreading of the silence."
+      },
+      {
+        "id": "scene_6_1761080304064",
+        "order": 6,
+        "title": "Confronting the Guardian's Dread",
+        "objective": "Face The Silent Guardian in a tense battle of wits and will, where the true identity of the entity guarding the silence may finally be revealed."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T20:58:24.064Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "f2374b50-e7b9-487f-bf1d-f2817ff369bf",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T20:58:24.064Z",
+    "updatedAt": "2025-10-21T20:58:24.068Z"
+  },
+  "chain_1761080536747_luq92rufn": {
+    "chainId": "chain_1761080536747_luq92rufn",
+    "scenes": [
+      {
+        "id": "scene_1_1761080536748",
+        "order": 1,
+        "title": "Whispers of the Fallen Fortress",
+        "objective": "Explore the ruins to uncover the first whispers of the silence's origin and face the threat of falling to its grasp."
+      },
+      {
+        "id": "scene_2_1761080536748",
+        "order": 2,
+        "title": "Echoes in the Crumbling Library",
+        "objective": "Consult the Forsaken Librarian to gather fragmented prophecies that hint at the entity guarding the silence."
+      },
+      {
+        "id": "scene_3_1761080536748",
+        "order": 3,
+        "title": "The Silent Guardian's Shadow",
+        "objective": "Encounter the Silent Guardian and learn of the living design's mysterious creation while risking the explorers' unity."
+      },
+      {
+        "id": "scene_4_1761080536748",
+        "order": 4,
+        "title": "Prophecies in the Temple's Murmurs",
+        "objective": "Seek the Prophet of Shadows to unravel the connection between the explorers' scars and the curse's meaning."
+      },
+      {
+        "id": "scene_5_1761080536748",
+        "order": 5,
+        "title": "Heart of the Dead Lands: Redemption or Ruin",
+        "objective": "Confront the Cursed Healer and determine if uncovering the curse's true origin will save or doom the realms."
+      },
+      {
+        "id": "scene_6_1761080536748",
+        "order": 6,
+        "title": "The Relic's Timeless Truth",
+        "objective": "Unveil the forgotten relic's secrets to prevent the silence from spreading unchecked and balance forgotten histories."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T21:02:16.748Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "dd1cafb6-8f76-419d-a627-037e4c39160a",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T21:02:16.748Z",
+    "updatedAt": "2025-10-21T21:02:16.751Z"
+  },
+  "chain_1761081142638_bd6dthaxn": {
+    "chainId": "chain_1761081142638_bd6dthaxn",
+    "scenes": [
+      {
+        "id": "scene_1_1761081142638",
+        "order": 1,
+        "title": "Whispers in the Ruined Fortress",
+        "objective": "The explorers uncover echoes of the past and a hint of the curse's origin while risking their sanity in a fortress haunted by shadows."
+      },
+      {
+        "id": "scene_2_1761081142638",
+        "order": 2,
+        "title": "The Silent Village's Eerie Secrets",
+        "objective": "The party encounters the Healer, who reveals fragmented prophecies tied to the curse, amidst the unsettling silence of a desolate village."
+      },
+      {
+        "id": "scene_3_1761081142638",
+        "order": 3,
+        "title": "The Cracked Oracle's Dark Revelation",
+        "objective": "In the cracked oracle stone temple, the explorers confront the War-Scarred Knight and delve deeper into the meaning behind the fragmented prophecies."
+      },
+      {
+        "id": "scene_4_1761081142638",
+        "order": 4,
+        "title": "The Forgotten Relic's Call",
+        "objective": "At the heart of the dead lands, the group discovers a relic that ties their pasts to the curse, testing their resolve and unity."
+      },
+      {
+        "id": "scene_5_1761081142638",
+        "order": 5,
+        "title": "The Guardian's Shadow",
+        "objective": "In the ancient, burned libraries, the explorers meet the Mysterious Guardian and face moral dilemmas as they uncover the identity of the protector of the silence."
+      },
+      {
+        "id": "scene_6_1761081142638",
+        "order": 6,
+        "title": "The Final Echoes of Despair and Hope",
+        "objective": "As the explorers reach the source of the curse, they confront their deepest fears and must decide how to prevent awakening a greater evil."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T21:12:22.638Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "014d80b0-cc21-4d7a-91b7-71e3addcdf3c",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T21:12:22.638Z",
+    "updatedAt": "2025-10-21T21:12:22.640Z"
+  },
+  "chain_1761081932701_q7tvseobw": {
+    "chainId": "chain_1761081932701_q7tvseobw",
+    "scenes": [
+      {
+        "id": "scene_1_1761081932702",
+        "order": 1,
+        "title": "Echoes in the Ruined Fortress",
+        "objective": "Discover the first clues about the silence's origin while exploring the haunted ruins, setting the stage for deeper mysteries."
+      },
+      {
+        "id": "scene_2_1761081932702",
+        "order": 2,
+        "title": "Whispers of the Dead Lands",
+        "objective": "Encounter the Mysterious Guardian who hints at the true source of the silence and the explorers' connection to it."
+      },
+      {
+        "id": "scene_3_1761081932702",
+        "order": 3,
+        "title": "Secrets Beneath the Forgotten Relic Site",
+        "objective": "Unveil the secrets of a forgotten relic that might hold the key to the curse, revealing the duality of knowledge motif."
+      },
+      {
+        "id": "scene_4_1761081932702",
+        "order": 4,
+        "title": "Prophecies of the Cracked Oracle Stones",
+        "objective": "Consult the Last Oracle to learn why the prophecies warn against ending the silence, deepening the moral ambiguity."
+      },
+      {
+        "id": "scene_5_1761081932702",
+        "order": 5,
+        "title": "Revelations at the Burned Ancient Library",
+        "objective": "Confront the Wandering Sage who offers forbidden knowledge, challenging the explorers to consider the cost of unraveling the curse."
+      },
+      {
+        "id": "scene_6_1761081932702",
+        "order": 6,
+        "title": "The Final Stand at the Relic Keeper's Domain",
+        "objective": "Face the Relic Keeper to decide the fate of the land, testing personal redemption and the potential to restore or doom the world."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T21:25:32.702Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "ebfae46b-01a2-42e3-a8eb-0e3e9c8f2844",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T21:25:32.702Z",
+    "updatedAt": "2025-10-21T21:25:32.706Z"
+  },
+  "chain_1761082305445_e3myhr4e8": {
+    "chainId": "chain_1761082305445_e3myhr4e8",
+    "scenes": [
+      {
+        "id": "scene_1_1761082305445",
+        "order": 1,
+        "title": "Whispers in the Ruined Fortress",
+        "objective": "Discover the haunting echoes that hint at the origin of the silence."
+      },
+      {
+        "id": "scene_2_1761082305445",
+        "order": 2,
+        "title": "Ashes of the Ancient Library",
+        "objective": "Unveil secrets hidden in the ashes to prevent the spread of the curse."
+      },
+      {
+        "id": "scene_3_1761082305445",
+        "order": 3,
+        "title": "Echoes of the Temple's Lost Gods",
+        "objective": "Interpret fragmented prophecies to uncover personal truths and secrets."
+      },
+      {
+        "id": "scene_4_1761082305445",
+        "order": 4,
+        "title": "The Dead Lands' Frozen Time",
+        "objective": "Survive encounters with monstrous reflections and learn why the silence calls."
+      },
+      {
+        "id": "scene_5_1761082305445",
+        "order": 5,
+        "title": "Guardian's Lair within the Forgotten Relic",
+        "objective": "Confront the guardian and understand the true origin of the silence."
+      },
+      {
+        "id": "scene_6_1761082305445",
+        "order": 6,
+        "title": "Resolution at the Heart of the Mystery",
+        "objective": "Restore sanity to the inhabitants and confront personal and emotional conflicts."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T21:31:45.445Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "4802bfb3-d34b-45ac-b3cc-8df1a0c62e50",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T21:31:45.445Z",
+    "updatedAt": "2025-10-21T21:31:45.447Z"
+  },
+  "chain_1761082493643_cuc1eb4g5": {
+    "chainId": "chain_1761082493643_cuc1eb4g5",
+    "scenes": [
+      {
+        "id": "scene_1_1761082493643",
+        "order": 1,
+        "title": "Echoes in the Ruined Fortress",
+        "objective": "Investigate the haunting echoes to uncover initial clues about the silence's origin."
+      },
+      {
+        "id": "scene_2_1761082493643",
+        "order": 2,
+        "title": "Whispers of the Ashen Library",
+        "objective": "Discover fragmented prophecies amidst the ashes to hint at the guardian's identity."
+      },
+      {
+        "id": "scene_3_1761082493643",
+        "order": 3,
+        "title": "The Silent Vigil at the Temple",
+        "objective": "Confront personal truths as the explorers feel the silence's call and the gods' absent whispers."
+      },
+      {
+        "id": "scene_4_1761082493643",
+        "order": 4,
+        "title": "Reflections in the Dead Lands",
+        "objective": "Survive encounters with monstrous reflections to learn the duality of the curse."
+      },
+      {
+        "id": "scene_5_1761082493643",
+        "order": 5,
+        "title": "The Relic's Call",
+        "objective": "Uncover the purpose of the ancient relic at the mystery's heart, hinting at the curse's spread."
+      },
+      {
+        "id": "scene_6_1761082493643",
+        "order": 6,
+        "title": "Confronting the Guardian of Silence",
+        "objective": "Face the mysterious keeper to prevent the silence's expansion and restore sanity to the cursed."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T21:34:53.643Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "ab3026a4-c8dd-436d-a8ae-c1589bf8ddec",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T21:34:53.643Z",
+    "updatedAt": "2025-10-21T21:34:53.645Z"
+  },
+  "chain_1761083066688_d7nnq27r7": {
+    "chainId": "chain_1761083066688_d7nnq27r7",
+    "scenes": [
+      {
+        "id": "scene_1_1761083066689",
+        "order": 1,
+        "title": "Echoes of the Dead Lands",
+        "objective": "Uncover the first clues about the curse's origin amidst the haunting silence of the Dead Lands."
+      },
+      {
+        "id": "scene_2_1761083066689",
+        "order": 2,
+        "title": "Whispers in the Ruined Fortress",
+        "objective": "Encounter Eldric, the oracle's keeper, who hints at the incomplete prophecies and their connection to the silence."
+      },
+      {
+        "id": "scene_3_1761083066689",
+        "order": 3,
+        "title": "Shadows of the Ancient Library",
+        "objective": "Investigate the forgotten tomes that reveal fragments of the explorers' true motivations and the silence's true nature."
+      },
+      {
+        "id": "scene_4_1761083066689",
+        "order": 4,
+        "title": "Bindings of Fate at the Temple of Silence",
+        "objective": "Face the spectral Whispering Shade, who guards the secrets of the silence and its enigmatic call."
+      },
+      {
+        "id": "scene_5_1761083066689",
+        "order": 5,
+        "title": "The Monstrous Warden's Challenge",
+        "objective": "Confront Torvald, the warden, whose transformation holds answers to the explorers' personal conflicts and the curse."
+      },
+      {
+        "id": "scene_6_1761083066689",
+        "order": 6,
+        "title": "Revelations at the Heart of the Silence",
+        "objective": "Unveil the final truth behind the silence, confronting the possibility of awakening a greater evil or achieving redemption."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-21T21:44:26.689Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "c4e1271f-c3af-42c5-84f3-d724ac580f13",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-21T21:44:26.689Z",
+    "updatedAt": "2025-10-21T21:44:26.690Z"
   }
 }

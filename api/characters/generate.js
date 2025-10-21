@@ -2,6 +2,9 @@ import OpenAI from 'openai';
 import { getOrCreateSessionContext, processContextForPrompt } from '../context.js';
 import { saveSessionContext } from '../storage.js';
 import { buildPromptContext } from '../lib/promptContext.js';
+import logger from '../lib/logger.js';
+
+const log = logger.character;
 
 // Initialize OpenAI client lazily to ensure environment variables are loaded
 let openai = null;
@@ -124,7 +127,7 @@ export default async function handler(req, res) {
     const playerCount = promptContext.numberOfPlayers;
     
     // Debug logging
-    console.log('Character generation debug:', {
+    log.info('Character generation debug:', {
       sessionId,
       hasBackground: !!bg,
       backgroundType: typeof bg,
@@ -173,22 +176,22 @@ export default async function handler(req, res) {
     }
 
     // Debug logging for AI response
-    console.log('AI Response length:', responseText.length);
-    console.log('AI Response preview:', responseText.substring(0, 500) + '...');
+    log.info('AI Response length:', responseText.length);
+    log.info('AI Response preview:', responseText.substring(0, 500) + '...');
 
     // Parse the JSON response
     let parsedResponse;
     try {
       const cleaned = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       parsedResponse = JSON.parse(cleaned);
-      console.log('Parsed response structure:', {
+      log.info('Parsed response structure:', {
         hasCharacters: !!parsedResponse.characters,
         characterCount: parsedResponse.characters?.length || 0,
         firstCharacterKeys: parsedResponse.characters?.[0] ? Object.keys(parsedResponse.characters[0]) : 'no characters'
       });
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', parseError);
-      console.error('Raw response that failed to parse:', responseText);
+      log.error('Failed to parse OpenAI response:', parseError);
+      log.error('Raw response that failed to parse:', responseText);
       throw new Error('Invalid JSON response from AI');
     }
 
@@ -244,7 +247,7 @@ export default async function handler(req, res) {
 
     await saveSessionContext(sessionId, sessionContext);
 
-    console.log('Characters generated:', {
+    log.info('Characters generated:', {
       sessionId,
       characterCount: characters.length,
       timestamp: Date.now()
@@ -257,7 +260,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error generating characters:', error);
+    log.error('Error generating characters:', error);
     res.status(500).json({ 
       error: error.message 
     });

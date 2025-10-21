@@ -1,3 +1,6 @@
+import logger from './lib/logger.js';
+
+const log = logger.validation;
 /**
  * Validation utilities for delta analysis responses
  */
@@ -197,7 +200,7 @@ export function createSafeResponse(data, validator) {
   const validation = validator(response);
   
   if (!validation.isValid) {
-    console.warn('Response validation failed:', validation.errors);
+    log.warn('Response validation failed:', validation.errors);
   }
   
   return response;

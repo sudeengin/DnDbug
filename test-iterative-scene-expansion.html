@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Iterative Scene Expansion</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; 
+            padding-bottom: 420px; /* Make room for log viewer */}
+    button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+    .section { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .success { background-color: #d4edda; }
+    .error { background-color: #f8d7da; }
+    .info { background-color: #d1ecf1; }
+    pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+    .step { margin: 20px 0; padding: 15px; border-left: 4px solid #007bff; }
+  </style>
+    
+    <!-- Visual Log Viewer -->
+    <script src="log-viewer.js"></script>
+
+</head>
+<body>
+  <h1>🧪 Test: Iterative Scene Expansion with GM Intent</h1>
+  
+  <div class="section info">
+    <h3>📋 Test Objectives</h3>
+    <ul>
+      <li>Verify new chains have <code>isDraftIdeaBank: true</code></li>
+      <li>Verify GM Intent modal appears after locking a scene</li>
+      <li>Verify <code>/api/generate_next_scene</code> endpoint works</li>
+      <li>Verify new scenes are created with GM intent metadata</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h2>Step 1: Setup Session</h2>
+    <label>Session ID: <input type="text" id="sessionId" value="test_iterative_expansion_123"></label>
+    <button onclick="clearSession()">🗑️ Clear Session</button>
+    <div id="sessionStatus"></div>
+  </div>
+
+  <div class="step">
+    <h2>Step 2: Generate Background & Characters</h2>
+    <button onclick="generateBackground()">1. Generate Background</button>
+    <button onclick="lockBackground()">2. Lock Background</button>
+    <button onclick="generateCharacters()">3. Generate Characters</button>
+    <button onclick="lockCharacters()">4. Lock Characters</button>
+    <div id="setupStatus"></div>
+  </div>
+
+  <div class="step">
+    <h2>Step 3: Generate NEW Macro Chain</h2>
+    <button onclick="generateChain()">🎬 Generate Macro Chain</button>
+    <div id="chainStatus"></div>
+    <pre id="chainData"></pre>
+  </div>
+
+  <div class="step">
+    <h2>Step 4: Verify Draft Idea Bank Flag</h2>
+    <button onclick="checkChainMeta()">🔍 Check Chain Metadata</button>
+    <div id="metaStatus"></div>
+    <pre id="metaData"></pre>
+  </div>
+
+  <div class="step">
+    <h2>Step 5: Generate & Lock Scene 1</h2>
+    <button onclick="generateScene1Detail()">1. Generate Scene 1 Detail</button>
+    <button onclick="lockScene1()">2. Lock Scene 1</button>
+    <div id="scene1Status"></div>
+  </div>
+
+  <div class="step">
+    <h2>Step 6: Test GM Intent - Generate Next Scene</h2>
+    <label>GM Intent for Scene 2:
+      <textarea id="gmIntent" rows="3">The party discovers a hidden passageway behind the altar. Strange symbols glow on the walls, and they hear whispers in an ancient language.</textarea>
+    </label>
+    <button onclick="generateNextScene()">🎯 Generate Scene 2 via GM Intent</button>
+    <div id="nextSceneStatus"></div>
+    <pre id="nextSceneData"></pre>
+  </div>
+
+  <div class="step">
+    <h2>Step 7: Verify Scene 2 Created</h2>
+    <button onclick="verifyScene2()">✅ Verify Scene 2 Exists</button>
+    <div id="verifyStatus"></div>
+    <pre id="verifyData"></pre>
+  </div>
+
+  <script>
+    const API = 'http://localhost:3000/api';
+    let currentChainId = null;
+    let scene1Id = null;
+
+    function getSessionId() {
+      return document.getElementById('sessionId').value;
+    }
+
+    async function clearSession() {
+      const sessionId = getSessionId();
+      try {
+        await fetch(`${API}/context/clear`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId })
+        });
+        document.getElementById('sessionStatus').innerHTML = '<div class="success">✅ Session cleared</div>';
+      } catch (err) {
+        document.getElementById('sessionStatus').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function generateBackground() {
+      const sessionId = getSessionId();
+      try {
+        const res = await fetch(`${API}/generate_background`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            concept: "A mysterious cult has taken over an ancient temple. The players must investigate disappearances in a nearby village.",
+            meta: { numberOfPlayers: 4 }
+          })
+        });
+        const data = await res.json();
+        document.getElementById('setupStatus').innerHTML = '<div class="success">✅ Background generated</div>';
+      } catch (err) {
+        document.getElementById('setupStatus').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function lockBackground() {
+      const sessionId = getSessionId();
+      try {
+        await fetch(`${API}/context/lock`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId, blockType: 'background', locked: true })
+        });
+        document.getElementById('setupStatus').innerHTML += '<div class="success">✅ Background locked</div>';
+      } catch (err) {
+        document.getElementById('setupStatus').innerHTML += `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function generateCharacters() {
+      const sessionId = getSessionId();
+      try {
+        const res = await fetch(`${API}/characters/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId, numberOfCharacters: 3 })
+        });
+        const data = await res.json();
+        document.getElementById('setupStatus').innerHTML += '<div class="success">✅ Characters generated</div>';
+      } catch (err) {
+        document.getElementById('setupStatus').innerHTML += `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function lockCharacters() {
+      const sessionId = getSessionId();
+      try {
+        await fetch(`${API}/context/lock`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId, blockType: 'characters', locked: true })
+        });
+        document.getElementById('setupStatus').innerHTML += '<div class="success">✅ Characters locked</div>';
+      } catch (err) {
+        document.getElementById('setupStatus').innerHTML += `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function generateChain() {
+      const sessionId = getSessionId();
+      try {
+        const res = await fetch(`${API}/generate_chain`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            concept: "A mysterious cult investigation in an ancient temple"
+          })
+        });
+        const data = await res.json();
+        
+        if (data.ok) {
+          currentChainId = data.data.chainId;
+          scene1Id = data.data.scenes[0]?.id;
+          document.getElementById('chainStatus').innerHTML = '<div class="success">✅ Chain generated!</div>';
+          document.getElementById('chainData').textContent = JSON.stringify(data.data, null, 2);
+        } else {
+          document.getElementById('chainStatus').innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+        }
+      } catch (err) {
+        document.getElementById('chainStatus').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function checkChainMeta() {
+      const sessionId = getSessionId();
+      try {
+        const res = await fetch(`${API}/context/get?sessionId=${sessionId}`);
+        const data = await res.json();
+        
+        const chain = data.data?.blocks?.custom?.macroChain;
+        if (chain) {
+          const hasDraftFlag = chain.meta?.isDraftIdeaBank === true;
+          const statusHTML = hasDraftFlag 
+            ? '<div class="success">✅ Chain has isDraftIdeaBank: true</div>'
+            : '<div class="error">❌ Chain missing isDraftIdeaBank flag!</div>';
+          
+          document.getElementById('metaStatus').innerHTML = statusHTML;
+          document.getElementById('metaData').textContent = JSON.stringify({
+            status: chain.status,
+            meta: chain.meta,
+            scenesCount: chain.scenes.length
+          }, null, 2);
+        } else {
+          document.getElementById('metaStatus').innerHTML = '<div class="error">❌ No chain found</div>';
+        }
+      } catch (err) {
+        document.getElementById('metaStatus').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function generateScene1Detail() {
+      const sessionId = getSessionId();
+      if (!scene1Id) {
+        document.getElementById('scene1Status').innerHTML = '<div class="error">❌ No scene1Id - generate chain first</div>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/generate_detail`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            sceneId: scene1Id,
+            macroScene: { id: scene1Id, order: 1, title: "Scene 1", objective: "Start the adventure" },
+            effectiveContext: {}
+          })
+        });
+        const data = await res.json();
+        
+        if (data.ok) {
+          document.getElementById('scene1Status').innerHTML = '<div class="success">✅ Scene 1 detail generated</div>';
+        } else {
+          document.getElementById('scene1Status').innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+        }
+      } catch (err) {
+        document.getElementById('scene1Status').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function lockScene1() {
+      const sessionId = getSessionId();
+      if (!scene1Id) {
+        document.getElementById('scene1Status').innerHTML += '<div class="error">❌ No scene1Id</div>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/scene/lock`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId, sceneId: scene1Id })
+        });
+        const data = await res.json();
+        
+        if (data.ok) {
+          document.getElementById('scene1Status').innerHTML += '<div class="success">✅ Scene 1 locked! (GM Intent modal should appear in UI)</div>';
+        } else {
+          document.getElementById('scene1Status').innerHTML += `<div class="error">❌ Error: ${data.error}</div>`;
+        }
+      } catch (err) {
+        document.getElementById('scene1Status').innerHTML += `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function generateNextScene() {
+      const sessionId = getSessionId();
+      const gmIntent = document.getElementById('gmIntent').value;
+      
+      if (!scene1Id) {
+        document.getElementById('nextSceneStatus').innerHTML = '<div class="error">❌ Lock Scene 1 first</div>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/generate_next_scene`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            previousSceneId: scene1Id,
+            gmIntent
+          })
+        });
+        const data = await res.json();
+        
+        if (data.ok) {
+          document.getElementById('nextSceneStatus').innerHTML = '<div class="success">✅ Scene 2 generated via GM Intent!</div>';
+          document.getElementById('nextSceneData').textContent = JSON.stringify(data.scene, null, 2);
+        } else {
+          document.getElementById('nextSceneStatus').innerHTML = `<div class="error">❌ Error: ${data.error}</div>`;
+          document.getElementById('nextSceneData').textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        document.getElementById('nextSceneStatus').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+
+    async function verifyScene2() {
+      const sessionId = getSessionId();
+      try {
+        const res = await fetch(`${API}/context/get?sessionId=${sessionId}`);
+        const data = await res.json();
+        
+        const chain = data.data?.blocks?.custom?.macroChain;
+        if (chain && chain.scenes.length >= 2) {
+          const scene2 = chain.scenes[1];
+          document.getElementById('verifyStatus').innerHTML = `<div class="success">✅ Scene 2 exists! Sequence: ${scene2.order}</div>`;
+          document.getElementById('verifyData').textContent = JSON.stringify({
+            totalScenes: chain.scenes.length,
+            scene2: scene2
+          }, null, 2);
+        } else {
+          document.getElementById('verifyStatus').innerHTML = '<div class="error">❌ Scene 2 not found</div>';
+        }
+      } catch (err) {
+        document.getElementById('verifyStatus').innerHTML = `<div class="error">❌ Error: ${err.message}</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
+

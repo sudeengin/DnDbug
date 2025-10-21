@@ -5,6 +5,9 @@ import BackgroundPanel from '../BackgroundPanel';
 import StoryBackgroundGenerator from '../StoryBackgroundGenerator';
 import { getJSON, postJSON } from '../../lib/api';
 import type { SessionContext, BackgroundData } from '../../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.background;
 
 interface BackgroundPageProps {
   sessionId: string;
@@ -31,7 +34,7 @@ export default function BackgroundPage({ sessionId, context, onContextUpdate }: 
         setBackground(response.data.blocks.background || null);
       }
     } catch (error) {
-      console.error('Failed to fetch context:', error);
+      log.error('Failed to fetch context:', error);
     } finally {
       setLoading(false);
     }
@@ -51,7 +54,7 @@ export default function BackgroundPage({ sessionId, context, onContextUpdate }: 
       await fetchContext();
       setBackground(newBackground);
     } catch (error) {
-      console.error('Failed to save background:', error);
+      log.error('Failed to save background:', error);
     } finally {
       setLoading(false);
     }
@@ -69,7 +72,7 @@ export default function BackgroundPage({ sessionId, context, onContextUpdate }: 
       // Refresh context
       await fetchContext();
     } catch (error) {
-      console.error('Failed to toggle lock:', error);
+      log.error('Failed to toggle lock:', error);
     } finally {
       setLoading(false);
     }

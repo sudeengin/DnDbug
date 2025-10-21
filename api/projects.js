@@ -1,5 +1,8 @@
 import fs from 'fs';
 import path from 'path';
+import logger from './lib/logger.js';
+
+const log = logger.api;
 
 // File-based storage for projects
 const PROJECTS_FILE = path.join(process.cwd(), 'projects.json');
@@ -13,7 +16,7 @@ function loadProjects() {
       return new Map(projectsArray.map(p => [p.id, p]));
     }
   } catch (error) {
-    console.error('Error loading projects:', error);
+    log.error('Error loading projects:', error);
   }
   return new Map();
 }
@@ -24,7 +27,7 @@ function saveProjects(projectsMap) {
     const projectsArray = Array.from(projectsMap.values());
     fs.writeFileSync(PROJECTS_FILE, JSON.stringify(projectsArray, null, 2));
   } catch (error) {
-    console.error('Error saving projects:', error);
+    log.error('Error saving projects:', error);
   }
 }
 
@@ -100,7 +103,7 @@ export default async function handler(req, res) {
 
       const project = createProject(title);
 
-      console.log('Project created:', {
+      log.info('Project created:', {
         id: project.id,
         title: project.title,
         timestamp: Date.now()
@@ -115,7 +118,7 @@ export default async function handler(req, res) {
       // GET /projects - List all projects
       const allProjects = listProjects();
 
-      console.log('Projects listed:', {
+      log.info('Projects listed:', {
         count: allProjects.length,
         timestamp: Date.now()
       });
@@ -143,7 +146,7 @@ export default async function handler(req, res) {
         });
       }
 
-      console.log('Project retrieved:', {
+      log.info('Project retrieved:', {
         id: project.id,
         title: project.title,
         timestamp: Date.now()
@@ -172,7 +175,7 @@ export default async function handler(req, res) {
         });
       }
 
-      console.log('Project deleted:', {
+      log.info('Project deleted:', {
         id: deletedProject.id,
         title: deletedProject.title,
         timestamp: Date.now()
@@ -190,7 +193,7 @@ export default async function handler(req, res) {
     }
 
   } catch (error) {
-    console.error('Error in projects handler:', error);
+    log.error('Error in projects handler:', error);
     res.status(500).json({ 
       error: error.message 
     });

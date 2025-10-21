@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Background-First Flow Test</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
+        body { font-family: Arial, sans-serif; margin: 20px; 
+            padding-bottom: 420px; /* Make room for log viewer */}
         .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
         .success { background-color: #d4edda; border-color: #c3e6cb; }
         .error { background-color: #f8d7da; border-color: #f5c6cb; }
@@ -16,6 +17,10 @@
         pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
         .status { margin: 10px 0; padding: 10px; border-radius: 3px; }
     </style>
+    
+    <!-- Visual Log Viewer -->
+    <script src="log-viewer.js"></script>
+
 </head>
 <body>
     <h1>Background-First Flow Test</h1>

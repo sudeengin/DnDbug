@@ -1,5 +1,8 @@
 import { getOrCreateSessionContext } from '../context.js';
 import { saveSessionContext } from '../storage.js';
+import logger from '../lib/logger.js';
+
+const log = logger.scene;
 
 /**
  * POST /api/scene/unlock
@@ -90,7 +93,7 @@ export default async function handler(req, res) {
     // Save the updated context
     await saveSessionContext(sessionId, sessionContext);
     
-    console.log(`Scene ${sceneId} unlocked for session ${sessionId}, affected scenes:`, affectedScenes);
+    log.info(`Scene ${sceneId} unlocked for session ${sessionId}, affected scenes:`, affectedScenes);
     
     res.status(200).json({
       ok: true,
@@ -99,7 +102,7 @@ export default async function handler(req, res) {
     });
     
   } catch (error) {
-    console.error('Error unlocking scene:', error);
+    log.error('Error unlocking scene:', error);
     res.status(500).json({ 
       error: error.message 
     });

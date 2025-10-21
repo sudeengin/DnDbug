@@ -1,242 +1,257 @@
 {
-  "project_1760996751148_kx5ga30ie": {
-    "sessionId": "project_1760996751148_kx5ga30ie",
+  "project_1761081845038_o8sy1rqx4": {
+    "sessionId": "project_1761081845038_o8sy1rqx4",
+    "blocks": {},
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-21T21:26:55.073Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-21T21:26:55.073Z",
+    "updatedAt": "2025-10-21T21:26:55.073Z"
+  },
+  "project_1761082219072_6695t8xcx": {
+    "sessionId": "project_1761082219072_6695t8xcx",
     "blocks": {
       "story_concept": {
-        "concept": "After centuries of war waged through steel and sorcery, the lands finally fell silent. But this “silence” was no peace — it was a curse. It crept into the minds of those who lived within the fallen kingdoms, twisting their thoughts until they lost themselves entirely, becoming monstrous reflections of their former selves.\n\nNo scholar, priest, or sorcerer could ever uncover the origin of this silence. The ancient libraries burned, the oracle stones cracked, and even the gods’ whispers faded from the temples. Only fragments of old prophecies remain — warnings that the silence was never meant to end.\n\nNow, generations later, a band of explorers from distant realms sets out to trace its source. Each bears a personal scar — and a secret reason to uncover the truth.\n\nTheir journey leads them beyond ruined fortresses and into a place untouched by time — a forgotten relic buried in the heart of the dead lands. But what they find there is not the echo of a lost age. It is a living design, one that proves the silence was never abandoned.\n\nSomeone — or something — is still guarding it.\nAnd perhaps, the silence isn’t sleeping at all… it’s calling them home.",
-        "timestamp": "2025-10-20T22:09:10.244Z"
+        "concept": "After centuries of war waged through steel and sorcery, the lands finally fell silent. But this “silence” was no peace — it was a curse. It crept into the minds of those who lived within the fallen kingdoms, twisting their thoughts until they lost themselves entirely, becoming monstrous reflections of their former selves.\n\nNo scholar, priest, or sorcerer could ever uncover the origin of this silence. The ancient libraries burned, the oracle stones cracked, and even the gods’ whispers faded from the temples. Only fragments of old prophecies remain — warnings that the silence was never meant to end.\n\nNow, generations later, a band of explorers from distant realms sets out to trace its source. Among them: a war-scarred knight seeking redemption, a scholar of forbidden magic, a healer who survived the silence once before, and a hunter who has seen its creatures up close. Each bears a personal scar — and a secret reason to uncover the truth.\n\nTheir journey leads them beyond ruined fortresses and into a place untouched by time — a forgotten relic buried in the heart of the dead lands. But what they find there is not the echo of a lost age. It is a living design, one that proves the silence was never abandoned.\n\nSomeone — or something — is still guarding it.\nAnd perhaps, the silence isn’t sleeping at all… it’s calling them home.",
+        "timestamp": "2025-10-21T21:30:28.129Z"
       },
       "background": {
-        "premise": "In a world silenced by an ancient curse, four explorers seek to uncover the truth behind the haunting stillness that twists minds into monstrosities.",
+        "premise": "A group of diverse explorers seeks to uncover the source of a mysterious silence that has cursed the land and its inhabitants for generations.",
         "tone_rules": [
-          "Dark and mysterious atmosphere",
-          "A sense of foreboding and unease",
-          "Hints of ancient, forgotten magic",
-          "Desolation mixed with fleeting hope",
-          "An undercurrent of urgency and danger"
+          "Dark and foreboding atmosphere",
+          "Sense of urgency and tension",
+          "Mystical and enigmatic elements",
+          "Personal and emotional conflicts",
+          "Haunting and surreal imagery"
         ],
         "stakes": [
-          "Discovering the source of the curse to prevent further madness",
-          "Overcoming personal fears and secrets to unlock hidden truths",
-          "Surviving the treacherous lands and their monstrous inhabitants",
-          "Unveiling whether the silence is a safeguard or a weapon",
-          "Deciding the fate of the cursed lands and their inhabitants"
+          "Restoring the sanity of cursed inhabitants",
+          "Surviving encounters with monstrous reflections",
+          "Uncovering personal truths and secrets",
+          "Preventing the spread of the curse",
+          "Confronting the guardian of the silence"
         ],
         "mysteries": [
-          "What or who created the silence?",
-          "Why does the silence twist minds?",
-          "Who or what is guarding the relic?",
-          "What is the true purpose of the relic?",
-          "Could the silence ever be lifted?"
+          "The true origin of the silence",
+          "The identity of the guardian",
+          "The purpose of the ancient relic",
+          "The meaning behind the fragmented prophecies",
+          "The reason the silence calls to the explorers"
         ],
         "factions": [
-          "The Silent Guardians, protectors of the relic",
-          "The Cursed Ones, inhabitants transformed into monsters",
-          "The Remnants, survivors who resist the madness",
-          "The Seekers, scholars obsessed with the curse",
-          "The Lost, those who vanished seeking answers"
+          "The cursed inhabitants of the fallen kingdoms",
+          "Ancient scholars seeking forbidden knowledge",
+          "Survivors who worship the silence",
+          "The explorers themselves",
+          "The unseen guardians of the silence"
         ],
         "location_palette": [
-          "Ruined fortresses echoing past glories",
-          "A timeless relic buried in the dead lands",
-          "Cracked oracle stones in shattered temples",
-          "The desolate wilderness surrounding cursed kingdoms",
-          "Abandoned libraries holding fragmented prophecies"
+          "Ruined fortresses with haunting echoes",
+          "Ancient libraries reduced to ashes",
+          "Temples where gods' whispers once resided",
+          "The dead lands, untouched by time",
+          "A forgotten relic at the heart of the mystery"
         ],
         "npc_roster_skeleton": [
-          "The Warden, mysterious guardian of the relic",
-          "The Oracle, a seer whose visions are clouded",
-          "The Cursed Warrior, a former hero now twisted",
-          "The Scholar, desperate to uncover lost knowledge",
-          "The Drifter, a wanderer bearing a hidden past"
+          "The War-Scarred Knight: seeking redemption",
+          "The Scholar of Forbidden Magic: driven by curiosity",
+          "The Healer: a survivor of the curse",
+          "The Hunter: familiar with the silence's creatures",
+          "The Guardian: mysterious keeper of the silence"
         ],
         "motifs": [
-          "Shattered silence",
-          "Twisted reflections",
-          "Forgotten prophecies",
-          "Whispers from the past",
-          "Guardians of secrets"
+          "Silence as a living entity",
+          "Personal scars and secrets",
+          "Time as a frozen element",
+          "The duality of reflection",
+          "The call home by the silence"
         ],
         "doNots": [
-          "Avoid modern technology themes",
-          "Do not resolve the curse too quickly",
-          "Avoid clear-cut definitions of good and evil",
-          "Do not introduce unrelated subplots",
-          "Avoid overly humorous tones"
+          "Avoid generic fantasy tropes",
+          "Do not simplify the curse's effects",
+          "Steer clear of stereotypical characters",
+          "Do not resolve mysteries too quickly",
+          "Avoid making the silence purely evil"
         ],
         "playstyle_implications": [
-          "Focus on exploration and discovery",
-          "Encourage problem-solving and deduction",
-          "Promote character-driven storytelling",
-          "Facilitate tension and suspense in encounters",
-          "Allow for moral ambiguity and tough decisions"
+          "Encourage exploration and investigation",
+          "Emphasize role-playing and character development",
+          "Prepare for encounters with cursed creatures",
+          "Facilitate puzzle-solving and prophecy interpretation",
+          "Allow for moral ambiguity and difficult choices"
         ],
         "numberOfPlayers": 4
       },
       "characters": {
         "list": [
           {
-            "name": "Elaria Whisperwind",
+            "name": "Elandra Moonsong",
             "role": "Wandering Scholar",
             "race": "Elf",
             "class": "Wizard",
-            "personality": "Elaria is introspective and curious, often lost in thought as she ponders the mysteries of the world. She possesses a quiet determination and an insatiable thirst for knowledge that drives her to uncover hidden truths.",
-            "motivation": "Elaria is driven by the desire to understand the ancient curse and to unravel the secrets of forgotten magic that could lift the silence.",
-            "connectionToStory": "Elaria seeks the Oracle's guidance, believing the seer's clouded visions hold the key to understanding the curse's origin.",
-            "gmSecret": "Elaria's mentor was secretly a member of the Seekers and manipulated her into this journey to use her as a pawn in unlocking the relic. Her mentor's true goal is to harness the relic's power for their own ends.",
-            "potentialConflict": "Elaria's obsession with knowledge may lead her to make reckless decisions, endangering herself and her companions.",
-            "voiceTone": "Soft and deliberate, each word measured and purposeful.",
-            "inventoryHint": "A worn tome of arcane lore passed down through generations.",
+            "personality": "Elandra is contemplative and deeply curious, often lost in thought as she ponders the mysteries of the world. She is gentle in demeanor but possesses an unyielding determination when it comes to uncovering truths.",
+            "motivation": "Driven by a need to understand the origins of the silence and restore the ancient whispers of the gods.",
+            "connectionToStory": "Elandra believes the silence holds the key to forbidden knowledge that could restore balance to the fallen kingdoms.",
+            "gmSecret": "Elandra's mentor, a revered scholar, was secretly a member of the unseen guardians of the silence. Her mentor's research notes contain cryptic clues about the guardian’s true identity, which Elandra carries unknowingly.",
+            "potentialConflict": "Her relentless pursuit of knowledge can blind her to the dangers around her, putting herself and others at risk.",
+            "voiceTone": "Soft and deliberate, with an air of mystery",
+            "inventoryHint": "An aged journal filled with fragmented prophecies",
             "motifAlignment": [
-              "Forgotten prophecies",
-              "Guardians of secrets"
+              "Silence as a living entity",
+              "Time as a frozen element"
             ],
-            "backgroundHistory": "Born into a lineage of elven scholars, Elaria grew up in the ruins of a once-great library. A cryptic prophecy discovered in her youth drove her to seek the Oracle, hoping to clear the shrouded visions that plague her dreams. Her journey is both a personal quest and a burden placed upon her by her heritage.",
+            "backgroundHistory": "Born in the ethereal forests of Eldoria, Elandra was raised among the ancient tomes of her people. A haunting vision of a world consumed by silence led her to leave her homeland, seeking answers in the ruins of fallen libraries. Her defining moment came when she discovered a prophecy hinting at a relic that could end the silence.",
             "keyRelationships": [
-              "The Oracle, a seer whose visions are clouded",
-              "Her mentor, a scholar of the Seekers",
-              "A fellow scholar she corresponded with who vanished in the cursed lands"
+              "Her mentor, who was secretly a guardian",
+              "A fellow scholar who shares her quest",
+              "The Healer, a survivor of the curse"
             ],
-            "flawOrWeakness": "Her relentless pursuit of knowledge often blinds her to the dangers around her.",
-            "id": "char_1760998230959_bk3ui47zi"
+            "flawOrWeakness": "Her insatiable curiosity can lead her to disregard personal safety and ethical boundaries.",
+            "id": "char_1761082295500_pgcqfdyts"
           },
           {
-            "name": "Thrain Stoneheart",
+            "name": "Garrick Stoneheart",
             "role": "Mercenary Captain",
             "race": "Dwarf",
             "class": "Fighter",
-            "personality": "Gruff and pragmatic, Thrain values strength and loyalty above all else. He is fiercely protective of his companions and tends to view the world in shades of gray, shaped by years of battle.",
-            "motivation": "Thrain is determined to protect his comrades from the madness and to find a way to break the curse that claims the minds of those he cares about.",
-            "connectionToStory": "Having lost his brother to the curse, Thrain joined the expedition to avenge him and prevent others from suffering the same fate.",
-            "gmSecret": "Thrain's brother, presumed dead, was actually transformed into a Cursed One and now serves as a guardian of the relic. This revelation could shatter Thrain's resolve and force him to confront his past.",
-            "potentialConflict": "Thrain struggles with guilt and anger over his brother's loss, which may cloud his judgment and strain team dynamics.",
-            "voiceTone": "Gruff and direct, often punctuated by a deep, resonant laugh.",
-            "inventoryHint": "A dented warhammer that belonged to his brother.",
+            "personality": "Gruff and direct, Garrick is a seasoned warrior with little patience for deception. His heart, though hardened by years of battle, holds a deep-seated loyalty to those he trusts.",
+            "motivation": "To find redemption for his past failures by protecting the explorers and ending the curse.",
+            "connectionToStory": "Garrick was once part of an expedition that barely escaped the clutches of the silence, and he seeks to ensure no one else suffers the same fate.",
+            "gmSecret": "Garrick carries a cursed artifact unknowingly, a relic from a past battle that binds him to the silence. This artifact is a key to awakening the guardian, a fact he is unaware of.",
+            "potentialConflict": "His past failures haunt him, causing him to question his leadership in moments of crisis.",
+            "voiceTone": "Gruff and direct, with a hint of regret",
+            "inventoryHint": "A rusted locket from an old comrade",
             "motifAlignment": [
-              "Twisted reflections",
-              "Guardians of secrets"
+              "Personal scars and secrets",
+              "The call home by the silence"
             ],
-            "backgroundHistory": "Hailing from a clan of warriors, Thrain's life has been a series of battles against both external foes and internal demons. When his brother fell victim to the curse, Thrain vowed to find those responsible and ensure no one else suffers the same fate. His journey is fueled by a desire for vengeance and redemption.",
+            "backgroundHistory": "Hailing from the subterranean strongholds of Durak-Zhul, Garrick was once a revered captain leading his kin against monstrous threats. A disastrous encounter with the silence claimed the lives of many under his command, leaving him with a scarred heart. Driven by guilt, he now lends his sword to the explorers with hopes of atonement.",
             "keyRelationships": [
-              "His brother, now a Cursed Warrior",
-              "A former comrade who turned into a Remnant",
-              "An old friend within the Silent Guardians"
+              "The War-Scarred Knight, a fellow survivor",
+              "A former comrade turned rival",
+              "The Hunter, who knows the silence's creatures well"
             ],
-            "flawOrWeakness": "His anger can lead him to act impulsively, risking not only his life but those of his allies.",
-            "id": "char_1760998230959_hjcdom9im"
+            "flawOrWeakness": "His sense of guilt can lead to reckless decisions, as he tries to make amends for past mistakes.",
+            "id": "char_1761082295500_4ezyjnf30"
           },
           {
-            "name": "Liora Starling",
-            "role": "Haunted Healer",
-            "race": "Human",
-            "class": "Cleric",
-            "personality": "Liora is compassionate yet haunted by the weight of those she could not save. Her presence is calming, and she seeks to heal both physical wounds and the deeper scars of the soul.",
-            "motivation": "Liora is driven by the hope of finding a way to heal the land and its people from the curse, believing that redemption is possible even for the Cursed Ones.",
-            "connectionToStory": "Her visions of the past, filled with whispers from the cursed lands, compel her to seek the Oracle and the relic in hopes of lifting the silence.",
-            "gmSecret": "Liora's powers are tied to a forgotten prophecy that speaks of a healer who will either save or doom the cursed lands. Her presence in the group is no accident; she is the key to the prophecy's fulfillment.",
-            "potentialConflict": "Liora's empathy can become a burden, causing her to take on more than she can handle and putting her at odds with more pragmatic allies.",
-            "voiceTone": "Gentle and reassuring, with a hint of sadness in her words.",
-            "inventoryHint": "A silver pendant that glows faintly when she prays.",
-            "motifAlignment": [
-              "Whispers from the past",
-              "Shattered silence"
-            ],
-            "backgroundHistory": "Liora's family were healers who traveled the cursed lands, offering aid to those in need. As a child, she witnessed the transformation of a loved one into a Cursed One, an event that ignited her desire to cure the curse. Her journey is a quest for redemption, both for herself and for the world.",
-            "keyRelationships": [
-              "A former patient who became a Remnant",
-              "The Oracle, who shares her visions",
-              "An elder cleric who trained her"
-            ],
-            "flawOrWeakness": "Her overwhelming empathy sometimes leads her to put others' needs before her own safety.",
-            "id": "char_1760998230959_cjim3736j"
-          },
-          {
-            "name": "Kieran Voss",
-            "role": "Shadowy Rogue",
+            "name": "Liora Windrider",
+            "role": "Mystic Healer",
             "race": "Half-Elf",
-            "class": "Rogue",
-            "personality": "Kieran is quick-witted and resourceful, with a penchant for mischief and a talent for getting into places he shouldn't. Despite his roguish demeanor, he has a keen sense of justice and a hidden depth of loyalty.",
-            "motivation": "Kieran seeks to uncover the truth behind the curse and expose the corruption he believes lies at its heart.",
-            "connectionToStory": "Drawn by rumors of a hidden treasure within the cursed lands, Kieran hopes that uncovering its secrets will lead to the downfall of those in power.",
-            "gmSecret": "Kieran's lineage traces back to the original creators of the silence, and he unknowingly holds the key to awakening the relic. His presence in the group is a catalyst for the events that will either save or doom the world.",
-            "potentialConflict": "Kieran's tendency to act independently may lead him to clash with more structured members of the group.",
-            "voiceTone": "Playful and teasing, often masking a deeper intent.",
-            "inventoryHint": "A lockpick set crafted by his estranged father.",
+            "class": "Cleric",
+            "personality": "Empathetic and serene, Liora exudes a calming presence, often mediating disputes with her gentle wisdom. She possesses a quiet strength that belies her delicate appearance.",
+            "motivation": "To heal the cursed inhabitants and uncover the truth behind the silence's affliction.",
+            "connectionToStory": "As a survivor of the curse, Liora feels a deep connection to the afflicted and seeks to free them from their torment.",
+            "gmSecret": "Liora's healing abilities are intertwined with the silence—her powers are strongest when in its presence, but this connection risks her succumbing to its call. Unbeknownst to her, she is a descendant of those who once worshipped the silence.",
+            "potentialConflict": "Her dual nature as both healer and potential victim of the silence creates internal conflict.",
+            "voiceTone": "Soft and soothing, with an undercurrent of resolve",
+            "inventoryHint": "A pendant of silver, engraved with ancient runes",
             "motifAlignment": [
-              "Shattered silence",
-              "Forgotten prophecies"
+              "Silence as a living entity",
+              "The duality of reflection"
             ],
-            "backgroundHistory": "Raised on the streets, Kieran honed his skills as a thief and shadow among the alleys and rooftops. A chance encounter with a dying scholar revealed his connection to the silence, setting him on a path to seek the relic and understand his heritage. His journey is one of self-discovery and redemption.",
+            "backgroundHistory": "Born in the tranquil village of Aranel, Liora witnessed the gradual descent of her home into madness as the silence spread. Her miraculous survival marked her as chosen, and she devoted herself to the healing arts, hoping to save others from a similar fate. Her journey began when she heard the silence's call during a healing ritual.",
             "keyRelationships": [
-              "A fellow rogue from his past",
-              "The Drifter, who knows more about his lineage",
-              "A rival thief who seeks the relic for themselves"
+              "The Healer, a kindred spirit",
+              "A cursed inhabitant she seeks to save",
+              "The Scholar of Forbidden Magic, who aids her with knowledge"
             ],
-            "flawOrWeakness": "His independent nature and distrust of authority often lead him to act recklessly.",
-            "id": "char_1760998230959_rk62gli5g"
+            "flawOrWeakness": "Her empathy can make her vulnerable to manipulation by those she seeks to save.",
+            "id": "char_1761082295500_2i7a74jfr"
+          },
+          {
+            "name": "Thorn Shadowstalker",
+            "role": "Rogue Scout",
+            "race": "Tiefling",
+            "class": "Rogue",
+            "personality": "Cunning and elusive, Thorn is a master of stealth and deception. He is fiercely independent, often masking his true intentions with a playful demeanor.",
+            "motivation": "To uncover the hidden truths behind the curse and exploit them for personal gain, while secretly yearning for belonging.",
+            "connectionToStory": "Thorn was drawn to the explorers by rumors of a treasure hidden within the silence, but stays for the camaraderie he never had.",
+            "gmSecret": "Thorn's true parentage is linked to the cursed inhabitants—his lineage is part of an ancient prophecy that could either save or doom the world. He carries a fragment of the prophecy in a language only he can decipher.",
+            "potentialConflict": "His self-serving nature clashes with the group's altruistic goals, leading to potential betrayals.",
+            "voiceTone": "Playful and sly, with a hint of mystery",
+            "inventoryHint": "A shadowy dagger with an obsidian blade",
+            "motifAlignment": [
+              "Personal scars and secrets",
+              "The duality of reflection"
+            ],
+            "backgroundHistory": "Raised in the shadowy alleys of a forgotten city, Thorn learned the art of survival through cunning and agility. His life changed when he encountered a mysterious figure who spoke of his prophetic destiny linked to the silence. Torn between skepticism and curiosity, Thorn joined the explorers, hoping to unravel the truth of his origins.",
+            "keyRelationships": [
+              "A mysterious figure who spoke of his destiny",
+              "The Hunter, who distrusts him",
+              "A cursed inhabitant who hints at his lineage"
+            ],
+            "flawOrWeakness": "His reluctance to trust others leaves him isolated and vulnerable, despite his facade of confidence.",
+            "id": "char_1761082295500_ku5g1dgvm"
           }
         ],
         "locked": false,
-        "version": 1760998230959
+        "version": 1761082295500
       },
       "custom": {
         "macroChain": {
-          "chainId": "chain_1760998613341_tx86f86sx",
+          "chainId": "chain_1761082493643_cuc1eb4g5",
           "scenes": [
             {
-              "id": "scene_1_1760998613341",
+              "id": "scene_1_1761082493643",
               "order": 1,
-              "title": "Whispers of the Shattered Oracle",
-              "objective": "The party seeks the Oracle in a shattered temple to uncover why the silence twists minds."
-            },
-            {
-              "id": "scene_2_1760998613341",
-              "order": 2,
               "title": "Echoes in the Ruined Fortress",
-              "objective": "Explore a ruined fortress to find clues about who or what created the silence."
+              "objective": "Investigate the haunting echoes to uncover initial clues about the silence's origin."
             },
             {
-              "id": "scene_3_1760998613341",
+              "id": "scene_2_1761082493643",
+              "order": 2,
+              "title": "Whispers of the Ashen Library",
+              "objective": "Discover fragmented prophecies amidst the ashes to hint at the guardian's identity."
+            },
+            {
+              "id": "scene_3_1761082493643",
               "order": 3,
-              "title": "The Drifter's Hidden Past",
-              "objective": "The party encounters the Drifter in the desolate wilderness, unraveling his connection to the relic's guardian."
+              "title": "The Silent Vigil at the Temple",
+              "objective": "Confront personal truths as the explorers feel the silence's call and the gods' absent whispers."
             },
             {
-              "id": "scene_4_1760998613341",
+              "id": "scene_4_1761082493643",
               "order": 4,
-              "title": "Secrets Beneath the Oracle Stones",
-              "objective": "Discover hidden truths beneath cracked oracle stones, unveiling whether the silence is a safeguard or weapon."
+              "title": "Reflections in the Dead Lands",
+              "objective": "Survive encounters with monstrous reflections to learn the duality of the curse."
             },
             {
-              "id": "scene_5_1760998613341",
+              "id": "scene_5_1761082493643",
               "order": 5,
-              "title": "Confrontation with the Cursed Warrior",
-              "objective": "Face the Cursed Warrior to learn what he knows about the relic's true purpose."
+              "title": "The Relic's Call",
+              "objective": "Uncover the purpose of the ancient relic at the mystery's heart, hinting at the curse's spread."
             },
             {
-              "id": "scene_6_1760998613341",
+              "id": "scene_6_1761082493643",
               "order": 6,
-              "title": "The Warden's Final Stand",
-              "objective": "Decide the fate of the lands by confronting the Warden, determining if the silence can ever be lifted."
+              "title": "Confronting the Guardian of Silence",
+              "objective": "Face the mysterious keeper to prevent the silence's expansion and restore sanity to the cursed."
             }
           ],
-          "status": "Generated",
+          "status": "Draft",
           "version": 1,
-          "lastUpdatedAt": "2025-10-20T22:16:53.341Z",
+          "lastUpdatedAt": "2025-10-21T21:34:53.643Z",
           "meta": {
             "source": "macroChainTab",
-            "requestId": "fb9f4f29-949f-456c-8b14-0afe56bda090"
+            "requestId": "ab3026a4-c8dd-436d-a8ae-c1589bf8ddec",
+            "isDraftIdeaBank": true
           },
-          "createdAt": "2025-10-20T22:16:53.341Z",
-          "updatedAt": "2025-10-20T22:16:53.341Z"
+          "createdAt": "2025-10-21T21:34:53.643Z",
+          "updatedAt": "2025-10-21T21:34:53.643Z"
         },
         "macro_index": [
-          "Whispers of the Shattered Oracle",
           "Echoes in the Ruined Fortress",
-          "The Drifter's Hidden Past",
-          "Secrets Beneath the Oracle Stones",
-          "Confrontation with the Cursed Warrior",
-          "The Warden's Final Stand"
+          "Whispers of the Ashen Library",
+          "The Silent Vigil at the Temple",
+          "Reflections in the Dead Lands",
+          "The Relic's Call",
+          "Confronting the Guardian of Silence"
         ]
       }
     },
@@ -248,61 +263,393 @@
       "backgroundV": 0,
       "charactersV": 1,
       "macroSnapshotV": 1,
-      "updatedAt": "2025-10-20T22:16:53.347Z"
+      "updatedAt": "2025-10-21T21:34:53.650Z"
     },
-    "version": 24,
-    "createdAt": "2025-10-20T21:45:51.187Z",
-    "updatedAt": "2025-10-20T22:16:53.358Z",
+    "version": 27,
+    "createdAt": "2025-10-21T21:30:19.119Z",
+    "updatedAt": "2025-10-21T21:36:07.176Z",
     "macroChains": {
-      "chain_1760998613341_tx86f86sx": {
-        "chainId": "chain_1760998613341_tx86f86sx",
+      "chain_1761082305445_e3myhr4e8": {
+        "chainId": "chain_1761082305445_e3myhr4e8",
         "scenes": [
           {
-            "id": "scene_1_1760998613341",
+            "id": "scene_1_1761082305445",
             "order": 1,
-            "title": "Whispers of the Shattered Oracle",
-            "objective": "The party seeks the Oracle in a shattered temple to uncover why the silence twists minds."
+            "title": "Whispers in the Ruined Fortress",
+            "objective": "Discover the haunting echoes that hint at the origin of the silence."
           },
           {
-            "id": "scene_2_1760998613341",
+            "id": "scene_2_1761082305445",
             "order": 2,
-            "title": "Echoes in the Ruined Fortress",
-            "objective": "Explore a ruined fortress to find clues about who or what created the silence."
+            "title": "Ashes of the Ancient Library",
+            "objective": "Unveil secrets hidden in the ashes to prevent the spread of the curse."
           },
           {
-            "id": "scene_3_1760998613341",
+            "id": "scene_3_1761082305445",
             "order": 3,
-            "title": "The Drifter's Hidden Past",
-            "objective": "The party encounters the Drifter in the desolate wilderness, unraveling his connection to the relic's guardian."
+            "title": "Echoes of the Temple's Lost Gods",
+            "objective": "Interpret fragmented prophecies to uncover personal truths and secrets."
           },
           {
-            "id": "scene_4_1760998613341",
+            "id": "scene_4_1761082305445",
             "order": 4,
-            "title": "Secrets Beneath the Oracle Stones",
-            "objective": "Discover hidden truths beneath cracked oracle stones, unveiling whether the silence is a safeguard or weapon."
+            "title": "The Dead Lands' Frozen Time",
+            "objective": "Survive encounters with monstrous reflections and learn why the silence calls."
           },
           {
-            "id": "scene_5_1760998613341",
+            "id": "scene_5_1761082305445",
             "order": 5,
-            "title": "Confrontation with the Cursed Warrior",
-            "objective": "Face the Cursed Warrior to learn what he knows about the relic's true purpose."
+            "title": "Guardian's Lair within the Forgotten Relic",
+            "objective": "Confront the guardian and understand the true origin of the silence."
           },
           {
-            "id": "scene_6_1760998613341",
+            "id": "scene_6_1761082305445",
             "order": 6,
-            "title": "The Warden's Final Stand",
-            "objective": "Decide the fate of the lands by confronting the Warden, determining if the silence can ever be lifted."
+            "title": "Resolution at the Heart of the Mystery",
+            "objective": "Restore sanity to the inhabitants and confront personal and emotional conflicts."
           }
         ],
-        "status": "Generated",
+        "status": "Draft",
         "version": 1,
-        "lastUpdatedAt": "2025-10-20T22:16:53.341Z",
+        "lastUpdatedAt": "2025-10-21T21:31:45.445Z",
         "meta": {
           "source": "macroChainTab",
-          "requestId": "fb9f4f29-949f-456c-8b14-0afe56bda090"
+          "requestId": "4802bfb3-d34b-45ac-b3cc-8df1a0c62e50",
+          "isDraftIdeaBank": true
         },
-        "createdAt": "2025-10-20T22:16:53.341Z",
-        "updatedAt": "2025-10-20T22:16:53.341Z"
+        "createdAt": "2025-10-21T21:31:45.445Z",
+        "updatedAt": "2025-10-21T21:31:45.445Z"
+      },
+      "chain_1761082493643_cuc1eb4g5": {
+        "chainId": "chain_1761082493643_cuc1eb4g5",
+        "scenes": [
+          {
+            "id": "scene_1_1761082493643",
+            "order": 1,
+            "title": "Echoes in the Ruined Fortress",
+            "objective": "Investigate the haunting echoes to uncover initial clues about the silence's origin."
+          },
+          {
+            "id": "scene_2_1761082493643",
+            "order": 2,
+            "title": "Whispers of the Ashen Library",
+            "objective": "Discover fragmented prophecies amidst the ashes to hint at the guardian's identity."
+          },
+          {
+            "id": "scene_3_1761082493643",
+            "order": 3,
+            "title": "The Silent Vigil at the Temple",
+            "objective": "Confront personal truths as the explorers feel the silence's call and the gods' absent whispers."
+          },
+          {
+            "id": "scene_4_1761082493643",
+            "order": 4,
+            "title": "Reflections in the Dead Lands",
+            "objective": "Survive encounters with monstrous reflections to learn the duality of the curse."
+          },
+          {
+            "id": "scene_5_1761082493643",
+            "order": 5,
+            "title": "The Relic's Call",
+            "objective": "Uncover the purpose of the ancient relic at the mystery's heart, hinting at the curse's spread."
+          },
+          {
+            "id": "scene_6_1761082493643",
+            "order": 6,
+            "title": "Confronting the Guardian of Silence",
+            "objective": "Face the mysterious keeper to prevent the silence's expansion and restore sanity to the cursed."
+          }
+        ],
+        "status": "Draft",
+        "version": 1,
+        "lastUpdatedAt": "2025-10-21T21:34:53.643Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "ab3026a4-c8dd-436d-a8ae-c1589bf8ddec",
+          "isDraftIdeaBank": true
+        },
+        "createdAt": "2025-10-21T21:34:53.643Z",
+        "updatedAt": "2025-10-21T21:34:53.643Z"
+      }
+    }
+  },
+  "project_1761082865185_sfe45py57": {
+    "sessionId": "project_1761082865185_sfe45py57",
+    "blocks": {
+      "story_concept": {
+        "concept": "After centuries of war waged through steel and sorcery, the lands finally fell silent. But this “silence” was no peace — it was a curse. It crept into the minds of those who lived within the fallen kingdoms, twisting their thoughts until they lost themselves entirely, becoming monstrous reflections of their former selves.\n\nNo scholar, priest, or sorcerer could ever uncover the origin of this silence. The ancient libraries burned, the oracle stones cracked, and even the gods’ whispers faded from the temples. Only fragments of old prophecies remain — warnings that the silence was never meant to end.\n\nNow, generations later, a band of explorers from distant realms sets out to trace its source. Among them: a war-scarred knight seeking redemption, a scholar of forbidden magic, a healer who survived the silence once before, and a hunter who has seen its creatures up close. Each bears a personal scar — and a secret reason to uncover the truth.\n\nTheir journey leads them beyond ruined fortresses and into a place untouched by time — a forgotten relic buried in the heart of the dead lands. But what they find there is not the echo of a lost age. It is a living design, one that proves the silence was never abandoned.\n\nSomeone — or something — is still guarding it.\nAnd perhaps, the silence isn’t sleeping at all… it’s calling them home.",
+        "timestamp": "2025-10-21T22:01:52.706Z"
+      },
+      "background": {
+        "premise": "A cursed silence grips the land, twisting its inhabitants into monstrous forms, while a group of explorers seeks its mysterious source.",
+        "tone_rules": [
+          "Dark and foreboding atmosphere",
+          "Tinge of hope amidst despair",
+          "Mystical and enigmatic",
+          "Claustrophobic and tense",
+          "Epic yet intimate"
+        ],
+        "stakes": [
+          "Prevent the curse from spreading further",
+          "Uncover personal redemption and truth",
+          "Resist being consumed by the silence",
+          "Protect the world from the silent force",
+          "Unravel secrets before being lost forever"
+        ],
+        "mysteries": [
+          "Origin of the silence curse",
+          "Purpose of the ancient relic",
+          "Identity of the guardian of silence",
+          "Meaning behind fragmented prophecies",
+          "Connection between explorers and silence"
+        ],
+        "factions": [
+          "The Silent Ones - cursed beings",
+          "The Seekers - explorers and truth-seekers",
+          "The Lost Prophets - remnants of ancient wisdom",
+          "The Silent Guardians - protectors of the curse",
+          "The Hidden Circle - covert manipulators of magic"
+        ],
+        "location_palette": [
+          "Ruined Kingdoms - echoes of past wars",
+          "Oracle Stones - cracked and silent",
+          "Ancient Libraries - sites of lost knowledge",
+          "Forgotten Relic - heart of the dead lands",
+          "Whispering Temples - where gods once spoke"
+        ],
+        "npc_roster_skeleton": [
+          "Eldrin, the War-Scarred Knight - seeks redemption",
+          "Lyra, the Scholar of Forbidden Magic - thirsts for knowledge",
+          "Mira, the Resilient Healer - survivor of silence",
+          "Thorn, the Watchful Hunter - knows the creatures well",
+          "The Silent Guardian - mysterious entity guarding the curse"
+        ],
+        "motifs": [
+          "Silence as both curse and call",
+          "Reflections of one's true self",
+          "The relentless passage of time",
+          "Secrets hidden in darkness",
+          "Redemption through understanding"
+        ],
+        "doNots": [
+          "Avoid clear-cut good vs evil",
+          "Avoid overly modern language",
+          "Avoid simplistic resolutions",
+          "Avoid ignoring personal scars",
+          "Avoid excessively comedic tones"
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and discovery",
+          "Focus on character-driven storytelling",
+          "Enable moral and ethical dilemmas",
+          "Provide opportunities for redemption arcs",
+          "Embrace unpredictability and suspense"
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "list": [
+          {
+            "name": "Arlin Voss",
+            "role": "Wandering Scholar",
+            "race": "Human",
+            "class": "Wizard",
+            "personality": "Arlin is inquisitive and obsessive, always seeking knowledge even at the cost of personal safety. He is driven by a deep curiosity and a longing to uncover hidden truths.",
+            "motivation": "Driven to uncover the true origin of the cursed silence and document it for future generations.",
+            "connectionToStory": "Arlin's ancestor was a member of the Order of the Last Prophecy, who left cryptic notes in an ancient library detailing the curse.",
+            "gmSecret": "Arlin unknowingly possesses a fragment of the original prophecy hidden in his family's grimoire. This fragment contains clues that could either banish the curse or unleash a greater evil.",
+            "potentialConflict": "His relentless pursuit of knowledge can lead him to take risks that endanger the group.",
+            "voiceTone": "Soft and deliberate",
+            "inventoryHint": "An aged journal with faded ink",
+            "motifAlignment": [
+              "Echoes of the past",
+              "Bindings of fate",
+              "Lost and found identities"
+            ],
+            "backgroundHistory": "Arlin grew up in the shadow of ancient tomes, captivated by the mysteries they held. His family, once esteemed members of the Order of the Last Prophecy, fell into obscurity when their predictions about the silence were proven incomplete. Haunted by this legacy, Arlin seeks redemption by unraveling the mysteries his ancestors left behind.",
+            "keyRelationships": [
+              "Eldric, the last oracle's keeper",
+              "Mira, a rogue priestess with dark secrets"
+            ],
+            "flawOrWeakness": "Arlin's obsession with knowledge often blinds him to the dangers of his discoveries.",
+            "id": "char_1761083046235_4dihcc16r"
+          },
+          {
+            "name": "Kaela Thorne",
+            "role": "Mercenary Captain",
+            "race": "Half-Orc",
+            "class": "Fighter",
+            "personality": "Kaela is fiercely protective and pragmatic, with a gruff exterior that hides a deep sense of loyalty to her comrades. She has a no-nonsense attitude and values strength and camaraderie.",
+            "motivation": "To protect her team from the curse and find a way to restore the lands to their former glory.",
+            "connectionToStory": "Kaela's mercenary band was decimated by the Monstrous Inhabitants while trying to escort refugees through the dead lands.",
+            "gmSecret": "Kaela's former mentor, believed dead, is now a monstrous warden under the guardianship of Torvald. His transformation is a living testament to the curse's power.",
+            "potentialConflict": "Her past failures haunt her, leading to moments of self-doubt that could undermine her leadership.",
+            "voiceTone": "Gruff and direct",
+            "inventoryHint": "A rusted locket containing a picture of her former mentor",
+            "motifAlignment": [
+              "Shadows and reflections",
+              "The thin veil between silence and sound"
+            ],
+            "backgroundHistory": "Kaela was raised among mercenaries, learning the art of combat and survival from a young age. After rising to the rank of captain, her band was tasked with guiding refugees through the cursed lands, only to be ambushed and slaughtered. Now, Kaela seeks to avenge her fallen comrades and ensure the safety of those who remain.",
+            "keyRelationships": [
+              "Torvald, the monstrous warden",
+              "The Outcast Survivors"
+            ],
+            "flawOrWeakness": "Kaela struggles with guilt over the loss of her comrades, which sometimes clouds her judgment.",
+            "id": "char_1761083046235_tknd10vge"
+          },
+          {
+            "name": "Soren Eldridge",
+            "role": "Rogue Archaeologist",
+            "race": "Elf",
+            "class": "Rogue",
+            "personality": "Soren is cunning and secretive, with a penchant for uncovering hidden relics. He is driven by the thrill of discovery and the potential for personal gain.",
+            "motivation": "To find forgotten relics that could hold the key to lifting the curse.",
+            "connectionToStory": "Soren discovered ancient maps leading to the heart of the dead lands, where the curse is rumored to originate.",
+            "gmSecret": "Soren is a member of the Shadow Seekers, a clandestine group seeking to harness the curse's power. His true mission is to secure relics for their dark purposes.",
+            "potentialConflict": "His secret allegiance to the Shadow Seekers could put the group at risk if discovered.",
+            "voiceTone": "Smooth and persuasive",
+            "inventoryHint": "A fragment of a forgotten relic",
+            "motifAlignment": [
+              "Lost and found identities",
+              "Shadows and reflections"
+            ],
+            "backgroundHistory": "Soren grew up on stories of lost civilizations and hidden treasures. His elven heritage gave him a natural affinity for the arcane, which he used to explore and plunder ancient sites. His latest expedition led him to maps pointing to the dead lands, where he believes the ultimate prize awaits.",
+            "keyRelationships": [
+              "Lira, the enigmatic guide",
+              "The Shadow Seekers"
+            ],
+            "flawOrWeakness": "Soren's greed can drive him to prioritize personal gain over the group's safety.",
+            "id": "char_1761083046235_ei31og3bi"
+          },
+          {
+            "name": "Elara Moonshadow",
+            "role": "Mystic Healer",
+            "race": "Tiefling",
+            "class": "Cleric",
+            "personality": "Elara is compassionate and serene, often finding solace in healing others. She is deeply spiritual and believes in the possibility of redemption and forgiveness.",
+            "motivation": "To cleanse the world of the curse's corruption and restore balance.",
+            "connectionToStory": "Elara received a vision from the Whispering Shade, guiding her to join the explorers and heal the land.",
+            "gmSecret": "Elara's true heritage is linked to the guardians of silence. Her ancestors were part of the original ritual that summoned the curse, a fact she remains unaware of.",
+            "potentialConflict": "Her unwavering belief in redemption can lead her to trust individuals who may not have the group's best interests at heart.",
+            "voiceTone": "Calm and soothing",
+            "inventoryHint": "A small vial of sacred water",
+            "motifAlignment": [
+              "Bindings of fate",
+              "The thin veil between silence and sound"
+            ],
+            "backgroundHistory": "Elara was raised in a secluded temple, learning the arts of healing and divination. Her tiefling heritage often caused others to distrust her, but she found peace in helping those around her. When the Whispering Shade appeared in her dreams, she knew her destiny was intertwined with the explorers' quest to end the curse.",
+            "keyRelationships": [
+              "The Whispering Shade",
+              "The Order of the Last Prophecy"
+            ],
+            "flawOrWeakness": "Elara's faith in others can sometimes blind her to their true intentions.",
+            "id": "char_1761083046235_7d5y3m0rc"
+          }
+        ],
+        "locked": false,
+        "version": 1761083046235
+      },
+      "custom": {
+        "macroChain": {
+          "chainId": "chain_1761083066688_d7nnq27r7",
+          "scenes": [
+            {
+              "id": "scene_2_1761083066689",
+              "order": 1,
+              "title": "Whispers in the Ruined Fortress",
+              "objective": "The party heard about this once glorious not ruined mysterious fortress from the common villagers where \"silence\" lurks around."
+            },
+            {
+              "id": "scene_2_1761084328972",
+              "order": 2,
+              "title": "Echoes of the Silent Halls",
+              "objective": "The explorers navigate the shadowy corridors of the fortress, seeking clues that might reveal the origins of the cursed silence while confronting the eerie remnants of its past inhabitants.",
+              "meta": {
+                "gmIntent": "the party wonders around the halls its rooms to find out the origin of the \"silence\"",
+                "generatedFrom": "scene_2_1761083066689",
+                "generatedAt": "2025-10-21T22:05:28.972Z"
+              }
+            },
+            {
+              "id": "scene-1761084503112",
+              "order": 3,
+              "title": "New Scene",
+              "objective": "Enter scene objective..."
+            }
+          ],
+          "status": "Draft",
+          "version": 1,
+          "lastUpdatedAt": "2025-10-21T22:08:19.746Z",
+          "meta": {
+            "source": "macroChainTab",
+            "requestId": "c4e1271f-c3af-42c5-84f3-d724ac580f13",
+            "isDraftIdeaBank": true
+          },
+          "createdAt": "2025-10-21T21:44:26.689Z",
+          "updatedAt": "2025-10-21T21:44:26.689Z"
+        },
+        "macro_index": [
+          "Echoes of the Dead Lands",
+          "Whispers in the Ruined Fortress",
+          "Shadows of the Ancient Library",
+          "Bindings of Fate at the Temple of Silence",
+          "The Monstrous Warden's Challenge",
+          "Revelations at the Heart of the Silence"
+        ]
+      }
+    },
+    "locks": {
+      "background": true,
+      "characters": true
+    },
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 1,
+      "macroSnapshotV": 1,
+      "updatedAt": "2025-10-21T21:44:26.694Z"
+    },
+    "version": 33,
+    "createdAt": "2025-10-21T21:43:11.505Z",
+    "updatedAt": "2025-10-21T22:08:23.141Z",
+    "macroChains": {
+      "chain_1761083066688_d7nnq27r7": {
+        "chainId": "chain_1761083066688_d7nnq27r7",
+        "scenes": [
+          {
+            "id": "scene_2_1761083066689",
+            "order": 1,
+            "title": "Whispers in the Ruined Fortress",
+            "objective": "The party heard about this once glorious not ruined mysterious fortress from the common villagers where \"silence\" lurks around."
+          },
+          {
+            "id": "scene_2_1761084328972",
+            "order": 2,
+            "title": "Echoes of the Silent Halls",
+            "objective": "The explorers navigate the shadowy corridors of the fortress, seeking clues that might reveal the origins of the cursed silence while confronting the eerie remnants of its past inhabitants.",
+            "meta": {
+              "gmIntent": "the party wonders around the halls its rooms to find out the origin of the \"silence\"",
+              "generatedFrom": "scene_2_1761083066689",
+              "generatedAt": "2025-10-21T22:05:28.972Z"
+            }
+          },
+          {
+            "id": "scene_1761084503118_th94o2koh",
+            "order": 3,
+            "title": "New Scene",
+            "objective": "Enter scene objective..."
+          }
+        ],
+        "status": "Edited",
+        "version": 2,
+        "lastUpdatedAt": "2025-10-21T22:08:23.118Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "c4e1271f-c3af-42c5-84f3-d724ac580f13",
+          "isDraftIdeaBank": true
+        },
+        "createdAt": "2025-10-21T21:44:26.689Z",
+        "updatedAt": "2025-10-21T21:44:26.689Z"
       }
     }
   }

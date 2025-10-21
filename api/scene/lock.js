@@ -1,5 +1,8 @@
 import { getOrCreateSessionContext } from '../context.js';
 import { saveSessionContext } from '../storage.js';
+import logger from '../lib/logger.js';
+
+const log = logger.scene;
 
 /**
  * POST /api/scene/lock
@@ -110,7 +113,7 @@ export default async function handler(req, res) {
     // Save the updated context
     await saveSessionContext(sessionId, sessionContext);
     
-    console.log(`Scene ${sceneId} locked for session ${sessionId}`);
+    log.info(`Scene ${sceneId} locked for session ${sessionId}`);
     
     res.status(200).json({
       ok: true,
@@ -118,7 +121,7 @@ export default async function handler(req, res) {
     });
     
   } catch (error) {
-    console.error('Error locking scene:', error);
+    log.error('Error locking scene:', error);
     res.status(500).json({ 
       error: error.message 
     });

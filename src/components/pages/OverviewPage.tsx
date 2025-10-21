@@ -3,6 +3,9 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { getJSON } from '../../lib/api';
 import type { Project, SessionContext } from '../../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.ui;
 
 interface OverviewPageProps {
   sessionId: string;
@@ -28,7 +31,7 @@ export default function OverviewPage({ sessionId, project, context, onContextUpd
         onContextUpdate(response.data);
       }
     } catch (error) {
-      console.error('Failed to fetch context:', error);
+      log.error('Failed to fetch context:', error);
     } finally {
       setLoading(false);
     }

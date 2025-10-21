@@ -1,4 +1,7 @@
 import { loadSessionContext } from '../storage.js';
+import logger from './logger.js';
+
+const log = logger.prompt;
 
 /**
  * Centralized PromptContextBuilder that provides consistent context for all LLM calls
@@ -127,7 +130,7 @@ export function checkMacroChainLocks(sessionContext) {
  * @returns {Object} Lock status and error message if not locked
  */
 export function checkPreviousSceneLock(sessionContext, sceneOrder) {
-  console.log('checkPreviousSceneLock called with:', {
+  log.info('checkPreviousSceneLock called with:', {
     sceneOrder,
     hasSceneDetails: !!sessionContext.sceneDetails,
     sceneDetailsKeys: sessionContext.sceneDetails ? Object.keys(sessionContext.sceneDetails) : []
@@ -145,7 +148,7 @@ export function checkPreviousSceneLock(sessionContext, sceneOrder) {
     return match && parseInt(match[1]) === prevSceneOrder;
   });
   
-  console.log('Scene lock validation:', {
+  log.info('Scene lock validation:', {
     prevSceneOrder,
     prevSceneId,
     foundScene: !!prevSceneId,

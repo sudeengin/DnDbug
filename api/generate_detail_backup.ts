@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import OpenAI from 'openai'
 import { MODEL_ID } from './model.js'
+import logger from './lib/logger.js';
+
+const log = logger.scene;
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
@@ -37,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     res.status(200).json({ ok: true, data: sceneDetail })
   } catch (error: unknown) {
-    console.error(error)
+    log.error(error)
     const message = error instanceof Error ? error.message : 'Server error'
     res.status(500).json({ error: message })
   }
@@ -214,7 +217,7 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
     
     return parsed
   } catch (error) {
-    console.error('Failed to parse scene detail JSON:', error)
+    log.error('Failed to parse scene detail JSON:', error)
     // Return a fallback structure
     return {
       sceneId,

@@ -1,5 +1,8 @@
 // Import the context handler functions
 import { getOrCreateSessionContext } from '../context.js';
+import logger from '../lib/logger.js';
+
+const log = logger.context;
 
 export default async function handler(req, res) {
   try {
@@ -28,7 +31,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log('Context retrieved:', {
+    log.info('Context retrieved:', {
       sessionId,
       version: sessionContext.version,
       blockTypes: Object.keys(sessionContext.blocks),
@@ -41,7 +44,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in context/get:', error);
+    log.error('Error in context/get:', error);
     res.status(500).json({ error: error.message });
   }
 }

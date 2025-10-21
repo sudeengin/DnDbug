@@ -1,4 +1,7 @@
 import { loadChain, updateChain } from './storage.js';
+import logger from './lib/logger.js';
+
+const log = logger.macroChain;
 
 export default async function handler(req, res) {
   try {
@@ -7,15 +10,33 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { chainId, edits } = req.body;
+    const { chainId, edits, sessionId } = req.body;
 
     if (!chainId || !Array.isArray(edits)) {
       res.status(400).json({ error: 'chainId and edits array are required' });
       return;
     }
 
-    // Load existing chain
-    const existingChain = await loadChain(chainId);
+    // Load existing chain from session context first, then fallback to old storage
+    let existingChain = null;
+    let sessionContext = null;
+    
+    if (sessionId) {
+      const { getOrCreateSessionContext } = await import('./context.js');
+      sessionContext = await getOrCreateSessionContext(sessionId);
+      
+      if (sessionContext.macroChains && sessionContext.macroChains[chainId]) {
+        existingChain = sessionContext.macroChains[chainId];
+        log.info('Loading chain from session context:', chainId);
+      }
+    }
+    
+    // Fallback to old storage if not found in session context
+    if (!existingChain) {
+      existingChain = await loadChain(chainId);
+      log.info('Loading chain from old storage:', chainId);
+    }
+    
     if (!existingChain) {
       res.status(404).json({ error: 'Chain not found' });
       return;
@@ -33,7 +54,7 @@ export default async function handler(req, res) {
     for (const edit of edits) {
       switch (edit.type) {
         case 'reorder':
-          console.log(`Reordering scene ${edit.sceneId} to position ${edit.newOrder}`);
+          log.info(`Reordering scene ${edit.sceneId} to position ${edit.newOrder}`);
           // Find the scene and update its order
           const sceneToReorder = updatedChain.scenes.find(s => s.id === edit.sceneId);
           if (sceneToReorder) {
@@ -44,7 +65,7 @@ export default async function handler(req, res) {
           break;
           
         case 'edit_title':
-          console.log(`Updating title for scene ${edit.sceneId} to: ${edit.newValue}`);
+          log.info(`Updating title for scene ${edit.sceneId} to: ${edit.newValue}`);
           const sceneToEditTitle = updatedChain.scenes.find(s => s.id === edit.sceneId);
           if (sceneToEditTitle) {
             sceneToEditTitle.title = edit.newValue;
@@ -52,7 +73,7 @@ export default async function handler(req, res) {
           break;
           
         case 'edit_objective':
-          console.log(`Updating objective for scene ${edit.sceneId} to: ${edit.newValue}`);
+          log.info(`Updating objective for scene ${edit.sceneId} to: ${edit.newValue}`);
           const sceneToEditObjective = updatedChain.scenes.find(s => s.id === edit.sceneId);
           if (sceneToEditObjective) {
             sceneToEditObjective.objective = edit.newValue;
@@ -60,7 +81,7 @@ export default async function handler(req, res) {
           break;
           
         case 'delete_scene':
-          console.log(`Deleting scene ${edit.sceneId}`);
+          log.info(`Deleting scene ${edit.sceneId}`);
           updatedChain.scenes = updatedChain.scenes.filter(s => s.id !== edit.sceneId);
           // Reorder remaining scenes
           updatedChain.scenes.forEach((scene, index) => {
@@ -69,7 +90,7 @@ export default async function handler(req, res) {
           break;
           
         case 'add_scene':
-          console.log(`Adding new scene:`, edit.sceneData);
+          log.info(`Adding new scene:`, edit.sceneData);
           const newScene = {
             id: `scene_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             order: updatedChain.scenes.length + 1,
@@ -80,24 +101,60 @@ export default async function handler(req, res) {
           break;
           
         default:
-          console.warn(`Unknown edit type: ${edit.type}`);
+          log.warn(`Unknown edit type: ${edit.type}`);
       }
     }
 
-    // Save the updated chain
+    // Save the updated chain to old storage
     const savedChain = await updateChain(chainId, updatedChain);
+    
+    // CRITICAL: Also update session context to keep everything in sync
+    if (sessionId && sessionContext) {
+      const { saveSessionContext } = await import('./storage.js');
+      
+      // Update macroChains storage
+      if (!sessionContext.macroChains) {
+        sessionContext.macroChains = {};
+      }
+      sessionContext.macroChains[chainId] = updatedChain;
+      
+      // Update blocks.custom.macroChain to keep UI in sync
+      if (!sessionContext.blocks) {
+        sessionContext.blocks = {};
+      }
+      if (!sessionContext.blocks.custom) {
+        sessionContext.blocks.custom = {};
+      }
+      sessionContext.blocks.custom.macroChain = {
+        chainId: updatedChain.chainId,
+        scenes: updatedChain.scenes,
+        status: updatedChain.status,
+        version: updatedChain.version,
+        lastUpdatedAt: updatedChain.lastUpdatedAt,
+        meta: updatedChain.meta,
+        createdAt: updatedChain.createdAt,
+        updatedAt: updatedChain.updatedAt,
+        lockedAt: updatedChain.lockedAt
+      };
+      
+      sessionContext.updatedAt = new Date().toISOString();
+      await saveSessionContext(sessionId, sessionContext);
+      
+      log.info(`Chain ${chainId} updated in session context with ${updatedChain.scenes.length} scenes`);
+    }
 
     // Log telemetry
-    console.log('Telemetry: update_chain', {
+    log.info('Telemetry: update_chain', {
       chainId,
       editCount: edits.length,
+      sceneCount: updatedChain.scenes.length,
       timestamp: Date.now(),
     });
 
     res.status(200).json({ ok: true, data: savedChain });
 
   } catch (error) {
-    console.error('Error updating chain:', error);
+    log.error('Error updating chain:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     res.status(500).json({ error: message });
   }

@@ -4,6 +4,9 @@ import { makeMacroSnapshotV } from './lib/versioning.js';
 import { saveChain } from './storage.js';
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
+import logger from './lib/logger.js';
+
+const log = logger.macroChain;
 
 // Initialize OpenAI client lazily to ensure environment variables are loaded
 let openai = null;
@@ -20,8 +23,8 @@ function getOpenAI() {
 }
 
 export default async function handler(req, res) {
-  console.error('🚀🚀🚀 GENERATE_CHAIN HANDLER CALLED - DEBUG MODE ACTIVE - VERSION 3.0 🚀🚀🚀');
-  console.error('Request body:', JSON.stringify(req.body, null, 2));
+  log.section('MACRO CHAIN GENERATION REQUEST');
+  log.info('Request received', { body: req.body });
   try {
     if (req.method !== 'POST') {
       res.status(405).json({ error: 'Use POST' });
@@ -49,7 +52,7 @@ export default async function handler(req, res) {
         // Check lock requirements using centralized function
         const lockCheck = checkMacroChainLocks(sessionContext);
         if (!lockCheck.canGenerate) {
-          console.log('Lock check failed:', {
+          log.warn('Lock check failed:', {
             error: lockCheck.error,
             sessionId,
             locks: sessionContext?.locks
@@ -61,7 +64,7 @@ export default async function handler(req, res) {
         // Build prompt context using centralized builder
         promptContext = await buildPromptContext(sessionId);
         
-        console.log('Prompt context loaded:', {
+        log.success('Prompt context loaded:', {
           sessionId,
           hasBackground: !!promptContext.background,
           hasCharacters: !!promptContext.characters,
@@ -70,10 +73,10 @@ export default async function handler(req, res) {
 
         // Warn if background is missing
         if (!promptContext.background) {
-          console.warn('BACKGROUND missing; proceeding with concept only');
+          log.warn('BACKGROUND missing; proceeding with concept only');
         }
       } catch (error) {
-        console.warn('Failed to load prompt context:', error.message);
+        log.warn('Failed to load prompt context:', error.message);
         // Continue without context if loading fails
       }
     }
@@ -91,7 +94,7 @@ All text output must be in English. Use clear, natural language suitable for tab
       if (promptContext.background) {
         // Format background context in a more readable way for the AI
         const bg = promptContext.background;
-        console.log('Background object:', JSON.stringify(bg, null, 2));
+        log.info('Background object:', JSON.stringify(bg, null, 2));
         contextMemoryBlock = `BACKGROUND_CONTEXT:
 PREMISE: ${bg.premise || 'No premise provided'}
 
@@ -149,16 +152,16 @@ PLAYER COUNT: ${promptContext.numberOfPlayers || 4}
     }
 
     // Debug: Log the context being sent to AI
-    console.log('=== CONTEXT BEING SENT TO AI ===');
-    console.log('Prompt Context Keys:', promptContext ? Object.keys(promptContext) : 'None');
-    console.log('Background Present:', !!promptContext?.background);
+    log.debug('=== CONTEXT BEING SENT TO AI ===');
+    log.info('Prompt Context Keys:', promptContext ? Object.keys(promptContext) : 'None');
+    log.info('Background Present:', !!promptContext?.background);
     if (promptContext?.background) {
-      console.log('Background Keys:', Object.keys(promptContext.background));
-      console.log('Background Premise:', promptContext.background.premise);
-      console.log('Background Tone Rules:', promptContext.background.tone_rules);
+      log.info('Background Keys:', Object.keys(promptContext.background));
+      log.info('Background Premise:', promptContext.background.premise);
+      log.info('Background Tone Rules:', promptContext.background.tone_rules);
     }
-    console.log('Full Context Block:', contextMemoryBlock);
-    console.log('================================');
+    log.info('Full Context Block:', contextMemoryBlock);
+    log.debug('================================');
 
     const userPrompt = `${contextMemoryBlock}
 
@@ -217,22 +220,22 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
       throw new Error('No response from OpenAI');
     }
 
-    console.error('=== RAW AI RESPONSE ===');
-    console.error(responseText);
-    console.error('=== END RAW AI RESPONSE ===');
+    log.error('=== RAW AI RESPONSE ===');
+    log.error(responseText);
+    log.error('=== END RAW AI RESPONSE ===');
 
     // Parse the JSON response
     let parsedResponse;
     try {
       // Remove markdown code blocks if present
       const cleaned = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      console.error('=== CLEANED RESPONSE ===');
-      console.error(cleaned);
-      console.error('=== END CLEANED RESPONSE ===');
+      log.error('=== CLEANED RESPONSE ===');
+      log.error(cleaned);
+      log.error('=== END CLEANED RESPONSE ===');
       parsedResponse = JSON.parse(cleaned);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', parseError);
-      console.error('Raw response that failed to parse:', responseText);
+      log.error('Failed to parse OpenAI response:', parseError);
+      log.error('Raw response that failed to parse:', responseText);
       throw new Error('Invalid JSON response from AI');
     }
 
@@ -240,16 +243,16 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
     const chainId = `chain_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Debug: Log the parsed response structure
-    console.log('=== PARSED AI RESPONSE ===');
-    console.log('Response keys:', Object.keys(parsedResponse));
-    console.log('Has scenes array:', Array.isArray(parsedResponse.scenes));
-    console.log('Scenes length:', parsedResponse.scenes ? parsedResponse.scenes.length : 'N/A');
-    console.log('Full response:', JSON.stringify(parsedResponse, null, 2));
-    console.log('========================');
+    log.debug('=== PARSED AI RESPONSE ===');
+    log.info('Response keys:', Object.keys(parsedResponse));
+    log.info('Has scenes array:', Array.isArray(parsedResponse.scenes));
+    log.info('Scenes length:', parsedResponse.scenes ? parsedResponse.scenes.length : 'N/A');
+    log.info('Full response:', JSON.stringify(parsedResponse, null, 2));
+    log.debug('========================');
     
     // Ensure we have scenes array
     if (!Array.isArray(parsedResponse.scenes)) {
-      console.error('AI Response does not contain scenes array. Response structure:', parsedResponse);
+      log.error('AI Response does not contain scenes array. Response structure:', parsedResponse);
       throw new Error(`Response must contain scenes array. Got: ${JSON.stringify(parsedResponse)}`);
     }
 
@@ -269,10 +272,10 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
     const macroChain = {
       chainId,
       scenes,
-      status: 'Generated',
+      status: 'Draft', // Mark initial scenes as Draft (idea bank)
       version: 1,
       lastUpdatedAt: new Date().toISOString(),
-      meta: meta || undefined,
+      meta: { ...meta, isDraftIdeaBank: true }, // Flag as idea bank
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -302,7 +305,7 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
         // Save to storage
         await saveSessionContext(sessionId, sessionContext);
         
-        console.log(`Macro chain ${chainId} stored in session context for ${sessionId}`, {
+        log.info(`Macro chain ${chainId} stored in session context for ${sessionId}`, {
           chainId,
           sessionId,
           hasMacroChains: !!sessionContext.macroChains,
@@ -311,13 +314,13 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
           macroSnapshotV: sessionContext.meta.macroSnapshotV
         });
       } catch (contextError) {
-        console.warn('Failed to store chain in session context:', contextError);
+        log.warn('Failed to store chain in session context:', contextError);
         // Continue even if context storage fails
       }
     }
 
     // Log telemetry
-    console.log('Telemetry: generate_chain', {
+    log.info('Telemetry: generate_chain', {
       chainId,
       sceneCount: scenes.length,
       timestamp: Date.now(),
@@ -326,7 +329,7 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
     res.status(200).json({ ok: true, data: macroChain });
 
   } catch (error) {
-    console.error('Error generating chain:', error);
+    log.error('Error generating chain:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     res.status(500).json({ error: message });
   }

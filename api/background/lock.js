@@ -1,6 +1,9 @@
 import { getOrCreateSessionContext } from '../context.js';
 import { saveSessionContext } from '../storage.js';
 import { bumpBackgroundV } from '../lib/versioning.js';
+import logger from '../lib/logger.js';
+
+const log = logger.background;
 
 export default async function handler(req, res) {
   try {
@@ -35,7 +38,7 @@ export default async function handler(req, res) {
     // Save the updated context
     await saveSessionContext(sessionId, sessionContext);
 
-    console.log('Background lock updated:', {
+    log.info('Background lock updated:', {
       sessionId,
       locked,
       backgroundV: sessionContext.meta.backgroundV,
@@ -48,7 +51,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error updating background lock:', error);
+    log.error('Error updating background lock:', error);
     res.status(500).json({ 
       error: error.message 
     });

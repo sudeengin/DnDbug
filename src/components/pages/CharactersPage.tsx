@@ -6,6 +6,9 @@ import { postJSON, getJSON } from '../../lib/api';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
 import CharactersTable from '../CharactersTable';
 import CharacterForm from '../CharacterForm';
+import logger from '@/utils/logger';
+
+const log = logger.character;
 
 interface CharactersPageProps {
   sessionId: string;
@@ -42,7 +45,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         onContextUpdate(response.data);
       }
     } catch (error) {
-      console.error('Failed to fetch context:', error);
+      log.error('Failed to fetch context:', error);
     }
   };
 
@@ -59,7 +62,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       }
     } catch (err) {
       setError('Failed to load characters');
-      console.error('Error loading characters:', err);
+      log.error('Error loading characters:', err);
     }
   };
 
@@ -93,7 +96,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       }
     } catch (err) {
       setError('Failed to generate characters');
-      console.error('Error generating characters:', err);
+      log.error('Error generating characters:', err);
     } finally {
       setLoading(false);
     }
@@ -131,7 +134,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       }
     } catch (err) {
       setError('Failed to lock characters');
-      console.error('Error locking characters:', err);
+      log.error('Error locking characters:', err);
     } finally {
       setLoading(false);
     }
@@ -167,7 +170,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       }
     } catch (err) {
       setError('Failed to save character');
-      console.error('Error saving character:', err);
+      log.error('Error saving character:', err);
     }
   };
 

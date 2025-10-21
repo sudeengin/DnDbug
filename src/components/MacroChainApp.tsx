@@ -9,6 +9,9 @@ import { postJSON } from '../lib/api';
 import { validateGenerateChainRequest, validateMacroChain } from '../utils/macro-chain-validation';
 import { telemetry } from '../utils/telemetry';
 import type { GenerateChainRequest, MacroChain, SessionContext, StoryBackground } from '../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.macroChain;
 
 interface Project {
   id: string;
@@ -67,7 +70,7 @@ export default function MacroChainApp() {
 
       // Show warnings if any
       if (validation.warnings.length > 0) {
-        console.warn('Validation warnings:', validation.warnings);
+        log.warn('Validation warnings:', validation.warnings);
       }
 
       // Store the story concept in context
@@ -82,7 +85,7 @@ export default function MacroChainApp() {
           }
         });
       } catch (error) {
-        console.warn('Failed to store story concept in context:', error);
+        log.warn('Failed to store story concept in context:', error);
         // Continue with chain generation even if context storage fails
       }
 
@@ -117,7 +120,7 @@ export default function MacroChainApp() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
-      console.error('Error generating chain:', err);
+      log.error('Error generating chain:', err);
     } finally {
       setLoading(false);
     }

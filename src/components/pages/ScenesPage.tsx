@@ -7,6 +7,9 @@ import { getJSON } from '../../lib/api';
 import { getSessionIdFromUrl, getSceneFromUrl } from '../../lib/router';
 import type { SessionContext, MacroChain, SceneDetail } from '../../types/macro-chain';
 import { type SceneStatusStore, getSceneStatus, canAccessScene, highestLockedIndex } from '../../lib/status';
+import logger from '@/utils/logger';
+
+const log = logger.scene;
 
 interface ScenesPageProps {
   sessionId: string;
@@ -39,9 +42,9 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   const fetchContext = async () => {
     try {
       setLoading(true);
-      console.log('Fetching context for sessionId:', effectiveSessionId);
+      log.info('Fetching context for sessionId:', effectiveSessionId);
       const response = await getJSON<{ ok: boolean; data: SessionContext | null }>(`/api/context/get?sessionId=${effectiveSessionId}`);
-      console.log('Context response:', response);
+      log.info('Context response:', response);
       if (response.ok && response.data) {
         onContextUpdate(response.data);
         // Extract macro chain from context
@@ -50,14 +53,14 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
         }
         // Extract scene details from context
         if (response.data.sceneDetails) {
-          console.log('Loading scene details from context:', response.data.sceneDetails);
+          log.info('Loading scene details from context:', response.data.sceneDetails);
           setSceneDetails(response.data.sceneDetails);
         } else {
-          console.log('No scene details found in context');
+          log.info('No scene details found in context');
         }
       }
     } catch (error) {
-      console.error('Failed to fetch context:', error);
+      log.error('Failed to fetch context:', error);
     } finally {
       setLoading(false);
     }
@@ -70,7 +73,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
     }
     // Extract scene details from context when it changes
     if (context && context.sceneDetails) {
-      console.log('Loading scene details from context (parent update):', context.sceneDetails);
+      log.info('Loading scene details from context (parent update):', context.sceneDetails);
       setSceneDetails(context.sceneDetails);
     }
   }, [context]);
@@ -79,7 +82,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
     // Check if scene can be accessed
     const sceneIds = chain?.scenes.map(s => s.id) || [];
     if (!canAccessScene(sceneIndex, sceneDetails, sceneIds)) {
-      console.warn(`Cannot access scene ${sceneIndex}: previous scene not locked`);
+      log.warn(`Cannot access scene ${sceneIndex}: previous scene not locked`);
       return;
     }
     
@@ -89,7 +92,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   };
 
   const handleSceneDetailUpdate = (detail: SceneDetail) => {
-    console.log('handleSceneDetailUpdate:', {
+    log.info('handleSceneDetailUpdate:', {
       detailSceneId: detail.sceneId,
       detail: detail
     });
@@ -123,6 +126,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
   };
 
   const hasChain = !!chain;
+  const isChainLocked = chain?.status === 'Locked';
   const scenes = chain?.scenes || [];
   const sceneIds = scenes.map(s => s.id);
   const highestLocked = highestLockedIndex(sceneDetails, sceneIds);
@@ -147,7 +151,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
         const currentScene = scenes[selectedScene];
         if (currentScene) {
           // Trigger lock action on current scene
-          console.log('Lock action triggered for scene:', currentScene.id);
+          log.info('Lock action triggered for scene:', currentScene.id);
         }
       }
     };
@@ -172,58 +176,100 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
         </div>
       </div>
       
-      <div className="flex h-full">
-        {/* Left Pane - Scene List */}
-        <aside className="w-80 border-r bg-white">
-        <SceneList
-          items={scenes}
-          statusMap={sceneDetails}
-          selected={selectedScene}
-          onSelect={handleSceneSelect}
-          highestLockedIndex={highestLocked}
-          sessionId={effectiveSessionId}
-          onGenerateFirst={async () => {
-            // Handle first scene generation
-            if (scenes.length > 0) {
-              handleSceneSelect(0);
-            }
-          }}
-        />
-      </aside>
-
-      {/* Right Pane - Scene Workspace */}
-      <div className="flex-1 flex flex-col">
-        {scenes.length > 0 && selectedScene < scenes.length ? (
-          <SceneWorkspace
-            sessionId={effectiveSessionId}
-            scene={scenes[selectedScene]}
-            total={scenes.length}
-            sceneIndex={selectedScene}
-            context={context}
-            onDetailUpdate={handleSceneDetailUpdate}
-            activeSubTab={activeSubTab}
-            onSubTabChange={setActiveSubTab}
-            sceneDetails={sceneDetails}
-            onSceneSelect={handleSceneSelect}
-            onMarkScenesNeedsRegen={handleMarkScenesNeedsRegen}
-          />
-        ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-50">
-            <div className="text-center">
-              <div className="text-gray-400 mb-4">
-                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Scene Selected</h3>
-              <p className="text-gray-600">
-                Select a scene from the list to begin detailing.
-              </p>
+      {!hasChain ? (
+        <div className="flex-1 flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="text-gray-400 mb-4">
+              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
             </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No Macro Chain</h3>
+            <p className="text-gray-600 mb-4">
+              Please create a macro chain first before accessing scene details.
+            </p>
+            <Button 
+              onClick={() => window.location.hash = '#tab=macro-chain'}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Go to Macro Chain
+            </Button>
           </div>
-        )}
         </div>
-      </div>
+      ) : !isChainLocked ? (
+        <div className="flex-1 flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="text-yellow-500 mb-4">
+              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Macro Chain Not Locked</h3>
+            <p className="text-gray-600 mb-4">
+              Please lock your macro chain before accessing scene details. This ensures your scene structure is finalized.
+            </p>
+            <Button 
+              onClick={() => window.location.hash = '#tab=macro-chain'}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Go to Macro Chain
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex h-full">
+          {/* Left Pane - Scene List */}
+          <aside className="w-80 border-r bg-white">
+          <SceneList
+            items={scenes}
+            statusMap={sceneDetails}
+            selected={selectedScene}
+            onSelect={handleSceneSelect}
+            highestLockedIndex={highestLocked}
+            sessionId={effectiveSessionId}
+            onGenerateFirst={async () => {
+              // Handle first scene generation
+              if (scenes.length > 0) {
+                handleSceneSelect(0);
+              }
+            }}
+          />
+        </aside>
+
+        {/* Right Pane - Scene Workspace */}
+        <div className="flex-1 flex flex-col">
+          {scenes.length > 0 && selectedScene < scenes.length ? (
+            <SceneWorkspace
+              sessionId={effectiveSessionId}
+              scene={scenes[selectedScene]}
+              total={scenes.length}
+              sceneIndex={selectedScene}
+              context={context}
+              onDetailUpdate={handleSceneDetailUpdate}
+              activeSubTab={activeSubTab}
+              onSubTabChange={setActiveSubTab}
+              sceneDetails={sceneDetails}
+              onSceneSelect={handleSceneSelect}
+              onMarkScenesNeedsRegen={handleMarkScenesNeedsRegen}
+            />
+          ) : (
+            <div className="flex-1 flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <div className="text-gray-400 mb-4">
+                  <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Scene Selected</h3>
+                <p className="text-gray-600">
+                  Select a scene from the list to begin detailing.
+                </p>
+              </div>
+            </div>
+          )}
+          </div>
+        </div>
+      )}
 
       {loading && (
         <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">

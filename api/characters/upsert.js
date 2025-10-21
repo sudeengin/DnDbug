@@ -1,5 +1,8 @@
 import { getOrCreateSessionContext } from '../context.js';
 import { saveSessionContext } from '../storage.js';
+import logger from '../lib/logger.js';
+
+const log = logger.character;
 
 export default async function handler(req, res) {
   try {
@@ -47,7 +50,7 @@ export default async function handler(req, res) {
 
     await saveSessionContext(sessionId, sessionContext);
 
-    console.log('Character updated:', {
+    log.info('Character updated:', {
       sessionId,
       characterId: character.id,
       characterName: character.name,
@@ -60,7 +63,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error updating character:', error);
+    log.error('Error updating character:', error);
     res.status(500).json({ 
       error: error.message 
     });

@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import OpenAI from 'openai'
 import { MODEL_ID } from './model.js'
+import logger from './lib/logger.js';
+
+const log = logger.scene;
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
@@ -37,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     res.status(200).json({ ok: true, data: sceneDetail })
   } catch (error: unknown) {
-    console.error(error)
+    log.error(error)
     const message = error instanceof Error ? error.message : 'Server error'
     res.status(500).json({ error: message })
   }
@@ -241,7 +244,7 @@ function createContextSummary(effectiveContext) {
 }
 
 function tryParseSceneDetail(text, sceneId, macroScene) {
-  console.log('🔧 tryParseSceneDetail called with updated code')
+  log.info('🔧 tryParseSceneDetail called with updated code')
   try {
     const parsed = JSON.parse(text)
     
@@ -272,7 +275,7 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
     if (parsed.checks && Array.isArray(parsed.checks)) {
       parsed.checks.forEach(check => {
         if (!check.dnd_skill && check.skill) {
-          console.log('Processing skill:', check.skill)
+          log.info('Processing skill:', check.skill)
           
           // Map Turkish skill names to D&D skills
           const skillMapping = {
@@ -303,7 +306,7 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
           for (const [turkish, english] of Object.entries(skillMapping)) {
             if (skillName === turkish.toLowerCase() || skillName === english.toLowerCase()) {
               dndSkill = english
-              console.log('Found exact match:', turkish, '->', english)
+              log.info('Found exact match:', turkish, '->', english)
               break
             }
           }
@@ -313,13 +316,13 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
             for (const [turkish, english] of Object.entries(skillMapping)) {
               if (skillName.includes(turkish.toLowerCase()) || skillName.includes(english.toLowerCase())) {
                 dndSkill = english
-                console.log('Found partial match:', turkish, '->', english)
+                log.info('Found partial match:', turkish, '->', english)
                 break
               }
             }
           }
           
-          console.log('Setting dnd_skill to:', dndSkill)
+          log.info('Setting dnd_skill to:', dndSkill)
           check.dnd_skill = dndSkill
         }
       })
@@ -327,7 +330,7 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
     
     return parsed
   } catch (error) {
-    console.error('Failed to parse scene detail JSON:', error)
+    log.error('Failed to parse scene detail JSON:', error)
     // Return a fallback structure
     return {
       sceneId,

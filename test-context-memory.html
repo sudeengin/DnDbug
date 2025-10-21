@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Context Memory Test</title>
+    
+    <!-- Visual Log Viewer -->
+    <script src="log-viewer.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            padding-bottom: 420px; /* Make room for log viewer */
             background-color: #f5f5f5;
         }
         .container {
@@ -446,6 +451,19 @@
 
         // Initialize
         generateSessionId();
+        
+        // Welcome log message
+        console.log('%c[' + new Date().toISOString().substring(11, 23) + '] %c🎨 UI %cℹ️', 
+            'color: #9CA3AF;', 
+            'color: #8B5CF6; font-weight: bold;', 
+            'color: #60A5FA;',
+            'Test page loaded and ready');
+        
+        console.log('%c[' + new Date().toISOString().substring(11, 23) + '] %c📊 UI %cℹ️', 
+            'color: #9CA3AF;', 
+            'color: #8B5CF6; font-weight: bold;', 
+            'color: #60A5FA;',
+            'Visual log viewer initialized at bottom-right of page');
     </script>
 </body>
 </html>

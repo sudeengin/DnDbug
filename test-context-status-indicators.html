@@ -6,6 +6,9 @@
     <title>Context Status Indicators Test</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        body {
+            padding-bottom: 420px; /* Make room for log viewer */
+        }
         .status-dot {
             width: 10px;
             height: 10px;
@@ -16,6 +19,10 @@
         .status-draft { background-color: #fbbf24; }
         .status-empty { background-color: #d1d5db; }
     </style>
+    
+    <!-- Visual Log Viewer -->
+    <script src="log-viewer.js"></script>
+
 </head>
 <body class="bg-gray-100 p-8">
     <div class="max-w-4xl mx-auto">

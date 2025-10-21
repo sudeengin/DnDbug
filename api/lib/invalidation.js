@@ -1,3 +1,6 @@
+import logger from './logger.js';
+
+const log = logger.validation;
 /**
  * Invalidation rules for downstream artifacts when upstream changes occur
  */
@@ -17,7 +20,7 @@ export function invalidateDownstreamScenes(sessionContext, editedSceneId, edited
     if (sceneDetail.order && sceneDetail.order > editedSceneOrder) {
       sessionContext.sceneDetails[sceneId].status = 'NeedsRegen';
       sessionContext.sceneDetails[sceneId].lastUpdatedAt = new Date().toISOString();
-      console.log(`Marked scene ${sceneId} as NeedsRegen due to edit of scene ${editedSceneId}`);
+      log.info(`Marked scene ${sceneId} as NeedsRegen due to edit of scene ${editedSceneId}`);
     }
   });
 }
@@ -33,7 +36,7 @@ export function invalidateMacroChain(sessionContext, changeType) {
   Object.keys(sessionContext.macroChains).forEach(chainId => {
     sessionContext.macroChains[chainId].status = 'NeedsRegen';
     sessionContext.macroChains[chainId].lastUpdatedAt = new Date().toISOString();
-    console.log(`Marked macro chain ${chainId} as NeedsRegen due to ${changeType} change`);
+    log.info(`Marked macro chain ${chainId} as NeedsRegen due to ${changeType} change`);
   });
 }
 
@@ -48,7 +51,7 @@ export function invalidateAllScenes(sessionContext, changeType) {
   Object.keys(sessionContext.sceneDetails).forEach(sceneId => {
     sessionContext.sceneDetails[sceneId].status = 'NeedsRegen';
     sessionContext.sceneDetails[sceneId].lastUpdatedAt = new Date().toISOString();
-    console.log(`Marked scene ${sceneId} as NeedsRegen due to ${changeType} change`);
+    log.info(`Marked scene ${sceneId} as NeedsRegen due to ${changeType} change`);
   });
 }
 

@@ -1,5 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
+import logger from './lib/logger.js';
+
+const log = logger.storage;
 
 const DATA_DIR = path.join(process.cwd(), '.data');
 const CHAINS_FILE = path.join(DATA_DIR, 'chains.json');
@@ -26,9 +29,10 @@ export async function saveChain(chain) {
     };
     
     await fs.writeFile(CHAINS_FILE, JSON.stringify(existingData, null, 2));
+    log.success('Chain saved:', chain.chainId);
     return chain;
   } catch (error) {
-    console.error('Error saving chain:', error);
+    log.error('Error saving chain:', error);
     throw new Error('Failed to save chain');
   }
 }
@@ -38,9 +42,15 @@ export async function loadChain(chainId) {
   
   try {
     const allChains = await loadAllChains();
-    return allChains[chainId] || null;
+    const chain = allChains[chainId] || null;
+    if (chain) {
+      log.debug('Chain loaded:', chainId);
+    } else {
+      log.warn('Chain not found:', chainId);
+    }
+    return chain;
   } catch (error) {
-    console.error('Error loading chain:', error);
+    log.error('Error loading chain:', error);
     return null;
   }
 }
@@ -77,9 +87,10 @@ export async function updateChain(chainId, updates) {
     allChains[chainId] = updatedChain;
     await fs.writeFile(CHAINS_FILE, JSON.stringify(allChains, null, 2));
     
+    log.success('Chain updated:', chainId);
     return updatedChain;
   } catch (error) {
-    console.error('Error updating chain:', error);
+    log.error('Error updating chain:', error);
     throw new Error('Failed to update chain');
   }
 }
@@ -91,9 +102,10 @@ export async function deleteChain(chainId) {
     const allChains = await loadAllChains();
     delete allChains[chainId];
     await fs.writeFile(CHAINS_FILE, JSON.stringify(allChains, null, 2));
+    log.success('Chain deleted:', chainId);
     return true;
   } catch (error) {
-    console.error('Error deleting chain:', error);
+    log.error('Error deleting chain:', error);
     throw new Error('Failed to delete chain');
   }
 }
@@ -110,9 +122,10 @@ export async function saveSessionContext(sessionId, context) {
     };
     
     await fs.writeFile(CONTEXT_FILE, JSON.stringify(allContexts, null, 2));
+    log.success('Session context saved:', sessionId);
     return context;
   } catch (error) {
-    console.error('Error saving session context:', error);
+    log.error('Error saving session context:', error);
     throw new Error('Failed to save session context');
   }
 }
@@ -122,9 +135,15 @@ export async function loadSessionContext(sessionId) {
   
   try {
     const allContexts = await loadAllSessionContexts();
-    return allContexts[sessionId] || null;
+    const context = allContexts[sessionId] || null;
+    if (context) {
+      log.debug('Session context loaded:', sessionId);
+    } else {
+      log.warn('Session context not found:', sessionId);
+    }
+    return context;
   } catch (error) {
-    console.error('Error loading session context:', error);
+    log.error('Error loading session context:', error);
     return null;
   }
 }
@@ -152,18 +171,48 @@ export async function updateSessionContext(sessionId, updates) {
       throw new Error('Session context not found');
     }
     
+    // Deep merge blocks to preserve all existing blocks and nested data
+    const mergedBlocks = { ...existingContext.blocks };
+    
+    if (updates.blocks) {
+      // Merge each block type
+      for (const [blockType, blockData] of Object.entries(updates.blocks)) {
+        if (blockType === 'custom' && mergedBlocks.custom) {
+          // Deep merge custom block to preserve existing custom data
+          mergedBlocks.custom = {
+            ...mergedBlocks.custom,
+            ...blockData
+          };
+        } else {
+          // Replace other block types
+          mergedBlocks[blockType] = blockData;
+        }
+      }
+    }
+    
+    // Deep merge macroChains to preserve other chains
+    const mergedMacroChains = { ...existingContext.macroChains };
+    if (updates.macroChains) {
+      for (const [chainId, chainData] of Object.entries(updates.macroChains)) {
+        mergedMacroChains[chainId] = chainData;
+      }
+    }
+    
     const updatedContext = {
       ...existingContext,
       ...updates,
+      blocks: mergedBlocks,
+      macroChains: mergedMacroChains,
       updatedAt: new Date().toISOString()
     };
     
     allContexts[sessionId] = updatedContext;
     await fs.writeFile(CONTEXT_FILE, JSON.stringify(allContexts, null, 2));
     
+    log.success('Session context updated:', sessionId);
     return updatedContext;
   } catch (error) {
-    console.error('Error updating session context:', error);
+    log.error('Error updating session context:', error);
     throw new Error('Failed to update session context');
   }
 }

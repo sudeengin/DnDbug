@@ -4,6 +4,9 @@ import { validateApplyEditResponse } from './validation.js';
 import { invalidateDownstreamScenes, isTrivialEdit } from './lib/invalidation.js';
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
+import logger from './lib/logger.js';
+
+const log = logger.api;
 
 export default async function handler(req, res) {
   try {
@@ -20,7 +23,7 @@ export default async function handler(req, res) {
 
     const { sceneId, oldDetail, newDetail, sessionId } = body;
 
-    console.log('Apply Edit Request:', {
+    log.info('Apply Edit Request:', {
       sceneId,
       hasOldDetail: !!oldDetail,
       hasNewDetail: !!newDetail,
@@ -43,10 +46,10 @@ export default async function handler(req, res) {
           // Save the updated context
           await saveSessionContext(sessionId, sessionContext);
           
-          console.log(`Invalidated downstream scenes after edit of scene ${sceneId}`);
+          log.info(`Invalidated downstream scenes after edit of scene ${sceneId}`);
         }
       } catch (error) {
-        console.warn('Failed to handle scene edit invalidation:', error);
+        log.warn('Failed to handle scene edit invalidation:', error);
         // Continue even if invalidation fails
       }
     }
@@ -59,10 +62,10 @@ export default async function handler(req, res) {
     // Validate the response
     const validation = validateApplyEditResponse(response);
     if (!validation.isValid) {
-      console.warn('Response validation failed:', validation.errors);
+      log.warn('Response validation failed:', validation.errors);
     }
 
-    console.log('Apply Edit Response:', {
+    log.info('Apply Edit Response:', {
       sceneId,
       keysChanged: result.delta.keysChanged.length,
       affectedScenesCount: result.affectedScenes.length,
@@ -72,7 +75,7 @@ export default async function handler(req, res) {
 
     res.status(200).json(response);
   } catch (error) {
-    console.error('Error in apply_edit:', error);
+    log.error('Error in apply_edit:', error);
     const message = error instanceof Error ? error.message : 'Server error';
     res.status(500).json({ error: message });
   }

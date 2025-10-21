@@ -3,6 +3,9 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { getJSON, postJSON } from '../lib/api';
 import type { SessionContext } from '../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.context;
 
 interface SessionContextPanelProps {
   sessionId: string;
@@ -38,7 +41,7 @@ export default function SessionContextPanel({ sessionId, context, onContextUpdat
         setIncludedBlocks(new Set(Object.keys(response.data.blocks)));
       }
     } catch (error) {
-      console.error('Failed to fetch context:', error);
+      log.error('Failed to fetch context:', error);
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,9 @@ import { renderDetailTemplate } from './lib/prompt.js'
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
 import dotenv from 'dotenv'
+import logger from './lib/logger.js';
+
+const log = logger.scene;
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' })
@@ -38,7 +41,7 @@ async function generateSceneDetail(req, res) {
           return;
         }
       } catch (error) {
-        console.warn('Failed to validate previous scene lock:', error.message);
+        log.warn('Failed to validate previous scene lock:', error.message);
         // Continue without validation if check fails
       }
     }
@@ -51,7 +54,7 @@ async function generateSceneDetail(req, res) {
         
         if (validation.isStale) {
           const errorMessage = createStalenessError(validation);
-          console.log('Stale context detected:', {
+          log.info('Stale context detected:', {
             sceneId,
             validation,
             errorMessage
@@ -60,7 +63,7 @@ async function generateSceneDetail(req, res) {
           return;
         }
       } catch (error) {
-        console.warn('Failed to validate scene version:', error.message);
+        log.warn('Failed to validate scene version:', error.message);
         // Continue without validation if check fails
       }
     }
@@ -71,14 +74,14 @@ async function generateSceneDetail(req, res) {
       try {
         promptContext = await buildPromptContext(sessionId);
         
-        console.log('Prompt context loaded:', {
+        log.info('Prompt context loaded:', {
           sessionId,
           hasBackground: !!promptContext.background,
           hasCharacters: !!promptContext.characters,
           versions: promptContext.versions
         });
       } catch (error) {
-        console.warn('Failed to load prompt context:', error.message);
+        log.warn('Failed to load prompt context:', error.message);
         // Continue without context if loading fails
       }
     }
@@ -123,7 +126,7 @@ async function generateSceneDetail(req, res) {
     // Store the scene detail in session context if sessionId is provided
     if (sessionId) {
       try {
-        console.log('Storing scene detail:', { sessionId, sceneId, enrichedSceneDetailSceneId: enrichedSceneDetail.sceneId });
+        log.info('Storing scene detail:', { sessionId, sceneId, enrichedSceneDetailSceneId: enrichedSceneDetail.sceneId });
         const sessionContext = await getOrCreateSessionContext(sessionId);
         
         // Initialize sceneDetails if it doesn't exist
@@ -135,7 +138,7 @@ async function generateSceneDetail(req, res) {
         sessionContext.sceneDetails[sceneId] = enrichedSceneDetail;
         sessionContext.updatedAt = new Date().toISOString();
         
-        console.log('Before saving to storage:', {
+        log.info('Before saving to storage:', {
           sessionId,
           sceneId,
           hasSceneDetails: !!sessionContext.sceneDetails,
@@ -146,7 +149,7 @@ async function generateSceneDetail(req, res) {
         // Save to storage
         await saveSessionContext(sessionId, sessionContext);
         
-        console.log(`Scene detail ${sceneId} stored in session context for ${sessionId}`, {
+        log.info(`Scene detail ${sceneId} stored in session context for ${sessionId}`, {
           sceneId,
           sessionId,
           hasSceneDetails: !!sessionContext.sceneDetails,
@@ -155,14 +158,14 @@ async function generateSceneDetail(req, res) {
           enrichedSceneDetailSceneId: enrichedSceneDetail.sceneId
         });
       } catch (contextError) {
-        console.warn('Failed to store scene detail in session context:', contextError);
+        log.warn('Failed to store scene detail in session context:', contextError);
         // Continue even if context storage fails
       }
     }
 
     res.status(200).json({ ok: true, data: enrichedSceneDetail })
   } catch (error) {
-    console.error(error)
+    log.error(error)
     const message = error instanceof Error ? error.message : 'Server error'
     res.status(500).json({ error: message })
   }
@@ -341,7 +344,7 @@ ${languageDirective}`
 
 function tryParseSceneDetail(text, sceneId, macroScene) {
   try {
-    console.log('Raw AI response:', text.substring(0, 500) + '...');
+    log.info('Raw AI response:', text.substring(0, 500) + '...');
     
     // Clean the text by removing markdown code blocks if present
     let cleanedText = text.trim()
@@ -352,7 +355,7 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
     }
     
     const parsed = JSON.parse(cleanedText)
-    console.log('Parsed AI response keys:', Object.keys(parsed));
+    log.info('Parsed AI response keys:', Object.keys(parsed));
     
     // Handle new schema format with sceneDetail wrapper
     const sceneDetail = parsed.sceneDetail || parsed
@@ -408,33 +411,33 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
     
     // Handle old structure where contextOut is inside dynamicElements
     if (sceneDetail.dynamicElements?.contextOut) {
-      console.log('Found old contextOut structure, migrating...');
+      log.info('Found old contextOut structure, migrating...');
       const oldContextOut = sceneDetail.dynamicElements.contextOut;
-      console.log('Old contextOut keys:', Object.keys(oldContextOut));
+      log.info('Old contextOut keys:', Object.keys(oldContextOut));
       
       // Populate keyEvents from story_facts and characterMoments
       if (oldContextOut.story_facts && Array.isArray(oldContextOut.story_facts)) {
-        console.log('Adding story_facts to keyEvents:', oldContextOut.story_facts);
+        log.info('Adding story_facts to keyEvents:', oldContextOut.story_facts);
         sceneDetail.contextOut.keyEvents = [...sceneDetail.contextOut.keyEvents, ...oldContextOut.story_facts];
       }
       if (oldContextOut.characterMoments && Array.isArray(oldContextOut.characterMoments)) {
-        console.log('Adding characterMoments to keyEvents:', oldContextOut.characterMoments);
+        log.info('Adding characterMoments to keyEvents:', oldContextOut.characterMoments);
         sceneDetail.contextOut.keyEvents = [...sceneDetail.contextOut.keyEvents, ...oldContextOut.characterMoments];
       }
       
       // Populate stateChanges from world_state
       if (oldContextOut.world_state && typeof oldContextOut.world_state === 'object') {
-        console.log('Adding world_state to stateChanges:', oldContextOut.world_state);
+        log.info('Adding world_state to stateChanges:', oldContextOut.world_state);
         sceneDetail.contextOut.stateChanges = { ...sceneDetail.contextOut.stateChanges, ...oldContextOut.world_state };
       }
       
       // Populate environmentalState from world_seeds
       if (oldContextOut.world_seeds && typeof oldContextOut.world_seeds === 'object') {
-        console.log('Adding world_seeds to environmentalState:', oldContextOut.world_seeds);
+        log.info('Adding world_seeds to environmentalState:', oldContextOut.world_seeds);
         sceneDetail.contextOut.environmentalState = { ...sceneDetail.contextOut.environmentalState, ...oldContextOut.world_seeds };
       }
     } else {
-      console.log('No old contextOut structure found');
+      log.info('No old contextOut structure found');
     }
     
     // Extract key events from narrative core if available
@@ -481,7 +484,7 @@ function tryParseSceneDetail(text, sceneId, macroScene) {
     
     return parsed
   } catch (error) {
-    console.error('Failed to parse scene detail JSON:', error)
+    log.error('Failed to parse scene detail JSON:', error)
     // Return a fallback structure with new schema
     return {
       sceneDetail: {
@@ -564,7 +567,7 @@ function isRecord(value) {
 async function generateSceneDetailForServer(req) {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log('generateSceneDetailForServer called with:', {
+      log.info('generateSceneDetailForServer called with:', {
         sessionId: req.body.sessionId,
         sceneId: req.body.sceneId,
         hasSessionId: !!req.body.sessionId

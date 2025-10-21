@@ -4,12 +4,16 @@ import {
   updateSessionContext 
 } from './storage.js';
 import { invalidateMacroChain, invalidateAllScenes } from './lib/invalidation.js';
+import logger from './lib/logger.js';
+
+const log = logger.context;
 
 // Helper function to create or get session context
 async function getOrCreateSessionContext(sessionId) {
   let sessionContext = await loadSessionContext(sessionId);
   
   if (!sessionContext) {
+    log.warn(`Creating NEW session context for ${sessionId} - this should only happen on first initialization!`);
     sessionContext = {
       sessionId,
       blocks: {},
@@ -25,6 +29,8 @@ async function getOrCreateSessionContext(sessionId) {
       updatedAt: new Date().toISOString()
     };
     await saveSessionContext(sessionId, sessionContext);
+  } else {
+    log.success(`Loaded existing session context for ${sessionId} - version: ${sessionContext.version}`);
   }
   
   // Ensure meta exists for existing sessions
@@ -177,7 +183,7 @@ function processContextForPrompt(sessionContext) {
 
   // Process background (highest priority after blueprint)
   if (blocks.background) {
-    console.log('Processing background:', JSON.stringify(blocks.background, null, 2));
+    log.debug('Processing background:', JSON.stringify(blocks.background, null, 2));
     processed.background = {
       premise: blocks.background.premise,
       tone_rules: blocks.background.tone_rules?.slice(0, 5),
@@ -265,7 +271,7 @@ export default async function handler(req, res) {
       // Save the updated context
       await updateSessionContext(sessionId, sessionContext);
 
-      console.log('Context appended:', {
+      log.info('Context appended:', {
         sessionId,
         blockType,
         version: sessionContext.version,
@@ -279,8 +285,8 @@ export default async function handler(req, res) {
 
     } else if (method === 'GET' && (url.endsWith('/get') || url === '/context/get')) {
       // GET /context/get
-      console.log('GET /context/get - req.query:', req.query);
-      console.log('GET /context/get - url:', url);
+      log.debug('GET /context/get - req.query:', req.query);
+      log.debug('GET /context/get - url:', url);
       
       const sessionId = req.query?.sessionId;
 
@@ -301,11 +307,11 @@ export default async function handler(req, res) {
 
       // Migrate scene details to new structure if needed
       if (sessionContext.sceneDetails) {
-        console.log('Checking scene details for migration:', Object.keys(sessionContext.sceneDetails));
+        log.debug('Checking scene details for migration:', Object.keys(sessionContext.sceneDetails));
         let needsMigration = false;
         const migratedSceneDetails = {};
         for (const [sceneId, sceneDetail] of Object.entries(sessionContext.sceneDetails)) {
-          console.log(`Checking scene ${sceneId} for migration:`, {
+          log.debug(`Checking scene ${sceneId} for migration:`, {
             hasContextOut: !!sceneDetail.contextOut,
             hasDynamicElementsContextOut: !!sceneDetail.dynamicElements?.contextOut
           });
@@ -313,7 +319,7 @@ export default async function handler(req, res) {
           migratedSceneDetails[sceneId] = migrated;
           // Check if migration was needed
           if (!sceneDetail.contextOut && migrated.contextOut) {
-            console.log(`Migration needed for scene ${sceneId}`);
+            log.info(`Migration needed for scene ${sceneId}`);
             needsMigration = true;
           }
         }
@@ -321,14 +327,14 @@ export default async function handler(req, res) {
         
         // If migration was needed, save the updated context back to storage
         if (needsMigration) {
-          console.log('Migrating scene details to new structure and saving to storage');
+          log.info('Migrating scene details to new structure and saving to storage');
           await saveSessionContext(sessionId, sessionContext);
         } else {
-          console.log('No migration needed for scene details');
+          log.debug('No migration needed for scene details');
         }
       }
 
-      console.log('Context retrieved:', {
+      log.info('Context retrieved:', {
         sessionId,
         version: sessionContext.version,
         blockTypes: Object.keys(sessionContext.blocks),
@@ -352,9 +358,9 @@ export default async function handler(req, res) {
 
       // Note: We don't have a delete function in storage yet, but we can clear the context
       // For now, we'll just log that it should be cleared
-      console.log('Context clear requested for sessionId:', sessionId);
+      log.warn('Context clear requested for sessionId:', sessionId);
 
-      console.log('Context cleared:', {
+      log.info('Context cleared:', {
         sessionId,
         timestamp: Date.now()
       });
@@ -371,7 +377,7 @@ export default async function handler(req, res) {
     }
 
   } catch (error) {
-    console.error('Error in context handler:', error);
+    log.error('Error in context handler:', error);
     res.status(500).json({ 
       error: error.message 
     });

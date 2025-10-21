@@ -1,4 +1,7 @@
 import { getOrCreateSessionContext } from '../context.js';
+import logger from '../lib/logger.js';
+
+const log = logger.character;
 
 export default async function handler(req, res) {
   try {
@@ -35,7 +38,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error getting characters:', error);
+    log.error('Error getting characters:', error);
     res.status(500).json({ 
       error: error.message 
     });

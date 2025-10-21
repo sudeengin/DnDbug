@@ -1,6 +1,9 @@
 import { getOrCreateSessionContext } from '../context.js';
 import { saveSessionContext } from '../storage.js';
 import { bumpCharactersV } from '../lib/versioning.js';
+import logger from '../lib/logger.js';
+
+const log = logger.character;
 
 export default async function handler(req, res) {
   try {
@@ -35,7 +38,7 @@ export default async function handler(req, res) {
     // Save the updated context
     await saveSessionContext(sessionId, sessionContext);
 
-    console.log('Characters lock updated:', {
+    log.info('Characters lock updated:', {
       sessionId,
       locked,
       charactersV: sessionContext.meta.charactersV,
@@ -48,7 +51,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error updating characters lock:', error);
+    log.error('Error updating characters lock:', error);
     res.status(500).json({ 
       error: error.message 
     });

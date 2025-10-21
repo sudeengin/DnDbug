@@ -3,6 +3,11 @@ export interface MacroScene {
   order: number;
   title: string;
   objective: string;
+  meta?: {
+    gmIntent?: string;
+    generatedFrom?: string;
+    generatedAt?: string;
+  };
 }
 
 export interface Playstyle {
@@ -49,6 +54,7 @@ export interface MacroChain {
     players?: string;
     level?: string;
     playstyle?: Playstyle;
+    isDraftIdeaBank?: boolean;
   };
 }
 
@@ -64,6 +70,7 @@ export interface GenerateChainRequest {
 
 export interface UpdateChainRequest {
   chainId: string;
+  sessionId?: string;
   edits: Array<{
     type: 'reorder' | 'edit_title' | 'edit_objective' | 'delete_scene' | 'add_scene';
     sceneId?: string;

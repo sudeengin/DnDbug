@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { postJSON, getJSON } from '../lib/api';
+import logger from '@/utils/logger';
+
+const log = logger.background;
 
 interface BackgroundData {
   premise: string;
@@ -64,7 +67,7 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
         }
       }
     } catch (error) {
-      console.error('Failed to load background:', error);
+      log.error('Failed to load background:', error);
     }
   };
 
@@ -103,11 +106,11 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
       }
 
       // Show success message
-      console.log('Background generated and saved successfully');
+      log.info('Background generated and saved successfully');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
-      console.error('Error generating background:', err);
+      log.error('Error generating background:', err);
     } finally {
       setLoading(false);
     }
@@ -128,7 +131,7 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
         onLockToggle(locked);
       }
     } catch (error) {
-      console.error('Failed to lock background:', error);
+      log.error('Failed to lock background:', error);
     }
   };
 
@@ -159,7 +162,7 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
       setIsEditing(false);
       setEditingBackground(null);
     } catch (error) {
-      console.error('Failed to save background edit:', error);
+      log.error('Failed to save background edit:', error);
     } finally {
       setLoading(false);
     }
@@ -187,7 +190,7 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
         onBackgroundUpdate(null);
       }
     } catch (error) {
-      console.error('Failed to delete background:', error);
+      log.error('Failed to delete background:', error);
     }
   };
 

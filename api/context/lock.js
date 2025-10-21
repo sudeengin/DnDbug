@@ -1,4 +1,7 @@
 import { getOrCreateSessionContext } from '../context.js';
+import logger from '../lib/logger.js';
+
+const log = logger.context;
 
 export default async function handler(req, res) {
   try {
@@ -33,7 +36,7 @@ export default async function handler(req, res) {
     sessionContext.version += 1;
     sessionContext.updatedAt = new Date().toISOString();
 
-    console.log('Context lock updated:', {
+    log.info('Context lock updated:', {
       sessionId,
       blockType,
       locked,
@@ -47,7 +50,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error updating context lock:', error);
+    log.error('Error updating context lock:', error);
     res.status(500).json({ 
       error: error.message 
     });

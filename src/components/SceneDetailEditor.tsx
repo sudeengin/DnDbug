@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { postJSON } from '../lib/api';
 import type { MacroScene, SceneDetail, GenerateDetailRequest, EffectiveContext, ApplyEditRequest, ApplyEditResponse, AffectedScene, PropagateRequest, PropagateResponse } from '../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.scene;
 
 interface SceneDetailEditorProps {
   sessionId?: string;
@@ -45,7 +48,7 @@ export default function SceneDetailEditor({
       // Create effective context from previous scenes
       const effectiveContext = createEffectiveContext(previousSceneDetails);
       
-      console.log('Generating scene detail with context:', {
+      log.info('Generating scene detail with context:', {
         sceneId: macroScene.id,
         macroScene,
         effectiveContext,
@@ -59,11 +62,11 @@ export default function SceneDetailEditor({
         sessionId
       };
 
-      console.log('Sending request:', request);
+      log.info('Sending request:', request);
 
       const response = await postJSON<{ ok: boolean; data: SceneDetail }>('/api/generate_detail', request);
 
-      console.log('Received response:', response);
+      log.info('Received response:', response);
 
       if (!response.ok) {
         throw new Error('Failed to generate scene detail');
@@ -74,7 +77,7 @@ export default function SceneDetailEditor({
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
-      console.error('Error generating scene detail:', err);
+      log.error('Error generating scene detail:', err);
     } finally {
       setLoading(false);
     }
@@ -147,7 +150,7 @@ export default function SceneDetailEditor({
         newDetail
       };
 
-      console.log('Analyzing edit delta:', request);
+      log.info('Analyzing edit delta:', request);
 
       const response = await postJSON<ApplyEditResponse>('/api/apply_edit', request);
 
@@ -161,7 +164,7 @@ export default function SceneDetailEditor({
       setAffectedScenes(newAffectedScenes);
       setShowAffectedScenes(newAffectedScenes.length > 0);
 
-      console.log('Edit delta analysis result:', {
+      log.info('Edit delta analysis result:', {
         delta,
         affectedScenes: newAffectedScenes
       });
@@ -169,7 +172,7 @@ export default function SceneDetailEditor({
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
-      console.error('Error analyzing edit delta:', err);
+      log.error('Error analyzing edit delta:', err);
     } finally {
       setLoading(false);
     }

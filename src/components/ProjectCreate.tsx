@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { postJSON } from '../lib/api';
+import logger from '@/utils/logger';
+
+const log = logger.ui;
 
 interface Project {
   id: string;
@@ -40,7 +43,7 @@ export default function ProjectCreate({ onProjectCreated }: ProjectCreateProps) 
         setError('Failed to create project');
       }
     } catch (error) {
-      console.error('Error creating project:', error);
+      log.error('Error creating project:', error);
       setError(error instanceof Error ? error.message : 'Failed to create project');
     } finally {
       setLoading(false);

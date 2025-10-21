@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import type { SessionContext, Blueprint, PlayerHook, WorldSeed, StylePreferences, StoryConcept } from '../types/macro-chain';
 import { analyzeConceptContextConflicts, type ConflictAnalysis } from '../utils/conflict-detection';
+import logger from '@/utils/logger';
+
+const log = logger.context;
 
 interface ContextPanelProps {
   sessionId: string;
@@ -41,7 +44,7 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
         onContextUpdate?.(result.data);
       }
     } catch (error) {
-      console.error('Failed to load context:', error);
+      log.error('Failed to load context:', error);
     } finally {
       setLoading(false);
     }
@@ -63,7 +66,7 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
         setNewData({});
       }
     } catch (error) {
-      console.error('Failed to append context:', error);
+      log.error('Failed to append context:', error);
     } finally {
       setLoading(false);
     }
@@ -84,7 +87,7 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
         onContextUpdate?.(null);
       }
     } catch (error) {
-      console.error('Failed to clear context:', error);
+      log.error('Failed to clear context:', error);
     } finally {
       setLoading(false);
     }
@@ -218,7 +221,7 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
         }
       }
     } catch (error) {
-      console.error('Failed to toggle story concept lock:', error);
+      log.error('Failed to toggle story concept lock:', error);
     }
   };
 

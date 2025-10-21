@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { postJSON, getJSON } from '../lib/api';
 import type { GenerateBackgroundRequest, GenerateBackgroundResponse, BackgroundData, SessionContext } from '../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.background;
 
 interface StoryBackgroundGeneratorProps {
   onBackgroundGenerated?: (background: BackgroundData) => void;
@@ -52,7 +55,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
         }
       }
     } catch (error) {
-      console.error('Failed to load existing data:', error);
+      log.error('Failed to load existing data:', error);
     }
   };
 
@@ -104,11 +107,11 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
         data: newBackground
       });
 
-      console.log('Background generated and saved successfully');
+      log.info('Background generated and saved successfully');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
-      console.error('Error generating background:', err);
+      log.error('Error generating background:', err);
     } finally {
       setIsGenerating(false);
     }
@@ -154,7 +157,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
         onLockToggle(locked);
       }
     } catch (error) {
-      console.error('Failed to lock background:', error);
+      log.error('Failed to lock background:', error);
     }
   };
 
@@ -185,7 +188,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
       setIsEditing(false);
       setEditingBackground(null);
     } catch (error) {
-      console.error('Failed to save background:', error);
+      log.error('Failed to save background:', error);
     } finally {
       setIsGenerating(false);
     }

@@ -1,6 +1,9 @@
 // Import the context handler functions
 import { getOrCreateSessionContext, mergeContextData } from '../context.js';
 import { saveSessionContext } from '../storage.js';
+import logger from '../lib/logger.js';
+
+const log = logger.context;
 
 export default async function handler(req, res) {
   try {
@@ -31,6 +34,15 @@ export default async function handler(req, res) {
     const sessionContext = await getOrCreateSessionContext(sessionId);
     const existingBlock = sessionContext.blocks[blockType];
 
+    log.info('📝 APPEND - Before merge:', {
+      sessionId,
+      blockType,
+      hasBackground: !!sessionContext.blocks.background,
+      hasCharacters: !!sessionContext.blocks.characters,
+      hasCustom: !!sessionContext.blocks.custom,
+      existingBlockKeys: existingBlock ? Object.keys(existingBlock) : []
+    });
+
     // Merge the new data with existing data
     const mergedData = mergeContextData(existingBlock, data, blockType);
 
@@ -39,10 +51,18 @@ export default async function handler(req, res) {
     sessionContext.version += 1;
     sessionContext.updatedAt = new Date().toISOString();
 
+    log.info('📝 APPEND - After merge:', {
+      blockType,
+      hasBackground: !!sessionContext.blocks.background,
+      hasCharacters: !!sessionContext.blocks.characters,
+      hasCustom: !!sessionContext.blocks.custom,
+      customHasMacroChain: !!sessionContext.blocks.custom?.macroChain
+    });
+
     // Save the updated context to persistent storage
     await saveSessionContext(sessionId, sessionContext);
 
-    console.log('Context appended:', {
+    log.info('✅ Context appended and saved:', {
       sessionId,
       blockType,
       version: sessionContext.version,
@@ -55,7 +75,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in context/append:', error);
+    log.error('Error in context/append:', error);
     res.status(500).json({ error: error.message });
   }
 }

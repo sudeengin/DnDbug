@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getJSON, deleteJSON } from '../lib/api';
+import logger from '@/utils/logger';
+
+const log = logger.ui;
 
 interface Project {
   id: string;
@@ -33,19 +36,19 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
     try {
       setLoading(true);
       setError(null);
-      console.log(`Loading projects from /api/projects... (attempt ${retryCount + 1})`);
+      log.info(`Loading projects from /api/projects... (attempt ${retryCount + 1})`);
       const response = await getJSON<{ ok: boolean; data: Project[] }>('/api/projects');
-      console.log('Projects response:', response);
+      log.info('Projects response:', response);
       if (response.ok) {
         setProjects(response.data);
-        console.log('Projects loaded successfully:', response.data);
+        log.info('Projects loaded successfully:', response.data);
       } else {
         setError('Failed to load projects');
       }
     } catch (error) {
-      console.error('Error loading projects:', error);
+      log.error('Error loading projects:', error);
       if (retryCount < 2) {
-        console.log(`Retrying in 1 second... (attempt ${retryCount + 1})`);
+        log.info(`Retrying in 1 second... (attempt ${retryCount + 1})`);
         setTimeout(() => loadProjects(retryCount + 1), 1000);
         return;
       }
@@ -80,12 +83,12 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
       if (response.ok) {
         // Remove the project from the local state
         setProjects(prevProjects => prevProjects.filter(p => p.id !== projectId));
-        console.log('Project deleted successfully:', response.data);
+        log.info('Project deleted successfully:', response.data);
       } else {
         setError('Failed to delete project');
       }
     } catch (error) {
-      console.error('Error deleting project:', error);
+      log.error('Error deleting project:', error);
       setError(error instanceof Error ? error.message : 'Failed to delete project');
     } finally {
       setDeletingProjectId(null);

@@ -238,3 +238,90 @@ OUTPUT FORMAT:
 
 CRITICAL: Return ONLY the JSON object. Do not include any other text, explanations, or formatting. The response must be valid JSON that can be parsed directly.`;
 }
+
+/**
+ * Renders the Next Scene prompt template for GM intent-based scene generation
+ * @param {Object} params - Template parameters
+ * @param {Object} params.background - Background context
+ * @param {Object} params.characters - Characters context
+ * @param {Object} params.previousScene - The previous locked scene
+ * @param {Object} params.effectiveContext - Context from all locked predecessors
+ * @param {string} params.gmIntent - GM's description of what they want next
+ * @returns {string} The rendered prompt
+ */
+export function renderNextScenePrompt({ background, characters, previousScene, effectiveContext, gmIntent }) {
+  const backgroundBlock = background ? `
+BACKGROUND_CONTEXT:
+PREMISE: ${background.premise || 'No premise provided'}
+
+TONE_RULES (use these to set the emotional tone):
+${(background.tone_rules || []).map(rule => `- ${rule}`).join('\n')}
+
+STAKES (connect scene to these conflicts):
+${(background.stakes || []).map(stake => `- ${stake}`).join('\n')}
+
+MYSTERIES (reveal these gradually):
+${(background.mysteries || []).map(mystery => `- ${mystery}`).join('\n')}
+
+LOCATIONS (choose from these places):
+${(background.location_palette || []).map(location => `- ${location}`).join('\n')}
+
+NPCs (these characters should appear):
+${(background.npc_roster_skeleton || []).map(npc => `- ${npc}`).join('\n')}
+
+MOTIFS (weave these themes throughout):
+${(background.motifs || []).map(motif => `- ${motif}`).join('\n')}
+
+CONSTRAINTS (follow these rules):
+${(background.doNots || []).map(constraint => `- ${constraint}`).join('\n')}` : '';
+
+  const charactersBlock = characters && characters.list ? `
+CHARACTERS (these PCs will be in the scenes):
+${characters.list.map(char => `- ${char.name} (${char.class || 'Unknown class'}): ${char.motivation || 'No motivation provided'}`).join('\n')}` : '';
+
+  const effectiveContextBlock = effectiveContext && Object.keys(effectiveContext).length > 0 ? `
+EFFECTIVE_CONTEXT (from all locked predecessor scenes):
+${JSON.stringify(effectiveContext, null, 2)}
+
+CONTEXT_INTEGRATION:
+- Build upon the context from previous scenes
+- Do not contradict established facts
+- Reference key events, revealed info, state changes, NPC relationships, environmental changes, plot threads, and player decisions
+- The scene should feel like a natural continuation of the story` : `
+EFFECTIVE_CONTEXT:
+No previous locked scenes.`;
+
+  return `You are a D&D GM assistant helping to expand a scene chain iteratively.
+
+${backgroundBlock}${charactersBlock}
+
+PREVIOUS SCENE:
+- title: "${previousScene.title}"
+- objective: "${previousScene.objective}"
+- sequence: ${previousScene.sequence || 1}
+
+${effectiveContextBlock}
+
+GM INTENT:
+"${gmIntent}"
+
+CRITICAL INSTRUCTIONS - CREATE THE NEXT SCENE:
+
+1. PROPOSE the NEXT SCENE that logically follows the previous scene and fulfills the GM's intent.
+2. The new scene should:
+   - Build naturally from the previous scene
+   - Fulfill the GM's stated intent
+   - Respect BACKGROUND tone/motifs
+   - Not contradict EFFECTIVE CONTEXT
+   - Maintain story continuity
+3. Keep the objective purpose-only (no micro detail - that comes later when generating scene details).
+
+OUTPUT FORMAT - Provide these fields:
+{
+  "title": "Evocative scene title that reflects GM intent and background tone",
+  "objective": "1-2 sentence purpose-only objective for this scene",
+  "sequence": ${(previousScene.sequence || 1) + 1}
+}
+
+CRITICAL: Return ONLY the JSON object. Do not include any other text, explanations, or formatting. The response must be valid JSON that can be parsed directly.`;
+}

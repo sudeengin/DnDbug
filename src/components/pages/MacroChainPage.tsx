@@ -9,6 +9,9 @@ import { getJSON, postJSON, generateChain } from '../../lib/api';
 import { useOnTabFocus } from '../../hooks/useOnTabFocus';
 import { navigateToTab } from '../../lib/router';
 import type { SessionContext, MacroChain, MacroScene } from '../../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.macroChain;
 
 interface MacroChainPageProps {
   sessionId: string;
@@ -23,6 +26,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
   const [chainStatus, setChainStatus] = useState<'Generated' | 'Edited' | 'Locked' | 'NeedsRegen'>('Generated');
   const [error, setError] = useState<string | null>(null);
   const [generatingChain, setGeneratingChain] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false); // Flag to prevent refetch during updates
+  const [isInteracting, setIsInteracting] = useState(false); // Flag to prevent refetch during GM intent modal interactions
   const { addToast } = useToast();
 
   // Always re-fetch context on mount and tab focus
@@ -37,36 +42,42 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
   }, [sessionId]);
 
   useOnTabFocus(() => {
-    if (sessionId) {
+    // TEMPORARILY DISABLED: Don't refetch on tab focus to prevent data loss
+    // This was causing background/characters to disappear when GM Intent modal appeared
+    log.info('👀 TAB FOCUS DETECTED - REFETCH DISABLED (isUpdating:', isUpdating, ')');
+    // TODO: Re-enable this with proper safeguards
+    /*
+    if (sessionId && !isUpdating) {
+      log.info('👀 REFETCHING CONTEXT due to tab focus');
       refetchContext();
-      // Also check the actual chain status from server if we have a chain ID
       if (currentChainId) {
         checkChainStatus();
       }
     }
+    */
   });
 
   const refetchContext = async () => {
     try {
       setLoading(true);
-      console.log('refetchContext: Fetching context for session:', sessionId);
+      log.info('refetchContext: Fetching context for session:', sessionId);
       const response = await getJSON<{ ok: boolean; data: SessionContext | null }>(`/api/context/get?sessionId=${sessionId}`);
-      console.log('refetchContext: Context response:', response);
+      log.info('refetchContext: Context response:', response);
       
       if (response.ok && response.data) {
         onContextUpdate(response.data);
         // Extract macro chain from context
         if (response.data.blocks.custom?.macroChain?.scenes) {
           const macroChain = response.data.blocks.custom.macroChain;
-          console.log('refetchContext: Found macro chain in context:', macroChain);
-          console.log('refetchContext: Macro chain status from context:', macroChain.status);
-          console.log('refetchContext: Setting chain status to:', macroChain.status || 'Generated');
+          log.info('refetchContext: Found macro chain in context:', macroChain);
+          log.info('refetchContext: Macro chain status from context:', macroChain.status);
+          log.info('refetchContext: Setting chain status to:', macroChain.status || 'Generated');
           setChain(macroChain.scenes);
           setCurrentChainId(macroChain.chainId);
           setChainStatus(macroChain.status || 'Generated');
         } else {
-          console.log('refetchContext: No macro chain found in context');
-          console.log('refetchContext: Custom blocks:', response.data.blocks.custom);
+          log.info('refetchContext: No macro chain found in context');
+          log.info('refetchContext: Custom blocks:', response.data.blocks.custom);
           // Reset chain state if no macro chain found
           setChain([]);
           setCurrentChainId(null);
@@ -74,7 +85,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
         }
       }
     } catch (error) {
-      console.error('Failed to fetch context:', error);
+      log.error('Failed to fetch context:', error);
     } finally {
       setLoading(false);
     }
@@ -82,19 +93,19 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
 
   const checkChainStatus = async () => {
     if (!currentChainId) {
-      console.log('checkChainStatus: No currentChainId, skipping');
+      log.info('checkChainStatus: No currentChainId, skipping');
       return;
     }
     
-    console.log('checkChainStatus: Checking status for chain:', currentChainId, 'session:', sessionId);
+    log.info('checkChainStatus: Checking status for chain:', currentChainId, 'session:', sessionId);
     
     try {
       // Directly fetch the chain from the server to get the real status
       const response = await getJSON<{ ok: boolean; chain: MacroChain }>(`/api/chain/get?chainId=${currentChainId}&sessionId=${sessionId}`);
-      console.log('checkChainStatus: Server response:', response);
+      log.info('checkChainStatus: Server response:', response);
       
       if (response.ok && response.chain) {
-        console.log('checkChainStatus: Setting chain status to:', response.chain.status);
+        log.info('checkChainStatus: Setting chain status to:', response.chain.status);
         setChainStatus(response.chain.status);
         
         // Update the context with the correct status
@@ -112,31 +123,29 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
               }
             }
           };
-          console.log('checkChainStatus: Updating context with status:', response.chain.status);
+          log.info('checkChainStatus: Updating context with status:', response.chain.status);
           onContextUpdate(updatedContext);
           
           // Also update the server context to persist the status
+          // CRITICAL: Use response.chain data, NOT old context data to avoid overwriting edits
           try {
             await postJSON('/api/context/append', {
               sessionId,
               blockType: 'custom',
               data: { 
-                macroChain: {
-                  ...context.blocks?.custom?.macroChain,
-                  status: response.chain.status
-                }
+                macroChain: response.chain  // Use fresh data from server, not stale context
               }
             });
-            console.log('checkChainStatus: Updated server context with status:', response.chain.status);
+            log.info('checkChainStatus: Updated server context with status:', response.chain.status);
           } catch (error) {
-            console.error('checkChainStatus: Failed to update server context:', error);
+            log.error('checkChainStatus: Failed to update server context:', error);
           }
         }
       } else {
-        console.log('checkChainStatus: Invalid response from server');
+        log.info('checkChainStatus: Invalid response from server');
       }
     } catch (error) {
-      console.error('Failed to check chain status:', error);
+      log.error('Failed to check chain status:', error);
     }
   };
 
@@ -185,7 +194,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
         variant: 'success'
       });
     } catch (err: any) {
-      console.error('Error generating chain:', err);
+      log.error('Error generating chain:', err);
       const errorMessage = err?.status === 409 ? 'Background must be locked first' : 'Failed to create Macro Chain';
       setError(errorMessage);
       
@@ -200,63 +209,72 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
   };
 
   const handleChainUpdate = async (updatedChain: MacroChain) => {
-    console.log('handleChainUpdate called with status:', updatedChain.status);
-    console.log('handleChainUpdate: Full updated chain:', updatedChain);
-    setChain(updatedChain.scenes);
-    setCurrentChainId(updatedChain.chainId);
-    setChainStatus(updatedChain.status);
+    log.info('handleChainUpdate called with status:', updatedChain.status);
+    log.info('handleChainUpdate: Full updated chain:', updatedChain);
     
-    // Update context with the updated chain
-    if (onContextUpdate) {
-      const updatedContext = {
-        ...context,
-        blocks: {
-          ...context?.blocks,
-          custom: {
-            ...context?.blocks?.custom,
-            macroChain: {
-              chainId: updatedChain.chainId,
-              scenes: updatedChain.scenes,
-              status: updatedChain.status,
-              version: updatedChain.version,
-              lastUpdatedAt: updatedChain.lastUpdatedAt,
-              meta: updatedChain.meta,
-              createdAt: updatedChain.createdAt,
-              updatedAt: updatedChain.updatedAt,
-              lockedAt: updatedChain.lockedAt
-            }
-          }
-        }
-      };
-      console.log('handleChainUpdate: Updating context with macro chain status:', updatedChain.status);
-      console.log('handleChainUpdate: Full updated context macro chain:', updatedContext.blocks.custom.macroChain);
-      onContextUpdate(updatedContext);
+    // Set flag to prevent refetch during update
+    setIsUpdating(true);
+    
+    try {
+      setChain(updatedChain.scenes);
+      setCurrentChainId(updatedChain.chainId);
+      setChainStatus(updatedChain.status);
       
-      // Also update the server context to persist the status
-      try {
-        await postJSON('/api/context/append', {
-          sessionId,
-          blockType: 'custom',
-          data: { 
-            macroChain: {
-              chainId: updatedChain.chainId,
-              scenes: updatedChain.scenes,
-              status: updatedChain.status,
-              version: updatedChain.version,
-              lastUpdatedAt: updatedChain.lastUpdatedAt,
-              meta: updatedChain.meta,
-              createdAt: updatedChain.createdAt,
-              updatedAt: updatedChain.updatedAt,
-              lockedAt: updatedChain.lockedAt
+      // Update context with the updated chain
+      if (onContextUpdate) {
+        const updatedContext = {
+          ...context,
+          blocks: {
+            ...context?.blocks,
+            custom: {
+              ...context?.blocks?.custom,
+              macroChain: {
+                chainId: updatedChain.chainId,
+                scenes: updatedChain.scenes,
+                status: updatedChain.status,
+                version: updatedChain.version,
+                lastUpdatedAt: updatedChain.lastUpdatedAt,
+                meta: updatedChain.meta,
+                createdAt: updatedChain.createdAt,
+                updatedAt: updatedChain.updatedAt,
+                lockedAt: updatedChain.lockedAt
+              }
             }
           }
-        });
-        console.log('handleChainUpdate: Updated server context with status:', updatedChain.status);
-      } catch (error) {
-        console.error('handleChainUpdate: Failed to update server context:', error);
+        };
+        log.info('handleChainUpdate: Updating context with macro chain status:', updatedChain.status);
+        log.info('handleChainUpdate: Full updated context macro chain:', updatedContext.blocks.custom.macroChain);
+        onContextUpdate(updatedContext);
+        
+        // Also update the server context to persist the status
+        try {
+          await postJSON('/api/context/append', {
+            sessionId,
+            blockType: 'custom',
+            data: { 
+              macroChain: {
+                chainId: updatedChain.chainId,
+                scenes: updatedChain.scenes,
+                status: updatedChain.status,
+                version: updatedChain.version,
+                lastUpdatedAt: updatedChain.lastUpdatedAt,
+                meta: updatedChain.meta,
+                createdAt: updatedChain.createdAt,
+                updatedAt: updatedChain.updatedAt,
+                lockedAt: updatedChain.lockedAt
+              }
+            }
+          });
+          log.info('handleChainUpdate: Updated server context with status:', updatedChain.status);
+        } catch (error) {
+          log.error('handleChainUpdate: Failed to update server context:', error);
+        }
+      } else {
+        log.info('handleChainUpdate: No onContextUpdate callback available');
       }
-    } else {
-      console.log('handleChainUpdate: No onContextUpdate callback available');
+    } finally {
+      // Clear the updating flag after a short delay to allow the update to complete
+      setTimeout(() => setIsUpdating(false), 500);
     }
   };
 
@@ -406,7 +424,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
         {/* Create Macro Chain Button */}
         <Button 
           onClick={handleGenerateChain} 
-          disabled={!isBackgroundLocked || !isCharactersLocked || generatingChain}
+          disabled={!isBackgroundLocked || !isCharactersLocked || generatingChain || hasChain}
           className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {generatingChain ? (
@@ -417,6 +435,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
               </svg>
               Generating…
             </>
+          ) : hasChain ? (
+            'Macro Chain Already Created'
           ) : (
             'Create Macro Chain'
           )}
@@ -434,13 +454,20 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
               <Badge variant="generated">{chain.length} scenes</Badge>
             </div>
             <MacroChainBoard 
-              chain={{ 
-                chainId: currentChainId || 'current', 
-                scenes: chain,
-                status: chainStatus,
-                version: 1,
-                lastUpdatedAt: new Date().toISOString()
-              }} 
+              chain={(() => {
+                const chainObj = { 
+                  chainId: currentChainId || 'current', 
+                  scenes: chain,
+                  status: chainStatus,
+                  version: 1,
+                  lastUpdatedAt: new Date().toISOString(),
+                  meta: context?.blocks.custom?.macroChain?.meta // ✅ Include meta with isDraftIdeaBank
+                };
+                log.info('🔵 MacroChainPage: Passing chain to MacroChainBoard:', chainObj);
+                log.info('🔵 MacroChainPage: meta value:', chainObj.meta);
+                log.info('🔵 MacroChainPage: isDraftIdeaBank?', chainObj.meta?.isDraftIdeaBank);
+                return chainObj;
+              })()} 
               onUpdate={handleChainUpdate}
               loading={loading}
               sessionId={sessionId}

@@ -4,6 +4,9 @@ import { Button } from '../ui/button';
 import SessionContextPanel from '../SessionContextPanel';
 import { getJSON } from '../../lib/api';
 import type { SessionContext } from '../../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.context;
 
 interface ContextPageProps {
   sessionId: string;
@@ -28,7 +31,7 @@ export default function ContextPage({ sessionId, context, onContextUpdate }: Con
         onContextUpdate(response.data);
       }
     } catch (error) {
-      console.error('Failed to fetch context:', error);
+      log.error('Failed to fetch context:', error);
     } finally {
       setLoading(false);
     }

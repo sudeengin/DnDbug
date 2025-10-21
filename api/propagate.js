@@ -1,5 +1,8 @@
 import { createRegenerationPlan } from './delta_service.js';
 import { validatePropagateResponse } from './validation.js';
+import logger from './lib/logger.js';
+
+const log = logger.api;
 
 export default async function handler(req, res) {
   try {
@@ -16,7 +19,7 @@ export default async function handler(req, res) {
 
     const { fromSceneIndex, chainId, affectedScenes } = body;
 
-    console.log('Propagate Request:', {
+    log.info('Propagate Request:', {
       fromSceneIndex,
       chainId,
       affectedScenesCount: affectedScenes.length,
@@ -46,10 +49,10 @@ export default async function handler(req, res) {
     // Validate the response
     const validation = validatePropagateResponse(response);
     if (!validation.isValid) {
-      console.warn('Response validation failed:', validation.errors);
+      log.warn('Response validation failed:', validation.errors);
     }
 
-    console.log('Propagate Response:', {
+    log.info('Propagate Response:', {
       fromSceneIndex,
       chainId,
       originalPlanCount: regenerationPlan.length,
@@ -60,7 +63,7 @@ export default async function handler(req, res) {
 
     res.status(200).json(response);
   } catch (error) {
-    console.error('Error in propagate:', error);
+    log.error('Error in propagate:', error);
     const message = error instanceof Error ? error.message : 'Server error';
     res.status(500).json({ error: message });
   }

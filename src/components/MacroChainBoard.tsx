@@ -22,6 +22,9 @@ import InlineEdit from './InlineEdit';
 import SceneDetailEditor from './SceneDetailEditor';
 import type { MacroChain, MacroScene, UpdateChainRequest, SceneDetail, LockChainRequest, UnlockChainRequest } from '../types/macro-chain';
 import { postJSON } from '../lib/api';
+import logger from '@/utils/logger';
+
+const log = logger.macroChain;
 
 interface MacroChainBoardProps {
   chain: MacroChain;
@@ -40,10 +43,12 @@ function SortableSceneItem({
   onObjectiveEdit,
   onGenerateDetail,
   onDeleteScene,
+  onLockScene,
   sceneDetails,
   scenes,
   isGenerating,
-  isChainLocked
+  isChainLocked,
+  isSceneLocked
 }: { 
   scene: MacroScene; 
   isEditing: boolean; 
@@ -51,10 +56,12 @@ function SortableSceneItem({
   onObjectiveEdit: (sceneId: string, newObjective: string) => void;
   onGenerateDetail: (scene: MacroScene, previousDetails: SceneDetail[]) => void;
   onDeleteScene: (sceneId: string) => void;
+  onLockScene: (scene: MacroScene) => void;
   sceneDetails: SceneDetail[];
   scenes: MacroScene[];
   isGenerating: boolean;
   isChainLocked: boolean;
+  isSceneLocked: boolean;
 }) {
   const {
     attributes,
@@ -160,34 +167,54 @@ function SortableSceneItem({
                 </svg>
                 <span>Delete Scene</span>
               </button>
+            ) : isSceneLocked ? (
+              <div className="space-y-2">
+                <div className="w-full px-3 py-2 text-sm bg-green-600 text-white rounded flex items-center justify-center space-x-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Scene Locked</span>
+                </div>
+                <button
+                  onClick={() => onLockScene(scene)}
+                  className="w-full px-3 py-2 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Generate Next Scene</span>
+                </button>
+              </div>
             ) : (
-              <button
-                onClick={() => {
-                  // Get previous scene details for context
-                  const previousDetails = sceneDetails.filter(detail => {
-                    // Find the scene order for this detail
-                    const sceneForDetail = scenes.find(s => s.id === detail.sceneId);
-                    return sceneForDetail && sceneForDetail.order < scene.order;
-                  });
-                  onGenerateDetail(scene, previousDetails);
-                }}
-                disabled={isGenerating || isChainLocked}
-                className="w-full px-3 py-2 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-              >
-                {isGenerating ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <div className="space-y-2">
+                <button
+                  onClick={() => onLockScene(scene)}
+                  disabled={isChainLocked}
+                  className="w-full px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                >
+                  {isChainLocked ? (
+                    <span>🔒 Chain Locked</span>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Lock Scene</span>
+                    </>
+                  )}
+                </button>
+                {!isChainLocked && (
+                  <button
+                    onClick={() => onDeleteScene(scene.id)}
+                    className="w-full px-3 py-2 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    <span>Generating...</span>
-                  </>
-                ) : isChainLocked ? (
-                  <span>🔒 Chain Locked</span>
-                ) : (
-                  <span>🎭 Open Scene Editor</span>
+                    <span>Delete Scene</span>
+                  </button>
                 )}
-              </button>
+              </div>
             )}
           </div>
         </div>
@@ -204,6 +231,10 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
   const [generatingSceneId, setGeneratingSceneId] = useState<string | null>(null);
   const [isLocking, setIsLocking] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
+  const [showGmIntent, setShowGmIntent] = useState(false);
+  const [gmIntent, setGmIntent] = useState('');
+  const [lastLockedScene, setLastLockedScene] = useState<MacroScene | null>(null);
+  const [lockedMacroScenes, setLockedMacroScenes] = useState<Set<string>>(new Set());
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -213,13 +244,18 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
   );
 
   useEffect(() => {
-    setScenes(chain.scenes);
-  }, [chain.scenes]);
+    // Only update scenes if not currently editing to preserve edit state
+    // This prevents losing edit mode when chain updates happen
+    if (!isEditing) {
+      setScenes(chain.scenes);
+    }
+  }, [chain.scenes, isEditing]);
 
   useEffect(() => {
-    // Reset scene details when chain changes
+    // Reset scene details and exit edit mode when chain ID changes (different chain)
     setSceneDetails([]);
     setSelectedScene(null);
+    setIsEditing(false);
   }, [chain.chainId]);
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -243,6 +279,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       try {
         const updateRequest: UpdateChainRequest = {
           chainId: chain.chainId,
+          sessionId,
           edits: [{
             type: 'reorder',
             sceneId: active.id as string,
@@ -258,7 +295,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
           scenes: updatedScenes,
         });
       } catch (error) {
-        console.error('Failed to update scene order:', error);
+        log.error('Failed to update scene order:', error);
         // Revert on error
         setScenes(chain.scenes);
       }
@@ -274,6 +311,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
     try {
       const updateRequest: UpdateChainRequest = {
         chainId: chain.chainId,
+        sessionId,
         edits: [{
           type: 'edit_title',
           sceneId,
@@ -288,7 +326,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         scenes: updatedScenes,
       });
     } catch (error) {
-      console.error('Failed to update scene title:', error);
+      log.error('Failed to update scene title:', error);
       // Revert on error
       setScenes(chain.scenes);
     }
@@ -303,6 +341,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
     try {
       const updateRequest: UpdateChainRequest = {
         chainId: chain.chainId,
+        sessionId,
         edits: [{
           type: 'edit_objective',
           sceneId,
@@ -317,7 +356,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         scenes: updatedScenes,
       });
     } catch (error) {
-      console.error('Failed to update scene objective:', error);
+      log.error('Failed to update scene objective:', error);
       // Revert on error
       setScenes(chain.scenes);
     }
@@ -335,16 +374,39 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       order: index + 1,
     }));
     setScenes(reorderedScenes);
+    
+    // Remove from locked scenes if it was locked
+    setLockedMacroScenes(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(sceneId);
+      return newSet;
+    });
+    
+    // Update lastLockedScene if we deleted it
+    if (lastLockedScene?.id === sceneId) {
+      // Find the highest order locked scene from remaining scenes
+      const remainingLockedScenes = reorderedScenes.filter(s => lockedMacroScenes.has(s.id) && s.id !== sceneId);
+      if (remainingLockedScenes.length > 0) {
+        const highestLocked = remainingLockedScenes.reduce((prev, current) => 
+          (current.order > prev.order) ? current : prev
+        );
+        setLastLockedScene(highestLocked);
+      } else {
+        setLastLockedScene(null);
+      }
+    }
 
     try {
       const updateRequest: UpdateChainRequest = {
         chainId: chain.chainId,
+        sessionId,
         edits: [{
           type: 'delete_scene',
           sceneId,
         }],
       };
 
+      log.info('handleDeleteScene: Sending update request', updateRequest);
       await postJSON('/api/update_chain', updateRequest);
       
       onUpdate({
@@ -352,7 +414,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         scenes: reorderedScenes,
       });
     } catch (error) {
-      console.error('Failed to delete scene:', error);
+      log.error('Failed to delete scene:', error);
       // Revert on error
       setScenes(chain.scenes);
     }
@@ -372,6 +434,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
     try {
       const updateRequest: UpdateChainRequest = {
         chainId: chain.chainId,
+        sessionId,
         edits: [{
           type: 'add_scene',
           sceneData: newScene,
@@ -385,7 +448,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         scenes: updatedScenes,
       });
     } catch (error) {
-      console.error('Failed to add scene:', error);
+      log.error('Failed to add scene:', error);
       // Revert on error
       setScenes(chain.scenes);
     }
@@ -448,7 +511,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
               }
             }
           } catch (contextError) {
-            console.error('Failed to append contextOut to session context:', contextError);
+            log.error('Failed to append contextOut to session context:', contextError);
           }
         }
         
@@ -456,7 +519,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         setSelectedScene(scene);
       }
     } catch (error) {
-      console.error('Error generating scene detail:', error);
+      log.error('Error generating scene detail:', error);
     } finally {
       setGeneratingSceneId(null);
     }
@@ -534,14 +597,14 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
 
   const handleLockChain = async () => {
     if (!sessionId) {
-      console.error('No session ID available for locking chain');
+      log.error('No session ID available for locking chain');
       return;
     }
 
     try {
       setIsLocking(true);
       
-      console.log('Attempting to lock chain:', {
+      log.info('Attempting to lock chain:', {
         sessionId,
         chainId: chain.chainId
       });
@@ -554,13 +617,13 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       const response = await postJSON<{ ok: boolean; chain: MacroChain }>('/api/chain/lock', request);
       
       if (response.ok) {
-        console.log('Chain locked successfully, updating with:', response.chain);
+        log.info('Chain locked successfully, updating with:', response.chain);
         onUpdate(response.chain);
       } else {
-        console.error('Failed to lock chain');
+        log.error('Failed to lock chain');
       }
     } catch (error) {
-      console.error('Error locking chain:', error);
+      log.error('Error locking chain:', error);
     } finally {
       setIsLocking(false);
     }
@@ -568,14 +631,14 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
 
   const handleUnlockChain = async () => {
     if (!sessionId) {
-      console.error('No session ID available for unlocking chain');
+      log.error('No session ID available for unlocking chain');
       return;
     }
 
     try {
       setIsUnlocking(true);
       
-      console.log('Attempting to unlock chain:', {
+      log.info('Attempting to unlock chain:', {
         sessionId,
         chainId: chain.chainId
       });
@@ -588,18 +651,104 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       const response = await postJSON<{ ok: boolean; chain: MacroChain; affectedScenes: string[] }>('/api/chain/unlock', request);
       
       if (response.ok) {
-        console.log('Chain unlocked successfully, updating with:', response.chain);
+        log.info('Chain unlocked successfully, updating with:', response.chain);
         onUpdate(response.chain);
-        console.log('Affected scenes:', response.affectedScenes);
+        log.info('Affected scenes:', response.affectedScenes);
       } else {
-        console.error('Failed to unlock chain');
+        log.error('Failed to unlock chain');
       }
     } catch (error) {
-      console.error('Error unlocking chain:', error);
+      log.error('Error unlocking chain:', error);
     } finally {
       setIsUnlocking(false);
     }
   };
+
+  const handleLockMacroScene = (scene: MacroScene) => {
+    log.info('🔒 Locking macro scene:', {
+      sceneId: scene.id,
+      sceneOrder: scene.order,
+      sceneTitle: scene.title,
+      currentLockedCount: lockedMacroScenes.size
+    });
+    
+    // Mark this scene as locked (local state only, no backend call needed)
+    setLockedMacroScenes(prev => {
+      const newSet = new Set([...prev, scene.id]);
+      log.info('🔒 Updated locked scenes:', Array.from(newSet));
+      return newSet;
+    });
+    
+    setLastLockedScene(scene);
+    
+    log.info('🔒 About to show GM Intent modal');
+    
+    // Always show GM Intent modal for iterative expansion
+    // (allows building the chain infinitely, one scene at a time)
+    setShowGmIntent(true);
+    
+    log.info('🔒 Lock scene complete - NO backend calls made (purely local state)');
+  };
+
+  const handleGenerateNextScene = async () => {
+    if (!gmIntent.trim() || !lastLockedScene) {
+      alert('Please describe what you want to see next.');
+      return;
+    }
+    
+    try {
+      setGeneratingSceneId('generating_next');
+      
+      log.info('🎯 Generating next scene with:', {
+        sessionId,
+        previousSceneId: lastLockedScene.id,
+        previousOrder: lastLockedScene.order,
+        gmIntentLength: gmIntent.trim().length
+      });
+      
+      const response = await postJSON<{ ok: boolean; scene: MacroScene; chain: MacroChain }>('/api/generate_next_scene', {
+        sessionId,
+        previousSceneId: lastLockedScene.id,
+        gmIntent: gmIntent.trim()
+      });
+      
+      log.info('✅ Response received:', response);
+      
+      if (response.ok && response.chain) {
+        log.info('✅ Next scene created successfully:', response.scene);
+        log.info('✅ Updated chain has', response.chain.scenes.length, 'scenes');
+        
+        // Update the chain with the new scene
+        onUpdate(response.chain);
+        
+        // Reset GM intent panel
+        setShowGmIntent(false);
+        setGmIntent('');
+        setLastLockedScene(response.scene); // Update to the new scene so we can continue the chain
+        
+        log.info('✅ UI updated successfully');
+      } else {
+        log.error('❌ Invalid response:', response);
+        alert('Unexpected response from server. Please try again.');
+      }
+    } catch (error: any) {
+      log.error('❌ Failed to generate next scene:', error);
+      alert(error?.message || 'Failed to generate next scene. Please check console for details.');
+    } finally {
+      setGeneratingSceneId(null);
+    }
+  };
+
+  const isDraftIdeaBank = chain.meta?.isDraftIdeaBank === true;
+
+  // Debug logging
+  log.info('MacroChainBoard Debug:', {
+    chainStatus: chain.status,
+    chainMeta: chain.meta,
+    isDraftIdeaBank,
+    hasMetaObject: !!chain.meta,
+    metaKeys: chain.meta ? Object.keys(chain.meta) : []
+  });
 
   return (
     <div className="space-y-4">
@@ -697,6 +846,32 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         </div>
       </div>
 
+      {isDraftIdeaBank && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start space-x-3">
+            <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-blue-900 mb-1">💡 Iterative Scene Expansion</h3>
+              <p className="text-sm text-blue-700">
+                {chain.status === 'Locked' ? (
+                  <>
+                    This chain started as 6 draft scenes. Now that it's locked, go to the <strong>Scenes tab</strong> to generate and lock Scene 1. 
+                    After locking each scene, you'll be asked <strong>"What do you want to see next?"</strong> to iteratively expand your story one scene at a time.
+                  </>
+                ) : (
+                  <>
+                    These 6 scenes are draft ideas to inspire your story. You can edit titles, objectives, delete scenes, or add new ones. 
+                    When ready, <strong>Lock Chain</strong>, then use the <strong>Scenes tab</strong> to iteratively expand using "What do you want to see next?" prompts.
+                  </>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -714,10 +889,12 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
                 onObjectiveEdit={handleObjectiveEdit}
                 onGenerateDetail={handleGenerateDetail}
                 onDeleteScene={handleDeleteScene}
+                onLockScene={handleLockMacroScene}
                 sceneDetails={sceneDetails}
                 scenes={scenes}
                 isGenerating={generatingSceneId === scene.id}
                 isChainLocked={chain.status === 'Locked'}
+                isSceneLocked={lockedMacroScenes.has(scene.id)}
               />
             ))}
           </div>
@@ -750,6 +927,73 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
             onSceneDetailGenerated={handleSceneDetailGenerated}
             background={background}
           />
+        </div>
+      )}
+
+      {/* GM Intent Modal - shown after locking a scene */}
+      {showGmIntent && lastLockedScene && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">What do you want to see next?</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  You've locked Scene {lastLockedScene.order}. Describe what should happen in the next scene.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowGmIntent(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                GM Intent
+              </label>
+              <textarea
+                value={gmIntent}
+                onChange={(e) => setGmIntent(e.target.value)}
+                placeholder="Example: The party discovers a hidden passageway that leads to the villain's lair. They encounter guards and must decide whether to fight or sneak past..."
+                className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-gray-500">
+                This will create Scene {lastLockedScene.order + 1} based on your intent.
+              </p>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setShowGmIntent(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleGenerateNextScene}
+                  disabled={!gmIntent.trim() || generatingSceneId === 'generating_next'}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                >
+                  {generatingSceneId === 'generating_next' ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <span>Generate Next Scene</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

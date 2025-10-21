@@ -1,36 +1,39 @@
+import logger from '@/utils/logger';
+
+const log = logger.api;
 export async function postJSON<T>(url: string, body: unknown): Promise<T> {
   // Ensure we're using the correct base URL for API calls
   const fullUrl = url.startsWith('http') ? url : `http://localhost:3000${url}`;
   
-  console.log('Making POST request to:', fullUrl);
+  log.info('Making POST request to:', fullUrl);
   const res = await fetch(fullUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  console.log('Response status:', res.status, 'ok:', res.ok);
+  log.info('Response status:', res.status, 'ok:', res.ok);
   if (!res.ok) {
     const text = await res.text()
-    console.error('Error response:', text);
+    log.error('Error response:', text);
     throw new Error(text || `HTTP ${res.status}`)
   }
   return res.json() as Promise<T>
 }
 
 export async function getJSON<T>(url: string): Promise<T> {
-  console.log('Making GET request to:', url);
+  log.info('Making GET request to:', url);
   const res = await fetch(url, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   })
-  console.log('Response status:', res.status, 'ok:', res.ok);
+  log.info('Response status:', res.status, 'ok:', res.ok);
   if (!res.ok) {
     const text = await res.text()
-    console.error('Error response:', text);
+    log.error('Error response:', text);
     throw new Error(text || `HTTP ${res.status}`)
   }
   const data = await res.json() as T;
-  console.log('Response data:', data);
+  log.info('Response data:', data);
   return data;
 }
 
@@ -48,7 +51,7 @@ export async function patchJSON<T>(url: string, body: unknown): Promise<T> {
 }
 
 export async function deleteJSON<T>(url: string): Promise<T> {
-  console.log('Making DELETE request to:', url);
+  log.info('Making DELETE request to:', url);
   const res = await fetch(url, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
@@ -147,7 +150,7 @@ export interface GenerateDetailResponse {
 }
 
 export async function generateDetail(request: GenerateDetailRequest): Promise<GenerateDetailResponse> {
-  console.log('API generateDetail called with:', {
+  log.info('API generateDetail called with:', {
     sessionId: request.sessionId,
     sceneId: request.sceneId,
     hasSessionId: !!request.sessionId,

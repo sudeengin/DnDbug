@@ -1,4 +1,7 @@
 import OpenAI from 'openai';
+import logger from './lib/logger.js';
+
+const log = logger.background;
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -76,7 +79,7 @@ Valid JSON only.`;
       const cleaned = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       parsedResponse = JSON.parse(cleaned);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', parseError);
+      log.error('Failed to parse OpenAI response:', parseError);
       throw new Error('Invalid JSON response from AI');
     }
 
@@ -95,7 +98,7 @@ Valid JSON only.`;
 
     // Validate numberOfPlayers - use meta value if provided, otherwise use parsed response or default
     const requestedPlayers = meta?.numberOfPlayers;
-    console.log('numberOfPlayers validation:', {
+    log.info('numberOfPlayers validation:', {
       requestedPlayers,
       parsedResponseNumberOfPlayers: parsedResponse.numberOfPlayers,
       metaNumberOfPlayers: meta?.numberOfPlayers
@@ -103,15 +106,15 @@ Valid JSON only.`;
     
     if (typeof requestedPlayers === 'number' && requestedPlayers >= 3 && requestedPlayers <= 6) {
       parsedResponse.numberOfPlayers = requestedPlayers;
-      console.log('Using requested numberOfPlayers:', requestedPlayers);
+      log.info('Using requested numberOfPlayers:', requestedPlayers);
     } else if (typeof parsedResponse.numberOfPlayers !== 'number' || 
         parsedResponse.numberOfPlayers < 3 || 
         parsedResponse.numberOfPlayers > 6) {
       // Set default if invalid
       parsedResponse.numberOfPlayers = 4;
-      console.log('Using default numberOfPlayers: 4');
+      log.info('Using default numberOfPlayers: 4');
     } else {
-      console.log('Using parsed numberOfPlayers:', parsedResponse.numberOfPlayers);
+      log.info('Using parsed numberOfPlayers:', parsedResponse.numberOfPlayers);
     }
 
     // Save background to session context
@@ -120,7 +123,7 @@ Valid JSON only.`;
       const { saveSessionContext } = await import('../storage.js');
       const sessionContext = await getOrCreateSessionContext(sessionId);
       
-      console.log('Session context before saving background:', {
+      log.info('Session context before saving background:', {
         sessionId,
         hasBlocks: !!sessionContext.blocks,
         blocksKeys: sessionContext.blocks ? Object.keys(sessionContext.blocks) : []
@@ -134,19 +137,19 @@ Valid JSON only.`;
       
       await saveSessionContext(sessionId, sessionContext);
       
-      console.log('Background saved to session context:', {
+      log.info('Background saved to session context:', {
         sessionId,
         hasBackground: !!sessionContext.blocks.background,
         numberOfPlayers: sessionContext.blocks.background?.numberOfPlayers,
         version: sessionContext.version
       });
     } catch (saveError) {
-      console.error('Error saving background to session context:', saveError);
+      log.error('Error saving background to session context:', saveError);
       // Don't fail the request, just log the error
     }
 
     // Log telemetry
-    console.log('Telemetry: generate_background', {
+    log.info('Telemetry: generate_background', {
       sessionId,
       conceptLength: concept.length,
       hasMeta: !!meta,
@@ -162,7 +165,7 @@ Valid JSON only.`;
     });
 
   } catch (error) {
-    console.error('Error generating background:', error);
+    log.error('Error generating background:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     res.status(500).json({ error: message });
   }

@@ -1,4 +1,7 @@
 import type { TelemetryEvent } from '../types/macro-chain';
+import logger from '@/utils/logger';
+
+const log = logger.api;
 
 class TelemetryService {
   private events: TelemetryEvent[] = [];
@@ -22,7 +25,7 @@ class TelemetryService {
     this.events.push(telemetryEvent);
 
     // In a real implementation, you would send this to your analytics service
-    console.log('Telemetry Event:', telemetryEvent);
+    log.info('Telemetry Event:', telemetryEvent);
 
     // Store in localStorage for persistence (in a real app, you'd send to a server)
     try {
@@ -34,7 +37,7 @@ class TelemetryService {
       const recentEvents = existingEvents.slice(-100);
       localStorage.setItem('telemetry_events', JSON.stringify(recentEvents));
     } catch (error) {
-      console.warn('Failed to store telemetry event:', error);
+      log.warn('Failed to store telemetry event:', error);
     }
   }
 
@@ -119,7 +122,7 @@ class TelemetryService {
         this.events = storedEvents;
       }
     } catch (error) {
-      console.warn('Failed to load stored telemetry events:', error);
+      log.warn('Failed to load stored telemetry events:', error);
     }
   }
 
