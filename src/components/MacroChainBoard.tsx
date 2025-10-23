@@ -223,7 +223,14 @@ function SortableSceneItem({
   );
 }
 
-export default function MacroChainBoard({ chain, onUpdate, loading = false, sessionId, onContextUpdate, background }: MacroChainBoardProps) {
+export default function MacroChainBoard({ 
+  chain, 
+  onUpdate, 
+  loading = false, 
+  sessionId, 
+  onContextUpdate, 
+  background 
+}: MacroChainBoardProps) {
   const [scenes, setScenes] = useState<MacroScene[]>(chain.scenes);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedScene, setSelectedScene] = useState<MacroScene | null>(null);
