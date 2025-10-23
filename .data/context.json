@@ -445,7 +445,10 @@
           "Provide opportunities for redemption arcs",
           "Embrace unpredictability and suspense"
         ],
-        "numberOfPlayers": 4
+        "numberOfPlayers": 4,
+        "sceneCount": 2,
+        "lastSceneAdded": "2025-10-23T22:20:00.089Z",
+        "totalScenesGenerated": 5
       },
       "characters": {
         "list": [
@@ -559,28 +562,11 @@
               "order": 1,
               "title": "Whispers in the Ruined Fortress",
               "objective": "The party heard about this once glorious not ruined mysterious fortress from the common villagers where \"silence\" lurks around."
-            },
-            {
-              "id": "scene_2_1761084328972",
-              "order": 2,
-              "title": "Echoes of the Silent Halls",
-              "objective": "The explorers navigate the shadowy corridors of the fortress, seeking clues that might reveal the origins of the cursed silence while confronting the eerie remnants of its past inhabitants.",
-              "meta": {
-                "gmIntent": "the party wonders around the halls its rooms to find out the origin of the \"silence\"",
-                "generatedFrom": "scene_2_1761083066689",
-                "generatedAt": "2025-10-21T22:05:28.972Z"
-              }
-            },
-            {
-              "id": "scene-1761084503112",
-              "order": 3,
-              "title": "New Scene",
-              "objective": "Enter scene objective..."
             }
           ],
-          "status": "Draft",
+          "status": "Edited",
           "version": 1,
-          "lastUpdatedAt": "2025-10-21T22:08:19.746Z",
+          "lastUpdatedAt": "2025-10-23T22:20:07.377Z",
           "meta": {
             "source": "macroChainTab",
             "requestId": "c4e1271f-c3af-42c5-84f3-d724ac580f13",
@@ -609,9 +595,9 @@
       "macroSnapshotV": 1,
       "updatedAt": "2025-10-21T21:44:26.694Z"
     },
-    "version": 33,
+    "version": 129,
     "createdAt": "2025-10-21T21:43:11.505Z",
-    "updatedAt": "2025-10-21T22:08:23.141Z",
+    "updatedAt": "2025-10-23T22:20:22.710Z",
     "macroChains": {
       "chain_1761083066688_d7nnq27r7": {
         "chainId": "chain_1761083066688_d7nnq27r7",
@@ -621,28 +607,11 @@
             "order": 1,
             "title": "Whispers in the Ruined Fortress",
             "objective": "The party heard about this once glorious not ruined mysterious fortress from the common villagers where \"silence\" lurks around."
-          },
-          {
-            "id": "scene_2_1761084328972",
-            "order": 2,
-            "title": "Echoes of the Silent Halls",
-            "objective": "The explorers navigate the shadowy corridors of the fortress, seeking clues that might reveal the origins of the cursed silence while confronting the eerie remnants of its past inhabitants.",
-            "meta": {
-              "gmIntent": "the party wonders around the halls its rooms to find out the origin of the \"silence\"",
-              "generatedFrom": "scene_2_1761083066689",
-              "generatedAt": "2025-10-21T22:05:28.972Z"
-            }
-          },
-          {
-            "id": "scene_1761084503118_th94o2koh",
-            "order": 3,
-            "title": "New Scene",
-            "objective": "Enter scene objective..."
           }
         ],
         "status": "Edited",
-        "version": 2,
-        "lastUpdatedAt": "2025-10-21T22:08:23.118Z",
+        "version": 5,
+        "lastUpdatedAt": "2025-10-23T22:20:22.700Z",
         "meta": {
           "source": "macroChainTab",
           "requestId": "c4e1271f-c3af-42c5-84f3-d724ac580f13",

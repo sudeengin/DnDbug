@@ -243,6 +243,19 @@ export default function SceneWorkspace({
         // Reset GM intent panel
         setShowGmIntent(false);
         setGmIntent('');
+        
+        // Trigger context refresh to update background scene count
+        if (onContextUpdate) {
+          try {
+            const contextResponse = await getJSON<{ ok: boolean; data: SessionContext | null }>(`/api/context/get?sessionId=${sessionId}`);
+            if (contextResponse.ok && contextResponse.data) {
+              onContextUpdate(contextResponse.data);
+            }
+          } catch (contextError) {
+            log.error('Failed to refresh context after generating next scene:', contextError);
+          }
+        }
+        
         // Navigate to the new scene (it will be at sceneIndex + 1)
         // Since the chain was updated, the parent will re-render with new scenes
         // We can navigate to the next index

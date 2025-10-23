@@ -16,7 +16,7 @@ app.use(express.json());
 // Request logging middleware - log all incoming POST/PUT/DELETE requests
 app.use((req, res, next) => {
   if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
-    const bodyPreview = JSON.stringify(req.body).substring(0, 150);
+    const bodyPreview = req.body ? JSON.stringify(req.body).substring(0, 150) : '';
     console.log(`📨 ${req.method} ${req.url} ${bodyPreview ? '- Body: ' + bodyPreview : ''}`);
   }
   next();

@@ -245,9 +245,39 @@ export default async function handler(req, res) {
     macroChain.lastUpdatedAt = new Date().toISOString();
     macroChain.status = 'Draft'; // Keep as Draft until this new scene is also locked
 
-    // Update session context
-    sessionContext.blocks.custom.macroChain = macroChain;
+    // Update session context - CRITICAL: Update both macroChains and blocks.custom.macroChain
+    if (!sessionContext.macroChains) {
+      sessionContext.macroChains = {};
+    }
+    sessionContext.macroChains[macroChain.chainId] = macroChain;
+    
+    // Update blocks.custom.macroChain to keep UI in sync
+    if (!sessionContext.blocks) {
+      sessionContext.blocks = {};
+    }
+    if (!sessionContext.blocks.custom) {
+      sessionContext.blocks.custom = {};
+    }
+    sessionContext.blocks.custom.macroChain = {
+      chainId: macroChain.chainId,
+      scenes: macroChain.scenes,
+      status: macroChain.status,
+      version: macroChain.version,
+      lastUpdatedAt: macroChain.lastUpdatedAt,
+      meta: macroChain.meta,
+      createdAt: macroChain.createdAt,
+      updatedAt: macroChain.updatedAt,
+      lockedAt: macroChain.lockedAt
+    };
+    
     sessionContext.updatedAt = new Date().toISOString();
+    
+    // Update background context to reflect new scene count
+    if (sessionContext.blocks.background) {
+      sessionContext.blocks.background.sceneCount = macroChain.scenes.length;
+      sessionContext.blocks.background.lastSceneAdded = new Date().toISOString();
+      sessionContext.blocks.background.totalScenesGenerated = (sessionContext.blocks.background.totalScenesGenerated || 0) + 1;
+    }
     
     // Save to storage
     await saveSessionContext(sessionId, sessionContext);

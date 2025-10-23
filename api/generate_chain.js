@@ -302,6 +302,13 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
         sessionContext.meta.macroSnapshotV = makeMacroSnapshotV(sessionContext.meta);
         sessionContext.meta.updatedAt = new Date().toISOString();
         
+        // Update background context to reflect initial scene count
+        if (sessionContext.blocks.background) {
+          sessionContext.blocks.background.sceneCount = scenes.length;
+          sessionContext.blocks.background.lastSceneAdded = new Date().toISOString();
+          sessionContext.blocks.background.totalScenesGenerated = scenes.length;
+        }
+        
         // Save to storage
         await saveSessionContext(sessionId, sessionContext);
         
