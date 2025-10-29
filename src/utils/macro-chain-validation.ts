@@ -61,12 +61,7 @@ export function validateMacroChain(chain: any): ValidationResult {
     return { isValid: false, errors, warnings };
   }
 
-  // Scene count validation
-  if (chain.scenes.length < 5) {
-    errors.push({ field: 'scenes', message: 'Must have at least 5 scenes' });
-  } else if (chain.scenes.length > 6) {
-    errors.push({ field: 'scenes', message: 'Must have at most 6 scenes' });
-  }
+  // Scene count validation removed - allow any number of scenes
 
   // Validate each scene
   chain.scenes.forEach((scene: any, index: number) => {

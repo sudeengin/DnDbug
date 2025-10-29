@@ -1,5 +1,5 @@
 import logger from '@/utils/logger';
-import { debug } from '@/utils/debug-collector';
+import debug from './simpleDebug';
 
 const log = logger.api;
 
@@ -8,7 +8,7 @@ export async function postJSON<T>(url: string, body: unknown): Promise<T> {
   const fullUrl = url.startsWith('http') ? url : `http://localhost:3000${url}`;
   
   log.info('Making POST request to:', fullUrl);
-  debug.apiCall(url, 'POST', body);
+  debug.info('api', `POST ${url}`, { url: fullUrl, body });
   
   const res = await fetch(fullUrl, {
     method: 'POST',
@@ -20,19 +20,50 @@ export async function postJSON<T>(url: string, body: unknown): Promise<T> {
   
   if (!res.ok) {
     const text = await res.text()
-    log.error('Error response:', text);
-    debug.apiCall(url, 'POST', body, undefined, { status: res.status, text });
-    throw new Error(text || `HTTP ${res.status}`)
+    
+    // Try to parse as JSON for structured error responses
+    let errorData;
+    try {
+      errorData = JSON.parse(text);
+    } catch {
+      errorData = { error: text };
+    }
+    
+    // Enhanced error logging with error type detection
+    const errorType = errorData.type || 'UNKNOWN_ERROR';
+    const errorMessage = errorData.error || text || `HTTP ${res.status}`;
+    
+    log.error('Error response:', errorMessage);
+    
+    // Enhanced debug logging with error categorization
+    debug.error('api', `POST ${url} failed`, { 
+      url: fullUrl, 
+      status: res.status, 
+      error: errorMessage,
+      errorType: errorType,
+      timestamp: errorData.timestamp,
+      body 
+    });
+    
+    // Create more informative error messages based on error type
+    let enhancedMessage = errorMessage;
+    if (errorType === 'MODULE_RESOLUTION_ERROR') {
+      enhancedMessage = `Module Resolution Error: ${errorMessage}\n\nThis is likely an import path issue. Check server logs for details.`;
+    } else if (errorType === 'IMPORT_EXPORT_ERROR') {
+      enhancedMessage = `Import/Export Error: ${errorMessage}\n\nThis is likely an ES module syntax issue. Check server logs for details.`;
+    }
+    
+    throw new Error(enhancedMessage);
   }
   
   const data = await res.json() as T;
-  debug.apiCall(url, 'POST', body, data);
+  debug.info('api', `POST ${url} success`, { url: fullUrl, status: res.status, response: data });
   return data;
 }
 
 export async function getJSON<T>(url: string): Promise<T> {
   log.info('Making GET request to:', url);
-  debug.apiCall(url, 'GET');
+  debug.info('api', `GET ${url}`, { url });
   
   const res = await fetch(url, {
     method: 'GET',
@@ -44,13 +75,13 @@ export async function getJSON<T>(url: string): Promise<T> {
   if (!res.ok) {
     const text = await res.text()
     log.error('Error response:', text);
-    debug.apiCall(url, 'GET', undefined, undefined, { status: res.status, text });
+    debug.error('api', `GET ${url} failed`, { url, status: res.status, error: text });
     throw new Error(text || `HTTP ${res.status}`)
   }
   
   const data = await res.json() as T;
   log.info('Response data:', data);
-  debug.apiCall(url, 'GET', undefined, data);
+  debug.info('api', `GET ${url} success`, { url, status: res.status, response: data });
   return data;
 }
 

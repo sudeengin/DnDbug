@@ -4,6 +4,7 @@ import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { postJSON, getJSON } from '../../lib/api';
+import debug from '../../lib/simpleDebug';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
 import CharactersTable from '../CharactersTable';
 import CharacterForm from '../CharacterForm';
@@ -29,6 +30,39 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   // Check if background is locked
   const isBackgroundLocked = context?.locks?.background === true;
   const hasBackground = !!context?.blocks?.background;
+
+  // Debug logging for component lifecycle
+  useEffect(() => {
+    debug.info('CharactersPage', 'Component mounted', { 
+      sessionId, 
+      isBackgroundLocked,
+      hasBackground,
+      hasContext: !!context,
+      charactersCount: characters.length 
+    });
+
+    return () => {
+      debug.info('CharactersPage', 'Component unmounted');
+    };
+  }, []);
+
+  // Debug logging for state changes
+  useEffect(() => {
+    debug.info('CharactersPage', 'Characters state changed', { 
+      charactersCount: characters.length,
+      characters: characters.map(c => ({ id: c.id, name: c.name }))
+    });
+  }, [characters]);
+
+  useEffect(() => {
+    debug.info('CharactersPage', 'Loading state changed', { loading });
+  }, [loading]);
+
+  useEffect(() => {
+    if (error) {
+      debug.error('CharactersPage', 'Error state set', { error });
+    }
+  }, [error]);
 
   // Load context and characters on mount
   useEffect(() => {
@@ -69,8 +103,16 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   };
 
   const handleGenerateCharacters = async () => {
+    debug.info('CharactersPage', 'Generate characters button clicked', { 
+      sessionId, 
+      isBackgroundLocked,
+      charactersCount: characters?.length || 0 
+    });
+
     if (!isBackgroundLocked) {
-      setError('Background must be locked before generating characters');
+      const errorMsg = 'Background must be locked before generating characters';
+      setError(errorMsg);
+      debug.warn('CharactersPage', 'Generate characters blocked', { reason: errorMsg });
       return;
     }
 
@@ -78,9 +120,14 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     setError(null);
 
     try {
+      debug.info('CharactersPage', 'Starting character generation', { sessionId });
       const response = await postJSON('/api/characters/generate', { sessionId });
       
       if (response.ok) {
+        debug.info('CharactersPage', 'Character generation successful', { 
+          charactersGenerated: response.list?.length || 0,
+          characters: response.list 
+        });
         setCharacters(response.list || []);
         setIsLocked(false);
         // Refresh context
@@ -94,13 +141,28 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
           onContextUpdate(updatedContext);
         }
       } else {
-        setError(response.error || 'Failed to generate characters');
+        const errorMsg = response.error || 'Failed to generate characters';
+        setError(errorMsg);
+        debug.error('CharactersPage', 'Character generation failed', { 
+          error: errorMsg, 
+          response 
+        });
       }
     } catch (err) {
-      setError('Failed to generate characters');
+      const errorMsg = 'Failed to generate characters';
+      setError(errorMsg);
       log.error('Error generating characters:', err);
+      debug.error('CharactersPage', 'Character generation exception', { 
+        error: errorMsg, 
+        exception: err,
+        sessionId 
+      });
     } finally {
       setLoading(false);
+      debug.info('CharactersPage', 'Character generation completed', { 
+        loading: false,
+        hasError: !!error 
+      });
     }
   };
 

@@ -1,6 +1,6 @@
 // Import the context handler functions
 import { getOrCreateSessionContext } from '../context.js';
-import logger from "./lib/logger.js";
+import logger from "../lib/logger.js";
 
 const log = logger.context;
 

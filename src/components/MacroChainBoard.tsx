@@ -264,17 +264,27 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
   );
 
   useEffect(() => {
+    // Always log when chain prop changes, regardless of edit state
+    log.info('🔄 Chain prop changed:', {
+      chainScenesCount: chain.scenes.length,
+      chainScenes: chain.scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+      localScenesCount: scenes.length,
+      localScenes: scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+      isEditing,
+      willUpdate: !isEditing
+    });
+
     // Only update scenes if not currently editing to preserve edit state
     // This prevents losing edit mode when chain updates happen
     if (!isEditing) {
-      log.info('🔄 Chain prop changed - updating local scenes:', {
-        chainScenesCount: chain.scenes.length,
-        chainScenes: chain.scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
-        localScenesCount: scenes.length,
-        localScenes: scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
-        isEditing
-      });
+      log.info('✅ Updating local scenes from chain prop');
       setScenes(chain.scenes);
+    } else {
+      log.warn('⚠️ NOT updating local scenes - currently in edit mode. Local and chain scenes may be out of sync!', {
+        localScenesCount: scenes.length,
+        chainScenesCount: chain.scenes.length,
+        difference: scenes.length - chain.scenes.length
+      });
     }
   }, [chain.scenes, isEditing]);
 
@@ -284,6 +294,20 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
     setSelectedScene(null);
     setIsEditing(false);
   }, [chain.chainId]);
+
+  // Add periodic check for scene count mismatches during editing
+  useEffect(() => {
+    if (isEditing && scenes.length !== chain.scenes.length) {
+      log.warn('🚨 SCENE COUNT MISMATCH DETECTED DURING EDITING!', {
+        localScenesCount: scenes.length,
+        chainScenesCount: chain.scenes.length,
+        difference: scenes.length - chain.scenes.length,
+        localScenes: scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+        chainScenes: chain.scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [isEditing, scenes.length, chain.scenes.length]);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -394,12 +418,26 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       return;
     }
 
+    log.info('🗑️ Deleting scene:', {
+      sceneId,
+      currentScenesCount: scenes.length,
+      sceneToDelete: scenes.find(s => s.id === sceneId)
+    });
+
     const updatedScenes = scenes.filter(scene => scene.id !== sceneId);
     // Reorder remaining scenes
     const reorderedScenes = updatedScenes.map((scene, index) => ({
       ...scene,
       order: index + 1,
     }));
+    
+    log.info('📊 Scene deletion result:', {
+      originalCount: scenes.length,
+      newCount: reorderedScenes.length,
+      deletedCount: scenes.length - reorderedScenes.length,
+      remainingScenes: reorderedScenes.map(s => ({ id: s.id, order: s.order, title: s.title }))
+    });
+    
     setScenes(reorderedScenes);
     
     // Remove from locked scenes if it was locked
@@ -434,7 +472,14 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       };
 
       log.info('handleDeleteScene: Sending update request', updateRequest);
-      await postJSON('/api/update_chain', updateRequest);
+      const response = await postJSON('/api/update_chain', updateRequest);
+      
+      log.info('✅ Scene deletion API response:', {
+        response,
+        updatedChainScenesCount: response?.data?.scenes?.length || 'unknown',
+        localScenesCount: reorderedScenes.length,
+        scenesMatch: (response?.data?.scenes?.length || 0) === reorderedScenes.length
+      });
       
       onUpdate({
         ...chain,
@@ -829,6 +874,11 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         <div className="flex items-center space-x-3">
           <h2 className="text-xl font-semibold text-gray-900">
             Macro Chain ({scenes.length} scenes)
+            {isEditing && scenes.length !== chain.scenes.length && (
+              <span className="ml-2 text-sm text-red-600 font-normal">
+                (⚠️ Local: {scenes.length}, Chain: {chain.scenes.length})
+              </span>
+            )}
           </h2>
           {background && (
             <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
@@ -906,7 +956,33 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
             </button>
           )}
           <button
-            onClick={() => setIsEditing(!isEditing)}
+            onClick={() => {
+              if (isEditing) {
+                // When exiting edit mode, sync local scenes with chain scenes
+                log.info('🔄 Exiting edit mode - syncing scenes:', {
+                  localScenesCount: scenes.length,
+                  chainScenesCount: chain.scenes.length,
+                  localScenes: scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+                  chainScenes: chain.scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+                  syncNeeded: scenes.length !== chain.scenes.length
+                });
+                
+                if (scenes.length !== chain.scenes.length) {
+                  log.warn('🚨 SCENE COUNT MISMATCH DETECTED!', {
+                    localCount: scenes.length,
+                    chainCount: chain.scenes.length,
+                    difference: scenes.length - chain.scenes.length,
+                    action: 'Syncing local scenes to match chain'
+                  });
+                }
+                
+                setScenes(chain.scenes);
+                log.info('✅ Local scenes synced with chain scenes');
+              } else {
+                log.info('🔄 Entering edit mode');
+              }
+              setIsEditing(!isEditing);
+            }}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               isEditing
                 ? 'bg-green-100 text-green-700 hover:bg-green-200'

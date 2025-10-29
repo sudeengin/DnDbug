@@ -2831,5 +2831,56 @@
     },
     "createdAt": "2025-10-21T21:44:26.689Z",
     "updatedAt": "2025-10-21T21:44:26.690Z"
+  },
+  "chain_1761697789162_puzxhhhyt": {
+    "chainId": "chain_1761697789162_puzxhhhyt",
+    "scenes": [
+      {
+        "id": "scene_1_1761697789162",
+        "order": 1,
+        "title": "Whispers Among the Market Stalls",
+        "objective": "Investigate the bustling markets of Elderglen for rumors surrounding the mysterious artifact and its potential impact on the city's factions."
+      },
+      {
+        "id": "scene_2_1761697789162",
+        "order": 2,
+        "title": "Secrets in the Arcane Guild",
+        "objective": "Gain insight from Guildmaster Alaric about the artifact's origin while navigating the intrigue and hidden agendas of the Arcane Guild."
+      },
+      {
+        "id": "scene_3_1761697789162",
+        "order": 3,
+        "title": "Shadows of the Syndicate",
+        "objective": "Meet with Syndicate Boss Marlowe in the dark alleys to broker information about the artifact, testing the thin line between trust and betrayal."
+      },
+      {
+        "id": "scene_4_1761697789162",
+        "order": 4,
+        "title": "Fortress of the City Guard",
+        "objective": "Confront Captain Elara about the rising tensions among factions and uncover her perspective on the artifact's influence on Elderglen's stability."
+      },
+      {
+        "id": "scene_5_1761697789162",
+        "order": 5,
+        "title": "Echoes of the Cult",
+        "objective": "Explore the hidden shrine of the Cult of the Lost and engage with High Priestess Seraphine to reveal the artifact's deeper, possibly apocalyptic significance."
+      },
+      {
+        "id": "scene_6_1761697789162",
+        "order": 6,
+        "title": "The Balance of Power",
+        "objective": "Decide whom to ally with in a climactic showdown as the factions converge on the artifact, determining Elderglen's fate amidst moral ambiguity and impending chaos."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-10-29T00:29:49.162Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "7ab7473c-f185-40d1-be54-df71fe9f6906",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-10-29T00:29:49.162Z",
+    "updatedAt": "2025-10-29T00:29:49.164Z"
   }
 }

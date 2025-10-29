@@ -25,6 +25,18 @@ export default async function handler(req, res) {
       const { getOrCreateSessionContext } = await import('./context.js');
       sessionContext = await getOrCreateSessionContext(sessionId);
       
+      // CRITICAL: Log session context state to detect data loss
+      log.info('🔍 Session context loaded for update_chain:', {
+        sessionId,
+        hasBlocks: !!sessionContext.blocks,
+        hasBackground: !!(sessionContext.blocks && sessionContext.blocks.background),
+        hasCharacters: !!(sessionContext.blocks && sessionContext.blocks.characters),
+        hasMacroChains: !!sessionContext.macroChains,
+        macroChainCount: sessionContext.macroChains ? Object.keys(sessionContext.macroChains).length : 0,
+        version: sessionContext.version,
+        contextSize: JSON.stringify(sessionContext).length
+      });
+      
       if (sessionContext.macroChains && sessionContext.macroChains[chainId]) {
         existingChain = sessionContext.macroChains[chainId];
         log.info('Loading chain from session context:', chainId);
@@ -138,6 +150,20 @@ export default async function handler(req, res) {
       };
       
       sessionContext.updatedAt = new Date().toISOString();
+      
+      // CRITICAL: Log session context state before saving to detect data loss
+      log.info('💾 Saving session context after update_chain:', {
+        sessionId,
+        hasBlocks: !!sessionContext.blocks,
+        hasBackground: !!(sessionContext.blocks && sessionContext.blocks.background),
+        hasCharacters: !!(sessionContext.blocks && sessionContext.blocks.characters),
+        hasMacroChains: !!sessionContext.macroChains,
+        macroChainCount: sessionContext.macroChains ? Object.keys(sessionContext.macroChains).length : 0,
+        version: sessionContext.version,
+        contextSize: JSON.stringify(sessionContext).length,
+        chainScenesCount: updatedChain.scenes.length
+      });
+      
       await saveSessionContext(sessionId, sessionContext);
       
       log.info(`Chain ${chainId} updated in session context with ${updatedChain.scenes.length} scenes`);

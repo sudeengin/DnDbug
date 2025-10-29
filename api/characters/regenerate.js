@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { getOrCreateSessionContext } from '../context.js';
 import { saveSessionContext } from '../storage.js';
 import { buildPromptContext } from '../lib/promptContext.js';
-import logger from "./lib/logger.js";
+import logger from "../lib/logger.js";
 
 const log = logger.character;
 

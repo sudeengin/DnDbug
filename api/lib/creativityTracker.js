@@ -3,7 +3,8 @@
  * Tracks recent approaches and ensures variation across generations
  */
 
-import { getOrCreateSessionContext, saveSessionContext } from './storage.js';
+import { getOrCreateSessionContext } from '../context.js';
+import { saveSessionContext } from '../storage.js';
 
 const MAX_HISTORY = 10; // Keep track of last 10 generations
 

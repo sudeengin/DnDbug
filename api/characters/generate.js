@@ -230,15 +230,27 @@ export default async function handler(req, res) {
       'name', 'role', 'race', 'class', 'personality', 'motivation',
       'connectionToStory', 'gmSecret', 'potentialConflict', 'voiceTone',
       'inventoryHint', 'motifAlignment', 'backgroundHistory', 'keyRelationships', 'flawOrWeakness',
-      'languages', 'alignment', 'deity', 'physicalDescription', 'equipmentPreferences', 'subrace',
+      'languages', 'alignment', 'physicalDescription', 'equipmentPreferences',
       'age', 'height', 'proficiencies'
     ];
 
+    // Fields that can be null/empty
+    const optionalFields = ['deity', 'subrace'];
+
     for (let i = 0; i < parsedResponse.characters.length; i++) {
       const char = parsedResponse.characters[i];
+      
+      // Check required fields
       for (const field of requiredFields) {
         if (!char[field]) {
           throw new Error(`Character ${i + 1} missing required field: ${field}`);
+        }
+      }
+      
+      // Check optional fields exist (but can be null/empty)
+      for (const field of optionalFields) {
+        if (!(field in char)) {
+          throw new Error(`Character ${i + 1} missing field: ${field}`);
         }
       }
       

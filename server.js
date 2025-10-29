@@ -6,6 +6,41 @@ import dotenv from 'dotenv';
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' });
 
+// Startup validation - check critical imports
+console.log('🔍 Validating critical imports...');
+try {
+  // Test critical API imports
+  await import('./api/characters/generate.js');
+  await import('./api/characters/upsert.js');
+  await import('./api/characters/lock.js');
+  await import('./api/generate_chain.js');
+  await import('./api/lib/logger.js');
+  await import('./api/lib/creativityTracker.js');
+  console.log('✅ All critical imports validated successfully');
+} catch (error) {
+  console.error('\n🚨 STARTUP VALIDATION FAILED 🚨');
+  console.error('═'.repeat(80));
+  console.error('❌ Critical import failed:', error.message);
+  
+  if (error.message.includes('Cannot find module')) {
+    console.error('🔍 MODULE RESOLUTION ERROR:');
+    console.error('   Check import paths in the following files:');
+    console.error('   - api/characters/*.js');
+    console.error('   - api/lib/*.js');
+    console.error('   - api/generate_chain.js');
+    console.error('\n💡 Common fixes:');
+    console.error('   - Use "../lib/logger.js" instead of "./lib/logger.js"');
+    console.error('   - Use "../../lib/logger.js" for nested directories');
+    console.error('   - Ensure all imported files exist');
+  }
+  
+  console.error('\n📋 Full Error:');
+  console.error(error.stack);
+  console.error('═'.repeat(80));
+  console.error('🛑 Server startup aborted due to import errors');
+  process.exit(1);
+}
+
 const app = express();
 const PORT = 3000;
 
@@ -1413,6 +1448,60 @@ app.get('/api/health', (req, res) => {
 
 // Debug routes
 app.use('/api/debug', (await import('./api/debug.js')).default);
+
+// Global error handler for unhandled errors
+app.use((error, req, res, next) => {
+  // Enhanced error logging with module resolution detection
+  const errorMessage = error.message || 'Unknown error';
+  const errorStack = error.stack || '';
+  
+  // Detect module resolution errors
+  const isModuleError = errorMessage.includes('Cannot find module') || 
+                       errorMessage.includes('ERR_MODULE_NOT_FOUND') ||
+                       errorMessage.includes('MODULE_NOT_FOUND');
+  
+  // Detect import/export errors
+  const isImportError = errorMessage.includes('import') || 
+                       errorMessage.includes('export') ||
+                       errorMessage.includes('require');
+  
+  // Log with enhanced formatting
+  console.error('\n🚨 SERVER ERROR DETECTED 🚨');
+  console.error('═'.repeat(80));
+  console.error(`❌ Error: ${errorMessage}`);
+  console.error(`📍 URL: ${req.method} ${req.url}`);
+  console.error(`⏰ Timestamp: ${new Date().toISOString()}`);
+  
+  if (isModuleError) {
+    console.error('🔍 MODULE RESOLUTION ERROR DETECTED:');
+    console.error('   This appears to be an import/module path issue');
+    console.error('   Check file paths and import statements');
+  }
+  
+  if (isImportError) {
+    console.error('📦 IMPORT/EXPORT ERROR DETECTED:');
+    console.error('   This appears to be an ES module issue');
+    console.error('   Check import/export syntax and file extensions');
+  }
+  
+  console.error('\n📋 Full Error Stack:');
+  console.error(errorStack);
+  console.error('═'.repeat(80));
+  
+  // Send appropriate response
+  res.status(500).json({ 
+    error: errorMessage,
+    type: isModuleError ? 'MODULE_RESOLUTION_ERROR' : 
+          isImportError ? 'IMPORT_EXPORT_ERROR' : 'SERVER_ERROR',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Handle 404s
+app.use((req, res) => {
+  console.warn(`⚠️  404 Not Found: ${req.method} ${req.url}`);
+  res.status(404).json({ error: 'Endpoint not found' });
+});
 
 app.listen(PORT, () => {
   console.log(`🚀 Local API server running on http://localhost:${PORT}`);
