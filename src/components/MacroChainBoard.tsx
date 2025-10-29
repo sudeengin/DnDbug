@@ -472,7 +472,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       };
 
       log.info('handleDeleteScene: Sending update request', updateRequest);
-      const response = await postJSON('/api/update_chain', updateRequest);
+      const response = await postJSON<{ ok: boolean; data: { scenes: MacroScene[] } }>('/api/update_chain', updateRequest);
       
       log.info('✅ Scene deletion API response:', {
         response,
@@ -577,7 +577,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
             
             // Refresh context panel
             if (onContextUpdate) {
-              const contextResponse = await postJSON(`/api/context/get?sessionId=${sessionId}`);
+              const contextResponse = await postJSON<{ ok: boolean; data: any }>(`/api/context/get?sessionId=${sessionId}`, {});
               if (contextResponse.ok) {
                 onContextUpdate(contextResponse.data);
               }
@@ -736,7 +736,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
     }
   };
 
-  const handleLockMacroScene = (scene: MacroScene) => {
+  const handleLockMacroScene = async (scene: MacroScene) => {
     log.info('🔒 Locking macro scene:', {
       sceneId: scene.id,
       sceneOrder: scene.order,
@@ -758,22 +758,47 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       return;
     }
     
-    // Mark this scene as locked (local state only, no backend call needed)
-    setLockedMacroScenes(prev => {
-      const newSet = new Set([...prev, scene.id]);
-      log.info('🔒 Updated locked scenes:', Array.from(newSet));
-      return newSet;
-    });
-    
-    setLastLockedScene(scene);
-    
-    log.info('🔒 About to show GM Intent modal');
-    
-    // Always show GM Intent modal for iterative expansion
-    // (allows building the chain infinitely, one scene at a time)
-    setShowGmIntent(true);
-    
-    log.info('🔒 Lock scene complete - NO backend calls made (purely local state)');
+    try {
+      // First, ensure the scene has detailed content by generating it if needed
+      if (!sceneDetails.find(detail => detail.sceneId === scene.id)) {
+        log.info('🔒 Scene needs detail generation before locking');
+        await handleGenerateDetail(scene, sceneDetails);
+      }
+      
+      // Lock the scene on the backend
+      log.info('🔒 Locking scene on backend:', { sessionId, sceneId: scene.id });
+      const lockResponse = await postJSON<{ ok: boolean; error?: string }>('/api/scene/lock', {
+        sessionId,
+        sceneId: scene.id
+      });
+      
+      if (!lockResponse.ok) {
+        throw new Error(lockResponse.error || 'Failed to lock scene');
+      }
+      
+      log.info('🔒 Scene locked successfully on backend');
+      
+      // Update local state
+      setLockedMacroScenes(prev => {
+        const newSet = new Set([...prev, scene.id]);
+        log.info('🔒 Updated locked scenes:', Array.from(newSet));
+        return newSet;
+      });
+      
+      setLastLockedScene(scene);
+      
+      log.info('🔒 About to show GM Intent modal');
+      
+      // Always show GM Intent modal for iterative expansion
+      // (allows building the chain infinitely, one scene at a time)
+      setShowGmIntent(true);
+      
+      log.info('🔒 Lock scene complete - backend and local state updated');
+      
+    } catch (error) {
+      log.error('🔒 Failed to lock scene:', error);
+      alert(`Failed to lock scene: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 
   const handleGenerateNextScene = async () => {
@@ -836,6 +861,8 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
           log.info('🔄 Context save delay completed');
         } catch (error) {
           log.error('🔄 Failed to update context:', error);
+          // Don't fail the entire operation if context update fails
+          log.warn('🔄 Continuing despite context update failure');
         }
         
         
@@ -851,13 +878,27 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       }
     } catch (error: any) {
       log.error('❌ Failed to generate next scene:', error);
-      alert(error?.message || 'Failed to generate next scene. Please check console for details.');
+      
+      // Provide more specific error messages based on the error type
+      let errorMessage = 'Failed to generate next scene.';
+      
+      if (error?.status === 409) {
+        errorMessage = 'The previous scene must be locked before generating the next scene. Please lock the scene first.';
+      } else if (error?.status === 400) {
+        errorMessage = 'Invalid request. Please check your input and try again.';
+      } else if (error?.status === 500) {
+        errorMessage = 'Server error occurred. Please try again in a moment.';
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(errorMessage);
     } finally {
       setGeneratingSceneId(null);
     }
   };
 
-  const isDraftIdeaBank = chain.meta?.isDraftIdeaBank === true;
+  const isDraftIdeaBank = (chain.meta as any)?.isDraftIdeaBank === true;
 
   // Debug logging
   log.info('MacroChainBoard Debug:', {
@@ -1025,7 +1066,6 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
-        disabled={chain.status === 'Locked'}
       >
         <SortableContext items={scenes.map(s => s.id)} strategy={verticalListSortingStrategy}>
           <div className="space-y-3">

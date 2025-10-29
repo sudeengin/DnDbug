@@ -7,21 +7,15 @@
           "chainId": "chain_1761697789162_puzxhhhyt",
           "scenes": [
             {
-              "id": "scene_5_1761697789162",
-              "order": 1,
-              "title": "Echoes of the Cult",
-              "objective": "Explore the hidden shrine of the Cult of the Lost and engage with High Priestess Seraphine to reveal the artifact's deeper, possibly apocalyptic significance."
-            },
-            {
               "id": "scene_6_1761697789162",
-              "order": 2,
+              "order": 1,
               "title": "The Balance of Power",
               "objective": "Decide whom to ally with in a climactic showdown as the factions converge on the artifact, determining Elderglen's fate amidst moral ambiguity and impending chaos."
             }
           ],
           "status": "Edited",
           "version": 2,
-          "lastUpdatedAt": "2025-10-29T00:38:23.216Z",
+          "lastUpdatedAt": "2025-10-29T00:48:17.381Z",
           "meta": {
             "source": "macroChainTab",
             "requestId": "7ab7473c-f185-40d1-be54-df71fe9f6906",
@@ -30,38 +24,299 @@
           "createdAt": "2025-10-29T00:29:49.162Z",
           "updatedAt": "2025-10-29T00:29:49.164Z"
         }
+      },
+      "story_concept": {
+        "concept": "silence",
+        "timestamp": "2025-10-29T00:46:21.957Z"
+      },
+      "background": {
+        "premise": "In the town of Whispering Hollow, an unnatural silence has descended, muting voices and music, and it falls to a group of adventurers to uncover the source of this eerie phenomenon.",
+        "tone_rules": [
+          "Maintain an atmosphere of suspense and intrigue.",
+          "Emphasize the unnatural stillness and its unsettling effects.",
+          "Incorporate moments of eerie calm before bursts of action.",
+          "Balance mystery with occasional dark humor.",
+          "Avoid overt horror; focus more on psychological tension."
+        ],
+        "stakes": [
+          "The town's survival depends on breaking the silence.",
+          "Failure to act could lead to the silence spreading beyond Whispering Hollow.",
+          "Personal relationships are strained by the inability to communicate.",
+          "The adventurers' sanity and trust in one another are tested."
+        ],
+        "mysteries": [
+          "What is causing the silence in Whispering Hollow?",
+          "Why are only certain individuals unaffected?",
+          "What ancient secrets lie beneath the town's foundations?",
+          "Who benefits from the silence?"
+        ],
+        "factions": [
+          "The Silent Ones, a cult embracing the phenomenon.",
+          "The Town Council, desperate to maintain order.",
+          "The Whisper Seekers, a group of scholars and mages investigating the silence.",
+          "The Shadow Merchants, exploiting the chaos for profit."
+        ],
+        "location_palette": [
+          "Whispering Hollow's Market Square, eerily quiet.",
+          "The abandoned bell tower at the town's center.",
+          "The Whispering Woods, where the silence is strongest.",
+          "The ancient library, full of forgotten lore."
+        ],
+        "npc_roster_skeleton": [
+          "Mayor Elara, struggling to keep the town calm.",
+          "Thorne, a mysterious bard immune to the silence.",
+          "Elder Fenn, leader of the Whisper Seekers.",
+          "Ilyana, a cunning trader among the Shadow Merchants."
+        ],
+        "motifs": [
+          "Echoes and whispers.",
+          "Broken instruments and silent songs.",
+          "Symbols of sound and music.",
+          "The contrast between silence and noise."
+        ],
+        "doNots": [
+          "Do not introduce overtly supernatural monsters.",
+          "Avoid clear-cut villains; maintain moral ambiguity.",
+          "Do not rely on predictable plot twists.",
+          "Avoid excessive combat; focus on investigation."
+        ],
+        "playstyle_implications": [
+          "Encourage problem-solving and investigation.",
+          "Foster cooperative storytelling and character development.",
+          "Focus on atmospheric roleplay over combat.",
+          "Offer opportunities for creative use of spells and skills."
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "list": [
+          {
+            "name": "Iris Thorne",
+            "role": "Whispering Bard",
+            "race": "Half-Elf",
+            "class": "Bard",
+            "personality": "Curious and enigmatic, Iris often speaks in riddles and enjoys weaving stories that captivate her audience. Her demeanor is calm, almost hauntingly serene.",
+            "motivation": "To uncover the secrets hidden within the silence and bring sound back to Whispering Hollow.",
+            "connectionToStory": "She was drawn to Whispering Hollow after hearing rumors of the town's eerie silence, which challenges her innate connection to sound and music.",
+            "gmSecret": "Iris is the descendant of a long-lost bard whose final song was the catalyst for the silence now enveloping Whispering Hollow. This song is hidden within her subconscious, waiting to be unlocked.",
+            "potentialConflict": "Her desire to solve the mystery might lead her to take dangerous risks, endangering herself and others.",
+            "voiceTone": "Soft and melodic, often with an echoing quality.",
+            "inventoryHint": "An ancient, silent lyre.",
+            "motifAlignment": [
+              "Echoes and whispers",
+              "Broken instruments and silent songs"
+            ],
+            "backgroundHistory": "Born to a human mother and an elven father in a distant village, Iris grew up surrounded by music. Her love for melodies led her to travel the world, collecting stories and songs. A mysterious dream compelled her to journey to Whispering Hollow, where the silence challenges her very identity.",
+            "keyRelationships": [
+              "Thorne, a mysterious bard immune to the silence",
+              "Elder Fenn, leader of the Whisper Seekers"
+            ],
+            "flawOrWeakness": "Iris is overly trusting, believing in the goodness of others, which can be easily exploited.",
+            "languages": [
+              "Common",
+              "Elvish",
+              "Sylvan",
+              "Draconic"
+            ],
+            "alignment": "Neutral Good",
+            "deity": "Sehanine Moonbow",
+            "physicalDescription": "Slender and graceful with long, silver hair cascading down her back. She wears flowing robes that seem to shimmer like starlight.",
+            "equipmentPreferences": [
+              "Lute",
+              "Dagger",
+              "Entertainer's Pack",
+              "Lyre",
+              "Leather Armor"
+            ],
+            "subrace": null,
+            "age": 34,
+            "height": "5'6\"",
+            "proficiencies": [
+              "Performance",
+              "Deception",
+              "Insight",
+              "Persuasion"
+            ],
+            "id": "char_1761698856930_gmtmd9mzk",
+            "status": "generated"
+          },
+          {
+            "name": "Garrick Flint",
+            "role": "Skeptical Scholar",
+            "race": "Dwarf",
+            "class": "Wizard",
+            "personality": "Pragmatic and analytical, Garrick approaches problems with a scientific mindset. He often doubts anything that lacks empirical evidence.",
+            "motivation": "To scientifically document and understand the phenomenon affecting Whispering Hollow.",
+            "connectionToStory": "Garrick is a member of the Whisper Seekers, invited by Elder Fenn to lend his expertise in arcane studies.",
+            "gmSecret": "Garrick's research unknowingly led to the discovery of an ancient symbol that amplifies the silence. His notes hold the key to reversing the effect, but they must be deciphered correctly.",
+            "potentialConflict": "His skepticism often puts him at odds with more superstitious or instinctual companions.",
+            "voiceTone": "Gruff and deliberate, with an unmistakable dwarven accent.",
+            "inventoryHint": "A notebook filled with cryptic runes.",
+            "motifAlignment": [
+              "Symbols of sound and music",
+              "The contrast between silence and noise"
+            ],
+            "backgroundHistory": "Raised among scholars in a dwarven stronghold, Garrick was always fascinated by the unknown. His pursuit of knowledge led him to Whispering Hollow, intrigued by tales of a place where even the sound of a pickaxe is muted.",
+            "keyRelationships": [
+              "Elder Fenn, leader of the Whisper Seekers",
+              "Ilyana, a cunning trader among the Shadow Merchants"
+            ],
+            "flawOrWeakness": "Garrick is stubbornly logical, often dismissing ideas that can't be quantified or measured.",
+            "languages": [
+              "Common",
+              "Dwarvish",
+              "Gnomish",
+              "Draconic"
+            ],
+            "alignment": "Lawful Neutral",
+            "deity": null,
+            "physicalDescription": "Stocky and broad-shouldered, Garrick wears simple robes covered with notes and arcane symbols. His beard is meticulously groomed, and his eyes shine with intelligence.",
+            "equipmentPreferences": [
+              "Spellbook",
+              "Quarterstaff",
+              "Scholar's Pack",
+              "Component Pouch"
+            ],
+            "subrace": "Mountain Dwarf",
+            "age": 112,
+            "height": "4'8\"",
+            "proficiencies": [
+              "Arcana",
+              "History",
+              "Investigation",
+              "Alchemy Supplies"
+            ],
+            "id": "char_1761698856930_2pjteucrt",
+            "status": "generated"
+          },
+          {
+            "name": "Elowen Whisperwind",
+            "role": "Cunning Ranger",
+            "race": "Elf",
+            "class": "Ranger",
+            "personality": "Reserved and observant, Elowen prefers solitude and silence, using them to blend into her surroundings. She has a strong sense of justice and protects those she cares for.",
+            "motivation": "To protect Whispering Hollow from the encroaching silence and discover its source.",
+            "connectionToStory": "Elowen is a native of the Whispering Woods, feeling a deep connection to the land and a responsibility to safeguard it.",
+            "gmSecret": "Elowen's family holds an ancient elven secret about the Whispering Woods' role in the town's history. Her ancestors once guarded a powerful artifact hidden beneath the woods, potentially linked to the silence.",
+            "potentialConflict": "Her loyalty to the forest can sometimes cloud her judgment, causing her to act without fully understanding the consequences.",
+            "voiceTone": "Quiet and measured, often speaking in poetic phrases.",
+            "inventoryHint": "A carved wooden whistle that produces no sound.",
+            "motifAlignment": [
+              "Whispers and echoes",
+              "The contrast between silence and noise"
+            ],
+            "backgroundHistory": "Elowen was raised by a community of elves that lived in harmony with the Whispering Woods. She learned to track and hunt in silence, becoming one with the forest. When the silence began to spread, she knew she had to act.",
+            "keyRelationships": [
+              "The Silent Ones, a cult embracing the phenomenon",
+              "Mayor Elara, struggling to keep the town calm"
+            ],
+            "flawOrWeakness": "Elowen tends to be overly secretive, keeping her intentions and plans to herself.",
+            "languages": [
+              "Common",
+              "Elvish",
+              "Sylvan"
+            ],
+            "alignment": "Chaotic Good",
+            "deity": "Rillifane Rallathil",
+            "physicalDescription": "Tall and lithe, with hair the color of autumn leaves. She wears earthy tones and practical clothing suitable for blending into the forest.",
+            "equipmentPreferences": [
+              "Longbow",
+              "Shortsword",
+              "Traveler's Clothes",
+              "Herbalism Kit"
+            ],
+            "subrace": "Wood Elf",
+            "age": 150,
+            "height": "5'9\"",
+            "proficiencies": [
+              "Stealth",
+              "Survival",
+              "Nature",
+              "Perception"
+            ],
+            "id": "char_1761698856930_z4403y5ie",
+            "status": "generated"
+          },
+          {
+            "name": "Thorn Blackwood",
+            "role": "Rogue Trader",
+            "race": "Human",
+            "class": "Rogue",
+            "personality": "Charming and quick-witted, Thorn is a master of persuasion. He is always looking for an angle, but his moral compass is guided by a strict personal code.",
+            "motivation": "To profit from the chaos in Whispering Hollow while uncovering the truth behind the silence.",
+            "connectionToStory": "Thorn is connected to the Shadow Merchants, a faction exploiting the town's turmoil, yet he seeks more than just profit.",
+            "gmSecret": "Thorn's family were once influential in Whispering Hollow but fell from grace after a scandal. Unbeknownst to him, his ancestor's actions are tied to the silence, and restoring his family's name might require breaking the curse.",
+            "potentialConflict": "His ambition might lead him to make deals or alliances that conflict with the party's goals.",
+            "voiceTone": "Smooth and persuasive, with a hint of mischief.",
+            "inventoryHint": "A silver coin etched with a family crest.",
+            "motifAlignment": [
+              "Symbols of sound and music",
+              "The contrast between silence and noise"
+            ],
+            "backgroundHistory": "Growing up on the streets of Whispering Hollow, Thorn learned to survive through cunning and charm. With the silence threatening his old haunts and contacts, he sees an opportunity to reclaim his family's lost honor.",
+            "keyRelationships": [
+              "Ilyana, a cunning trader among the Shadow Merchants",
+              "The Town Council, desperate to maintain order"
+            ],
+            "flawOrWeakness": "Thorn is overly confident, sometimes underestimating the danger of a situation.",
+            "languages": [
+              "Common",
+              "Thieves' Cant",
+              "Gnomish"
+            ],
+            "alignment": "Neutral",
+            "deity": null,
+            "physicalDescription": "Lean and agile, with dark hair and a roguish grin. Thorn dresses in simple but well-kept clothing, with hidden pockets for his various tools.",
+            "equipmentPreferences": [
+              "Dagger",
+              "Thieves' Tools",
+              "Disguise Kit",
+              "Leather Armor"
+            ],
+            "subrace": null,
+            "age": 28,
+            "height": "5'11\"",
+            "proficiencies": [
+              "Stealth",
+              "Deception",
+              "Sleight of Hand",
+              "Thieves' Tools"
+            ],
+            "id": "char_1761698856930_ate6in892",
+            "status": "generated"
+          }
+        ],
+        "locked": false,
+        "version": 1761698856930
       }
     },
-    "locks": {},
+    "locks": {
+      "background": true,
+      "characters": true
+    },
     "meta": {
       "backgroundV": 0,
-      "charactersV": 0,
+      "charactersV": 1,
       "macroSnapshotV": 0,
-      "updatedAt": "2025-10-29T00:38:17.647Z"
+      "updatedAt": "2025-10-29T00:47:44.292Z"
     },
-    "version": 4,
-    "createdAt": "2025-10-29T00:38:17.647Z",
-    "updatedAt": "2025-10-29T00:38:23.239Z",
+    "version": 25,
+    "createdAt": "2025-10-29T00:43:23.470Z",
+    "updatedAt": "2025-10-29T00:52:25.498Z",
     "macroChains": {
       "chain_1761697789162_puzxhhhyt": {
         "chainId": "chain_1761697789162_puzxhhhyt",
         "scenes": [
           {
-            "id": "scene_5_1761697789162",
-            "order": 1,
-            "title": "Echoes of the Cult",
-            "objective": "Explore the hidden shrine of the Cult of the Lost and engage with High Priestess Seraphine to reveal the artifact's deeper, possibly apocalyptic significance."
-          },
-          {
             "id": "scene_6_1761697789162",
-            "order": 2,
+            "order": 1,
             "title": "The Balance of Power",
             "objective": "Decide whom to ally with in a climactic showdown as the factions converge on the artifact, determining Elderglen's fate amidst moral ambiguity and impending chaos."
           }
         ],
         "status": "Edited",
         "version": 2,
-        "lastUpdatedAt": "2025-10-29T00:38:23.216Z",
+        "lastUpdatedAt": "2025-10-29T00:48:17.381Z",
         "meta": {
           "source": "macroChainTab",
           "requestId": "7ab7473c-f185-40d1-be54-df71fe9f6906",

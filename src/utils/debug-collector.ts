@@ -140,6 +140,25 @@ class DebugCollector {
   log(scope: string, level: 'info' | 'warn' | 'error' | 'debug', message: string, data?: any) {
     if (!this.isEnabled) return;
 
+    // Filter out noisy logs to reduce clutter
+    const noisyPatterns = [
+      /React DevTools/,
+      /Warning: /,
+      /HMR/,
+      /webpack/,
+      /vite/,
+      /hot-update/,
+      /\[HMR\]/,
+      /DevTools/,
+      /Extension/,
+      /chrome-extension/,
+      /moz-extension/
+    ];
+    
+    if (level === 'info' && noisyPatterns.some(pattern => pattern.test(message))) {
+      return; // Skip noisy info logs
+    }
+
     const log: DebugLog = {
       id: this.generateId(),
       timestamp: Date.now(),

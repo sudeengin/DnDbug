@@ -13,24 +13,92 @@ async function getOrCreateSessionContext(sessionId) {
   let sessionContext = await loadSessionContext(sessionId);
   
   if (!sessionContext) {
-    log.warn(`Creating NEW session context for ${sessionId} - this should only happen on first initialization!`);
-    sessionContext = {
-      sessionId,
-      blocks: {},
-      locks: {},
-      meta: {
-        backgroundV: 0,
-        charactersV: 0,
-        macroSnapshotV: 0,
+    // CRITICAL FIX: Check if this is truly a new session or a corrupted one
+    // by looking for any existing data files
+    const { loadAllSessionContexts } = await import('./storage.js');
+    const allContexts = await loadAllSessionContexts();
+    
+    if (Object.keys(allContexts).length > 0) {
+      log.error(`🚨 CRITICAL: Session ${sessionId} not found but other sessions exist - possible corruption!`, {
+        sessionId,
+        existingSessions: Object.keys(allContexts),
+        timestamp: new Date().toISOString()
+      });
+      
+      // CRITICAL FIX: Try to find a similar session ID
+      const similarSession = Object.keys(allContexts).find(id => 
+        id.includes(sessionId.split('_')[0]) || sessionId.includes(id.split('_')[0])
+      );
+      
+      if (similarSession) {
+        log.warn(`🔄 Attempting to recover session ${sessionId} from similar session ${similarSession}`);
+        sessionContext = allContexts[similarSession];
+        sessionContext.sessionId = sessionId; // Update the session ID
+        
+        // CRITICAL: Preserve the existing locks and meta
+        log.info('🛡️ Preserving existing locks and meta during recovery:', {
+          sessionId,
+          originalLocks: sessionContext.locks,
+          originalMeta: sessionContext.meta,
+          originalVersion: sessionContext.version
+        });
+      } else {
+        // CRITICAL FIX: Don't create new session if we can't find similar one
+        // This prevents data loss
+        log.error(`🚨 CRITICAL: Refusing to create new session ${sessionId} - would cause data loss!`, {
+          sessionId,
+          existingSessions: Object.keys(allContexts),
+          timestamp: new Date().toISOString(),
+          action: 'ABORTING to prevent data loss'
+        });
+        
+        // Return a minimal context that won't overwrite existing data
+        sessionContext = {
+          sessionId,
+          blocks: {},
+          locks: {}, // Empty locks - won't overwrite existing
+          meta: {
+            backgroundV: 0,
+            charactersV: 0,
+            macroSnapshotV: 0,
+            updatedAt: new Date().toISOString()
+          },
+          version: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        // DON'T save this context - it would overwrite existing data
+        log.warn('⚠️ Not saving minimal context to prevent data loss');
+      }
+    } else {
+      log.info(`✅ Creating new session context for ${sessionId} - no existing sessions found`);
+      sessionContext = {
+        sessionId,
+        blocks: {},
+        locks: {},
+        meta: {
+          backgroundV: 0,
+          charactersV: 0,
+          macroSnapshotV: 0,
+          updatedAt: new Date().toISOString()
+        },
+        version: 0,
+        createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      },
-      version: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    await saveSessionContext(sessionId, sessionContext);
+      };
+      await saveSessionContext(sessionId, sessionContext);
+    }
   } else {
-    log.success(`Loaded existing session context for ${sessionId} - version: ${sessionContext.version}`);
+    log.success(`✅ Loaded existing session context for ${sessionId}:`, {
+      version: sessionContext.version,
+      hasBlocks: !!sessionContext.blocks,
+      hasBackground: !!(sessionContext.blocks && sessionContext.blocks.background),
+      hasCharacters: !!(sessionContext.blocks && sessionContext.blocks.characters),
+      hasMacroChains: !!sessionContext.macroChains,
+      macroChainCount: sessionContext.macroChains ? Object.keys(sessionContext.macroChains).length : 0,
+      contextSize: JSON.stringify(sessionContext).length
+    });
   }
   
   // Ensure meta exists for existing sessions

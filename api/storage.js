@@ -115,17 +115,50 @@ export async function saveSessionContext(sessionId, context) {
   await ensureDataDir();
   
   try {
-    const allContexts = await loadAllSessionContexts();
-    allContexts[sessionId] = {
-      ...context,
-      updatedAt: new Date().toISOString()
-    };
+    // CRITICAL FIX: Add file locking to prevent race conditions
+    const lockKey = `session_${sessionId}`;
+    const lockTimeout = 5000; // 5 second timeout
     
-    await fs.writeFile(CONTEXT_FILE, JSON.stringify(allContexts, null, 2));
-    log.success('Session context saved:', sessionId);
-    return context;
+    // Simple in-memory lock to prevent concurrent writes
+    if (global.sessionLocks && global.sessionLocks[lockKey]) {
+      console.warn('⚠️ Session context save blocked - another operation in progress', {
+        sessionId,
+        lockKey,
+        waitingFor: global.sessionLocks[lockKey]
+      });
+      
+      // Wait for lock to be released
+      let attempts = 0;
+      while (global.sessionLocks[lockKey] && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+      
+      if (global.sessionLocks[lockKey]) {
+        throw new Error(`Session context save timeout for ${sessionId}`);
+      }
+    }
+    
+    // Set lock
+    if (!global.sessionLocks) global.sessionLocks = {};
+    global.sessionLocks[lockKey] = Date.now();
+    
+    try {
+      const allContexts = await loadAllSessionContexts();
+      allContexts[sessionId] = {
+        ...context,
+        updatedAt: new Date().toISOString()
+      };
+      
+      await fs.writeFile(CONTEXT_FILE, JSON.stringify(allContexts, null, 2));
+      console.success('Session context saved:', sessionId);
+      return context;
+    } finally {
+      // Release lock
+      delete global.sessionLocks[lockKey];
+    }
   } catch (error) {
-    log.error('Error saving session context:', error);
+    console.error('Error saving session context:', error);
     throw new Error('Failed to save session context');
   }
 }
@@ -136,14 +169,30 @@ export async function loadSessionContext(sessionId) {
   try {
     const allContexts = await loadAllSessionContexts();
     const context = allContexts[sessionId] || null;
+    
+    // CRITICAL: Log session loading to detect why sessions are not found
+    console.log('🔍 Loading session context:', {
+      sessionId,
+      found: !!context,
+      allSessionIds: Object.keys(allContexts),
+      contextSize: context ? JSON.stringify(context).length : 0,
+      hasLocks: !!(context && context.locks),
+      hasBackground: !!(context && context.blocks && context.blocks.background),
+      hasCharacters: !!(context && context.blocks && context.blocks.characters),
+      version: context ? context.version : 'N/A'
+    });
+    
     if (context) {
-      log.debug('Session context loaded:', sessionId);
+      console.debug('Session context loaded:', sessionId);
     } else {
-      log.warn('Session context not found:', sessionId);
+      console.warn('Session context not found:', sessionId, {
+        availableSessions: Object.keys(allContexts),
+        timestamp: new Date().toISOString()
+      });
     }
     return context;
   } catch (error) {
-    log.error('Error loading session context:', error);
+    console.error('Error loading session context:', error);
     return null;
   }
 }

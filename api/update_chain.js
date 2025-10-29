@@ -124,6 +124,27 @@ export default async function handler(req, res) {
     if (sessionId && sessionContext) {
       const { saveSessionContext } = await import('./storage.js');
       
+      // CRITICAL FIX: Create backup before modifying session context
+      const backupContext = JSON.parse(JSON.stringify(sessionContext));
+      log.info('💾 Created session context backup before update_chain', {
+        sessionId,
+        chainId,
+        backupSize: JSON.stringify(backupContext).length,
+        hasBackground: !!(backupContext.blocks && backupContext.blocks.background),
+        hasCharacters: !!(backupContext.blocks && backupContext.blocks.characters)
+      });
+      
+      // SAFETY CHECK: Verify session context has data before modifying
+      if (!sessionContext.blocks && !sessionContext.macroChains) {
+        log.error('🚨 CRITICAL: Session context appears empty - aborting update to prevent data loss!', {
+          sessionId,
+          chainId,
+          contextKeys: Object.keys(sessionContext)
+        });
+        res.status(500).json({ error: 'Session context appears corrupted - aborting to prevent data loss' });
+        return;
+      }
+      
       // Update macroChains storage
       if (!sessionContext.macroChains) {
         sessionContext.macroChains = {};
@@ -164,9 +185,35 @@ export default async function handler(req, res) {
         chainScenesCount: updatedChain.scenes.length
       });
       
-      await saveSessionContext(sessionId, sessionContext);
-      
-      log.info(`Chain ${chainId} updated in session context with ${updatedChain.scenes.length} scenes`);
+      try {
+        await saveSessionContext(sessionId, sessionContext);
+        log.info(`Chain ${chainId} updated in session context with ${updatedChain.scenes.length} scenes`);
+      } catch (error) {
+        log.error('🚨 CRITICAL: Failed to save session context - attempting recovery from backup', {
+          sessionId,
+          chainId,
+          error: error.message,
+          backupSize: JSON.stringify(backupContext).length
+        });
+        
+        // Attempt to restore from backup
+        try {
+          await saveSessionContext(sessionId, backupContext);
+          log.warn('🔄 Session context restored from backup', {
+            sessionId,
+            chainId
+          });
+        } catch (backupError) {
+          log.error('🚨 CRITICAL: Backup restoration failed - data may be lost!', {
+            sessionId,
+            chainId,
+            backupError: backupError.message
+          });
+        }
+        
+        // Don't fail the entire request, just log the error
+        log.error('Session context save failed but chain update succeeded:', error);
+      }
     }
 
     // Log telemetry
