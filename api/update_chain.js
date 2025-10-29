@@ -1,5 +1,5 @@
 import { loadChain, updateChain } from './storage.js';
-import logger from './lib/logger.js';
+import logger from "./lib/logger.js";
 
 const log = logger.macroChain;
 

@@ -4,7 +4,13 @@ import { makeMacroSnapshotV } from './lib/versioning.js';
 import { saveChain } from './storage.js';
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
-import logger from './lib/logger.js';
+import { 
+  selectCreativeApproach, 
+  recordMacroChainApproach, 
+  getRecentMacroChainApproaches,
+  generateVariationSeed 
+} from './lib/creativityTracker.js';
+import logger from "./lib/logger.js";
 
 const log = logger.macroChain;
 
@@ -163,6 +169,65 @@ PLAYER COUNT: ${promptContext.numberOfPlayers || 4}
     log.info('Full Context Block:', contextMemoryBlock);
     log.debug('================================');
 
+    // Enhanced randomization system with creativity tracking
+    const creativityDirections = [
+      "Focus on unexpected plot twists and surprising revelations",
+      "Emphasize atmospheric tension and mysterious elements", 
+      "Prioritize character-driven conflicts and personal stakes",
+      "Highlight environmental storytelling and world-building details",
+      "Create scenes with multiple possible outcomes and player agency",
+      "Focus on moral dilemmas and ethical choices",
+      "Emphasize social dynamics and NPC relationships",
+      "Create scenes with hidden layers and deeper meanings",
+      "Focus on action and adventure with dynamic encounters",
+      "Emphasize investigation and discovery mechanics",
+      "Create scenes with psychological horror and mind-bending elements",
+      "Focus on political intrigue and factional conflicts",
+      "Emphasize exploration of ancient mysteries and lost civilizations",
+      "Create scenes with time manipulation or reality distortion",
+      "Focus on environmental challenges and survival elements",
+      "Emphasize magical experimentation and arcane discoveries",
+      "Create scenes with moral ambiguity and difficult choices",
+      "Focus on character backstory revelations and personal growth",
+      "Emphasize cosmic horror and otherworldly encounters",
+      "Create scenes with social commentary and philosophical themes"
+    ];
+    
+    // Get recent approaches to avoid repetition
+    const recentApproaches = sessionId ? await getRecentMacroChainApproaches(sessionId) : [];
+    const randomCreativityPrompt = selectCreativeApproach(creativityDirections, recentApproaches);
+    
+    // Generate session-aware variation seed
+    const variationSeed = sessionId ? await generateVariationSeed(sessionId) : Date.now() % 1000;
+    
+    // Dynamic temperature based on variation seed for more randomness
+    const baseTemperature = 0.9;
+    const temperatureVariation = (variationSeed % 20) / 100; // 0.0 to 0.19 variation
+    const dynamicTemperature = Math.min(1.0, baseTemperature + temperatureVariation);
+    
+    // Additional randomization factors
+    const narrativeStyles = [
+      "Use a more poetic and descriptive tone",
+      "Adopt a more direct and action-oriented style", 
+      "Employ a mysterious and enigmatic narrative voice",
+      "Use a conversational and accessible tone",
+      "Adopt a scholarly and analytical approach",
+      "Employ a dramatic and theatrical style"
+    ];
+    
+    const randomNarrativeStyle = narrativeStyles[Math.floor(Math.random() * narrativeStyles.length)];
+    
+    const pacingVariations = [
+      "Create a slow-burning, methodical progression",
+      "Use rapid-fire, high-energy pacing",
+      "Alternate between intense and contemplative moments",
+      "Build tension gradually with escalating stakes",
+      "Use episodic structure with clear chapter breaks",
+      "Create a continuous, flowing narrative"
+    ];
+    
+    const randomPacing = pacingVariations[Math.floor(Math.random() * pacingVariations.length)];
+
     const userPrompt = `${contextMemoryBlock}
 
 STORY_CONCEPT:
@@ -172,6 +237,17 @@ ${concept}
 
 STRUCTURAL_PREFERENCES:
 ${JSON.stringify(meta || {})}
+
+CREATIVITY_DIRECTION:
+${randomCreativityPrompt}
+
+NARRATIVE_STYLE:
+${randomNarrativeStyle}
+
+PACING_APPROACH:
+${randomPacing}
+
+VARIATION_SEED: ${variationSeed} (use this number to add subtle variations in scene structure and pacing)
 
 CRITICAL INSTRUCTIONS - FOLLOW THESE EXACTLY:
 1. The BACKGROUND_CONTEXT above is your PRIMARY SOURCE for creating scenes. Use it extensively.
@@ -206,13 +282,39 @@ You MUST return a valid JSON object with this EXACT structure:
 
 CRITICAL: Return ONLY the JSON object. Do not include any other text, explanations, or formatting. The response must be valid JSON that can be parsed directly.`;
 
+    // Model rotation for different generation styles
+    const models = ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo'];
+    const selectedModel = models[Math.floor(Math.random() * models.length)];
+    
+    // Dynamic top_p based on variation seed
+    const baseTopP = 0.95;
+    const topPVariation = (variationSeed % 10) / 100; // 0.0 to 0.09 variation
+    const dynamicTopP = Math.min(1.0, baseTopP + topPVariation);
+    
+    log.info('Using dynamic parameters:', {
+      model: selectedModel,
+      temperature: dynamicTemperature,
+      top_p: dynamicTopP,
+      variationSeed,
+      creativityDirection: randomCreativityPrompt,
+      narrativeStyle: randomNarrativeStyle,
+      pacing: randomPacing,
+      recentApproaches: recentApproaches.length
+    });
+
+    // Record the approach used for future creativity tracking
+    if (sessionId) {
+      await recordMacroChainApproach(sessionId, randomCreativityPrompt, randomNarrativeStyle, randomPacing);
+    }
+
     const completion = await getOpenAI().chat.completions.create({
-      model: 'gpt-4o',
+      model: selectedModel,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.7,
+      temperature: dynamicTemperature,
+      top_p: dynamicTopP,
     });
 
     const responseText = completion.choices[0]?.message?.content;
@@ -272,10 +374,10 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
     const macroChain = {
       chainId,
       scenes,
-      status: 'Draft', // Mark initial scenes as Draft (idea bank)
+      status: 'Draft', // Mark initial scenes as Draft (idea bank for iterative expansion)
       version: 1,
       lastUpdatedAt: new Date().toISOString(),
-      meta: { ...meta, isDraftIdeaBank: true }, // Flag as idea bank
+      meta: { ...meta, isDraftIdeaBank: true }, // Flag as idea bank for GM to edit/delete and expand iteratively
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

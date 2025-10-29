@@ -288,5 +288,4 @@ const logger = {
 };
 
 export default logger;
-export { loggers, createLogger };
 

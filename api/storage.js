@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import logger from './lib/logger.js';
+import logger from "./lib/logger.js";
 
 const log = logger.storage;
 

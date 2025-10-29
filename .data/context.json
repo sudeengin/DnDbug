@@ -621,5 +621,139 @@
         "updatedAt": "2025-10-21T21:44:26.689Z"
       }
     }
+  },
+  "project_1761415072939_q78qqjzy6": {
+    "sessionId": "project_1761415072939_q78qqjzy6",
+    "blocks": {
+      "story_concept": {
+        "concept": "hjkl",
+        "timestamp": "2025-10-29T00:03:44.830Z"
+      },
+      "background": {
+        "premise": "A mysterious artifact has surfaced in the bustling city of Elderglen, drawing the attention of various factions eager to harness its power.",
+        "tone_rules": [
+          "Maintain an air of mystery and intrigue.",
+          "Balance moments of high-stakes action with quiet investigation.",
+          "Encourage players to question whom they can trust.",
+          "Highlight the moral ambiguity of choices.",
+          "Keep an underlying sense of impending danger."
+        ],
+        "stakes": [
+          "The artifact could tip the balance of power in Elderglen.",
+          "A war between factions could devastate the city.",
+          "The players' alliances might determine the city's future.",
+          "Uncovering the artifact's true purpose may have global implications.",
+          "Failure could lead to the artifact falling into the wrong hands."
+        ],
+        "mysteries": [
+          "What is the true nature of the artifact?",
+          "Who originally created the artifact?",
+          "Which faction can be trusted, if any?",
+          "What hidden powers does the artifact possess?",
+          "Why has the artifact appeared now?"
+        ],
+        "factions": [
+          "The Arcane Guild, seeking the artifact for study.",
+          "The Shadow Syndicate, wanting it for control and power.",
+          "The City Guard, aiming to protect Elderglen from chaos.",
+          "The Cult of the Lost, believing the artifact is a divine relic.",
+          "The Merchants' Consortium, interested in the artifact's market potential."
+        ],
+        "location_palette": [
+          "The bustling markets of Elderglen.",
+          "The secretive halls of the Arcane Guild.",
+          "The dark alleys controlled by the Shadow Syndicate.",
+          "The fortified barracks of the City Guard.",
+          "The hidden shrine of the Cult of the Lost."
+        ],
+        "npc_roster_skeleton": [
+          "Guildmaster Alaric, a wise but secretive leader of the Arcane Guild.",
+          "Syndicate Boss Marlowe, a cunning and ruthless crime lord.",
+          "Captain Elara, a stern but fair leader of the City Guard.",
+          "High Priestess Seraphine, a fervent believer of the Cult of the Lost.",
+          "Trader Vex, a shrewd merchant with connections in every faction."
+        ],
+        "motifs": [
+          "The duality of power and corruption.",
+          "The thin line between order and chaos.",
+          "The search for truth amidst deception.",
+          "The weight of choice and consequence.",
+          "The allure of forbidden knowledge."
+        ],
+        "doNots": [
+          "Do not make the artifact easily accessible.",
+          "Do not allow one faction to be clearly superior.",
+          "Avoid making the city a single-tone environment.",
+          "Do not resolve mysteries too quickly.",
+          "Avoid overly simplistic moral choices."
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and investigation.",
+          "Balance combat with diplomacy and negotiation.",
+          "Allow players to form their own alliances.",
+          "Support creative problem-solving.",
+          "Facilitate player-driven story progression."
+        ],
+        "numberOfPlayers": 4
+      }
+    },
+    "locks": {
+      "background": true
+    },
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-28T22:55:58.098Z"
+    },
+    "version": 6,
+    "createdAt": "2025-10-28T22:55:58.098Z",
+    "updatedAt": "2025-10-29T00:04:23.325Z"
+  },
+  "test-session-123": {
+    "sessionId": "test-session-123",
+    "blocks": {
+      "background": {
+        "premise": "Test premise"
+      }
+    },
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-28T23:52:19.757Z"
+    },
+    "version": 1,
+    "createdAt": "2025-10-28T23:52:19.757Z",
+    "updatedAt": "2025-10-28T23:52:19.759Z"
+  },
+  "test-session": {
+    "sessionId": "test-session",
+    "blocks": {},
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-28T23:54:57.306Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-28T23:54:57.306Z",
+    "updatedAt": "2025-10-28T23:54:57.307Z"
+  },
+  "test": {
+    "sessionId": "test",
+    "blocks": {},
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-10-29T00:07:06.957Z"
+    },
+    "version": 0,
+    "createdAt": "2025-10-29T00:07:06.957Z",
+    "updatedAt": "2025-10-29T00:07:06.958Z"
   }
 }

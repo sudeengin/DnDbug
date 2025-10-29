@@ -31,7 +31,7 @@ ${backgroundJson}
 
 PLAYER COUNT: ${playerCount}
 
-CRITICAL: You MUST generate ALL 15 required fields for each character. Do not omit any fields.
+CRITICAL: You MUST generate ALL 20 required fields for each character. Do not omit any fields.
 
 INSTRUCTIONS:
 
@@ -69,15 +69,26 @@ INSTRUCTIONS:
        - Keep tone immersive and concise — readable for GMs and players alike
        - No stats or numeric attributes — this system generates narrative, not mechanics
 
-       7. GM SECRET REQUIREMENTS (CRITICAL)
-       - Each gmSecret must be 2-3 sentences of rich, interconnected lore
-       - Connect directly to background context: use anchors, factions, mysteries, or motifs
-       - Create dramatic potential: secrets that can change the story when revealed
-       - Examples of good gmSecrets:
-         * "Character's family was responsible for the manor's downfall, but they don't know it. Their ancestor's betrayal is why the manor is cursed, and the current owner seeks revenge."
-         * "The character unknowingly carries the key to the manor's hidden chamber where the original owner's soul is trapped. Opening it will either free or doom the spirit."
-         * "Their mentor was secretly a member of the antagonist faction and sent them here as a sacrifice. The character's arrival triggers the final ritual."
-       - Avoid shallow secrets like "they have trust issues" or "mysterious past"
+7. GM SECRET REQUIREMENTS (CRITICAL)
+- Each gmSecret must be 2-3 sentences of rich, interconnected lore
+- Connect directly to background context: use anchors, factions, mysteries, or motifs
+- Create dramatic potential: secrets that can change the story when revealed
+- Examples of good gmSecrets:
+  * "Character's family was responsible for the manor's downfall, but they don't know it. Their ancestor's betrayal is why the manor is cursed, and the current owner seeks revenge."
+  * "The character unknowingly carries the key to the manor's hidden chamber where the original owner's soul is trapped. Opening it will either free or doom the spirit."
+  * "Their mentor was secretly a member of the antagonist faction and sent them here as a sacrifice. The character's arrival triggers the final ritual."
+- Avoid shallow secrets like "they have trust issues" or "mysterious past"
+
+8. SRD CHARACTER SHEET INTEGRATION
+- languages: Array of 2-4 languages the character speaks (include Common + racial languages + learned languages)
+- alignment: D&D alignment (e.g., "Lawful Good", "Chaotic Neutral", "True Neutral")
+- deity: Religious affiliation or deity worshiped (if any, otherwise null)
+- physicalDescription: Detailed appearance including build, distinguishing features, clothing style (exclude height - use separate height field)
+- equipmentPreferences: Array of 3-5 preferred starting equipment items (weapons, armor, tools, etc.)
+- subrace: Specific subrace if applicable (e.g., "High Elf", "Wood Elf", "Mountain Dwarf", "Hill Dwarf")
+- age: Character's age in years (reasonable for their race and background)
+- height: Character's height in feet and inches format (e.g., "5'7\"", "6'2\"")
+- proficiencies: Array of 3-5 skill proficiencies, tool proficiencies, or other abilities (e.g., "Athletics", "Stealth", "Thieves' Tools", "Herbalism Kit")
 
 Generate exactly ${playerCount} playable characters (±1 if narratively justified).
 Follow all tone/motif/consistency rules from the Background.
@@ -94,14 +105,23 @@ REQUIRED OUTPUT FORMAT - Generate ALL fields for each character:
       "personality": "2-3 sentences describing their personality traits and behavior",
       "motivation": "What drives them in this specific story",
       "connectionToStory": "Direct link to the background context or story premise",
-             "gmSecret": "Rich, detailed hidden truth (2-3 sentences) connecting to background lore, factions, or past events that the character doesn't know but GM can use for dramatic reveals",
+      "gmSecret": "Rich, detailed hidden truth (2-3 sentences) connecting to background lore, factions, or past events that the character doesn't know but GM can use for dramatic reveals",
       "potentialConflict": "Internal or external tension that could cause problems",
       "voiceTone": "How they speak or behave (e.g., 'Soft and deliberate', 'Gruff and direct')",
       "inventoryHint": "Small symbolic item they carry (e.g., 'An aged journal', 'A rusted locket')",
       "motifAlignment": ["Array of 2-3 motifs from background that connect to this character"],
       "backgroundHistory": "1-2 paragraphs of their full backstory including upbringing and defining events",
       "keyRelationships": ["Array of 2-3 people, factions, or NPCs they know"],
-      "flawOrWeakness": "Defining flaw, vice, or vulnerability that makes them human"
+      "flawOrWeakness": "Defining flaw, vice, or vulnerability that makes them human",
+      "languages": ["Array of 2-4 languages (e.g., 'Common', 'Elvish', 'Dwarvish', 'Draconic')"],
+      "alignment": "D&D alignment (e.g., 'Lawful Good', 'Chaotic Neutral', 'True Neutral')",
+      "deity": "Religious affiliation or deity worshiped (null if none)",
+      "physicalDescription": "Detailed appearance including build, distinguishing features, clothing style (exclude height)",
+      "equipmentPreferences": ["Array of 3-5 preferred starting equipment items"],
+      "subrace": "Specific subrace if applicable (null if none, e.g., 'High Elf', 'Wood Elf', 'Mountain Dwarf')",
+      "age": "Character's age in years (reasonable for their race and background)",
+      "height": "Character's height in feet and inches format (e.g., '5'7\"', '6'2\"')",
+      "proficiencies": ["Array of 3-5 skill proficiencies, tool proficiencies, or other abilities"]
     }
   ]
 }`;
@@ -166,7 +186,8 @@ export default async function handler(req, res) {
           content: prompt
         }
       ],
-      temperature: 0.7,
+      temperature: 0.9,
+      top_p: 0.95,
       max_tokens: 4000
     });
 
@@ -208,7 +229,9 @@ export default async function handler(req, res) {
     const requiredFields = [
       'name', 'role', 'race', 'class', 'personality', 'motivation',
       'connectionToStory', 'gmSecret', 'potentialConflict', 'voiceTone',
-      'inventoryHint', 'motifAlignment', 'backgroundHistory', 'keyRelationships', 'flawOrWeakness'
+      'inventoryHint', 'motifAlignment', 'backgroundHistory', 'keyRelationships', 'flawOrWeakness',
+      'languages', 'alignment', 'deity', 'physicalDescription', 'equipmentPreferences', 'subrace',
+      'age', 'height', 'proficiencies'
     ];
 
     for (let i = 0; i < parsedResponse.characters.length; i++) {
@@ -226,12 +249,27 @@ export default async function handler(req, res) {
       if (!Array.isArray(char.keyRelationships)) {
         throw new Error(`Character ${i + 1} keyRelationships must be an array`);
       }
+      if (!Array.isArray(char.languages)) {
+        throw new Error(`Character ${i + 1} languages must be an array`);
+      }
+      if (!Array.isArray(char.equipmentPreferences)) {
+        throw new Error(`Character ${i + 1} equipmentPreferences must be an array`);
+      }
+      if (!Array.isArray(char.proficiencies)) {
+        throw new Error(`Character ${i + 1} proficiencies must be an array`);
+      }
+      
+      // Validate numeric fields
+      if (typeof char.age !== 'number' || char.age < 1 || char.age > 1000) {
+        throw new Error(`Character ${i + 1} age must be a reasonable number between 1 and 1000`);
+      }
     }
 
     // Generate UUIDs for characters and ensure proper structure
     const characters = parsedResponse.characters.map(char => ({
       ...char,
-      id: `char_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      id: `char_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      status: 'generated' // Mark newly generated characters
     }));
 
     // Store characters in session context

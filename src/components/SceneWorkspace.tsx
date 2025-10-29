@@ -2,15 +2,13 @@ import { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
 import SceneDetailEditor from './SceneDetailEditor';
 import SceneContextOut from './SceneContextOut';
 import SceneHistory from './SceneHistory';
-import { getJSON, postJSON, lockScene, unlockScene, generateDetail } from '../lib/api';
+import { getJSON, postJSON, lockScene, unlockScene, generateDetail, generateNextScene } from '../lib/api';
 import type { MacroScene, SceneDetail, SessionContext, ContextOut } from '../types/macro-chain';
 import { canLockScene, canGenerateNext, mergeLockedContexts, getSceneStatus, type SceneStatusStore } from '../lib/status';
-import logger from '@/utils/logger';
-
-const log = logger.scene;
 
 interface SceneWorkspaceProps {
   sessionId: string;
@@ -43,23 +41,23 @@ export default function SceneWorkspace({
   const [detail, setDetail] = useState<SceneDetail | null>(null);
   const [contextOut, setContextOut] = useState<ContextOut | null>(null);
   const [history, setHistory] = useState<any[]>([]); // Placeholder for history
-  const [showGmIntent, setShowGmIntent] = useState(false);
   const [gmIntent, setGmIntent] = useState('');
+  const [showGmIntent, setShowGmIntent] = useState(false);
 
   useEffect(() => {
     // Load existing detail from sceneDetails prop
-    log.info('SceneWorkspace useEffect:', {
+    console.log('SceneWorkspace useEffect:', {
       sceneId: scene.id,
       sceneDetailsKeys: Object.keys(sceneDetails),
       sceneDetails: sceneDetails
     });
     const existingDetail = sceneDetails[scene.id];
     if (existingDetail) {
-      log.info('Found existing detail:', existingDetail);
+      console.log('Found existing detail:', existingDetail);
       setDetail(existingDetail);
       setContextOut(existingDetail.contextOut || existingDetail.dynamicElements?.contextOut);
     } else {
-      log.info('No existing detail found for scene:', scene.id);
+      console.log('No existing detail found for scene:', scene.id);
       setDetail(null);
       setContextOut(null);
     }
@@ -68,7 +66,7 @@ export default function SceneWorkspace({
   const handleGenerateDetail = async () => {
     if (!context) return;
     
-    log.info('SceneWorkspace sessionId:', sessionId, 'Type:', typeof sessionId);
+    console.log('SceneWorkspace sessionId:', sessionId, 'Type:', typeof sessionId);
     
     try {
       setLoading(true);
@@ -77,7 +75,7 @@ export default function SceneWorkspace({
       const sceneIds = Object.keys(sceneDetails);
       const effectiveContext = mergeLockedContexts(sceneIndex - 1, sceneDetails, sceneIds);
       
-      log.info('Context building for scene generation:', {
+      console.log('Context building for scene generation:', {
         sceneIndex,
         sceneIds,
         sceneDetailsKeys: Object.keys(sceneDetails),
@@ -97,25 +95,25 @@ export default function SceneWorkspace({
         sessionId
       };
       
-      log.info('Request data before API call:', {
+      console.log('Request data before API call:', {
         sessionId,
         sceneId: scene.id,
         hasSessionId: !!sessionId,
         requestDataKeys: Object.keys(requestData)
       });
       
-      log.info('SceneWorkspace generateDetail request:', {
+      console.log('SceneWorkspace generateDetail request:', {
         sessionId,
         sceneId: scene.id,
         requestData
       });
       
-      log.info('SessionId value:', sessionId, 'Type:', typeof sessionId);
+      console.log('SessionId value:', sessionId, 'Type:', typeof sessionId);
       
       const response = await generateDetail(requestData);
       
       if (response.ok) {
-        log.info('GenerateDetail response:', {
+        console.log('GenerateDetail response:', {
           responseData: response.data,
           responseDataSceneId: response.data.sceneId,
           sceneId: scene.id
@@ -125,7 +123,7 @@ export default function SceneWorkspace({
         onDetailUpdate(response.data);
       }
     } catch (error) {
-      log.error('Failed to generate detail:', error);
+      console.error('Failed to generate detail:', error);
     } finally {
       setLoading(false);
     }
@@ -151,7 +149,7 @@ export default function SceneWorkspace({
       setDetail(updatedDetail);
       onDetailUpdate(updatedDetail);
     } catch (error) {
-      log.error('Failed to save detail:', error);
+      console.error('Failed to save detail:', error);
     } finally {
       setLoading(false);
     }
@@ -166,21 +164,17 @@ export default function SceneWorkspace({
     
     try {
       setLoading(true);
-      log.info('Locking scene with:', { sessionId, sceneId: scene.id, detailSceneId: detail.sceneId });
+      console.log('Locking scene with:', { sessionId, sceneId: scene.id, detailSceneId: detail.sceneId });
       const response = await lockScene({ sessionId, sceneId: scene.id });
       if (response.ok) {
         setDetail(response.detail);
         onDetailUpdate(response.detail);
-        // Show success toast
-        log.info('Scene locked successfully');
-        
-        // After locking, show GM Intent panel if not the last scene
-        if (scene.order < total) {
-          setShowGmIntent(true);
-        }
+        // Show GM Intent panel after successful lock
+        setShowGmIntent(true);
+        console.log('Scene locked successfully');
       }
     } catch (error) {
-      log.error('Failed to lock scene:', error);
+      console.error('Failed to lock scene:', error);
     } finally {
       setLoading(false);
     }
@@ -199,10 +193,10 @@ export default function SceneWorkspace({
         setDetail(response.detail);
         onDetailUpdate(response.detail);
         onMarkScenesNeedsRegen(response.affectedScenes);
-        log.info('Scene unlocked successfully, affected scenes:', response.affectedScenes);
+        console.log('Scene unlocked successfully, affected scenes:', response.affectedScenes);
       }
     } catch (error) {
-      log.error('Failed to unlock scene:', error);
+      console.error('Failed to unlock scene:', error);
     } finally {
       setLoading(false);
     }
@@ -217,7 +211,7 @@ export default function SceneWorkspace({
       // Navigate to next scene
       onSceneSelect(sceneIndex + 1);
     } catch (error) {
-      log.error('Failed to navigate to next scene:', error);
+      console.error('Failed to navigate to next scene:', error);
     } finally {
       setLoading(false);
     }
@@ -225,47 +219,29 @@ export default function SceneWorkspace({
 
   const handleGenerateNextScene = async () => {
     if (!gmIntent.trim()) {
-      alert('Please describe what you want to see next.');
+      console.error('Please describe what you want next.');
       return;
     }
     
     try {
       setLoading(true);
       
-      const response = await postJSON<{ ok: boolean; scene: MacroScene; chain: any }>('/api/generate_next_scene', {
+      const response = await generateNextScene({
         sessionId,
         previousSceneId: scene.id,
         gmIntent: gmIntent.trim()
       });
       
       if (response.ok) {
-        log.info('Next scene created:', response.scene);
-        // Reset GM intent panel
+        console.log('Next scene created:', response.data);
+        // Navigate to the new scene
+        onSceneSelect(sceneIndex + 1);
+        // Hide GM Intent panel
         setShowGmIntent(false);
         setGmIntent('');
-        
-        // Trigger context refresh to update background scene count
-        if (onContextUpdate) {
-          try {
-            const contextResponse = await getJSON<{ ok: boolean; data: SessionContext | null }>(`/api/context/get?sessionId=${sessionId}`);
-            if (contextResponse.ok && contextResponse.data) {
-              onContextUpdate(contextResponse.data);
-            }
-          } catch (contextError) {
-            log.error('Failed to refresh context after generating next scene:', contextError);
-          }
-        }
-        
-        // Navigate to the new scene (it will be at sceneIndex + 1)
-        // Since the chain was updated, the parent will re-render with new scenes
-        // We can navigate to the next index
-        setTimeout(() => {
-          onSceneSelect(sceneIndex + 1);
-        }, 500);
       }
     } catch (error) {
-      log.error('Failed to generate next scene:', error);
-      alert('Failed to generate next scene. Please try again.');
+      console.error('Failed to generate next scene:', error);
     } finally {
       setLoading(false);
     }
@@ -332,56 +308,48 @@ export default function SceneWorkspace({
         </TabsContent>
       </Tabs>
 
-      {/* GM Intent Panel - shown after locking a scene */}
-      {showGmIntent && detail?.status === 'Locked' && scene.order < total && (
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">What do you want to see next?</h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  Describe what should happen in the next scene. Your input will guide the AI to create Scene {scene.order + 1}.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowGmIntent(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      {/* GM Intent Panel - Show after scene is locked */}
+      {showGmIntent && detail?.status === 'Locked' && (
+        <div className="border-t bg-blue-50 p-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-blue-500 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                GM Intent
-              </label>
-              <textarea
-                value={gmIntent}
-                onChange={(e) => setGmIntent(e.target.value)}
-                placeholder="Example: The party discovers a hidden passageway that leads to the villain's lair. They encounter guards and must decide whether to fight or sneak past..."
-                className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500">
-                This will create a new draft scene based on your intent.
-              </p>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowGmIntent(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleGenerateNextScene}
-                  disabled={!gmIntent.trim()}
-                >
-                  Generate Next Scene
-                </Button>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-blue-900 mb-2">What do you want to see next?</h3>
+                <p className="text-sm text-blue-700 mb-4">
+                  Describe what should happen in the next scene. The AI will use your intent along with the story context to generate the next scene.
+                </p>
+                <div className="space-y-4">
+                  <Textarea
+                    value={gmIntent}
+                    onChange={(e) => setGmIntent(e.target.value)}
+                    placeholder="e.g., The party discovers a hidden chamber with ancient artifacts, or The villain reveals their true identity..."
+                    className="min-h-[100px] resize-none"
+                  />
+                  <div className="flex items-center justify-between">
+                    <Button
+                      onClick={handleGenerateNextScene}
+                      disabled={!gmIntent.trim() || loading}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      {loading ? 'Generating...' : 'Generate Next Scene'}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setShowGmIntent(false);
+                        setGmIntent('');
+                      }}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

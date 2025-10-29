@@ -4,7 +4,7 @@ import {
   updateSessionContext 
 } from './storage.js';
 import { invalidateMacroChain, invalidateAllScenes } from './lib/invalidation.js';
-import logger from './lib/logger.js';
+import logger from "./lib/logger.js";
 
 const log = logger.context;
 

@@ -8,6 +8,8 @@ import ProjectList from './ProjectList';
 import { postJSON } from '../lib/api';
 import { validateGenerateChainRequest, validateMacroChain } from '../utils/macro-chain-validation';
 import { telemetry } from '../utils/telemetry';
+import { debug } from '../utils/debug-collector';
+import { useDebug } from '../hooks/useDebug';
 import type { GenerateChainRequest, MacroChain, SessionContext, StoryBackground } from '../types/macro-chain';
 import logger from '@/utils/logger';
 
@@ -31,6 +33,13 @@ export default function MacroChainApp() {
   const [background, setBackground] = useState<any | null>(null);
   const [showProjectCreate, setShowProjectCreate] = useState(false);
 
+  // Initialize debug logging
+  const { logAction, logTestPhase, logApiCall, logValidation } = useDebug({
+    component: 'MacroChainApp',
+    sessionId: sessionId || undefined,
+    route: '/macro-chain',
+  });
+
   const handleProjectCreated = (createdProject: Project) => {
     setProject(createdProject);
     setSessionId(createdProject.id); // Use project ID as sessionId
@@ -52,8 +61,13 @@ export default function MacroChainApp() {
 
   const handleGenerateChain = async (request: GenerateChainRequest) => {
     try {
+      logAction('generate-chain-started', { request, sessionId });
+      logTestPhase('generate', 'Starting chain generation', request);
+
       if (!sessionId) {
-        setError('No active project session');
+        const errorMsg = 'No active project session';
+        setError(errorMsg);
+        logAction('generate-chain-error', { error: errorMsg });
         return;
       }
 
@@ -62,18 +76,25 @@ export default function MacroChainApp() {
       setLoading(true);
 
       // Validate the request
+      logTestPhase('validate', 'Validating generate chain request', request);
       const validation = validateGenerateChainRequest(request);
+      logValidation('generate-chain-request', validation.isValid, validation.errors, validation.warnings);
+      
       if (!validation.isValid) {
-        setValidationErrors(validation.errors.map(e => `${e.field}: ${e.message}`));
+        const errors = validation.errors.map(e => `${e.field}: ${e.message}`);
+        setValidationErrors(errors);
+        logAction('generate-chain-validation-failed', { errors });
         return;
       }
 
       // Show warnings if any
       if (validation.warnings.length > 0) {
         log.warn('Validation warnings:', validation.warnings);
+        logAction('generate-chain-warnings', { warnings: validation.warnings });
       }
 
       // Store the story concept in context
+      logTestPhase('append', 'Storing story concept in context', { concept: request.concept, meta: request.meta });
       try {
         await postJSON('/api/context/append', {
           sessionId,
@@ -84,12 +105,15 @@ export default function MacroChainApp() {
             timestamp: new Date().toISOString()
           }
         });
+        logAction('context-append-success', { blockType: 'story_concept' });
       } catch (error) {
         log.warn('Failed to store story concept in context:', error);
+        logAction('context-append-failed', { error, blockType: 'story_concept' });
         // Continue with chain generation even if context storage fails
       }
 
       // Call the API with sessionId for context memory
+      logTestPhase('generate', 'Calling generate chain API', { ...request, sessionId });
       const response = await postJSON<{ ok: boolean; data: MacroChain }>('/api/generate_chain', {
         ...request,
         sessionId
@@ -100,9 +124,14 @@ export default function MacroChainApp() {
       }
 
       // Validate the response
+      logTestPhase('validate', 'Validating generated chain', response.data);
       const chainValidation = validateMacroChain(response.data);
+      logValidation('generated-chain', chainValidation.isValid, chainValidation.errors, chainValidation.warnings);
+      
       if (!chainValidation.isValid) {
-        setValidationErrors(chainValidation.errors.map(e => `${e.field}: ${e.message}`));
+        const errors = chainValidation.errors.map(e => `${e.field}: ${e.message}`);
+        setValidationErrors(errors);
+        logAction('chain-validation-failed', { errors });
         return;
       }
 
@@ -116,11 +145,18 @@ export default function MacroChainApp() {
         }
       );
 
+      logTestPhase('generate', 'Chain generation completed successfully', response.data);
+      logAction('generate-chain-success', { 
+        chainId: response.data.chainId, 
+        sceneCount: response.data.scenes.length 
+      });
+      
       setChain(response.data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
       log.error('Error generating chain:', err);
+      logAction('generate-chain-error', { error: errorMessage, stack: err instanceof Error ? err.stack : undefined });
     } finally {
       setLoading(false);
     }

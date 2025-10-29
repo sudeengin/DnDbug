@@ -20,7 +20,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import InlineEdit from './InlineEdit';
 import SceneDetailEditor from './SceneDetailEditor';
-import type { MacroChain, MacroScene, UpdateChainRequest, SceneDetail, LockChainRequest, UnlockChainRequest, SessionContext } from '../types/macro-chain';
+import type { MacroChain, MacroScene, UpdateChainRequest, SceneDetail, LockChainRequest, UnlockChainRequest } from '../types/macro-chain';
 import { postJSON } from '../lib/api';
 import logger from '@/utils/logger';
 
@@ -44,7 +44,6 @@ function SortableSceneItem({
   onGenerateDetail,
   onDeleteScene,
   onLockScene,
-  onRetriggerGmIntent,
   sceneDetails,
   scenes,
   isGenerating,
@@ -59,7 +58,6 @@ function SortableSceneItem({
   onGenerateDetail: (scene: MacroScene, previousDetails: SceneDetail[]) => void;
   onDeleteScene: (sceneId: string) => void;
   onLockScene: (scene: MacroScene) => void;
-  onRetriggerGmIntent: (scene: MacroScene) => void;
   sceneDetails: SceneDetail[];
   scenes: MacroScene[];
   isGenerating: boolean;
@@ -76,16 +74,20 @@ function SortableSceneItem({
     isDragging,
   } = useSortable({ id: scene.id });
 
+  // Determine if this scene is the next one to lock (enforce Lock & Advance)
+  // Find the highest order among locked scenes and add 1
+  const lockedSceneOrders = Array.from(lockedMacroScenes).map(sceneId => {
+    const lockedScene = scenes.find(s => s.id === sceneId);
+    return lockedScene ? lockedScene.order : 0;
+  });
+  const maxLockedOrder = lockedSceneOrders.length > 0 ? Math.max(...lockedSceneOrders) : 0;
+  const expectedNextOrder = maxLockedOrder + 1;
+  const isNextSceneToLock = scene.order === expectedNextOrder;
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
-  // Check if this scene can be locked (sequential locking requirement)
-  const lockedScenes = scenes.filter(s => lockedMacroScenes.has(s.id));
-  const highestLockedOrder = lockedScenes.length > 0 ? Math.max(...lockedScenes.map(s => s.order)) : 0;
-  const nextSceneOrder = highestLockedOrder + 1;
-  const canLockScene = scene.order === nextSceneOrder;
 
   return (
     <div
@@ -186,34 +188,53 @@ function SortableSceneItem({
                   <span>Scene Locked</span>
                 </div>
                 <button
-                  onClick={() => onRetriggerGmIntent(scene)}
+                  onClick={() => onLockScene(scene)}
                   className="w-full px-3 py-2 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors flex items-center justify-center space-x-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  <span>Re-trigger GM Intent</span>
+                  <span>Generate Next Scene</span>
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => onLockScene(scene)}
-                disabled={isChainLocked || !canLockScene}
-                className="w-full px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-              >
-                {isChainLocked ? (
-                  <span>🔒 Chain Locked</span>
-                ) : !canLockScene ? (
-                  <span>⏳ Lock Previous Scene First</span>
-                ) : (
-                  <>
+              <div className="space-y-2">
+                <button
+                  onClick={() => onLockScene(scene)}
+                  disabled={isChainLocked || !isNextSceneToLock}
+                  className={`w-full px-3 py-2 text-sm rounded transition-colors flex items-center justify-center space-x-2 ${
+                    isChainLocked 
+                      ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
+                      : isNextSceneToLock
+                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                        : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isChainLocked ? (
+                    <span>🔒 Chain Locked</span>
+                  ) : isNextSceneToLock ? (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Lock Scene</span>
+                    </>
+                  ) : (
+                    <span>⏳ Lock Scene {expectedNextOrder} first</span>
+                  )}
+                </button>
+                {!isChainLocked && (
+                  <button
+                    onClick={() => onDeleteScene(scene.id)}
+                    className="w-full px-3 py-2 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors flex items-center justify-center space-x-2"
+                  >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    <span>Lock Scene</span>
-                  </>
+                    <span>Delete Scene</span>
+                  </button>
                 )}
-              </button>
+              </div>
             )}
           </div>
         </div>
@@ -246,6 +267,13 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
     // Only update scenes if not currently editing to preserve edit state
     // This prevents losing edit mode when chain updates happen
     if (!isEditing) {
+      log.info('🔄 Chain prop changed - updating local scenes:', {
+        chainScenesCount: chain.scenes.length,
+        chainScenes: chain.scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+        localScenesCount: scenes.length,
+        localScenes: scenes.map(s => ({ id: s.id, order: s.order, title: s.title })),
+        isEditing
+      });
       setScenes(chain.scenes);
     }
   }, [chain.scenes, isEditing]);
@@ -366,7 +394,6 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       return;
     }
 
-    const deletedScene = scenes.find(scene => scene.id === sceneId);
     const updatedScenes = scenes.filter(scene => scene.id !== sceneId);
     // Reorder remaining scenes
     const reorderedScenes = updatedScenes.map((scene, index) => ({
@@ -374,6 +401,27 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       order: index + 1,
     }));
     setScenes(reorderedScenes);
+    
+    // Remove from locked scenes if it was locked
+    setLockedMacroScenes(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(sceneId);
+      return newSet;
+    });
+    
+    // Update lastLockedScene if we deleted it
+    if (lastLockedScene?.id === sceneId) {
+      // Find the highest order locked scene from remaining scenes
+      const remainingLockedScenes = reorderedScenes.filter(s => lockedMacroScenes.has(s.id) && s.id !== sceneId);
+      if (remainingLockedScenes.length > 0) {
+        const highestLocked = remainingLockedScenes.reduce((prev, current) => 
+          (current.order > prev.order) ? current : prev
+        );
+        setLastLockedScene(highestLocked);
+      } else {
+        setLastLockedScene(null);
+      }
+    }
 
     try {
       const updateRequest: UpdateChainRequest = {
@@ -392,21 +440,6 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
         ...chain,
         scenes: reorderedScenes,
       });
-
-      // Check if we deleted the last scene and need to re-enable GM Intent
-      if (deletedScene && deletedScene.order === scenes.length) {
-        // Find the previous locked scene (the one before the deleted scene)
-        const previousLockedScene = reorderedScenes
-          .filter(scene => scene.order < deletedScene.order)
-          .sort((a, b) => b.order - a.order)[0]; // Get the highest order scene before the deleted one
-        
-        if (previousLockedScene && lockedMacroScenes.has(previousLockedScene.id)) {
-          log.info('🔄 Re-enabling GM Intent for previous locked scene:', previousLockedScene);
-          setLastLockedScene(previousLockedScene);
-          setShowGmIntent(true);
-          setGmIntent(''); // Clear any existing GM intent
-        }
-      }
     } catch (error) {
       log.error('Failed to delete scene:', error);
       // Revert on error
@@ -666,13 +699,17 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       currentLockedCount: lockedMacroScenes.size
     });
     
-    // Enforce "Lock & Advance" principle: only the next scene in sequence can be locked
-    const lockedScenes = scenes.filter(s => lockedMacroScenes.has(s.id));
-    const highestLockedOrder = lockedScenes.length > 0 ? Math.max(...lockedScenes.map(s => s.order)) : 0;
-    const nextSceneOrder = highestLockedOrder + 1;
+    // ENFORCE LOCK & ADVANCE: Only allow locking the next scene in sequence
+    // Find the highest order among locked scenes and add 1
+    const lockedSceneOrders = Array.from(lockedMacroScenes).map(sceneId => {
+      const lockedScene = scenes.find(s => s.id === sceneId);
+      return lockedScene ? lockedScene.order : 0;
+    });
+    const maxLockedOrder = lockedSceneOrders.length > 0 ? Math.max(...lockedSceneOrders) : 0;
+    const expectedNextOrder = maxLockedOrder + 1;
     
-    if (scene.order !== nextSceneOrder) {
-      alert(`You must lock Scene ${nextSceneOrder} before locking Scene ${scene.order}. Please lock scenes in sequential order.`);
+    if (scene.order !== expectedNextOrder) {
+      alert(`You must lock scenes in order. Please lock Scene ${expectedNextOrder} first.`);
       return;
     }
     
@@ -692,17 +729,6 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
     setShowGmIntent(true);
     
     log.info('🔒 Lock scene complete - NO backend calls made (purely local state)');
-  };
-
-  const handleRetriggerGmIntent = (scene: MacroScene) => {
-    log.info('🔄 Re-triggering GM Intent for scene:', scene);
-    
-    // Set this scene as the last locked scene and show GM Intent modal
-    setLastLockedScene(scene);
-    setShowGmIntent(true);
-    setGmIntent(''); // Clear any existing GM intent
-    
-    log.info('🔄 GM Intent re-triggered for scene:', scene.id);
   };
 
   const handleGenerateNextScene = async () => {
@@ -732,21 +758,41 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
       if (response.ok && response.chain) {
         log.info('✅ Next scene created successfully:', response.scene);
         log.info('✅ Updated chain has', response.chain.scenes.length, 'scenes');
+        log.info('✅ Response chain scenes:', response.chain.scenes.map(s => ({ id: s.id, order: s.order, title: s.title })));
+        log.info('✅ Current local scenes before update:', scenes.map(s => ({ id: s.id, order: s.order, title: s.title })));
+        
+        // Update local state first
+        setScenes(response.chain.scenes);
         
         // Update the chain with the new scene
         onUpdate(response.chain);
         
-        // Trigger context refresh to update background scene count
-        if (onContextUpdate) {
-          try {
-            const contextResponse = await postJSON<{ ok: boolean; data: SessionContext | null }>(`/api/context/get?sessionId=${sessionId}`);
-            if (contextResponse.ok && contextResponse.data) {
-              onContextUpdate(contextResponse.data);
+        // CRITICAL: Also update the locked scenes state to include the new scene
+        setLockedMacroScenes(prev => {
+          const newSet = new Set([...prev, response.scene.id]);
+          log.info('🔒 Updated locked scenes after generation:', Array.from(newSet));
+          return newSet;
+        });
+        
+        // CRITICAL: Force a context update to ensure the backend has the latest data
+        try {
+          log.info('🔄 Force updating context after scene generation');
+          await postJSON('/api/context/append', {
+            sessionId,
+            blockType: 'custom',
+            data: {
+              macroChain: response.chain
             }
-          } catch (contextError) {
-            log.error('Failed to refresh context after generating next scene:', contextError);
-          }
+          });
+          log.info('🔄 Context updated successfully');
+          
+          // CRITICAL: Add a small delay to ensure the context is fully saved
+          await new Promise(resolve => setTimeout(resolve, 100));
+          log.info('🔄 Context save delay completed');
+        } catch (error) {
+          log.error('🔄 Failed to update context:', error);
         }
+        
         
         // Reset GM intent panel
         setShowGmIntent(false);
@@ -917,7 +963,6 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
                 onGenerateDetail={handleGenerateDetail}
                 onDeleteScene={handleDeleteScene}
                 onLockScene={handleLockMacroScene}
-                onRetriggerGmIntent={handleRetriggerGmIntent}
                 sceneDetails={sceneDetails}
                 scenes={scenes}
                 isGenerating={generatingSceneId === scene.id}

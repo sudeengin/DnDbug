@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { postJSON, getJSON } from '../../lib/api';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
 import CharactersTable from '../CharactersTable';
@@ -23,6 +24,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   const [isLocked, setIsLocked] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'generated' | 'saved'>('all');
 
   // Check if background is locked
   const isBackgroundLocked = context?.locks?.background === true;
@@ -195,6 +197,84 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     return { label: 'Draft', variant: 'outline' as const };
   };
 
+  // Filter characters based on status
+  const getFilteredCharacters = () => {
+    if (statusFilter === 'all') {
+      return characters;
+    }
+    return characters.filter(char => char.status === statusFilter);
+  };
+
+  // Handle character status changes
+  const handleSaveCharacterStatus = async (character: Character) => {
+    try {
+      const updatedCharacter = { ...character, status: 'saved' as const };
+      const response = await postJSON('/api/characters/upsert', {
+        sessionId,
+        character: updatedCharacter
+      });
+      
+      if (response.ok) {
+        setCharacters(prev => 
+          prev.map(char => char.id === character.id ? updatedCharacter : char)
+        );
+        log.info('Character status updated to saved:', character.name);
+      } else {
+        setError('Failed to save character status');
+      }
+    } catch (err) {
+      setError('Failed to save character status');
+      log.error('Error saving character status:', err);
+    }
+  };
+
+  const handleDiscardCharacter = async (character: Character) => {
+    try {
+      const response = await postJSON('/api/characters/delete', {
+        sessionId,
+        characterId: character.id
+      });
+      
+      if (response.ok) {
+        setCharacters(prev => prev.filter(char => char.id !== character.id));
+        log.info('Character discarded:', character.name);
+      } else {
+        setError('Failed to discard character');
+      }
+    } catch (err) {
+      setError('Failed to discard character');
+      log.error('Error discarding character:', err);
+    }
+  };
+
+  const handleDeleteCharacter = async (character: Character) => {
+    try {
+      const response = await postJSON('/api/characters/delete', {
+        sessionId,
+        characterId: character.id
+      });
+      
+      if (response.ok) {
+        setCharacters(prev => prev.filter(char => char.id !== character.id));
+        log.info('Character deleted:', character.name);
+      } else {
+        setError('Failed to delete character');
+      }
+    } catch (err) {
+      setError('Failed to delete character');
+      log.error('Error deleting character:', err);
+    }
+  };
+
+  // Get character status badge
+  const getCharacterStatusBadge = (character: Character) => {
+    const status = character.status || 'generated';
+    if (status === 'saved') {
+      return { label: 'Saved', variant: 'default' as const, className: 'bg-green-100 text-green-800' };
+    }
+    return { label: 'Generated', variant: 'outline' as const, className: 'bg-yellow-100 text-yellow-800' };
+  };
+
   const status = getStatusBadge();
 
   return (
@@ -290,13 +370,15 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
 
       {/* Action Buttons */}
       <div className="flex space-x-4">
-        <Button
-          onClick={handleGenerateCharacters}
-          disabled={!isBackgroundLocked || loading}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          {loading ? 'Generating...' : 'Generate Characters'}
-        </Button>
+        {(!characters || characters.length === 0) && (
+          <Button
+            onClick={handleGenerateCharacters}
+            disabled={!isBackgroundLocked || loading}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            {loading ? 'Generating...' : 'Generate Characters'}
+          </Button>
+        )}
         
         {characters && characters.length > 0 && !isLocked && (
           <Button
@@ -307,10 +389,19 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
             {loading ? 'Locking...' : 'Lock Characters'}
           </Button>
         )}
+
+        {characters && characters.length > 0 && isLocked && (
+          <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Characters are locked and ready for play</span>
+          </div>
+        )}
       </div>
 
       {/* Requirements Banner */}
-      {!isBackgroundLocked && (
+      {!isBackgroundLocked && (!characters || characters.length === 0) && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
           <div className="flex">
             <div className="flex-shrink-0">
@@ -330,11 +421,36 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
 
       {/* Characters Table */}
       {characters && characters.length > 0 && (
-        <CharactersTable
-          characters={characters}
-          isLocked={isLocked}
-          onEditCharacter={handleEditCharacter}
-        />
+        <>
+          {/* Filter Section */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <h3 className="text-lg font-medium text-gray-900">
+                Characters ({getFilteredCharacters().length})
+              </h3>
+              <Select value={statusFilter} onValueChange={(value: 'all' | 'generated' | 'saved') => setStatusFilter(value)}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="generated">Generated</SelectItem>
+                  <SelectItem value="saved">Saved</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <CharactersTable
+            characters={getFilteredCharacters()}
+            isLocked={isLocked}
+            onEditCharacter={handleEditCharacter}
+            onSaveCharacter={handleSaveCharacterStatus}
+            onDiscardCharacter={handleDiscardCharacter}
+            onDeleteCharacter={handleDeleteCharacter}
+            getCharacterStatusBadge={getCharacterStatusBadge}
+          />
+        </>
       )}
 
       {/* Character Form Modal */}
@@ -344,6 +460,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
           onSave={handleSaveCharacter}
           onClose={handleCloseForm}
           isLocked={isLocked}
+          sessionId={sessionId}
         />
       )}
     </div>

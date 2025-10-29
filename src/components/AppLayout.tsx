@@ -6,6 +6,7 @@ import { getSessionIdFromUrl, getTabFromUrl, navigateToProjectCreate, navigateTo
 import OverviewPage from './pages/OverviewPage';
 import BackgroundPage from './pages/BackgroundPage';
 import CharactersPage from './pages/CharactersPage';
+import CharacterSheetPage from './pages/CharacterSheetPage';
 import MacroChainPage from './pages/MacroChainPage';
 import ScenesPage from './pages/ScenesPage';
 import ContextPage from './pages/ContextPage';
@@ -173,6 +174,12 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
                   )}
                 </div>
               </TabsTrigger>
+              <TabsTrigger value="character-sheet" className="px-6 py-4">
+                <div className="flex items-center space-x-2">
+                  <span>Character Sheet</span>
+                  <div className="w-2 h-2 rounded-full bg-blue-400" title="SRD 2014 Character Sheet" />
+                </div>
+              </TabsTrigger>
               <TabsTrigger value="macro-chain" className="px-6 py-4">
                 <div className="flex items-center space-x-2">
                   <span>Macro Chain</span>
@@ -256,6 +263,14 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
 
           <TabsContent value="characters" className="p-6">
             <CharactersPage 
+              sessionId={sessionId}
+              context={context}
+              onContextUpdate={setContext}
+            />
+          </TabsContent>
+
+          <TabsContent value="character-sheet" className="p-6">
+            <CharacterSheetPage 
               sessionId={sessionId}
               context={context}
               onContextUpdate={setContext}

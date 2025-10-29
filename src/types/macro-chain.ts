@@ -3,11 +3,6 @@ export interface MacroScene {
   order: number;
   title: string;
   objective: string;
-  meta?: {
-    gmIntent?: string;
-    generatedFrom?: string;
-    generatedAt?: string;
-  };
 }
 
 export interface Playstyle {
@@ -33,6 +28,20 @@ export interface Character {
   backgroundHistory: string; // full backstory paragraph (1–2 short paragraphs)
   keyRelationships: string[]; // other people, factions, or NPCs they know
   flawOrWeakness: string; // defining flaw, vice, or vulnerability
+  
+  // Character status for UI differentiation
+  status?: 'generated' | 'saved'; // 'generated' = newly created, 'saved' = persisted
+  
+  // Additional fields for SRD character sheet integration
+  languages?: string[]; // languages the character speaks
+  alignment?: string; // moral/ethical alignment (e.g., "Lawful Good", "Chaotic Neutral")
+  deity?: string; // deity or religious affiliation
+  physicalDescription?: string; // appearance, height, distinguishing features
+  equipmentPreferences?: string[]; // preferred starting equipment
+  subrace?: string; // subrace if applicable (e.g., "High Elf", "Wood Elf")
+  age?: number; // character's age
+  height?: string; // character's height (e.g., "5'7\"", "6'2\"")
+  proficiencies?: string[]; // skill proficiencies, tool proficiencies, etc.
 }
 
 export interface CharactersBlock {
@@ -54,7 +63,6 @@ export interface MacroChain {
     players?: string;
     level?: string;
     playstyle?: Playstyle;
-    isDraftIdeaBank?: boolean;
   };
 }
 

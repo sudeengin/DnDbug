@@ -5,8 +5,14 @@ import { isStale, validateSceneVersion, createStalenessError, createSceneVersion
 import { renderDetailTemplate } from './lib/prompt.js'
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
+import { 
+  selectCreativeApproach, 
+  recordSceneDetailApproach, 
+  getRecentSceneDetailApproaches,
+  generateVariationSeed 
+} from './lib/creativityTracker.js';
 import dotenv from 'dotenv'
-import logger from './lib/logger.js';
+import logger from "./lib/logger.js";
 
 const log = logger.scene;
 
@@ -86,7 +92,95 @@ async function generateSceneDetail(req, res) {
       }
     }
 
-    const system = 'You are a D&D GM assistant creating detailed scene content. Follow the rules strictly and return valid JSON only. All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. Do not use Turkish words or local idioms.'
+    // Enhanced randomization system with creativity tracking
+    const sceneApproaches = [
+      "Focus on immersive sensory details and atmospheric descriptions",
+      "Emphasize character interactions and dialogue opportunities", 
+      "Create dynamic challenges with multiple solution paths",
+      "Highlight environmental storytelling and world-building",
+      "Focus on tension-building and dramatic pacing",
+      "Emphasize investigation and discovery mechanics",
+      "Create scenes with moral complexity and ethical choices",
+      "Focus on action sequences and dynamic encounters",
+      "Emphasize social dynamics and NPC relationships",
+      "Create scenes with hidden layers and deeper meanings",
+      "Focus on psychological tension and character development",
+      "Emphasize exploration of mysterious locations and ancient secrets",
+      "Create scenes with unexpected plot twists and revelations",
+      "Focus on environmental challenges and survival elements",
+      "Emphasize magical phenomena and arcane discoveries",
+      "Create scenes with political intrigue and factional dynamics",
+      "Focus on character backstory integration and personal growth",
+      "Emphasize cosmic horror and otherworldly encounters",
+      "Create scenes with philosophical themes and moral ambiguity",
+      "Focus on time manipulation and reality-bending elements"
+    ];
+    
+    // Get recent approaches to avoid repetition
+    const recentApproaches = sessionId ? await getRecentSceneDetailApproaches(sessionId) : [];
+    const randomApproach = selectCreativeApproach(sceneApproaches, recentApproaches);
+    
+    // Generate session-aware variation seed
+    const variationSeed = sessionId ? await generateVariationSeed(sessionId) : Date.now() % 1000;
+    
+    // Dynamic temperature and top_p for more randomness
+    const baseTemperature = 0.9;
+    const temperatureVariation = (variationSeed % 25) / 100; // 0.0 to 0.24 variation
+    const dynamicTemperature = Math.min(1.0, baseTemperature + temperatureVariation);
+    
+    const baseTopP = 0.95;
+    const topPVariation = (variationSeed % 15) / 100; // 0.0 to 0.14 variation
+    const dynamicTopP = Math.min(1.0, baseTopP + topPVariation);
+    
+    // Additional creative variations
+    const detailStyles = [
+      "Use rich, evocative language with vivid imagery",
+      "Adopt a more clinical, analytical approach to descriptions",
+      "Employ a conversational, accessible tone",
+      "Use a mysterious, enigmatic narrative voice",
+      "Adopt a dramatic, theatrical style",
+      "Employ a scholarly, academic tone"
+    ];
+    
+    const randomDetailStyle = detailStyles[Math.floor(Math.random() * detailStyles.length)];
+    
+    const complexityLevels = [
+      "Create intricate, multi-layered scenes with hidden depths",
+      "Focus on simple, direct encounters with clear objectives",
+      "Build complex webs of interconnected elements",
+      "Emphasize straightforward, linear progression",
+      "Create branching paths with multiple outcomes",
+      "Focus on single, focused objectives with depth"
+    ];
+    
+    const randomComplexity = complexityLevels[Math.floor(Math.random() * complexityLevels.length)];
+    
+    // Model rotation for different generation styles
+    const models = ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo'];
+    const selectedModel = models[Math.floor(Math.random() * models.length)];
+    
+    log.info('Using dynamic scene detail parameters:', {
+      model: selectedModel,
+      temperature: dynamicTemperature,
+      top_p: dynamicTopP,
+      variationSeed,
+      approach: randomApproach,
+      detailStyle: randomDetailStyle,
+      complexity: randomComplexity,
+      recentApproaches: recentApproaches.length
+    });
+
+    // Record the approach used for future creativity tracking
+    if (sessionId) {
+      await recordSceneDetailApproach(sessionId, randomApproach, randomDetailStyle, randomComplexity);
+    }
+
+    const system = `You are a D&D GM assistant creating detailed scene content. Follow the rules strictly and return valid JSON only. All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. Do not use Turkish words or local idioms.
+
+CREATIVE APPROACH: ${randomApproach}
+DETAIL_STYLE: ${randomDetailStyle}
+COMPLEXITY_LEVEL: ${randomComplexity}
+VARIATION_SEED: ${variationSeed} (use this number to add subtle variations in scene structure and content)`
 
     const prompt = renderDetailTemplate({
       background: promptContext?.background,
@@ -97,12 +191,13 @@ async function generateSceneDetail(req, res) {
     })
     
     const resp = await client.chat.completions.create({
-      model: MODEL_ID,
+      model: selectedModel,
       messages: [
         { role: 'system', content: system },
         { role: 'user', content: prompt },
       ],
-      temperature: 0.8,
+      temperature: dynamicTemperature,
+      top_p: dynamicTopP,
     })
 
     const text = resp.choices[0]?.message?.content ?? ''

@@ -2,15 +2,28 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Edit, Save, Trash2, X } from 'lucide-react';
 import type { Character } from '../types/macro-chain';
 
 interface CharactersTableProps {
   characters: Character[];
   isLocked: boolean;
   onEditCharacter: (character: Character) => void;
+  onSaveCharacter?: (character: Character) => void;
+  onDiscardCharacter?: (character: Character) => void;
+  onDeleteCharacter?: (character: Character) => void;
+  getCharacterStatusBadge?: (character: Character) => { label: string; variant: 'default' | 'outline'; className: string };
 }
 
-export default function CharactersTable({ characters, isLocked, onEditCharacter }: CharactersTableProps) {
+export default function CharactersTable({ 
+  characters, 
+  isLocked, 
+  onEditCharacter, 
+  onSaveCharacter, 
+  onDiscardCharacter, 
+  onDeleteCharacter, 
+  getCharacterStatusBadge 
+}: CharactersTableProps) {
   const [revealedSecrets, setRevealedSecrets] = useState<Set<string>>(new Set());
 
   const toggleSecret = (characterId: string) => {
@@ -49,11 +62,22 @@ export default function CharactersTable({ characters, isLocked, onEditCharacter 
           <Card key={character.id} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-lg font-semibold text-gray-900">
-                    {character.name}
-                  </CardTitle>
-                  <div className="flex items-center space-x-2 mt-1">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <CardTitle className="text-lg font-semibold text-gray-900">
+                      {character.name}
+                    </CardTitle>
+                    {/* Status Badge */}
+                    {getCharacterStatusBadge && (
+                      <Badge 
+                        variant={getCharacterStatusBadge(character).variant}
+                        className={getCharacterStatusBadge(character).className}
+                      >
+                        {getCharacterStatusBadge(character).label}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-2">
                     {character.class && (
                       <Badge variant="outline" className="text-xs">
                         {character.class}
@@ -69,21 +93,67 @@ export default function CharactersTable({ characters, isLocked, onEditCharacter 
                     )}
                   </div>
                 </div>
-                {!isLocked && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onEditCharacter(character)}
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    Edit
-                  </Button>
-                )}
+                
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-1 ml-2">
+                  {!isLocked && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onEditCharacter(character)}
+                      className="h-8 w-8 p-0"
+                      title="Edit Character"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  
+                  {/* Generated character actions */}
+                  {(!character.status || character.status === 'generated') && (
+                    <>
+                      {onSaveCharacter && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onSaveCharacter(character)}
+                          className="h-8 w-8 p-0 text-green-600 hover:text-green-700"
+                          title="Save Character"
+                        >
+                          <Save className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {onDiscardCharacter && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onDiscardCharacter(character)}
+                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                          title="Discard Character"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* Saved character actions */}
+                  {character.status === 'saved' && onDeleteCharacter && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onDeleteCharacter(character)}
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                      title="Delete Character"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Basic Info */}
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                 <div>
                   <span className="text-gray-600">Race:</span>
                   <span className="ml-1 text-gray-900">{character.race}</span>
@@ -92,6 +162,41 @@ export default function CharactersTable({ characters, isLocked, onEditCharacter 
                   <span className="text-gray-600">Class:</span>
                   <span className="ml-1 text-gray-900">{character.class}</span>
                 </div>
+                {character.subrace && (
+                  <div>
+                    <span className="text-gray-600">Subrace:</span>
+                    <span className="ml-1 text-gray-900">{character.subrace}</span>
+                  </div>
+                )}
+                {character.deity && (
+                  <div>
+                    <span className="text-gray-600">Deity:</span>
+                    <span className="ml-1 text-gray-900">{character.deity}</span>
+                  </div>
+                )}
+                {character.age && (
+                  <div>
+                    <span className="text-gray-600">Age:</span>
+                    <span className="ml-1 text-gray-900">{character.age} years</span>
+                  </div>
+                )}
+                {character.height && (
+                  <div>
+                    <span className="text-gray-600">Height:</span>
+                    <span className="ml-1 text-gray-900">{character.height}</span>
+                  </div>
+                )}
+                {/* Debug info */}
+                {!character.age && (
+                  <div className="text-xs text-gray-500 italic">
+                    Age: {character.age === undefined ? 'Not defined' : character.age}
+                  </div>
+                )}
+                {!character.height && (
+                  <div className="text-xs text-gray-500 italic">
+                    Height: {character.height === undefined ? 'Not defined' : character.height}
+                  </div>
+                )}
               </div>
 
               {/* Personality */}
@@ -123,6 +228,71 @@ export default function CharactersTable({ characters, isLocked, onEditCharacter 
                 <h4 className="text-sm font-medium text-gray-700 mb-1">Inventory Hint</h4>
                 <p className="text-sm text-gray-600">{character.inventoryHint}</p>
               </div>
+
+              {/* Physical Description */}
+              {character.physicalDescription && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Physical Description</h4>
+                  <p className="text-sm text-gray-600">{character.physicalDescription}</p>
+                </div>
+              )}
+
+              {/* Languages */}
+              {character.languages && character.languages.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Languages</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {character.languages.map((language, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {language}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Debug: Show languages even if empty */}
+              {(!character.languages || character.languages.length === 0) && (
+                <div className="text-xs text-gray-500 italic">
+                  Languages: {character.languages ? 'Empty array' : 'Not defined'}
+                </div>
+              )}
+
+              {/* Equipment Preferences */}
+              {character.equipmentPreferences && character.equipmentPreferences.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Equipment Preferences</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    {character.equipmentPreferences.map((item, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-gray-400 mr-2">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Proficiencies */}
+              {character.proficiencies && character.proficiencies.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-1">Proficiencies</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {character.proficiencies.map((proficiency, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {proficiency}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Debug: Show proficiencies even if empty */}
+              {(!character.proficiencies || character.proficiencies.length === 0) && (
+                <div className="text-xs text-gray-500 italic">
+                  Proficiencies: {character.proficiencies ? 'Empty array' : 'Not defined'}
+                </div>
+              )}
 
               {/* Motif Alignment */}
               {character.motifAlignment && character.motifAlignment.length > 0 && (

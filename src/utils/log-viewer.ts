@@ -3,7 +3,7 @@
  * Displays formatted logs in a terminal-like UI within the page
  */
 
-import logger, { loggers } from './logger';
+import logger from './logger';
 
 interface LogEntry {
   timestamp: string;

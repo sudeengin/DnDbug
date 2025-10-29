@@ -4,7 +4,7 @@ import { validateApplyEditResponse } from './validation.js';
 import { invalidateDownstreamScenes, isTrivialEdit } from './lib/invalidation.js';
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
-import logger from './lib/logger.js';
+import logger from "./lib/logger.js";
 
 const log = logger.api;
 

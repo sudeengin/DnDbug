@@ -4,6 +4,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import GmIntentModal from './GmIntentModal';
 import type { Character } from '../types/macro-chain';
 
 interface CharacterFormProps {
@@ -11,6 +12,7 @@ interface CharacterFormProps {
   onSave: (character: Character) => void;
   onClose: () => void;
   isLocked: boolean;
+  sessionId?: string;
 }
 
 const ALIGNMENTS = [
@@ -61,7 +63,6 @@ const RACES = [
   'Kenku',
   'Lizardfolk',
   'Minotaur',
-  'Triton',
   'Yuan-ti'
 ];
 
@@ -80,23 +81,173 @@ const BACKGROUNDS = [
   'Sailor'
 ];
 
-export default function CharacterForm({ character, onSave, onClose, isLocked }: CharacterFormProps) {
+export default function CharacterForm({ character, onSave, onClose, isLocked, sessionId }: CharacterFormProps) {
   const [formData, setFormData] = useState<Character>(character);
+  const [showGmIntentModal, setShowGmIntentModal] = useState(false);
+  const [regeneratingField, setRegeneratingField] = useState<string | null>(null);
+  const [isRegenerating, setIsRegenerating] = useState(false);
 
   useEffect(() => {
     setFormData(character);
   }, [character]);
 
-  const handleChange = (field: keyof Character, value: string | string[]) => {
+  const handleChange = (field: keyof Character, value: string | string[] | number) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
+  // Helper component for array fields
+  const ArrayField = ({ 
+    fieldName, 
+    label, 
+    placeholder = "Enter items separated by commas"
+  }: { 
+    fieldName: keyof Character; 
+    label: string; 
+    placeholder?: string;
+  }) => {
+    const value = (formData[fieldName] as string[]) || [];
+    const stringValue = value.join(', ');
+    
+    const handleArrayChange = (inputValue: string) => {
+      const array = inputValue.split(',').map(item => item.trim()).filter(item => item.length > 0);
+      handleChange(fieldName, array);
+    };
+    
+    return (
+      <div>
+        <Label htmlFor={fieldName}>{label}</Label>
+        <Input
+          id={fieldName}
+          value={stringValue}
+          onChange={(e) => handleArrayChange(e.target.value)}
+          placeholder={placeholder}
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Separate multiple items with commas
+        </p>
+      </div>
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
+  };
+
+  const handleRegenerateField = (fieldName: string) => {
+    if (!sessionId) {
+      alert('Session ID is required for regeneration');
+      return;
+    }
+    setRegeneratingField(fieldName);
+    setShowGmIntentModal(true);
+  };
+
+  const handleGmIntentConfirm = async (intent: string) => {
+    if (!regeneratingField || !sessionId) return;
+
+    setIsRegenerating(true);
+    setShowGmIntentModal(false);
+
+    try {
+      const response = await fetch('/api/characters/regenerate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          characterId: formData.id,
+          fieldName: regeneratingField,
+          gmIntent: intent || undefined
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to regenerate field');
+      }
+
+      const result = await response.json();
+      
+      // Update the form data with the regenerated field
+      setFormData(prev => ({
+        ...prev,
+        [regeneratingField]: result.regeneratedField
+      }));
+
+      // Also update the character in the parent component
+      onSave({
+        ...formData,
+        [regeneratingField]: result.regeneratedField
+      });
+
+    } catch (error) {
+      console.error('Error regenerating field:', error);
+      alert(`Error regenerating field: ${error.message}`);
+    } finally {
+      setIsRegenerating(false);
+      setRegeneratingField(null);
+    }
+  };
+
+  const handleGmIntentCancel = () => {
+    setShowGmIntentModal(false);
+    setRegeneratingField(null);
+  };
+
+  // Helper component for fields with regenerate buttons
+  const FieldWithRegenerate = ({ 
+    fieldName, 
+    label, 
+    children, 
+    isTextarea = false 
+  }: { 
+    fieldName: string; 
+    label: string; 
+    children: React.ReactNode; 
+    isTextarea?: boolean;
+  }) => {
+    const canRegenerate = sessionId && !isLocked;
+    
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor={fieldName}>{label}</Label>
+          {canRegenerate && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleRegenerateField(fieldName)}
+              disabled={isRegenerating}
+              className="text-xs"
+            >
+              {isRegenerating && regeneratingField === fieldName ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Regenerating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Regenerate
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+        {children}
+      </div>
+    );
   };
 
   if (isLocked) {
@@ -172,7 +323,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="class">Class *</Label>
               <Select value={formData.class || ''} onValueChange={(value) => handleChange('class', value)}>
@@ -186,11 +337,65 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <Label htmlFor="subrace">Subrace</Label>
+              <Input
+                id="subrace"
+                value={formData.subrace || ''}
+                onChange={(e) => handleChange('subrace', e.target.value)}
+                placeholder="e.g., High Elf, Wood Elf, Mountain Dwarf"
+              />
+            </div>
+            <div>
+              <Label htmlFor="alignment">Alignment</Label>
+              <Select value={formData.alignment || ''} onValueChange={(value) => handleChange('alignment', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select alignment" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALIGNMENTS.map(alignment => (
+                    <SelectItem key={alignment} value={alignment}>{alignment}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="age">Age</Label>
+              <Input
+                id="age"
+                type="number"
+                value={formData.age || ''}
+                onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
+                placeholder="Character's age in years"
+                min="1"
+                max="1000"
+              />
+            </div>
+            <div>
+              <Label htmlFor="height">Height</Label>
+              <Input
+                id="height"
+                value={formData.height || ''}
+                onChange={(e) => handleChange('height', e.target.value)}
+                placeholder="e.g., 5'7&quot;, 6'2&quot;"
+              />
+            </div>
+            <div>
+              <Label htmlFor="deity">Deity</Label>
+              <Input
+                id="deity"
+                value={formData.deity || ''}
+                onChange={(e) => handleChange('deity', e.target.value)}
+                placeholder="Religious affiliation or deity"
+              />
+            </div>
           </div>
 
           {/* Character Details */}
-          <div>
-            <Label htmlFor="personality">Personality *</Label>
+          <FieldWithRegenerate fieldName="personality" label="Personality *">
             <Textarea
               id="personality"
               value={formData.personality}
@@ -199,10 +404,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               rows={3}
               required
             />
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="motivation">Motivation *</Label>
+          <FieldWithRegenerate fieldName="motivation" label="Motivation *">
             <Textarea
               id="motivation"
               value={formData.motivation}
@@ -211,10 +415,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               rows={2}
               required
             />
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="connectionToStory">Connection to Story *</Label>
+          <FieldWithRegenerate fieldName="connectionToStory" label="Connection to Story *">
             <Textarea
               id="connectionToStory"
               value={formData.connectionToStory}
@@ -223,10 +426,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               rows={2}
               required
             />
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="voiceTone">Voice Tone *</Label>
+          <FieldWithRegenerate fieldName="voiceTone" label="Voice Tone *">
             <Input
               id="voiceTone"
               value={formData.voiceTone}
@@ -234,10 +436,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               placeholder="e.g., Soft and deliberate, Gruff and direct"
               required
             />
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="inventoryHint">Inventory Hint *</Label>
+          <FieldWithRegenerate fieldName="inventoryHint" label="Inventory Hint *">
             <Input
               id="inventoryHint"
               value={formData.inventoryHint}
@@ -245,10 +446,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               placeholder="e.g., An aged journal, A rusted locket"
               required
             />
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="backgroundHistory">Background History *</Label>
+          <FieldWithRegenerate fieldName="backgroundHistory" label="Background History *">
             <Textarea
               id="backgroundHistory"
               value={formData.backgroundHistory}
@@ -257,10 +457,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               rows={4}
               required
             />
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="flawOrWeakness">Flaw or Weakness *</Label>
+          <FieldWithRegenerate fieldName="flawOrWeakness" label="Flaw or Weakness *">
             <Textarea
               id="flawOrWeakness"
               value={formData.flawOrWeakness}
@@ -269,10 +468,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               rows={2}
               required
             />
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="gmSecret">GM Secret *</Label>
+          <FieldWithRegenerate fieldName="gmSecret" label="GM Secret *">
             <Textarea
               id="gmSecret"
               value={formData.gmSecret}
@@ -284,10 +482,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
             <p className="text-xs text-gray-500 mt-1">
               This information is only visible to the GM and will be masked in the character list.
             </p>
-          </div>
+          </FieldWithRegenerate>
 
-          <div>
-            <Label htmlFor="potentialConflict">Potential Conflict *</Label>
+          <FieldWithRegenerate fieldName="potentialConflict" label="Potential Conflict *">
             <Textarea
               id="potentialConflict"
               value={formData.potentialConflict}
@@ -296,6 +493,49 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
               rows={2}
               required
             />
+          </FieldWithRegenerate>
+
+          {/* Additional Character Sheet Fields */}
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Character Sheet Details</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ArrayField 
+                fieldName="languages" 
+                label="Languages" 
+                placeholder="e.g., Common, Elvish, Dwarvish, Draconic"
+              />
+              <ArrayField 
+                fieldName="proficiencies" 
+                label="Proficiencies" 
+                placeholder="e.g., Athletics, Stealth, Thieves' Tools, Herbalism Kit"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <ArrayField 
+                fieldName="equipmentPreferences" 
+                label="Equipment Preferences" 
+                placeholder="e.g., Quarterstaff, Spellbook, Component pouch, Ink and quill"
+              />
+              <ArrayField 
+                fieldName="motifAlignment" 
+                label="Motif Alignment" 
+                placeholder="e.g., decay, secrets, family curses"
+              />
+            </div>
+
+            <div className="mt-4">
+              <FieldWithRegenerate fieldName="physicalDescription" label="Physical Description">
+                <Textarea
+                  id="physicalDescription"
+                  value={formData.physicalDescription || ''}
+                  onChange={(e) => handleChange('physicalDescription', e.target.value)}
+                  placeholder="Detailed appearance including build, distinguishing features, clothing style"
+                  rows={3}
+                />
+              </FieldWithRegenerate>
+            </div>
           </div>
 
           {/* Form Actions */}
@@ -308,6 +548,15 @@ export default function CharacterForm({ character, onSave, onClose, isLocked }: 
             </Button>
           </div>
         </form>
+
+        {/* GM Intent Modal */}
+        <GmIntentModal
+          isOpen={showGmIntentModal}
+          onClose={handleGmIntentCancel}
+          onConfirm={handleGmIntentConfirm}
+          fieldName={regeneratingField || ''}
+          characterName={formData.name}
+        />
       </div>
     </div>
   );

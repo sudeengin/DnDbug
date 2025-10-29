@@ -101,6 +101,14 @@ CRITICAL INSTRUCTIONS - NEW SCENE DETAIL SCHEMA:
    - No contradictions with effectiveContext
    - Output valid JSON for the schema
 
+4. CREATIVITY REQUIREMENTS:
+   - Avoid repetitive patterns from previous generations
+   - Use unexpected combinations of elements
+   - Create unique NPC personalities and motivations
+   - Develop distinctive environmental details
+   - Include surprising revelations or plot twists
+   - Vary the pacing and structure from typical scenes
+
 REQUIRED OUTPUT FORMAT - Generate ALL fields:
 {
   "sceneDetail": {
@@ -221,6 +229,15 @@ CRITICAL INSTRUCTIONS:
 7. You MUST follow all constraints from the doNots list
 8. DO NOT create generic scenes - every scene must be clearly connected to the background context
 
+CREATIVITY REQUIREMENTS:
+9. Avoid repetitive patterns and clichéd scene structures
+10. Create unexpected combinations of locations, NPCs, and objectives
+11. Vary the pacing and intensity between scenes
+12. Include surprising plot developments and twists
+13. Use unique and memorable scene titles that stand out
+14. Create diverse scene types (exploration, social, combat, investigation, etc.)
+15. Ensure each scene feels distinct and memorable
+
 SCENE STRUCTURE (5-6 scenes):
 - Scenes 1-2: Early exploration, introduce basic mysteries from background
 - Scenes 3-4: Mid development, deepen investigation of background mysteries
@@ -240,13 +257,13 @@ CRITICAL: Return ONLY the JSON object. Do not include any other text, explanatio
 }
 
 /**
- * Renders the Next Scene prompt template for GM intent-based scene generation
+ * Renders the Next Scene template for iterative scene expansion
  * @param {Object} params - Template parameters
  * @param {Object} params.background - Background context
  * @param {Object} params.characters - Characters context
- * @param {Object} params.previousScene - The previous locked scene
- * @param {Object} params.effectiveContext - Context from all locked predecessors
- * @param {string} params.gmIntent - GM's description of what they want next
+ * @param {Object} params.previousScene - The previous scene data
+ * @param {Object} params.effectiveContext - Context from locked predecessors
+ * @param {string} params.gmIntent - GM's intent for the next scene
  * @returns {string} The rendered prompt
  */
 export function renderNextScenePrompt({ background, characters, previousScene, effectiveContext, gmIntent }) {
@@ -273,54 +290,67 @@ MOTIFS (weave these themes throughout):
 ${(background.motifs || []).map(motif => `- ${motif}`).join('\n')}
 
 CONSTRAINTS (follow these rules):
-${(background.doNots || []).map(constraint => `- ${constraint}`).join('\n')}` : '';
+${(background.doNots || []).map(constraint => `- ${constraint}`).join('\n')}
+
+PLAYSTYLE (consider these implications):
+${(background.playstyle_implications || []).map(implication => `- ${implication}`).join('\n')}` : '';
 
   const charactersBlock = characters && characters.list ? `
-CHARACTERS (these PCs will be in the scenes):
-${characters.list.map(char => `- ${char.name} (${char.class || 'Unknown class'}): ${char.motivation || 'No motivation provided'}`).join('\n')}` : '';
+CHARACTERS (these PCs will be in the scene):
+${characters.list.map(char => `- ${char.name} (${char.class || 'Unknown class'}): ${char.motivation || 'No motivation provided'}
+  Connection: ${char.connectionToStory || 'No connection provided'}`).join('\n')}
+
+CHARACTER MOTIVATIONS (use these to shape scene beats):
+${characters.list.map(char => `- ${char.name}: ${char.motivation || 'No motivation provided'}`).join('\n')}` : '';
 
   const effectiveContextBlock = effectiveContext && Object.keys(effectiveContext).length > 0 ? `
-EFFECTIVE_CONTEXT (from all locked predecessor scenes):
+EFFECTIVE_CONTEXT (from locked predecessors):
 ${JSON.stringify(effectiveContext, null, 2)}
 
 CONTEXT_INTEGRATION:
-- Build upon the context from previous scenes
+- Build upon the context from previous locked scenes
 - Do not contradict established facts
-- Reference key events, revealed info, state changes, NPC relationships, environmental changes, plot threads, and player decisions
+- Reference key events, revealed info, state changes, NPC relationships, environmental changes, plot threads, and player decisions from previous scenes
 - The scene should feel like a natural continuation of the story` : `
 EFFECTIVE_CONTEXT:
-No previous locked scenes.`;
+No previous locked scenes - this is the first scene.`;
 
-  return `You are a D&D GM assistant helping to expand a scene chain iteratively.
+  return `You are a D&D GM assistant helping to expand a scene chain iteratively. Follow the rules strictly and return valid JSON only.
 
 ${backgroundBlock}${charactersBlock}
 
-PREVIOUS SCENE:
+PREVIOUS_SCENE:
 - title: "${previousScene.title}"
 - objective: "${previousScene.objective}"
-- sequence: ${previousScene.sequence || 1}
+- sequence: ${previousScene.sequence}
 
 ${effectiveContextBlock}
 
-GM INTENT:
+GM_INTENT:
 "${gmIntent}"
 
-CRITICAL INSTRUCTIONS - CREATE THE NEXT SCENE:
+CRITICAL INSTRUCTIONS:
 
-1. PROPOSE the NEXT SCENE that logically follows the previous scene and fulfills the GM's intent.
-2. The new scene should:
+1. Create the NEXT SCENE that logically follows the previous scene and the GM's intent.
+2. The scene should:
    - Build naturally from the previous scene
-   - Fulfill the GM's stated intent
-   - Respect BACKGROUND tone/motifs
-   - Not contradict EFFECTIVE CONTEXT
-   - Maintain story continuity
-3. Keep the objective purpose-only (no micro detail - that comes later when generating scene details).
+   - Incorporate the GM's specific intent
+   - Respect BACKGROUND tone/motifs and CHARACTERS motivations
+   - Not contradict EFFECTIVE_CONTEXT
+   - Use specific locations/NPCs from the background when appropriate
 
-OUTPUT FORMAT - Provide these fields:
+3. Output concise JSON with these fields:
+   - "title": Short, evocative title that matches tone_rules and uses background elements
+   - "objective": 1-2 sentence purpose-only objective that connects to background stakes/mysteries
+   - "sequence": ${previousScene.sequence + 1}
+
+4. Keep the objective focused on purpose only - no micro-details about implementation.
+
+REQUIRED OUTPUT FORMAT:
 {
-  "title": "Evocative scene title that reflects GM intent and background tone",
-  "objective": "1-2 sentence purpose-only objective for this scene",
-  "sequence": ${(previousScene.sequence || 1) + 1}
+  "title": "Scene title that matches the tone_rules and uses background elements",
+  "objective": "One-sentence purpose that connects to background stakes/mysteries",
+  "sequence": ${previousScene.sequence + 1}
 }
 
 CRITICAL: Return ONLY the JSON object. Do not include any other text, explanations, or formatting. The response must be valid JSON that can be parsed directly.`;

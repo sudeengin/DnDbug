@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import OpenAI from 'openai'
 import { MODEL_ID } from './model.js'
-import logger from './lib/logger.js';
+import logger from '../lib/logger.js';
 
 const log = logger.scene;
 

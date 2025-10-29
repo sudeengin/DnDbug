@@ -3,11 +3,11 @@ import { buildPromptContext } from './lib/promptContext.js';
 import { renderNextScenePrompt } from './lib/prompt.js';
 import { getOrCreateSessionContext } from './context.js';
 import { saveSessionContext } from './storage.js';
-import logger from './lib/logger.js';
+import logger from "./lib/logger.js";
 
 const log = logger.scene;
 
-// Initialize OpenAI client lazily
+// Initialize OpenAI client lazily to ensure environment variables are loaded
 let openai = null;
 function getOpenAI() {
   if (!openai) {
@@ -22,7 +22,10 @@ function getOpenAI() {
 }
 
 /**
- * Helper function to build effective context from locked predecessor scenes
+ * Builds effective context from locked predecessors only
+ * @param {Object} sessionContext - The session context
+ * @param {number} upToSequence - The sequence number to build context up to
+ * @returns {Object} The effective context object
  */
 function buildEffectiveContext(sessionContext, upToSequence) {
   const effectiveContext = {
@@ -39,66 +42,132 @@ function buildEffectiveContext(sessionContext, upToSequence) {
     return effectiveContext;
   }
 
-  // Get all locked scenes up to (but not including) the target sequence
-  const lockedScenes = Object.values(sessionContext.sceneDetails)
-    .filter(detail => 
-      detail.status === 'Locked' && 
-      (detail.sequence || detail.order || 0) < upToSequence
-    )
-    .sort((a, b) => (a.sequence || a.order || 0) - (b.sequence || b.order || 0));
+  // Find all locked scenes with sequence <= upToSequence
+  const lockedScenes = Object.values(sessionContext.sceneDetails).filter(detail => 
+    detail.status === 'Locked' && detail.sequence <= upToSequence
+  );
 
-  log.info('Building effective context from locked scenes:', {
-    upToSequence,
-    lockedScenesCount: lockedScenes.length,
-    lockedSceneIds: lockedScenes.map(s => s.sceneId)
-  });
+  // Sort by sequence to maintain order
+  lockedScenes.sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
 
-  // Merge context from all locked predecessors
-  lockedScenes.forEach(detail => {
-    if (detail.contextOut) {
-      // Merge key events
-      if (detail.contextOut.keyEvents && Array.isArray(detail.contextOut.keyEvents)) {
-        effectiveContext.keyEvents.push(...detail.contextOut.keyEvents);
+  // Merge context from locked scenes
+  for (const sceneDetail of lockedScenes) {
+    if (sceneDetail.dynamicElements?.contextOut) {
+      const contextOut = sceneDetail.dynamicElements.contextOut;
+      
+      // Merge story_facts
+      if (contextOut.story_facts) {
+        effectiveContext.keyEvents.push(...(contextOut.story_facts.keyEvents || []));
+        effectiveContext.revealedInfo.push(...(contextOut.story_facts.revealedInfo || []));
+        effectiveContext.stateChanges = {
+          ...effectiveContext.stateChanges,
+          ...(contextOut.story_facts.stateChanges || {})
+        };
       }
 
-      // Merge revealed info
-      if (detail.contextOut.revealedInfo && Array.isArray(detail.contextOut.revealedInfo)) {
-        effectiveContext.revealedInfo.push(...detail.contextOut.revealedInfo);
+      // Merge world_state
+      if (contextOut.world_state) {
+        effectiveContext.stateChanges = {
+          ...effectiveContext.stateChanges,
+          ...contextOut.world_state
+        };
       }
 
-      // Merge state changes (later scenes override earlier ones)
-      if (detail.contextOut.stateChanges && typeof detail.contextOut.stateChanges === 'object') {
-        Object.assign(effectiveContext.stateChanges, detail.contextOut.stateChanges);
+      // Merge world_seeds
+      if (contextOut.world_seeds) {
+        effectiveContext.environmentalState = {
+          ...effectiveContext.environmentalState,
+          ...contextOut.world_seeds
+        };
       }
 
-      // Merge NPC relationships
-      if (detail.contextOut.npcRelationships && typeof detail.contextOut.npcRelationships === 'object') {
-        Object.assign(effectiveContext.npcRelationships, detail.contextOut.npcRelationships);
-      }
-
-      // Merge environmental state
-      if (detail.contextOut.environmentalState && typeof detail.contextOut.environmentalState === 'object') {
-        Object.assign(effectiveContext.environmentalState, detail.contextOut.environmentalState);
-      }
-
-      // Merge plot threads
-      if (detail.contextOut.plotThreads && Array.isArray(detail.contextOut.plotThreads)) {
-        effectiveContext.plotThreads.push(...detail.contextOut.plotThreads);
-      }
-
-      // Merge player decisions
-      if (detail.contextOut.playerDecisions && Array.isArray(detail.contextOut.playerDecisions)) {
-        effectiveContext.playerDecisions.push(...detail.contextOut.playerDecisions);
+      // Merge character moments
+      if (contextOut.characterMoments) {
+        effectiveContext.playerDecisions.push(...contextOut.characterMoments);
       }
     }
-  });
+  }
 
   return effectiveContext;
 }
 
+/**
+ * Checks if a scene is locked
+ * @param {string} sessionId - The session ID
+ * @param {string} sceneId - The scene ID
+ * @returns {Promise<boolean>} True if the scene is locked
+ */
+async function isSceneLocked(sessionId, sceneId) {
+  const sessionContext = await getOrCreateSessionContext(sessionId);
+  const sceneDetail = sessionContext.sceneDetails?.[sceneId];
+  return sceneDetail?.status === 'Locked';
+}
+
+/**
+ * Gets a scene by ID
+ * @param {string} sessionId - The session ID
+ * @param {string} sceneId - The scene ID
+ * @returns {Promise<Object>} The scene detail
+ */
+async function getSceneById(sessionId, sceneId) {
+  const sessionContext = await getOrCreateSessionContext(sessionId);
+  const sceneDetail = sessionContext.sceneDetails?.[sceneId];
+  
+  if (!sceneDetail) {
+    throw new Error('Scene not found');
+  }
+  
+  return sceneDetail;
+}
+
+/**
+ * Appends a new scene to the macro chain
+ * @param {string} sessionId - The session ID
+ * @param {Object} sceneData - The scene data
+ * @returns {Promise<Object>} The created scene
+ */
+async function appendScene(sessionId, sceneData) {
+  const sessionContext = await getOrCreateSessionContext(sessionId);
+  
+  // Generate a new scene ID
+  const sceneId = `scene_${sceneData.sequence}_${Date.now()}`;
+  
+  const newScene = {
+    id: sceneId,
+    sequence: sceneData.sequence,
+    title: sceneData.title,
+    objective: sceneData.objective,
+    status: 'Draft',
+    meta: sceneData.meta || {},
+    createdAt: new Date().toISOString(),
+    lastUpdatedAt: new Date().toISOString(),
+    version: 1
+  };
+
+  // Initialize sceneDetails if it doesn't exist
+  if (!sessionContext.sceneDetails) {
+    sessionContext.sceneDetails = {};
+  }
+
+  // Add the new scene
+  sessionContext.sceneDetails[sceneId] = newScene;
+  sessionContext.updatedAt = new Date().toISOString();
+
+  // Save the updated context
+  await saveSessionContext(sessionId, sessionContext);
+
+  log.info(`New scene ${sceneId} appended to session ${sessionId}`, {
+    sceneId,
+    sequence: sceneData.sequence,
+    title: sceneData.title
+  });
+
+  return newScene;
+}
+
 export default async function handler(req, res) {
-  log.info('🎯 GENERATE_NEXT_SCENE handler called');
-  log.info('Request body:', JSON.stringify(req.body, null, 2));
+  log.section('GENERATE NEXT SCENE REQUEST');
+  log.info('Request received', { body: req.body });
 
   try {
     if (req.method !== 'POST') {
@@ -108,97 +177,59 @@ export default async function handler(req, res) {
 
     const { sessionId, previousSceneId, gmIntent } = req.body;
 
-    // Validate inputs
     if (!sessionId || !previousSceneId) {
       res.status(400).json({ error: 'Missing required fields: sessionId, previousSceneId' });
       return;
     }
 
-    if (!gmIntent || gmIntent.trim().length === 0) {
-      res.status(400).json({ error: 'GM intent is required. Please describe what you want to see next.' });
+    // Validate that the previous scene is locked
+    const locked = await isSceneLocked(sessionId, previousSceneId);
+    if (!locked) {
+      res.status(409).json({ error: 'Previous scene must be locked before generating the next scene.' });
       return;
     }
 
-    // Get session context
-    const sessionContext = await getOrCreateSessionContext(sessionId);
+    // Get the previous scene
+    const previousScene = await getSceneById(sessionId, previousSceneId);
     
-    // Get the macro chain
-    const macroChain = sessionContext.blocks?.custom?.macroChain;
-    if (!macroChain) {
-      res.status(404).json({ error: 'Macro chain not found. Please create a macro chain first.' });
-      return;
-    }
-
-    // Find the previous scene in the macro chain
-    const previousMacroScene = macroChain.scenes.find(s => s.id === previousSceneId);
-    if (!previousMacroScene) {
-      res.status(404).json({ error: 'Previous scene not found in macro chain.' });
-      return;
-    }
-
-    log.info('Previous macro scene found:', {
-      id: previousMacroScene.id,
-      order: previousMacroScene.order,
-      title: previousMacroScene.title
-    });
-
-    const previousSequence = previousMacroScene.order || 1;
-    const nextSequence = previousSequence + 1;
-
-    // Build prompt context (background, characters, etc.)
+    // Build prompt context
     const promptContext = await buildPromptContext(sessionId);
     
-    // Build effective context from all locked predecessors
-    // Note: At macro chain level, we use titles + objectives as context, not full scene details
-    const effectiveContext = buildEffectiveContext(sessionContext, nextSequence);
-    
-    // If no scene details exist (working at macro level), use previous macro scenes as context
-    if (Object.keys(effectiveContext.keyEvents || {}).length === 0) {
-      log.info('No scene details found - using macro scene context instead');
-      effectiveContext.previousScenes = macroChain.scenes
-        .filter(s => s.order < nextSequence)
-        .map(s => ({
-          order: s.order,
-          title: s.title,
-          objective: s.objective
-        }));
-    }
+    // Build effective context from locked predecessors
+    const sessionContext = await getOrCreateSessionContext(sessionId);
+    const effectiveContext = buildEffectiveContext(sessionContext, previousScene.sequence);
 
-    log.info('Context for next scene generation:', {
-      previousSequence,
-      nextSequence,
-      hasBackground: !!promptContext.background,
-      hasCharacters: !!promptContext.characters,
-      effectiveContextSize: Object.keys(effectiveContext).length,
-      gmIntentLength: gmIntent.length
-    });
-
-    // Build the prompt
+    // Create the prompt
     const prompt = renderNextScenePrompt({
       background: promptContext.background,
       characters: promptContext.characters,
       previousScene: {
-        title: previousMacroScene.title,
-        objective: previousMacroScene.objective,
-        sequence: previousSequence
+        title: previousScene.title,
+        objective: previousScene.objective,
+        sequence: previousScene.sequence
       },
       effectiveContext,
-      gmIntent: gmIntent.trim()
+      gmIntent: gmIntent?.trim() || ''
     });
 
-    log.info('Calling OpenAI to generate next scene...');
+    log.info('Generated prompt for next scene:', {
+      sessionId,
+      previousSceneId,
+      gmIntent: gmIntent?.trim(),
+      hasBackground: !!promptContext.background,
+      hasCharacters: !!promptContext.characters,
+      effectiveContextKeys: Object.keys(effectiveContext)
+    });
 
     // Call OpenAI
     const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
-        { 
-          role: 'system', 
-          content: 'You are a D&D GM assistant helping to expand a scene chain iteratively based on GM intent.' 
-        },
+        { role: 'system', content: 'You are a D&D GM assistant helping to expand scene chains. Return only valid JSON.' },
         { role: 'user', content: prompt }
       ],
-      temperature: 0.7,
+      temperature: 0.8,
+      top_p: 0.9,
     });
 
     const responseText = completion.choices[0]?.message?.content;
@@ -206,7 +237,7 @@ export default async function handler(req, res) {
       throw new Error('No response from OpenAI');
     }
 
-    log.info('OpenAI response:', responseText);
+    log.debug('Raw AI response:', responseText);
 
     // Parse the JSON response
     let parsedResponse;
@@ -215,83 +246,37 @@ export default async function handler(req, res) {
       parsedResponse = JSON.parse(cleaned);
     } catch (parseError) {
       log.error('Failed to parse OpenAI response:', parseError);
-      log.error('Raw response:', responseText);
+      log.error('Raw response that failed to parse:', responseText);
       throw new Error('Invalid JSON response from AI');
     }
 
-    // Validate the response
+    // Validate response structure
     if (!parsedResponse.title || !parsedResponse.objective) {
-      throw new Error('AI response missing required fields (title, objective)');
+      throw new Error('AI response must contain title and objective fields');
     }
 
-    // Create the new macro scene
-    const newSceneId = `scene_${nextSequence}_${Date.now()}`;
-    const newMacroScene = {
-      id: newSceneId,
-      order: nextSequence,
+    // Calculate next sequence number
+    const nextSequence = (previousScene.sequence || 0) + 1;
+
+    // Create the new scene
+    const newScene = await appendScene(sessionId, {
       title: parsedResponse.title,
       objective: parsedResponse.objective,
-      meta: {
-        gmIntent: gmIntent.trim(),
-        generatedFrom: previousSceneId,
-        generatedAt: new Date().toISOString()
-      }
-    };
-
-    // Add the new scene to the macro chain
-    macroChain.scenes.push(newMacroScene);
-    macroChain.scenes.sort((a, b) => a.order - b.order); // Ensure proper ordering
-    macroChain.version = (macroChain.version || 0) + 1;
-    macroChain.lastUpdatedAt = new Date().toISOString();
-    macroChain.status = 'Draft'; // Keep as Draft until this new scene is also locked
-
-    // Update session context - CRITICAL: Update both macroChains and blocks.custom.macroChain
-    if (!sessionContext.macroChains) {
-      sessionContext.macroChains = {};
-    }
-    sessionContext.macroChains[macroChain.chainId] = macroChain;
-    
-    // Update blocks.custom.macroChain to keep UI in sync
-    if (!sessionContext.blocks) {
-      sessionContext.blocks = {};
-    }
-    if (!sessionContext.blocks.custom) {
-      sessionContext.blocks.custom = {};
-    }
-    sessionContext.blocks.custom.macroChain = {
-      chainId: macroChain.chainId,
-      scenes: macroChain.scenes,
-      status: macroChain.status,
-      version: macroChain.version,
-      lastUpdatedAt: macroChain.lastUpdatedAt,
-      meta: macroChain.meta,
-      createdAt: macroChain.createdAt,
-      updatedAt: macroChain.updatedAt,
-      lockedAt: macroChain.lockedAt
-    };
-    
-    sessionContext.updatedAt = new Date().toISOString();
-    
-    // Update background context to reflect new scene count
-    if (sessionContext.blocks.background) {
-      sessionContext.blocks.background.sceneCount = macroChain.scenes.length;
-      sessionContext.blocks.background.lastSceneAdded = new Date().toISOString();
-      sessionContext.blocks.background.totalScenesGenerated = (sessionContext.blocks.background.totalScenesGenerated || 0) + 1;
-    }
-    
-    // Save to storage
-    await saveSessionContext(sessionId, sessionContext);
-
-    log.info('Next scene created successfully:', {
-      sceneId: newSceneId,
       sequence: nextSequence,
-      title: newMacroScene.title
+      meta: { gmIntent: gmIntent?.trim() }
+    });
+
+    log.info('Next scene generated successfully:', {
+      sessionId,
+      previousSceneId,
+      newSceneId: newScene.id,
+      sequence: nextSequence,
+      title: newScene.title
     });
 
     res.status(200).json({
       ok: true,
-      scene: newMacroScene,
-      chain: macroChain
+      data: newScene
     });
 
   } catch (error) {
@@ -300,4 +285,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: message });
   }
 }
-

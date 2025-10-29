@@ -380,7 +380,10 @@ app.get('/', (req, res) => {
       'POST /api/chain/lock',
       'POST /api/chain/unlock',
       'POST /api/scene/lock',
-      'POST /api/scene/unlock'
+      'POST /api/scene/unlock',
+      'POST /api/scene/update',
+      'POST /api/scene/delete',
+      'POST /api/generate_next_scene'
     ]
   });
 });
@@ -1343,6 +1346,24 @@ app.post('/api/scene/unlock', async (req, res) => {
   }
 });
 
+// Scene Update API route
+app.post('/api/scene/update', async (req, res) => {
+  const { default: handler } = await import('./api/scene/update.js?' + Date.now());
+  return handler(req, res);
+});
+
+// Scene Delete API route
+app.post('/api/scene/delete', async (req, res) => {
+  const { default: handler } = await import('./api/scene/delete.js?' + Date.now());
+  return handler(req, res);
+});
+
+// Generate Next Scene API route
+app.post('/api/generate_next_scene', async (req, res) => {
+  const { default: handler } = await import('./api/generate_next_scene.js?' + Date.now());
+  return handler(req, res);
+});
+
 // Health check endpoint
 // Characters API routes
 app.post('/api/characters/generate', async (req, res) => {
@@ -1370,9 +1391,28 @@ app.post('/api/characters/upsert', async (req, res) => {
   return handler(req, res);
 });
 
+app.post('/api/characters/delete', async (req, res) => {
+  const { default: handler } = await import('./api/characters/delete.js?' + Date.now());
+  return handler(req, res);
+});
+
+app.post('/api/characters/regenerate', async (req, res) => {
+  const { default: handler } = await import('./api/characters/regenerate.js?' + Date.now());
+  return handler(req, res);
+});
+
+// Test character generation endpoint
+app.post('/api/test-character-generation', async (req, res) => {
+  const { default: handler } = await import('./api/test-character-generation.js?' + Date.now());
+  return handler(req, res);
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: Date.now() });
 });
+
+// Debug routes
+app.use('/api/debug', (await import('./api/debug.js')).default);
 
 app.listen(PORT, () => {
   console.log(`🚀 Local API server running on http://localhost:${PORT}`);
@@ -1395,5 +1435,14 @@ app.listen(PORT, () => {
   console.log(`   POST /api/chain/unlock`);
   console.log(`   POST /api/scene/lock`);
   console.log(`   POST /api/scene/unlock`);
+  console.log(`   POST /api/scene/update`);
+  console.log(`   POST /api/scene/delete`);
+  console.log(`   POST /api/generate_next_scene`);
+  console.log(`   POST /api/characters/generate`);
+  console.log(`   GET  /api/characters/list`);
+  console.log(`   POST /api/characters/lock`);
+  console.log(`   POST /api/characters/upsert`);
+  console.log(`   POST /api/characters/regenerate`);
+  console.log(`   POST /api/background/lock`);
   console.log(`   GET  /api/health`);
 });
