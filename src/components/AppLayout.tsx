@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { getSessionIdFromUrl, getTabFromUrl, navigateToProjectCreate, navigateToTab } from '../lib/router';
 import OverviewPage from './pages/OverviewPage';
 import BackgroundPage from './pages/BackgroundPage';
@@ -58,11 +59,11 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
     navigateToTab(createdProject.id, 'overview');
   };
 
-  const handleProjectSelected = (selectedProject: Project) => {
+  const handleProjectSelected = useCallback((selectedProject: Project) => {
     onProjectChange?.(selectedProject);
     setSessionId(selectedProject.id);
     navigateToTab(selectedProject.id, 'overview');
-  };
+  }, [onProjectChange]);
 
   const handleCreateNew = () => {
     setShowProjectCreate(true);
@@ -112,7 +113,18 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{project.title}</h1>
+              <div className="flex items-center gap-2 mb-1">
+                <button
+                  onClick={handleSwitchProject}
+                  className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 transition-colors duration-200 text-sm font-medium group"
+                  type="button"
+                >
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" />
+                  <span className="group-hover:underline">All Projects</span>
+                </button>
+                <span className="text-gray-300">/</span>
+                <h1 className="text-2xl font-bold text-gray-900">{project.title}</h1>
+              </div>
               <div className="flex items-center space-x-2 mt-1">
                 <Badge variant="outline" className="text-xs">
                   {sessionId}

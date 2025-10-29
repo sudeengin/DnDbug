@@ -15,6 +15,7 @@ import {
   Check,
   Lock,
   Circle,
+  ArrowLeft,
 } from 'lucide-react';
 import CharactersPage from './pages/CharactersPage';
 import CharacterSheetPage from './pages/CharacterSheetPage';
@@ -43,7 +44,6 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState('overview');
   const [context, setContext] = useState<any>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -55,13 +55,12 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
 
   // Auto-select first project if autoSelectProject is true
   useEffect(() => {
-    if (autoSelectProject && projects.length > 0 && !sessionId) {
+    if (autoSelectProject && projects.length > 0) {
       const firstProject = projects[0];
       log.info('Auto-selecting first project:', firstProject);
-      setSessionId(firstProject.id);
       onProjectSelected(firstProject);
     }
-  }, [projects, autoSelectProject, sessionId, onProjectSelected]);
+  }, [projects, autoSelectProject, onProjectSelected]);
 
   const loadProjects = async (retryCount = 0) => {
     try {
@@ -71,10 +70,6 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
       log.info('Projects response:', response);
       if (response.ok) {
         setProjects(response.data);
-        // Set sessionId from the first project for now
-        if (response.data.length > 0) {
-          setSessionId(response.data[0].id);
-        }
         log.info('Projects loaded successfully:', response.data);
       }
     } catch (error) {
@@ -213,9 +208,9 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
           </div>
         );
       case 'background':
-        return sessionId ? (
+        return projects[0]?.id ? (
           <BackgroundPage 
-            sessionId={sessionId}
+            sessionId={projects[0].id}
             context={context}
             onContextUpdate={setContext}
           />
@@ -225,9 +220,9 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
           </div>
         );
       case 'characters':
-        return sessionId ? (
+        return projects[0]?.id ? (
           <CharactersPage 
-            sessionId={sessionId}
+            sessionId={projects[0].id}
             context={context}
             onContextUpdate={setContext}
           />
@@ -237,9 +232,9 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
           </div>
         );
       case 'character-sheet':
-        return sessionId ? (
+        return projects[0]?.id ? (
           <CharacterSheetPage 
-            sessionId={sessionId}
+            sessionId={projects[0].id}
             context={context}
             onContextUpdate={setContext}
           />
@@ -249,9 +244,9 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
           </div>
         );
       case 'macro-chain':
-        return sessionId ? (
+        return projects[0]?.id ? (
           <MacroChainPage 
-            sessionId={sessionId}
+            sessionId={projects[0].id}
             context={context}
             onContextUpdate={setContext}
           />
@@ -261,9 +256,9 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
           </div>
         );
       case 'scenes':
-        return sessionId ? (
+        return projects[0]?.id ? (
           <ScenesPage 
-            sessionId={sessionId}
+            sessionId={projects[0].id}
             context={context}
             onContextUpdate={setContext}
           />
@@ -273,9 +268,9 @@ export default function ProjectList({ onProjectSelected, onCreateNew, autoSelect
           </div>
         );
       case 'context':
-        return sessionId ? (
+        return projects[0]?.id ? (
           <ContextPage 
-            sessionId={sessionId}
+            sessionId={projects[0].id}
             context={context}
             onContextUpdate={setContext}
           />
