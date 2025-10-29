@@ -209,7 +209,7 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
             onValueChange={setSearchQuery}
             className="flex-1 min-w-[200px] px-4 py-2 rounded-[12px] bg-[#151A22] border border-[#2A3340] text-[#E6EAF2] placeholder-[#7B8698] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)]"
             classNames={{
-              input: "px-4 py-2 text-[#E6EAF2] focus:outline-none",
+              input: "px-4 py-2 text-[#E6EAF2] focus:outline-none bg-[#151A22]",
               inputWrapper: "bg-[#151A22] rounded-[12px] border-[#2A3340] hover:border-[#2A3340] data-[hover=true]:border-[#2A3340] focus-within:outline-none focus-within:ring-2 focus-within:ring-[rgba(255,255,255,0.15)] focus-within:border-[#2A3340]",
             }}
           />

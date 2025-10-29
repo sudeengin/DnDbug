@@ -114,21 +114,7 @@ export default async function handler(req, res) {
         data: project 
       });
 
-    } else if (method === 'GET') {
-      // GET /projects - List all projects
-      const allProjects = listProjects();
-
-      log.info('Projects listed:', {
-        count: allProjects.length,
-        timestamp: Date.now()
-      });
-
-      res.status(200).json({ 
-        ok: true, 
-        data: allProjects 
-      });
-
-    } else if (method === 'GET' && url.includes('/')) {
+    } else if (method === 'GET' && url.includes('/') && url.split('/').length > 1) {
       // GET /projects/{id} - Get a specific project
       const projectId = url.split('/').pop();
       
@@ -155,6 +141,20 @@ export default async function handler(req, res) {
       res.status(200).json({ 
         ok: true, 
         data: project 
+      });
+
+    } else if (method === 'GET') {
+      // GET /projects - List all projects
+      const allProjects = listProjects();
+
+      log.info('Projects listed:', {
+        count: allProjects.length,
+        timestamp: Date.now()
+      });
+
+      res.status(200).json({ 
+        ok: true, 
+        data: allProjects 
       });
 
     } else if (method === 'DELETE' && url.includes('/')) {
