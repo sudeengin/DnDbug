@@ -70,6 +70,40 @@ div[data-slot="popover"] {
 }
 
 div[data-slot="popover"] > div {
-  background-color: #151A22 !important;
   opacity: 1 !important;
+}
+
+/* Override HeroUI tabs styling for dark theme */
+[data-slot="tabList"] {
+  border-bottom: 1px solid #2A3340 !important;
+}
+
+[data-slot="cursor"] {
+  background-color: #FFB703 !important;
+}
+
+[data-slot="tabContent"] {
+  color: #A4AEC0 !important;
+}
+
+[data-slot="tabContent"][data-selected="true"] {
+  color: #FFB703 !important;
+  font-weight: 600 !important;
+}
+
+/* Ensure proper focus states for all inputs */
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Override any default browser styling for inputs */
+input, textarea, select {
+  background-color: #1D1E29 !important;
+  border-color: #2A3340 !important;
+  color: #F0F4F8 !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #A9B4C4 !important;
 }

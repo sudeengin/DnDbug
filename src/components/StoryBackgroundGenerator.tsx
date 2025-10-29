@@ -40,10 +40,6 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
         // Load background
         if (response.data.blocks && response.data.blocks.background) {
           setBackground(response.data.blocks.background);
-          // Load numberOfPlayers from existing background
-          if (response.data.blocks.background.numberOfPlayers) {
-            setNumberOfPlayers(response.data.blocks.background.numberOfPlayers);
-          }
           onBackgroundGenerated?.(response.data.blocks.background);
         }
         
@@ -221,18 +217,19 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">🎭 Story Concept & Background Generator</h2>
-        <p className="text-sm text-gray-600 mb-4">
+      {/* Story Concept & Background Generator Card */}
+      <div className="bg-[#151A22] border border-[#2A3340] rounded-[16px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+        <h2 className="text-[20px] leading-[28px] font-semibold text-[#F0F4F8] mb-2">🎭 Story Concept & Background Generator</h2>
+        <p className="text-[14px] leading-[22px] text-[#A9B4C4] mb-6">
           Enter your story concept below. You can generate a background for context-aware generation, or directly generate a macro chain.
         </p>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <label htmlFor="storyConcept" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="storyConcept" className="block text-[14px] leading-[20px] font-medium text-[#F0F4F8] mb-2">
               Story Concept
               {storyConcept && !isGenerating && !loading && (
-                <span className="ml-2 text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
+                <span className="ml-2 text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded-full border border-green-500/30">
                   ✓ Loaded from context
                 </span>
               )}
@@ -242,23 +239,23 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
               value={storyConcept}
               onChange={(e) => setStoryConcept(e.target.value)}
               placeholder="Enter your story concept here..."
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-blue-500 ${
+              className={`w-full px-4 py-2 bg-[#1D1E29] border border-[#2A3340] rounded-[12px] text-[#F0F4F8] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] focus:border-[#2A3340] transition-all duration-200 ${
                 storyConcept && !isGenerating && !loading 
-                  ? 'border-green-300 bg-green-50 focus:ring-green-500' 
-                  : 'border-gray-300 focus:ring-blue-500'
+                  ? 'border-green-500/50 bg-green-500/5' 
+                  : ''
               }`}
               rows={4}
               disabled={isGenerating || loading}
             />
             {storyConcept && !isGenerating && !loading && (
-              <p className="mt-1 text-xs text-green-600">
+              <p className="mt-2 text-xs text-green-400">
                 Story concept loaded from context. To modify, clear and re-enter.
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="numberOfPlayers" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="numberOfPlayers" className="block text-[14px] leading-[20px] font-medium text-[#F0F4F8] mb-2">
               Number of Players
             </label>
             <input
@@ -269,17 +266,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
               value={numberOfPlayers}
               onChange={(e) => setNumberOfPlayers(parseInt(e.target.value) || 4)}
               placeholder="4"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-[#1D1E29] border border-[#2A3340] rounded-[12px] text-[#F0F4F8] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] focus:border-[#2A3340] transition-all duration-200"
               disabled={isGenerating || loading}
             />
-            <p className="mt-1 text-xs text-gray-500">How many players will participate? (3-6 recommended)</p>
+            <p className="mt-2 text-xs text-[#A9B4C4] opacity-75">How many players will participate? (3–6 recommended)</p>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={handleGenerateBackground}
               disabled={isGenerating || loading || !storyConcept.trim()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 bg-[#3B82F6] text-white rounded-[12px] font-semibold hover:bg-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
             >
               {isGenerating ? '⏳ Generating...' : '🚀 Generate Background'}
             </button>
@@ -287,7 +284,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             <button
               onClick={handleGenerateChain}
               disabled={loading || !storyConcept.trim()}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 bg-[#10B981] text-white rounded-[12px] font-semibold hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
             >
               ⛓️ Generate Chain
             </button>
@@ -295,7 +292,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             {background && (
               <button
                 onClick={handleClear}
-                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                className="px-5 py-2.5 bg-[#374151] text-white rounded-[12px] font-semibold hover:bg-[#4B5563] focus:outline-none focus:ring-2 focus:ring-[rgba(55,65,81,0.3)] transition-all duration-200 shadow-sm"
               >
                 🗑️ Clear
               </button>
@@ -303,34 +300,31 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-md p-3">
-              <div className="text-sm text-red-700">{error}</div>
+            <div className="bg-red-500/10 border border-red-500/30 rounded-[12px] p-4">
+              <div className="text-sm text-red-300">{error}</div>
             </div>
           )}
         </div>
       </div>
 
       {background && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">📖 Generated Story Background</h3>
-            <div className="flex items-center space-x-2">
+        <div className="bg-[#151A22] border border-[#2A3340] rounded-[16px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-[20px] leading-[28px] font-semibold text-[#F0F4F8]">📖 Generated Story Background</h3>
+            <div className="flex items-center space-x-3">
               {!isEditing && (
                 <>
-                  <button
-                    onClick={() => lockBackground(!isLocked)}
-                    className={`px-3 py-1 text-sm rounded transition-colors ${
-                      isLocked
-                        ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                        : 'bg-green-100 text-green-700 hover:bg-green-200'
-                    }`}
-                  >
+                  <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 ${
+                    isLocked 
+                      ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
+                      : 'bg-green-500/20 text-green-400 border border-green-500/30'
+                  }`}>
                     {isLocked ? '🔒 Locked' : '🔓 Unlocked'}
-                  </button>
+                  </div>
                   <button
                     onClick={startEditing}
                     disabled={isLocked}
-                    className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 text-sm bg-[#374151] text-[#F0F4F8] rounded-[12px] hover:bg-[#4B5563] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
                   >
                     Edit
                   </button>
@@ -341,13 +335,13 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                   <button
                     onClick={saveEdit}
                     disabled={isGenerating}
-                    className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 text-sm bg-[#10B981] text-white rounded-[12px] hover:bg-[#059669] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
                   >
                     {isGenerating ? 'Saving...' : 'Save'}
                   </button>
                   <button
                     onClick={cancelEdit}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                    className="px-4 py-2 text-sm bg-[#374151] text-[#F0F4F8] rounded-[12px] hover:bg-[#4B5563] transition-all duration-200 font-medium"
                   >
                     Cancel
                   </button>
@@ -358,17 +352,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
           
           {/* Background Premise */}
           <div className="mb-6">
-            <h4 className="text-md font-medium text-gray-800 mb-2">Premise</h4>
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+            <h4 className="text-[16px] leading-[24px] font-medium text-[#F0F4F8] mb-3">Premise</h4>
+            <div className="bg-[#1D1E29] border border-[#2A3340] rounded-[12px] p-4">
               {isEditing && editingBackground ? (
                 <textarea
                   value={editingBackground.premise}
                   onChange={(e) => setEditingBackground({...editingBackground, premise: e.target.value})}
-                  className="w-full p-2 border border-blue-300 rounded text-gray-700 leading-relaxed resize-none"
+                  className="w-full p-3 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#151420] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] leading-relaxed resize-none"
                   rows={3}
                 />
               ) : (
-                <p className="text-gray-700 leading-relaxed">{background.premise}</p>
+                <p className="text-[#F0F4F8] leading-relaxed">{background.premise}</p>
               )}
             </div>
           </div>
@@ -376,9 +370,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
           {/* Background Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">🎭 Tone Rules</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">🎭</span>
+                Tone Rules
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.tone_rules.map((rule, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -389,14 +386,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newRules[index] = e.target.value;
                           setEditingBackground({...editingBackground, tone_rules: newRules});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newRules = editingBackground.tone_rules.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, tone_rules: newRules});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -409,17 +406,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         tone_rules: [...editingBackground.tone_rules, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Tone Rule
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.tone_rules.map((rule, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {rule}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{rule}</span>
                     </li>
                   ))}
                 </ul>
@@ -427,9 +424,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">⚡ Stakes</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">⚡</span>
+                Stakes
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.stakes.map((stake, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -440,14 +440,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newStakes[index] = e.target.value;
                           setEditingBackground({...editingBackground, stakes: newStakes});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newStakes = editingBackground.stakes.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, stakes: newStakes});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -460,17 +460,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         stakes: [...editingBackground.stakes, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Stake
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.stakes.map((stake, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {stake}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{stake}</span>
                     </li>
                   ))}
                 </ul>
@@ -478,9 +478,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">🔍 Mysteries</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">🔍</span>
+                Mysteries
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.mysteries.map((mystery, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -491,14 +494,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newMysteries[index] = e.target.value;
                           setEditingBackground({...editingBackground, mysteries: newMysteries});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newMysteries = editingBackground.mysteries.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, mysteries: newMysteries});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -511,17 +514,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         mysteries: [...editingBackground.mysteries, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Mystery
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.mysteries.map((mystery, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {mystery}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{mystery}</span>
                     </li>
                   ))}
                 </ul>
@@ -529,9 +532,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">🏛️ Factions</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">🏛️</span>
+                Factions
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.factions.map((faction, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -542,14 +548,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newFactions[index] = e.target.value;
                           setEditingBackground({...editingBackground, factions: newFactions});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newFactions = editingBackground.factions.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, factions: newFactions});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -562,17 +568,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         factions: [...editingBackground.factions, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Faction
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.factions.map((faction, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {faction}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{faction}</span>
                     </li>
                   ))}
                 </ul>
@@ -580,9 +586,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">📍 Locations</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">📍</span>
+                Locations
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.location_palette.map((location, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -593,14 +602,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newLocations[index] = e.target.value;
                           setEditingBackground({...editingBackground, location_palette: newLocations});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newLocations = editingBackground.location_palette.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, location_palette: newLocations});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -613,17 +622,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         location_palette: [...editingBackground.location_palette, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Location
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.location_palette.map((location, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {location}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{location}</span>
                     </li>
                   ))}
                 </ul>
@@ -631,9 +640,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">👥 NPCs</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">👥</span>
+                NPCs
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.npc_roster_skeleton.map((npc, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -644,14 +656,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newNpcs[index] = e.target.value;
                           setEditingBackground({...editingBackground, npc_roster_skeleton: newNpcs});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newNpcs = editingBackground.npc_roster_skeleton.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, npc_roster_skeleton: newNpcs});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -664,17 +676,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         npc_roster_skeleton: [...editingBackground.npc_roster_skeleton, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add NPC
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.npc_roster_skeleton.map((npc, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {npc}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{npc}</span>
                     </li>
                   ))}
                 </ul>
@@ -682,9 +694,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">🎨 Motifs</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">🎨</span>
+                Motifs
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.motifs.map((motif, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -695,14 +710,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newMotifs[index] = e.target.value;
                           setEditingBackground({...editingBackground, motifs: newMotifs});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newMotifs = editingBackground.motifs.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, motifs: newMotifs});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -715,17 +730,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         motifs: [...editingBackground.motifs, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Motif
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.motifs.map((motif, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {motif}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{motif}</span>
                     </li>
                   ))}
                 </ul>
@@ -733,9 +748,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">🚫 Do Nots</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">🚫</span>
+                Do Nots
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.doNots.map((doNot, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -746,14 +764,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newDoNots[index] = e.target.value;
                           setEditingBackground({...editingBackground, doNots: newDoNots});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newDoNots = editingBackground.doNots.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, doNots: newDoNots});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -766,17 +784,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         doNots: [...editingBackground.doNots, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Do Not
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.doNots.map((doNot, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {doNot}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{doNot}</span>
                     </li>
                   ))}
                 </ul>
@@ -784,9 +802,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="font-medium text-gray-800 mb-2">🎮 Playstyle Implications</h5>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
+                <span className="w-5 h-5 flex items-center justify-center">🎮</span>
+                Playstyle Implications
+              </h5>
               {isEditing && editingBackground ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {editingBackground.playstyle_implications.map((implication, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -797,14 +818,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                           newImplications[index] = e.target.value;
                           setEditingBackground({...editingBackground, playstyle_implications: newImplications});
                         }}
-                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                        className="flex-1 px-3 py-2 border border-[#2A3340] rounded-[8px] text-[#F0F4F8] bg-[#1D1E29] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] text-sm"
                       />
                       <button
                         onClick={() => {
                           const newImplications = editingBackground.playstyle_implications.filter((_, i) => i !== index);
                           setEditingBackground({...editingBackground, playstyle_implications: newImplications});
                         }}
-                        className="text-red-500 hover:text-red-700 text-sm"
+                        className="text-red-400 hover:text-red-300 text-sm p-1 rounded hover:bg-red-500/10 transition-colors"
                       >
                         ×
                       </button>
@@ -817,17 +838,17 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         playstyle_implications: [...editingBackground.playstyle_implications, '']
                       });
                     }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-[#3B82F6] hover:text-[#2563EB] px-2 py-1 rounded hover:bg-blue-500/10 transition-colors"
                   >
                     + Add Playstyle Implication
                   </button>
                 </div>
               ) : (
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-[14px] leading-[22px] text-[#F0F4F8] space-y-2">
                   {background.playstyle_implications.map((implication, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      {implication}
+                      <span className="text-[#A9B4C4] mr-3 mt-1">•</span>
+                      <span className="leading-relaxed">{implication}</span>
                     </li>
                   ))}
                 </ul>

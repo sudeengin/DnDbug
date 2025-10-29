@@ -6,6 +6,7 @@ import StoryBackgroundGenerator from '../StoryBackgroundGenerator';
 import { getJSON, postJSON } from '../../lib/api';
 import type { SessionContext, BackgroundData } from '../../types/macro-chain';
 import logger from '@/utils/logger';
+import { Lock, Unlock } from 'lucide-react';
 
 const log = logger.background;
 
@@ -82,58 +83,68 @@ export default function BackgroundPage({ sessionId, context, onContextUpdate }: 
   const hasBackground = !!context?.blocks.background;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Story Background</h2>
-          <p className="text-gray-600">Generate and lock your story foundation.</p>
+    <div className="min-h-screen bg-[#151420] pt-10 pb-16 px-3 sm:px-6 md:px-8">
+      <div className="max-w-[1440px] mx-auto space-y-6">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-[28px] leading-[36px] font-semibold text-[#F0F4F8]">Story Background</h1>
+            <p className="text-[14px] leading-[22px] text-[#A9B4C4] mt-2">
+              Generate and lock your story foundation for consistent generation.
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            {hasBackground && (
+              <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 ${
+                isBackgroundLocked 
+                  ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
+                  : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+              }`}>
+                {isBackgroundLocked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                {isBackgroundLocked ? "Locked" : "Unlocked"}
+              </div>
+            )}
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          {hasBackground && (
-            <Badge variant={isBackgroundLocked ? "upToDate" : "needsRegen"}>
-              {isBackgroundLocked ? "Locked" : "Unlocked"}
-            </Badge>
-          )}
-        </div>
-      </div>
 
-      {/* Status Banner */}
-      {hasBackground && !isBackgroundLocked && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">Background Not Locked</h3>
-              <div className="mt-2 text-sm text-yellow-700">
-                Lock your background to ensure consistent generation in the Macro Chain phase.
+        {/* Status Banner */}
+        {hasBackground && !isBackgroundLocked && (
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-[16px] p-4">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-yellow-300">Background Not Locked</h3>
+                <div className="mt-2 text-sm text-yellow-200/80">
+                  Lock your background to ensure consistent generation in the Macro Chain phase.
+                </div>
               </div>
             </div>
           </div>
+        )}
+
+        <div className="space-y-6">
+          <StoryBackgroundGenerator 
+            onBackgroundGenerated={handleBackgroundGenerated}
+            onLockToggle={handleLockToggle}
+            loading={loading}
+            sessionId={sessionId}
+            isLocked={isBackgroundLocked}
+          />
         </div>
-      )}
 
-      <div className="space-y-6">
-        <StoryBackgroundGenerator 
-          onBackgroundGenerated={handleBackgroundGenerated}
-          onLockToggle={handleLockToggle}
-          loading={loading}
-          sessionId={sessionId}
-          isLocked={isBackgroundLocked}
-        />
-      </div>
-
-      {loading && (
-        <div className="text-center py-4">
-          <div className="inline-flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="text-sm text-gray-600">Processing...</span>
+        {loading && (
+          <div className="text-center py-4">
+            <div className="inline-flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#3B82F6]"></div>
+              <span className="text-sm text-[#A9B4C4]">Processing...</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

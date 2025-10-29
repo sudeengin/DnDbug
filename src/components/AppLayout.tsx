@@ -87,7 +87,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
     if (showProjectCreate) {
       return <ProjectCreate onProjectCreated={handleProjectCreated} />;
     }
-    return <ProjectList onProjectSelected={handleProjectSelected} onCreateNew={handleCreateNew} />;
+    return <ProjectList onProjectSelected={handleProjectSelected} onCreateNew={handleCreateNew} autoSelectProject={true} />;
   }
 
   const getPhaseBadge = () => {
