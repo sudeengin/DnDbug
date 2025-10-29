@@ -36,6 +36,11 @@ class ViteSafeDebugCollector {
   private logs: DebugLog[] = [];
   private isEnabled: boolean = false;
   private maxLogs: number = 1000;
+  private originalConsole: {
+    error: typeof console.error;
+    warn: typeof console.warn;
+    log: typeof console.log;
+  } | null = null;
 
   constructor() {
     // Only initialize if we're in a browser environment
@@ -91,6 +96,9 @@ class ViteSafeDebugCollector {
         error: event.error,
       });
     });
+
+    // Intercept console methods to catch React warnings and API errors
+    this.setupConsoleInterceptors();
   }
 
   enable() {
@@ -107,6 +115,141 @@ class ViteSafeDebugCollector {
     this.log('debug-collector', 'info', 'Debug mode enabled');
   }
 
+  private setupConsoleInterceptors() {
+    if (typeof window === 'undefined') return;
+
+    // Store original console methods if not already stored
+    if (!this.originalConsole) {
+      this.originalConsole = {
+        error: console.error.bind(console),
+        warn: console.warn.bind(console),
+        log: console.log.bind(console),
+      };
+    }
+
+    const originalError = this.originalConsole.error;
+    const originalWarn = this.originalConsole.warn;
+    const self = this;
+
+    // Override console.error to catch API 404 errors and other issues
+    console.error = function(...args: any[]) {
+      originalError.apply(console, args);
+      
+      if (!self.isEnabled) return;
+      
+      const message = args.map(arg => {
+        if (typeof arg === 'string') return arg;
+        if (arg?.toString) return arg.toString();
+        return JSON.stringify(arg);
+      }).join(' ');
+
+      // Detect API 404 errors
+      if (message.includes('404') || message.includes('Not Found')) {
+        const match = message.match(/(GET|POST|PUT|DELETE|PATCH)\s+([^\s]+)/);
+        if (match) {
+          const method = match[1];
+          const endpoint = match[2];
+          self.log('api:missing-endpoint', 'error', `Missing API endpoint: ${method} ${endpoint}`, {
+            method,
+            endpoint,
+            message,
+            stack: new Error().stack,
+            issueType: 'missing-api-endpoint',
+            severity: 'high',
+            recommendation: `Add ${method} ${endpoint} route to server.js`
+          });
+          return;
+        }
+      }
+
+      // Detect fetch errors
+      if (message.includes('fetch') && (message.includes('404') || message.includes('failed'))) {
+        const urlMatch = message.match(/http[s]?:\/\/[^\s]+/);
+        if (urlMatch) {
+          self.log('api:fetch-error', 'error', `API fetch failed: ${urlMatch[0]}`, {
+            url: urlMatch[0],
+            message,
+            issueType: 'api-fetch-failure',
+            severity: 'high'
+          });
+        }
+      }
+
+      // Pass through to original error logger
+      self.log('console', 'error', message, { args, stack: new Error().stack });
+    };
+
+    // Override console.warn to catch React warnings
+    console.warn = function(...args: any[]) {
+      originalWarn.apply(console, args);
+      
+      if (!self.isEnabled) return;
+      
+      const message = args.map(arg => {
+        if (typeof arg === 'string') return arg;
+        if (arg?.toString) return arg.toString();
+        return JSON.stringify(arg);
+      }).join(' ');
+
+      // Detect accessibility warnings (missing aria-label)
+      if (message.includes('aria-label') || message.includes('aria-labelledby')) {
+        if (message.includes('must specify') || message.includes('provide a visible label')) {
+          const componentMatch = message.match(/([A-Z][a-zA-Z]*\.tsx?:\d+)/) || 
+                                 message.match(/([A-Z][a-zA-Z0-9]*)/);
+          const component = componentMatch ? componentMatch[1] : 'Unknown';
+          
+          self.log('react:accessibility', 'warn', 'Missing accessibility label', {
+            message,
+            component,
+            issueType: 'missing-aria-label',
+            severity: 'medium',
+            recommendation: 'Add aria-label or aria-labelledby attribute to the element',
+            stack: new Error().stack
+          });
+          return;
+        }
+      }
+
+      // Detect nested button warnings
+      if (message.includes('cannot be a descendant of') || message.includes('cannot contain a nested')) {
+        if (message.includes('button') || message.includes('<button>')) {
+          const componentMatch = message.match(/([A-Z][a-zA-Z]*\.tsx?:\d+)/) || 
+                                 message.match(/([A-Z][a-zA-Z0-9]*)/);
+          const component = componentMatch ? componentMatch[1] : 'Unknown';
+          
+          self.log('react:dom-nesting', 'error', 'Nested button elements detected', {
+            message,
+            component,
+            issueType: 'nested-buttons',
+            severity: 'high',
+            recommendation: 'Remove isPressable from Card component or change Button to a non-button element',
+            stack: new Error().stack
+          });
+          return;
+        }
+      }
+
+      // Detect DOM nesting validation errors
+      if (message.includes('validateDOMNesting') || message.includes('cannot be nested')) {
+        const componentMatch = message.match(/([A-Z][a-zA-Z]*\.tsx?:\d+)/) || 
+                               message.match(/([A-Z][a-zA-Z0-9]*)/);
+        const component = componentMatch ? componentMatch[1] : 'Unknown';
+        
+        self.log('react:dom-nesting', 'error', 'Invalid DOM nesting detected', {
+          message,
+          component,
+          issueType: 'invalid-dom-nesting',
+          severity: 'high',
+          stack: new Error().stack
+        });
+        return;
+      }
+
+      // Pass through to main log method
+      self.log('console', 'warn', message, { args });
+    };
+  }
+
   disable() {
     if (typeof window === 'undefined') return;
     
@@ -115,6 +258,13 @@ class ViteSafeDebugCollector {
       localStorage.setItem('debug_mode', 'false');
     } catch (error) {
       // Ignore localStorage errors
+    }
+
+    // Restore original console methods
+    if (this.originalConsole) {
+      console.error = this.originalConsole.error;
+      console.warn = this.originalConsole.warn;
+      console.log = this.originalConsole.log;
     }
     
     this.log('debug-collector', 'info', 'Debug mode disabled');

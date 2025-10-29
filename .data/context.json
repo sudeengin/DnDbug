@@ -748,9 +748,9 @@
       "macroSnapshotV": 0,
       "updatedAt": "2025-10-29T00:47:44.292Z"
     },
-    "version": 53,
+    "version": 58,
     "createdAt": "2025-10-29T00:43:23.470Z",
-    "updatedAt": "2025-10-29T19:20:37.721Z",
+    "updatedAt": "2025-10-29T20:26:55.561Z",
     "macroChains": {
       "chain_1761697789162_puzxhhhyt": {
         "chainId": "chain_1761697789162_puzxhhhyt",
@@ -994,16 +994,82 @@
   },
   "project_1761332696614_ymqqhurjj": {
     "sessionId": "project_1761332696614_ymqqhurjj",
-    "blocks": {},
-    "locks": {},
+    "blocks": {
+      "story_concept": {
+        "concept": "After centuries of war waged through steel and sorcery, the lands finally fell silent. But this “silence” was no peace — it was a curse. It crept into the minds of those who lived within the fallen kingdoms, twisting their thoughts until they lost themselves entirely, becoming monstrous reflections of their former selves.\n\nNo scholar, priest, or sorcerer could ever uncover the origin of this silence. The ancient libraries burned, the oracle stones cracked, and even the gods’ whispers faded from the temples. Only fragments of old prophecies remain — warnings that the silence was never meant to end.\n\nNow, generations later, a band of explorers from distant realms sets out to trace its source. Among them: a war-scarred knight seeking redemption, a scholar of forbidden magic, a healer who survived the silence once before, and a hunter who has seen its creatures up close. Each bears a personal scar — and a secret reason to uncover the truth.\n\nTheir journey leads them beyond ruined fortresses and into a place untouched by time — a forgotten relic buried in the heart of the dead lands. But what they find there is not the echo of a lost age. It is a living design, one that proves the silence was never abandoned.\n\nSomeone — or something — is still guarding it.\nAnd perhaps, the silence isn’t sleeping at all… it’s calling them home.",
+        "timestamp": "2025-10-29T20:55:02.790Z"
+      },
+      "background": {
+        "premise": "A group of explorers seeks the source of a mysterious silence that has cursed the lands, transforming its inhabitants into monsters.",
+        "tone_rules": [
+          "Dark and mysterious atmosphere.",
+          "Persistent sense of foreboding.",
+          "Blend of high fantasy with horror elements.",
+          "Emphasis on introspection and inner conflicts.",
+          "Hope amidst despair."
+        ],
+        "stakes": [
+          "Uncovering the source of the curse to prevent further transformation.",
+          "Survival against monstrous creatures and twisted landscapes.",
+          "Personal redemption for the knight.",
+          "Reconciling forbidden knowledge with its dangers."
+        ],
+        "mysteries": [
+          "The true origin of the silence.",
+          "The nature of the guardian of the silence.",
+          "Secrets behind the forgotten relic.",
+          "The hidden motives of each explorer."
+        ],
+        "factions": [
+          "The War-Scarred Remnants, survivors of the ancient wars.",
+          "The Silent Keepers, a cult devoted to the silence.",
+          "The Scholars of the Lost, seekers of forbidden knowledge.",
+          "The Hunters of Nightmares, those who know the land's creatures best."
+        ],
+        "location_palette": [
+          "Ruined fortresses of the old kingdoms.",
+          "The heart of the dead lands, untouched by time.",
+          "Ancient libraries reduced to ashes.",
+          "Cracked oracle stones amidst forgotten temples."
+        ],
+        "npc_roster_skeleton": [
+          "The Guardian, a mysterious figure tied to the silence.",
+          "An Old Seer, who speaks in riddles of the past.",
+          "The Cult Leader, who believes the silence is divine.",
+          "A Lost Scribe, who guards remnants of ancient knowledge."
+        ],
+        "motifs": [
+          "Echoes of the past.",
+          "Transformation and identity.",
+          "The duality of silence.",
+          "Secrets buried beneath ruins."
+        ],
+        "doNots": [
+          "Avoid straightforward solutions to the silence.",
+          "Do not trivialize the horror elements.",
+          "Avoid deus ex machina resolutions.",
+          "Do not ignore player's personal stakes."
+        ],
+        "playstyle_implications": [
+          "Encourage exploration and discovery.",
+          "Focus on character-driven storytelling.",
+          "Balance combat with mystery-solving.",
+          "Allow players to influence the world's fate."
+        ],
+        "numberOfPlayers": 4
+      }
+    },
+    "locks": {
+      "background": true
+    },
     "meta": {
       "backgroundV": 0,
       "charactersV": 0,
       "macroSnapshotV": 0,
       "updatedAt": "2025-10-29T20:03:10.904Z"
     },
-    "version": 0,
+    "version": 36,
     "createdAt": "2025-10-29T20:03:10.904Z",
-    "updatedAt": "2025-10-29T20:03:10.909Z"
+    "updatedAt": "2025-10-29T21:33:32.106Z"
   }
 }

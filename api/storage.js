@@ -121,7 +121,7 @@ export async function saveSessionContext(sessionId, context) {
     
     // Simple in-memory lock to prevent concurrent writes
     if (global.sessionLocks && global.sessionLocks[lockKey]) {
-      console.warn('⚠️ Session context save blocked - another operation in progress', {
+      log.warn('⚠️ Session context save blocked - another operation in progress', {
         sessionId,
         lockKey,
         waitingFor: global.sessionLocks[lockKey]
@@ -151,14 +151,14 @@ export async function saveSessionContext(sessionId, context) {
       };
       
       await fs.writeFile(CONTEXT_FILE, JSON.stringify(allContexts, null, 2));
-      console.success('Session context saved:', sessionId);
+      log.success('Session context saved:', sessionId);
       return context;
     } finally {
       // Release lock
       delete global.sessionLocks[lockKey];
     }
   } catch (error) {
-    console.error('Error saving session context:', error);
+    log.error('Error saving session context:', error);
     throw new Error('Failed to save session context');
   }
 }
@@ -171,7 +171,7 @@ export async function loadSessionContext(sessionId) {
     const context = allContexts[sessionId] || null;
     
     // CRITICAL: Log session loading to detect why sessions are not found
-    console.log('🔍 Loading session context:', {
+    log.debug('🔍 Loading session context:', {
       sessionId,
       found: !!context,
       allSessionIds: Object.keys(allContexts),
@@ -183,16 +183,16 @@ export async function loadSessionContext(sessionId) {
     });
     
     if (context) {
-      console.debug('Session context loaded:', sessionId);
+      log.debug('Session context loaded:', sessionId);
     } else {
-      console.warn('Session context not found:', sessionId, {
+      log.warn('Session context not found:', sessionId, {
         availableSessions: Object.keys(allContexts),
         timestamp: new Date().toISOString()
       });
     }
     return context;
   } catch (error) {
-    console.error('Error loading session context:', error);
+    log.error('Error loading session context:', error);
     return null;
   }
 }

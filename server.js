@@ -401,6 +401,7 @@ app.get('/', (req, res) => {
       'GET /api/health',
       'POST /api/projects',
       'GET /api/projects',
+      'GET /api/projects/:id',
       'POST /api/generate_chain',
       'POST /api/generate_next_scene',
       'POST /api/update_chain', 
@@ -715,6 +716,44 @@ app.get('/api/projects', async (req, res) => {
 
   } catch (error) {
     console.error('Error in projects list:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/projects/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!id) {
+      return res.status(400).json({ 
+        error: 'Project ID is required' 
+      });
+    }
+
+    // Import the projects handler functions
+    const { getProject } = await import('./api/projects.js');
+    
+    const project = getProject(id);
+    
+    if (!project) {
+      return res.status(404).json({ 
+        error: 'Project not found' 
+      });
+    }
+
+    console.log('Project retrieved:', {
+      id: project.id,
+      title: project.title,
+      timestamp: Date.now()
+    });
+
+    res.status(200).json({ 
+      ok: true, 
+      data: project 
+    });
+
+  } catch (error) {
+    console.error('Error retrieving project:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -1268,6 +1307,7 @@ app.listen(PORT, () => {
   console.log(`📡 API endpoints available:`);
   console.log(`   POST /api/projects`);
   console.log(`   GET  /api/projects`);
+  console.log(`   GET  /api/projects/:id`);
   console.log(`   DELETE /api/projects/:id`);
   console.log(`   POST /api/generate_chain`);
   console.log(`   POST /api/generate_next_scene`);

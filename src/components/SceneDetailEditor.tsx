@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { postJSON } from '../lib/api';
 import type { MacroScene, SceneDetail, GenerateDetailRequest, EffectiveContext, ApplyEditRequest, ApplyEditResponse, AffectedScene, PropagateRequest, PropagateResponse } from '../types/macro-chain';
 import logger from '@/utils/logger';
+import { Button } from './ui/button';
 
 const log = logger.scene;
 
@@ -227,47 +228,52 @@ export default function SceneDetailEditor({
         </div>
         <div className="flex items-center space-x-2">
           {sceneDetail && !editingSceneDetail && (
-            <button
+            <Button
               onClick={startEditing}
               disabled={readOnly}
-              className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              variant="secondary"
+              size="sm"
             >
               {readOnly ? 'Scene Locked' : 'Edit Scene'}
-            </button>
+            </Button>
           )}
           {editingSceneDetail && (
             <>
-              <button
+              <Button
                 onClick={saveEdit}
                 disabled={loading || readOnly}
-                className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                variant="primary"
+                size="sm"
               >
                 {loading ? 'Analyzing...' : readOnly ? 'Scene Locked' : 'Save Changes'}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={cancelEdit}
                 disabled={readOnly}
-                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                variant="secondary"
+                size="sm"
               >
                 {readOnly ? 'Scene Locked' : 'Cancel'}
-              </button>
+              </Button>
             </>
           )}
           {sceneDetail && (
-            <button
+            <Button
               onClick={() => setShowJson(!showJson)}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+              variant="secondary"
+              size="sm"
             >
               {showJson ? 'Hide JSON' : 'Show JSON'}
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             onClick={generateSceneDetail}
             disabled={loading || readOnly}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            variant="primary"
+            size="sm"
           >
             {loading ? 'Generating...' : readOnly ? 'Scene Locked' : 'Generate Scene Content'}
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
 import { getJSON } from '../../lib/api';
 import type { Project, SessionContext } from '../../types/macro-chain';
 import logger from '@/utils/logger';
+import { Check, Lock } from 'lucide-react';
 
 const log = logger.ui;
 
@@ -38,104 +37,85 @@ export default function OverviewPage({ sessionId, project, context, onContextUpd
   };
 
   const getProgressSteps = () => {
-    const steps = [
-      { id: 'background', label: 'Background', completed: !!context?.blocks.background, locked: context?.locks?.background },
-      { id: 'macro-chain', label: 'Macro Chain', completed: !!context?.blocks.custom?.macroChain },
-      { id: 'scenes', label: 'Scene Details', completed: false }, // Will be determined by scene count
+    const hasBackground = !!context?.blocks.background;
+    const isBackgroundLocked = !!context?.locks?.background;
+    const hasMacroChain = !!context?.blocks.custom?.macroChain;
+    const macroChain = context?.blocks.custom?.macroChain;
+    const hasScenes = macroChain?.scenes && macroChain.scenes.length > 0;
+    const hasSceneDetails = context?.sceneDetails && Object.keys(context.sceneDetails).length > 0;
+
+    return [
+      { 
+        id: 'background', 
+        label: 'Background', 
+        completed: hasBackground, 
+        locked: isBackgroundLocked 
+      },
+      { 
+        id: 'macro-chain', 
+        label: 'Macro Chain', 
+        completed: hasMacroChain,
+        locked: macroChain?.status === 'Locked'
+      },
+      { 
+        id: 'scenes', 
+        label: 'Scene Details', 
+        completed: hasSceneDetails,
+        locked: hasSceneDetails && Object.values(context?.sceneDetails || {}).some((detail: any) => detail.status === 'Locked')
+      },
     ];
-    return steps;
   };
 
   const steps = getProgressSteps();
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Overview</h2>
-        <p className="text-gray-600">Track your story development progress and manage your session.</p>
-      </div>
-
-      {/* Progress Steps */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Progress</h3>
-        <div className="space-y-4">
-          {steps.map((step, index) => (
-            <div key={step.id} className="flex items-center space-x-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                step.completed 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-gray-100 text-gray-500'
-              }`}>
-                {step.completed ? '✓' : index + 1}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center space-x-2">
-                  <span className="font-medium text-gray-900">{step.label}</span>
-                  {step.locked && (
-                    <Badge variant="upToDate" className="text-xs">Locked</Badge>
-                  )}
-                  {step.completed && !step.locked && (
-                    <Badge variant="generated" className="text-xs">Complete</Badge>
-                  )}
-                </div>
+      {/* Project Overview Card */}
+      <div className="bg-[#151A22] rounded-[16px] border border-[#2A3340] p-6">
+        <div className="flex flex-col gap-4">
+          {steps.map((step) => (
+            <div key={step.id} className="flex items-center justify-between">
+              <span className="text-[#EDEDED] font-medium">{step.label}</span>
+              <div className="flex items-center gap-2">
+                {step.locked ? (
+                  <>
+                    <Lock className="w-4 h-4 text-[#B0B0B0]" />
+                    <span className="text-[#B0B0B0] text-sm">Locked</span>
+                  </>
+                ) : step.completed ? (
+                  <>
+                    <Check className="w-4 h-4 text-[#10B981]" />
+                    <span className="text-[#10B981] text-sm">Complete</span>
+                  </>
+                ) : (
+                  <span className="text-[#B0B0B0] text-sm">Pending</span>
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Button 
-            variant="outline" 
-            className="h-auto p-4 flex flex-col items-start space-y-2"
-            onClick={() => window.location.hash = '#tab=background'}
-          >
-            <span className="font-medium">Generate Background</span>
-            <span className="text-sm text-gray-500">Create story foundation</span>
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            className="h-auto p-4 flex flex-col items-start space-y-2"
-            onClick={() => window.location.hash = '#tab=macro-chain'}
-          >
-            <span className="font-medium">Plan Macro Chain</span>
-            <span className="text-sm text-gray-500">Design scene sequence</span>
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            className="h-auto p-4 flex flex-col items-start space-y-2"
-            onClick={() => window.location.hash = '#tab=scenes'}
-          >
-            <span className="font-medium">Detail Scenes</span>
-            <span className="text-sm text-gray-500">Add scene specifics</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Session Info */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Information</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Session Metadata Card */}
+      <div className="bg-[#151A22] border border-[#2A3340] rounded-[16px] p-4">
+        <div className="space-y-3">
           <div>
-            <label className="text-sm font-medium text-gray-500">Session ID</label>
-            <p className="text-sm text-gray-900 font-mono">{sessionId}</p>
+            <label className="text-sm font-medium text-[#B0B0B0] block mb-1">Session ID</label>
+            <p className="text-sm text-[#EDEDED] font-mono">{sessionId}</p>
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-500">Created</label>
-            <p className="text-sm text-gray-900">{new Date(project.createdAt).toLocaleDateString()}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-500">Last Updated</label>
-            <p className="text-sm text-gray-900">{new Date(project.updatedAt).toLocaleDateString()}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-500">Context Version</label>
-            <p className="text-sm text-gray-900">{context?.version || 'N/A'}</p>
+            <label className="text-sm font-medium text-[#B0B0B0] block mb-1">Created Date</label>
+            <p className="text-sm text-[#EDEDED]">{formatDate(project.createdAt)}</p>
           </div>
         </div>
       </div>
@@ -143,8 +123,8 @@ export default function OverviewPage({ sessionId, project, context, onContextUpd
       {loading && (
         <div className="text-center py-4">
           <div className="inline-flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="text-sm text-gray-600">Loading context...</span>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#FFB703]"></div>
+            <span className="text-sm text-[#B0B0B0]">Loading context...</span>
           </div>
         </div>
       )}

@@ -99,7 +99,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Override any default browser styling for inputs */
 input, textarea, select {
-  background-color: #1D1E29 !important;
+  background-color: #151A22 !important;
   border-color: #2A3340 !important;
   color: #F0F4F8 !important;
 }

@@ -190,7 +190,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
             </p>
             <Button 
               onClick={() => window.location.hash = '#tab=macro-chain'}
-              className="bg-blue-600 hover:bg-blue-700"
+              variant="primary"
             >
               Go to Macro Chain
             </Button>
@@ -210,7 +210,7 @@ export default function ScenesPage({ sessionId, context, onContextUpdate }: Scen
             </p>
             <Button 
               onClick={() => window.location.hash = '#tab=macro-chain'}
-              className="bg-blue-600 hover:bg-blue-700"
+              variant="primary"
             >
               Go to Macro Chain
             </Button>

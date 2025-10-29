@@ -219,6 +219,7 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
             variant="bordered"
             selectedKeys={[sortBy]}
             onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
+            aria-label="Sort projects by"
             className="min-w-[200px] rounded-[12px] bg-[#151A22] border border-[#2A3340] text-[#E6EAF2] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)]"
             classNames={{
               trigger: "bg-[#151A22] rounded-[12px] border-[#2A3340] px-4 py-2 text-[#E6EAF2] hover:border-[#2A3340] data-[hover=true]:border-[#2A3340] focus-within:outline-none focus-within:ring-2 focus-within:ring-[rgba(255,255,255,0.15)] focus-within:border-[#2A3340]",
@@ -309,8 +310,7 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
               <Card
                 key={project.id}
                 className="bg-[#151A22] border border-[#2A3340] rounded-[16px] text-[#E6EAF2] shadow-[0_8px_24px_rgba(0,0,0,0.45)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.55)] hover:border-[#2A3340]/80 transition-all duration-200 cursor-pointer group"
-                isPressable
-                onPress={() => onProjectSelected(project)}
+                onClick={() => onProjectSelected(project)}
               >
                 <CardHeader className="flex justify-between items-start pb-2 p-6">
                   <h3 className="text-[18px] leading-[26px] font-medium text-[#E6EAF2] flex-1 pr-2">

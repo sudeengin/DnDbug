@@ -75,7 +75,24 @@ export async function getJSON<T>(url: string): Promise<T> {
   if (!res.ok) {
     const text = await res.text()
     log.error('Error response:', text);
-    debug.error('api', `GET ${url} failed`, { url, status: res.status, error: text });
+    
+    // Enhanced error logging for 404s (missing endpoints)
+    if (res.status === 404) {
+      const endpoint = url.replace(/^https?:\/\/[^\/]+/, '');
+      debug.error('api:missing-endpoint', `GET ${url} - Endpoint not found`, { 
+        url, 
+        status: res.status, 
+        method: 'GET',
+        endpoint: endpoint,
+        error: text,
+        issueType: 'missing-api-endpoint',
+        severity: 'high',
+        recommendation: `Add GET ${endpoint} route to server.js`
+      });
+    } else {
+      debug.error('api', `GET ${url} failed`, { url, status: res.status, error: text });
+    }
+    
     throw new Error(text || `HTTP ${res.status}`)
   }
   

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { postJSON, getJSON } from '../lib/api';
 import type { GenerateBackgroundRequest, GenerateBackgroundResponse, BackgroundData, SessionContext } from '../types/macro-chain';
 import logger from '@/utils/logger';
+import { Lock, Unlock } from 'lucide-react';
 
 const log = logger.background;
 
@@ -219,7 +220,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
     <div className="space-y-6">
       {/* Story Concept & Background Generator Card */}
       <div className="bg-[#151A22] border border-[#2A3340] rounded-[16px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
-        <h2 className="text-[20px] leading-[28px] font-semibold text-[#F0F4F8] mb-2">🎭 Story Concept & Background Generator</h2>
+        <h2 className="text-[20px] leading-[28px] font-semibold text-[#F0F4F8] mb-2">Story Concept & Background Generator</h2>
         <p className="text-[14px] leading-[22px] text-[#A9B4C4] mb-6">
           Enter your story concept below. You can generate a background for context-aware generation, or directly generate a macro chain.
         </p>
@@ -230,7 +231,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
               Story Concept
               {storyConcept && !isGenerating && !loading && (
                 <span className="ml-2 text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded-full border border-green-500/30">
-                  ✓ Loaded from context
+                  Loaded from context
                 </span>
               )}
             </label>
@@ -239,7 +240,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
               value={storyConcept}
               onChange={(e) => setStoryConcept(e.target.value)}
               placeholder="Enter your story concept here..."
-              className={`w-full px-4 py-2 bg-[#1D1E29] border border-[#2A3340] rounded-[12px] text-[#F0F4F8] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] focus:border-[#2A3340] transition-all duration-200 ${
+              className={`w-full px-4 py-2 bg-[#1E1D2A] border border-[#2A3340] rounded-[12px] text-[#F0F4F8] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] focus:border-[#2A3340] transition-all duration-200 ${
                 storyConcept && !isGenerating && !loading 
                   ? 'border-green-500/50 bg-green-500/5' 
                   : ''
@@ -261,12 +262,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             <input
               type="number"
               id="numberOfPlayers"
-              min="3"
+              min="1"
               max="6"
               value={numberOfPlayers}
               onChange={(e) => setNumberOfPlayers(parseInt(e.target.value) || 4)}
               placeholder="4"
-              className="w-full px-4 py-2 bg-[#1D1E29] border border-[#2A3340] rounded-[12px] text-[#F0F4F8] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] focus:border-[#2A3340] transition-all duration-200"
+              className="w-full px-4 py-2 bg-[#1E1D2A] border border-[#2A3340] rounded-[12px] text-[#F0F4F8] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] focus:border-[#2A3340] transition-all duration-200"
               disabled={isGenerating || loading}
             />
             <p className="mt-2 text-xs text-[#A9B4C4] opacity-75">How many players will participate? (3–6 recommended)</p>
@@ -275,26 +276,26 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
           <div className="flex flex-wrap gap-3">
             <button
               onClick={handleGenerateBackground}
-              disabled={isGenerating || loading || !storyConcept.trim()}
-              className="px-5 py-2.5 bg-[#3B82F6] text-white rounded-[12px] font-semibold hover:bg-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+              disabled={isGenerating || loading || !storyConcept.trim() || isLocked}
+              className="px-6 py-2 bg-[#3B82F6] text-white rounded-[12px] font-semibold hover:bg-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
             >
-              {isGenerating ? '⏳ Generating...' : '🚀 Generate Background'}
+              {isGenerating ? 'Generating...' : 'Generate Background'}
             </button>
             
             <button
               onClick={handleGenerateChain}
               disabled={loading || !storyConcept.trim()}
-              className="px-5 py-2.5 bg-[#10B981] text-white rounded-[12px] font-semibold hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+              className="px-6 py-2 bg-[#10B981] text-white rounded-[12px] font-semibold hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
             >
-              ⛓️ Generate Chain
+              Generate Chain
             </button>
             
             {background && (
               <button
                 onClick={handleClear}
-                className="px-5 py-2.5 bg-[#374151] text-white rounded-[12px] font-semibold hover:bg-[#4B5563] focus:outline-none focus:ring-2 focus:ring-[rgba(55,65,81,0.3)] transition-all duration-200 shadow-sm"
+                className="px-6 py-2 bg-[#374151] text-white rounded-[12px] font-semibold hover:bg-[#4B5563] focus:outline-none focus:ring-2 focus:ring-[rgba(55,65,81,0.3)] transition-all duration-200 shadow-sm"
               >
-                🗑️ Clear
+                Clear
               </button>
             )}
           </div>
@@ -310,17 +311,31 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
       {background && (
         <div className="bg-[#151A22] border border-[#2A3340] rounded-[16px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[20px] leading-[28px] font-semibold text-[#F0F4F8]">📖 Generated Story Background</h3>
+            <h3 className="text-[20px] leading-[28px] font-semibold text-[#F0F4F8]">Generated Story Background</h3>
             <div className="flex items-center space-x-3">
               {!isEditing && (
                 <>
-                  <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 ${
-                    isLocked 
-                      ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
-                      : 'bg-green-500/20 text-green-400 border border-green-500/30'
-                  }`}>
-                    {isLocked ? '🔒 Locked' : '🔓 Unlocked'}
-                  </div>
+                  <button
+                    onClick={() => lockBackground(!isLocked)}
+                    disabled={loading}
+                    className={`px-3 py-1 text-sm font-medium rounded-[12px] flex items-center gap-2 transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isLocked
+                        ? 'bg-[#374151] text-white border border-[#4B5563] hover:shadow-[0_2px_6px_rgba(0,0,0,0.2)]'
+                        : 'bg-[#16a34a] text-white border border-[#15803d] hover:shadow-[0_2px_6px_rgba(0,0,0,0.2)]'
+                    }`}
+                  >
+                    {isLocked ? (
+                      <>
+                        <Lock className="w-4 h-4" />
+                        <span>Locked</span>
+                      </>
+                    ) : (
+                      <>
+                        <Unlock className="w-4 h-4" />
+                        <span>Unlocked</span>
+                      </>
+                    )}
+                  </button>
                   <button
                     onClick={startEditing}
                     disabled={isLocked}
@@ -370,8 +385,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
           {/* Background Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">🎭</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Tone Rules
               </h5>
               {isEditing && editingBackground ? (
@@ -424,8 +438,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">⚡</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Stakes
               </h5>
               {isEditing && editingBackground ? (
@@ -478,8 +491,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">🔍</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Mysteries
               </h5>
               {isEditing && editingBackground ? (
@@ -532,8 +544,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">🏛️</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Factions
               </h5>
               {isEditing && editingBackground ? (
@@ -586,8 +597,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">📍</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Locations
               </h5>
               {isEditing && editingBackground ? (
@@ -640,8 +650,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">👥</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 NPCs
               </h5>
               {isEditing && editingBackground ? (
@@ -694,8 +703,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">🎨</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Motifs
               </h5>
               {isEditing && editingBackground ? (
@@ -748,8 +756,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">🚫</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Do Nots
               </h5>
               {isEditing && editingBackground ? (
@@ -802,8 +809,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             </div>
 
             <div>
-              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3 flex items-center gap-2">
-                <span className="w-5 h-5 flex items-center justify-center">🎮</span>
+              <h5 className="text-[16px] leading-[24px] font-semibold text-[#F0F4F8] mb-3">
                 Playstyle Implications
               </h5>
               {isEditing && editingBackground ? (
