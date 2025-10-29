@@ -4,6 +4,7 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { getSessionIdFromUrl, getTabFromUrl, navigateToProjectCreate, navigateToTab } from '../lib/router';
+import { getJSON } from '../lib/api';
 import OverviewPage from './pages/OverviewPage';
 import BackgroundPage from './pages/BackgroundPage';
 import CharactersPage from './pages/CharactersPage';
@@ -37,13 +38,30 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
     log.info('AppLayout sessionId from URL:', urlSessionId);
     
     if (urlSessionId) {
-      setSessionId(urlSessionId);
-      setActiveTab(urlTab);
-    } else if (!project) {
-      // No sessionId and no project - show project selection
-      return;
+      // If we have a URL sessionId but no project, fetch it
+      if (!project) {
+        log.info('Fetching project from URL sessionId:', urlSessionId);
+        getJSON<{ ok: boolean; data: Project }>(`/api/projects/${urlSessionId}`)
+          .then(response => {
+            if (response.ok && response.data) {
+              log.info('Project fetched from URL:', response.data);
+              onProjectChange?.(response.data);
+              setSessionId(urlSessionId);
+              setActiveTab(urlTab);
+            } else {
+              log.error('Failed to fetch project from URL sessionId');
+            }
+          })
+          .catch(error => {
+            log.error('Error fetching project from URL:', error);
+          });
+      } else {
+        // Project already exists, just update sessionId and tab
+        setSessionId(urlSessionId);
+        setActiveTab(urlTab);
+      }
     }
-  }, [project]);
+  }, []);
 
   // Update sessionId when project changes
   useEffect(() => {
