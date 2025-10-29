@@ -164,7 +164,61 @@ export interface UnlockSceneResponse {
 }
 
 export async function lockScene(request: LockSceneRequest): Promise<LockSceneResponse> {
-  return postJSON<LockSceneResponse>('/api/scene/lock', request);
+  // Use context/lock mechanism for scene locking
+  // Since scenes are stored in sceneDetails, we'll update the scene directly
+  const { sessionId, sceneId } = request;
+  
+  // Get the current session context to find the scene
+  const contextResponse = await getJSON<{ ok: boolean; data: any }>(`/api/context/get?sessionId=${sessionId}`);
+  if (!contextResponse.ok || !contextResponse.data) {
+    throw new Error('Failed to get session context');
+  }
+  
+  const sessionContext = contextResponse.data;
+  const sceneDetail = sessionContext.sceneDetails?.[sceneId];
+  
+  if (!sceneDetail) {
+    throw new Error('Scene detail not found');
+  }
+  
+  if (sceneDetail.status === 'Locked') {
+    throw new Error('Scene is already locked');
+  }
+  
+  // Update the scene status to Locked
+  const lockedDetail = {
+    ...sceneDetail,
+    status: 'Locked',
+    lockedAt: new Date().toISOString(),
+    lastUpdatedAt: new Date().toISOString(),
+    version: (sceneDetail.version || 0) + 1
+  };
+  
+  // Update the scene in session context
+  const updatedContext = {
+    ...sessionContext,
+    sceneDetails: {
+      ...sessionContext.sceneDetails,
+      [sceneId]: lockedDetail
+    },
+    updatedAt: new Date().toISOString()
+  };
+  
+  // Save the updated context
+  const saveResponse = await postJSON('/api/context', {
+    sessionId,
+    blockType: 'custom',
+    data: { sceneDetails: updatedContext.sceneDetails }
+  });
+  
+  if (!saveResponse.ok) {
+    throw new Error('Failed to save scene lock');
+  }
+  
+  return {
+    ok: true,
+    detail: lockedDetail
+  };
 }
 
 export async function unlockScene(request: UnlockSceneRequest): Promise<UnlockSceneResponse> {

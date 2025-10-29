@@ -3,6 +3,8 @@
 ## Overview
 This document catalogs all AI prompts used in the D&D Bug application, their purpose, and which ones are currently active.
 
+**Last Verified**: October 29, 2025
+
 ---
 
 ## 🟢 ACTIVE PROMPTS (Currently in Use)
@@ -10,8 +12,8 @@ This document catalogs all AI prompts used in the D&D Bug application, their pur
 ### 1. Background Generation Prompt
 **File**: `api/generate_background.js`
 **Status**: ✅ **ACTIVE**
-**Model**: GPT-4o
-**Temperature**: 0.7
+**Model**: `gpt-4o`
+**Temperature**: `0.7`
 
 **Purpose**: Generate a compact Story Background from a Story Concept
 
@@ -47,9 +49,9 @@ Do not use Turkish words or local idioms.
 ### 2. Character Generation Prompt
 **File**: `api/characters/generate.js`
 **Status**: ✅ **ACTIVE**
-**Model**: GPT-4o
-**Temperature**: 0.7
-**Max Tokens**: 4000
+**Model**: `gpt-4o`
+**Temperature**: `0.7`
+**Max Tokens**: `4000`
 
 **Purpose**: Create playable D&D PCs with detailed backgrounds
 
@@ -59,7 +61,8 @@ You are a D&D GM character designer creating playable PCs with detailed backgrou
 Follow the rules strictly and return valid JSON only.
 ```
 
-**Output Schema** (15 required fields per character):
+**Output Schema** (20 required fields per character):
+**Core Fields**:
 - name
 - role
 - race
@@ -76,10 +79,21 @@ Follow the rules strictly and return valid JSON only.
 - keyRelationships (array)
 - flawOrWeakness
 
+**SRD Character Sheet Integration Fields**:
+- languages (array): 2-4 languages (e.g., 'Common', 'Elvish', 'Dwarvish')
+- alignment (string): D&D alignment (e.g., 'Lawful Good', 'Chaotic Neutral')
+- deity (string|null): Religious affiliation or deity worshiped
+- physicalDescription (string): Detailed appearance including build, distinguishing features, clothing style
+- equipmentPreferences (array): 3-5 preferred starting equipment items
+- subrace (string|null): Specific subrace if applicable (e.g., 'High Elf', 'Wood Elf')
+- age (number): Character's age in years
+- height (string): Height in feet and inches format (e.g., "5'7\"", "6'2\"")
+- proficiencies (array): 3-5 skill proficiencies, tool proficiencies, or other abilities
+
 **Key Instructions**:
 1. **Lore & World Integration**: Use background context (tone, motifs, anchors)
-2. **D&D-Level Background Depth**: Base style on D&D 5e manuals
-3. **Relationships and Hooks**: Create 2-3 narrative connections
+2. **D&D-Level Background Depth**: Base style on D&D 5e manuals (Player's Handbook & Xanathar's Guide)
+3. **Relationships and Hooks**: Create 2-3 narrative connections (family, mentor, rival, guild, cult, etc.)
 4. **Flaws & Secrets**: gmSecret must be 2-3 sentences connecting to background lore
 5. **Motif Resonance**: Connect characters to visual themes symbolically
 6. **Playability Focus**: All output in English, immersive and concise
@@ -93,14 +107,16 @@ Follow the rules strictly and return valid JSON only.
 **Validation**:
 - Must generate numberOfPlayers characters (±1 if narratively justified)
 - Locked background required before generation
+- All 20 fields must be present per character
 
 ---
 
 ### 3. Macro Chain Generation Prompt
 **File**: `api/generate_chain.js`
 **Status**: ✅ **ACTIVE**
-**Model**: GPT-4o
-**Temperature**: 0.7
+**Model**: `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo` (rotated randomly)
+**Temperature**: `0.9` base + dynamic variation (0.0 to 0.19) = `0.9 to 1.0`
+**Creativity Tracking**: ✅ Active (tracks approaches to avoid repetition)
 
 **Purpose**: Generate a macro chain of 5-6 scenes
 
@@ -140,6 +156,14 @@ Do not use Turkish words or local idioms.
 7. MUST follow all constraints from doNots list
 8. DO NOT create generic scenes
 
+**Creativity Enhancements**:
+- Dynamic temperature variation based on session-aware variation seed
+- Model rotation between gpt-4o, gpt-4o-mini, and gpt-4-turbo for variety
+- Narrative style variations (poetic, direct, mysterious, conversational, scholarly, dramatic)
+- Pacing variations (slow-burning, rapid-fire, alternating, escalating, episodic, continuous)
+- Creativity direction prompts to avoid repetitive patterns
+- Tracks recent approaches to ensure variety across sessions
+
 **Scene Structure** (5-6 scenes):
 - Scenes 1-2: Early exploration, introduce basic mysteries from background
 - Scenes 3-4: Mid development, deepen investigation of background mysteries
@@ -159,16 +183,23 @@ Do not use Turkish words or local idioms.
 ### 4. Scene Detail Generation Prompt
 **File**: `api/generate_detail.js` (via `api/lib/prompt.js`)
 **Status**: ✅ **ACTIVE**
-**Model**: GPT-4o
-**Temperature**: 0.8
+**Model**: `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo` (rotated randomly)
+**Temperature**: `0.9` base + dynamic variation (0.0 to 0.24) = `0.9 to 1.0`
+**Top P**: `0.95` base + dynamic variation (0.0 to 0.14) = `0.95 to 1.0`
+**Creativity Tracking**: ✅ Active (20 approaches tracked)
 
 **Purpose**: Create detailed scene content with new narrative core structure
 
-**System Prompt**:
+**System Prompt** (Enhanced with Creativity Directives):
 ```
 You are a D&D GM assistant creating detailed scene content. Follow the rules strictly and return valid JSON only. 
 All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. 
 Do not use Turkish words or local idioms.
+
+CREATIVE APPROACH: [One of 20 dynamic approaches]
+DETAIL_STYLE: [One of 6 styles: rich evocative, clinical analytical, conversational, mysterious, dramatic, scholarly]
+COMPLEXITY_LEVEL: [One of 3 levels: intricate multi-layered, simple direct, complex interconnected]
+VARIATION_SEED: [Session-aware variation number]
 ```
 
 **Output Schema** (New Structure - Goal→Conflict→Revelation→Transition):
@@ -227,6 +258,13 @@ Do not use Turkish words or local idioms.
 5. No contradictions with effectiveContext
 6. Output valid JSON for the schema
 
+**Creativity System**:
+- **20 Creative Approaches**: Rotated to avoid repetition (e.g., "Focus on immersive sensory details", "Emphasize character interactions", "Create dynamic challenges", etc.)
+- **Detail Styles**: Rich evocative, clinical analytical, conversational, mysterious, dramatic, scholarly
+- **Complexity Levels**: Intricate multi-layered, simple direct, complex interconnected
+- **Recent Approach Tracking**: Prevents repetitive patterns across scenes
+- **Dynamic Parameters**: Temperature and top_p vary per generation for increased creativity
+
 **Context Provided**:
 - Background Context (all fields)
 - Characters Context (with motivations)
@@ -246,24 +284,127 @@ Do not use Turkish words or local idioms.
 
 ---
 
-### 5. Delta Analysis Prompt
-**File**: `api/delta_prompt.js`
-**Status**: ✅ **ACTIVE** (Used for scene edit analysis)
-**Purpose**: Compare old and new scene details to analyze semantic changes
+### 5. Next Scene Generation Prompt
+**File**: `api/generate_next_scene.js` (via `api/lib/prompt.js`)
+**Status**: ✅ **ACTIVE**
+**Model**: `gpt-4o`
+**Temperature**: `0.8`
+**Top P**: `0.9`
+
+**Purpose**: Generate the next scene in a chain based on previous scene and GM intent
 
 **System Prompt**:
 ```
-You are a DnD scene editor. Compare the old and new scene details below and analyze the changes.
+You are a D&D GM assistant helping to expand a scene chain iteratively. Follow the rules strictly and return valid JSON only.
 ```
 
 **Output Schema**:
 ```json
 {
-  "updatedDetail": "SceneDetail",
+  "title": "Scene title that matches the tone_rules and uses background elements",
+  "objective": "One-sentence purpose that connects to background stakes/mysteries",
+  "sequence": [next sequence number]
+}
+```
+
+**Key Instructions**:
+1. Create the NEXT SCENE that logically follows the previous scene and the GM's intent
+2. Build naturally from the previous scene
+3. Incorporate the GM's specific intent
+4. Respect BACKGROUND tone/motifs and CHARACTERS motivations
+5. Do not contradict EFFECTIVE_CONTEXT
+6. Use specific locations/NPCs from the background when appropriate
+7. Keep objective focused on purpose only - no micro-details about implementation
+
+**Context Provided**:
+- Background Context (all fields)
+- Characters Context (if available)
+- Previous Scene (title, objective, sequence)
+- Effective Context (from locked predecessors)
+- GM Intent (user-provided direction for the next scene)
+
+**Critical**: Return ONLY the JSON object. Do not include any other text, explanations, or formatting.
+
+---
+
+### 6. Character Regeneration Prompt
+**File**: `api/characters/regenerate.js`
+**Status**: ✅ **ACTIVE**
+**Model**: `gpt-4o`
+**Temperature**: `0.9`
+
+**Purpose**: Regenerate a specific character field while maintaining consistency with existing character and background
+
+**Regenerable Fields**:
+- personality
+- motivation
+- connectionToStory
+- gmSecret
+- potentialConflict
+- voiceTone
+- inventoryHint
+- backgroundHistory
+- flawOrWeakness
+
+**System Prompt**:
+```
+You are a D&D GM character designer regenerating a specific field for an existing character. 
+Follow the rules strictly and return valid JSON only.
+```
+
+**Key Instructions**:
+1. **Lore & World Integration**: Use Background Context data to guide realism
+2. **Character Consistency**: Regenerated field must be consistent with existing character's other fields
+3. **Field-Specific Requirements**:
+   - **gmSecret**: Must be 2-3 sentences of rich, interconnected lore connecting to background context
+   - **backgroundHistory**: Should read like a mini origin story (1-2 paragraphs, max 10 lines)
+   - **personality**: Focus on personality traits and behavior patterns (2-3 sentences)
+4. **GM Intent Integration**: If GM intent provided, incorporate it while maintaining consistency
+
+**Output Schema**:
+```json
+{
+  "regeneratedField": "The new value for [fieldName]"
+}
+```
+
+**Prerequisites**:
+- Background must be generated
+- Characters must be generated
+- Characters must NOT be locked (locked characters cannot be edited)
+
+**Output**: Returns only the regenerated field value, not the full character object.
+
+---
+
+### 7. Delta Analysis (Programmatic)
+**File**: `api/delta_service.js` (used by `api/apply_edit.js`)
+**Status**: ✅ **ACTIVE** (Programmatic analysis - AI prompt exists but is not currently used)
+**AI Prompt File**: `api/delta_prompt.js`
+**AI Prompt Status**: ⚠️ **AVAILABLE BUT NOT USED**
+
+**Purpose**: Compare old and new scene details to analyze semantic changes and determine impact on subsequent scenes
+
+**Current Implementation**: Programmatic analysis (not AI-based)
+
+**Analysis Method**:
+The system compares old and new scene details programmatically by examining:
+- `keyEvents`: Array of key events that occurred
+- `revealedInfo`: Array of information revealed
+- `stateChanges`: Object with state changes
+- `contextOut.keyEvents`: Key events in context output
+- `contextOut.revealedInfo`: Revealed info in context output
+- `contextOut.stateChanges`: State changes in context output
+- `contextOut.npcRelationships`: NPC relationship changes
+
+**Output Schema**:
+```json
+{
   "delta": {
     "keysChanged": ["string"],
     "summary": "string"
   },
+  "updatedDetail": "SceneDetail",
   "affectedScenes": [
     {
       "sceneId": "string",
@@ -274,33 +415,24 @@ You are a DnD scene editor. Compare the old and new scene details below and anal
 }
 ```
 
-**Tasks**:
+**AI Prompt** (Available but not currently used):
+If enabled in the future, the AI prompt would:
 1. Compare both versions semantically
 2. Identify changed keys (context-related)
 3. Summarize the delta in natural language
 4. Determine affected subsequent scenes and assign importance level
 5. Return updated detail, delta summary, and affected scenes list
 
-**Rules**:
-- Return only JSON, no additional text
+**Severity Levels**:
 - "soft": Minor changes (state changes, minor updates)
 - "hard": Major changes (new information, key events, plot changes)
+
+**Rules**:
 - Only mark the next 2-3 scenes as affected
 - Ignore only spelling/style differences
 - Detect semantic changes
 
-**Language Directive**:
-```
-All text output must be in English. Use clear, natural language suitable for tabletop Game Masters. 
-Do not use Turkish words or local idioms.
-```
-
-**Fallback**:
-If AI analysis fails, programmatic fallback compares:
-- keyEvents
-- revealedInfo
-- stateChanges
-- contextOut fields (keyEvents, revealedInfo, stateChanges)
+**Note**: The AI prompt infrastructure exists in `api/delta_prompt.js` but `api/apply_edit.js` currently uses the programmatic `analyzeDelta()` function from `api/delta_service.js` instead.
 
 ---
 
@@ -507,19 +639,39 @@ This ensures consistent, professional English output across all AI-generated con
 
 ## 📊 Model Configuration
 
-**Current Active Model**: GPT-4o (OpenAI)
+**Current Active Models**: `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo` (OpenAI)
 **Configuration File**: `api/model.js`
 
+**Model Usage**:
+- **Background Generation**: `gpt-4o` only
+- **Character Generation**: `gpt-4o` only
+- **Macro Chain Generation**: Rotates between `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`
+- **Scene Detail Generation**: Rotates between `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`
+- **Next Scene Generation**: `gpt-4o` only
+- **Character Regeneration**: `gpt-4o` only
+- **Delta Analysis**: Programmatic (no AI model used)
+
 **Temperature Settings**:
-- Background Generation: 0.7
-- Character Generation: 0.7
-- Macro Chain Generation: 0.7
-- Scene Detail Generation: 0.8
-- Delta Analysis: (Not specified, likely 0.7 default)
+- Background Generation: `0.7` (fixed)
+- Character Generation: `0.7` (fixed)
+- Character Regeneration: `0.9` (fixed)
+- Macro Chain Generation: `0.9` base + dynamic variation (0.0 to 0.19) = `0.9 to 1.0`
+- Scene Detail Generation: `0.9` base + dynamic variation (0.0 to 0.24) = `0.9 to 1.0`
+- Next Scene Generation: `0.8` (fixed)
+
+**Top P Settings**:
+- Scene Detail Generation: `0.95` base + dynamic variation (0.0 to 0.14) = `0.95 to 1.0`
+- Next Scene Generation: `0.9` (fixed)
+- Others: Not specified (uses default)
 
 **Max Tokens**:
-- Character Generation: 4000
-- Others: Default (unspecified)
+- Character Generation: `4000`
+- Others: Default (unspecified, typically 4096 for GPT-4 models)
+
+**Creativity Tracking**:
+- Macro Chain Generation: ✅ Active (tracks narrative styles and pacing)
+- Scene Detail Generation: ✅ Active (tracks 20 different approaches)
+- Purpose: Prevents repetitive patterns across sessions
 
 ---
 
@@ -559,15 +711,38 @@ This ensures consistent, professional English output across all AI-generated con
 
 ---
 
-## 🔄 Recent Changes
+## 🔄 Recent Changes (Verified October 29, 2025)
 
-1. **New Scene Detail Structure**: Implemented Goal→Conflict→Revelation→Transition narrative core
-2. **Context Migration**: Added automatic migration from old `dynamicElements.contextOut` to top-level `contextOut`
-3. **Enhanced Context**: Added comprehensive context blocks (background, characters, player count)
-4. **Language Enforcement**: Added English language directive to all prompts
-5. **Version Tracking**: Implemented version staleness detection for scene generation
+1. **Character Generation Enhanced**: Now generates 20 fields per character (added SRD character sheet integration fields: languages, alignment, deity, physicalDescription, equipmentPreferences, subrace, age, height, proficiencies)
+
+2. **Dynamic Temperature System**: Implemented for Macro Chain and Scene Detail generation:
+   - Base temperature 0.9 with session-aware variation
+   - Increases creativity and reduces repetitive patterns
+
+3. **Model Rotation**: Macro Chain and Scene Detail generation now rotate between `gpt-4o`, `gpt-4o-mini`, and `gpt-4-turbo` for variety
+
+4. **Creativity Tracking System**: 
+   - Macro Chain: Tracks narrative styles and pacing approaches
+   - Scene Detail: Tracks 20 different creative approaches to avoid repetition
+
+5. **Next Scene Generation**: New prompt added for iterative scene chain expansion based on GM intent
+
+6. **Character Regeneration**: New prompt added for regenerating individual character fields
+
+7. **Delta Analysis**: Currently uses programmatic analysis; AI prompt available but not active
+
+8. **New Scene Detail Structure**: Implemented Goal→Conflict→Revelation→Transition narrative core
+
+9. **Context Migration**: Added automatic migration from old `dynamicElements.contextOut` to top-level `contextOut`
+
+10. **Enhanced Context**: Added comprehensive context blocks (background, characters, player count)
+
+11. **Language Enforcement**: Added English language directive to all prompts
+
+12. **Version Tracking**: Implemented version staleness detection for scene generation
 
 ---
 
-Last Updated: 2025-10-21
+**Last Verified**: October 29, 2025
+**Next Review**: When prompt implementations change or new prompts are added
 

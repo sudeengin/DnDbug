@@ -1,10 +1,12 @@
-import { getOrCreateSessionContext } from '../context.js';
-import { saveSessionContext } from '../storage.js';
-import { bumpCharactersV } from '../lib/versioning.js';
+import { lockContextBlock } from '../lib/lockService.js';
 import logger from "../lib/logger.js";
 
 const log = logger.character;
 
+/**
+ * Characters lock handler - uses unified lockService
+ * Maintained for backward compatibility with POST /api/characters/lock
+ */
 export default async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
@@ -21,22 +23,8 @@ export default async function handler(req, res) {
       return;
     }
 
-    const sessionContext = await getOrCreateSessionContext(sessionId);
-    
-    // Update the lock status
-    if (!sessionContext.locks) {
-      sessionContext.locks = {};
-    }
-    sessionContext.locks.characters = locked;
-    sessionContext.updatedAt = new Date().toISOString();
-
-    // Bump version when locking/unlocking
-    if (locked) {
-      bumpCharactersV(sessionContext.meta);
-    }
-
-    // Save the updated context
-    await saveSessionContext(sessionId, sessionContext);
+    // Use unified lock service with blockType='characters'
+    const sessionContext = await lockContextBlock(sessionId, 'characters', locked);
 
     log.info('Characters lock updated:', {
       sessionId,

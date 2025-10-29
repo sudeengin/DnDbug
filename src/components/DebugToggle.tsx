@@ -1,3 +1,10 @@
+/**
+ * @deprecated This component uses DebugPanel which uses debugCollector (not actively used).
+ * The app uses SimpleDebugToggle with simpleDebug instead.
+ * 
+ * This file is kept for reference but should not be used in production.
+ */
+
 // Debug Toggle Component - Floating button to access debug panel
 import React, { useState } from 'react';
 import DebugPanel from './DebugPanel';

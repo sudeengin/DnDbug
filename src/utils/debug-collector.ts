@@ -152,11 +152,24 @@ class DebugCollector {
       /DevTools/,
       /Extension/,
       /chrome-extension/,
-      /moz-extension/
+      /moz-extension/,
+      /useState/,
+      /useEffect/,
+      /setState/,
+      /React state/,
+      /component.*update/,
+      /render.*component/,
+      /React.*update/,
+      /state.*change/,
+      /props.*change/,
+      /re-render/,
+      /componentDidUpdate/,
+      /componentWillUpdate/
     ];
     
-    if (level === 'info' && noisyPatterns.some(pattern => pattern.test(message))) {
-      return; // Skip noisy info logs
+    // Additional filter for high-frequency logs (like typing)
+    if (level === 'info' && message.length < 10 && !message.includes('API') && !message.includes('Error')) {
+      return; // Skip very short info logs that are likely typing events
     }
 
     const log: DebugLog = {

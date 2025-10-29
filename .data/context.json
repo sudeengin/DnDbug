@@ -14,8 +14,8 @@
             }
           ],
           "status": "Edited",
-          "version": 2,
-          "lastUpdatedAt": "2025-10-29T00:48:17.381Z",
+          "version": 4,
+          "lastUpdatedAt": "2025-10-29T01:13:33.542Z",
           "meta": {
             "source": "macroChainTab",
             "requestId": "7ab7473c-f185-40d1-be54-df71fe9f6906",
@@ -288,7 +288,455 @@
         ],
         "locked": false,
         "version": 1761698856930
-      }
+      },
+      "story_facts": [
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The silence is connected to an ancient artifact beneath the Whispering Woods, affecting those selectively.",
+            "The artifact beneath the Whispering Woods resonates with specific individuals.",
+            "Elowen Whisperwind feels a personal resolve to delve into the Whispering Woods, reconnecting with her roots."
+          ],
+          "revealedInfo": [
+            "The silence is connected to an ancient artifact beneath the Whispering Woods, affecting those selectively."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "Artifact Chamber beneath Whispering Woods"
+            ],
+            "factions": [
+              "Whisper Seekers"
+            ],
+            "constraints": [
+              "The silence may only be lifted with knowledge from the artifact."
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "Navigate the intricate alliances within Whispering Hollow to determine the best course of action for restoring sound."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:19.819Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact's location lies beneath the ancient library, believed to be a nexus of the town's historic sound conduits.",
+            "The artifact could either restore or permanently sever the town's connection to sound.",
+            "Garrick Flint realizes the scientific ramifications of his allegiance choices.",
+            "Iris Thorne's relationship with Thorne deepens, as music forms an unspoken bond."
+          ],
+          "revealedInfo": [
+            "The artifact's location lies beneath the ancient library, believed to be a nexus of the town's historic sound conduits."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Subterranean Conduits under the ancient library"
+            ],
+            "factions": [
+              "A new faction of soundkeepers emerges"
+            ],
+            "constraints": [
+              "The decision on alliances impacts the artifact's eventual use"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "The adventurers must navigate allegiances among Whispering Hollow's factions and determine the truth about the artifact causing the silence."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:21.345Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact is a relic tied to a hidden history of Whispering Hollow, revealing that the silence is not merely a curse but a consequence of an unresolved conflict.",
+            "The artifact's historical significance is revealed, altering the adventurers’ understanding of their quest.",
+            "Iris wrestles with her desire to restore music against the pragmatic plans Ilyana presents, testing her artistic integrity."
+          ],
+          "revealedInfo": [
+            "The artifact is a relic tied to a hidden history of Whispering Hollow, revealing that the silence is not merely a curse but a consequence of an unresolved conflict."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [],
+            "factions": [
+              "The Shadow Merchants are revealed as a potential manipulative force in the town's affairs."
+            ],
+            "constraints": []
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "To navigate the tensions between factions and choose an ally to confront the growing silence's source."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:23.904Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact beneath the market square was once used by ancient mages to enforce peace through silence.",
+            "The artifact's purpose and origin have been revealed.",
+            {
+              "character": "Iris Thorne",
+              "moment": "Uses her bardic skills to interpret non-verbal cues, easing the tense negotiations."
+            },
+            {
+              "character": "Garrick Flint",
+              "moment": "Applies his scientific expertise to understand the artifact's mechanism."
+            },
+            {
+              "character": "Elowen Whisperwind",
+              "moment": "Leverages her local knowledge to facilitate meetings between the factions."
+            },
+            {
+              "character": "Thorn Blackwood",
+              "moment": "Sneaks around to gather critical information, overhearing important secrets."
+            }
+          ],
+          "revealedInfo": [
+            "The artifact beneath the market square was once used by ancient mages to enforce peace through silence."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "Underground chamber beneath the market square"
+            ],
+            "factions": [
+              "Ancient Guardian Sect"
+            ],
+            "constraints": [
+              "Artifact must not be destroyed"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "Identify the source of the silence in Whispering Hollow and negotiate alliances among competing interests."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:24.311Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact is a seal that suppresses a power linked to the silence.",
+            "The Whisper Seekers and Shadow Merchants are both descendants of the original creators.",
+            "The artifact is central to controlling the silence.",
+            "Iris confronts her beliefs about sound's intrinsic power.",
+            "Garrick uncovers layers of arcane history linking to his studies.",
+            "Elowen strengthens her resolve to safeguard the land.",
+            "Thorn sees the potential for both profit and revelation."
+          ],
+          "revealedInfo": [
+            "The artifact is a seal that suppresses a power linked to the silence.",
+            "The Whisper Seekers and Shadow Merchants are both descendants of the original creators."
+          ],
+          "stateChanges": {
+            "faction_tensions": "heightened",
+            "artifact_awareness": "increased"
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Arcane Vault beneath the Library"
+            ],
+            "factions": [
+              "Ancient alignments between Whisper Seekers and Shadow Merchants"
+            ],
+            "constraints": [
+              "Artifacts must not be removed from their original sites without risk"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "Unite or divide the party in making a pivotal decision regarding the looming conflict among local factions."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:34.363Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "Whispers in the Market Square",
+          "keyEvents": [
+            "Townsfolk believe the silence is linked to an ancient secret buried beneath the town.",
+            "Mayor Elara knows of a tale involving a forbidden pact made generations ago.",
+            "The connection between the silence and the town's history is growing clearer.",
+            "Iris Thorne shares her own fears about the loss of music and sound, prompting the group to discuss their personal connections to sound."
+          ],
+          "revealedInfo": [
+            "Townsfolk believe the silence is linked to an ancient secret buried beneath the town.",
+            "Mayor Elara knows of a tale involving a forbidden pact made generations ago."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne, the Bard": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The ancient library is suggested as a place to find more information."
+            ],
+            "factions": [],
+            "constraints": []
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "Whispers in the Market Square",
+              "status": "active",
+              "description": "To uncover clues about the silence affecting Whispering Hollow and learn the townspeople's fears and suspicions."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:59.813Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Silent Convergence",
+          "keyEvents": [
+            "An ancient pact was made with a forgotten deity, silencing the town when the deity's domain was trespassed upon.",
+            "An ancient artifact under the market square is linked to the town's silence.",
+            "The pact includes a clause that can end the silence if uncovered and properly understood.",
+            "Iris feels a mystical pull towards the location of the artifact, her bardic senses tingling with suppressed sound.",
+            "Garrick sketches quick diagrams, piecing together ley line maps and arcane theories related to the silence.",
+            "Elowen senses a disturbing shift in the natural order around the market square, feeling the land's muted plea for help.",
+            "Thorn's mind races with the potential for profit and power but also a growing understanding of the magnitude of the artifact's implications."
+          ],
+          "revealedInfo": [
+            "An ancient pact was made with a forgotten deity, silencing the town when the deity's domain was trespassed upon."
+          ],
+          "stateChanges": {
+            "SilenceAreaExpanded": false
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "Underneath the Market Square"
+            ],
+            "factions": [
+              "The Whisper Seekers",
+              "The Shadow Merchants"
+            ],
+            "constraints": [
+              "Must resolve the silence without destroying the artifact"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Silent Convergence",
+              "status": "active",
+              "description": "The adventurers aim to investigate the origins of the silence in Whispering Hollow and understand its effects on the town and its factions."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:55:22.545Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically.",
+            "The factions' goals are revealed to be more complex than initially suspected.",
+            "Iris finds herself torn between her artistic passion and the moral dilemmas presented by the artifact, prompting a deeper reflection on her connection to sound."
+          ],
+          "revealedInfo": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Whispering Woods now hold greater significance as the source of the artifact's power."
+            ],
+            "factions": [
+              "The Whisper Seekers and Shadow Merchants reveal hidden agendas."
+            ],
+            "constraints": [
+              "Each decision made during this scene influences future interactions with factions."
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "The adventurers aim to discern the motivations of various factions regarding the source of silence."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T01:00:56.377Z"
+        }
+      ]
     },
     "locks": {
       "background": true,
@@ -300,9 +748,9 @@
       "macroSnapshotV": 0,
       "updatedAt": "2025-10-29T00:47:44.292Z"
     },
-    "version": 25,
+    "version": 52,
     "createdAt": "2025-10-29T00:43:23.470Z",
-    "updatedAt": "2025-10-29T00:52:25.498Z",
+    "updatedAt": "2025-10-29T01:13:43.648Z",
     "macroChains": {
       "chain_1761697789162_puzxhhhyt": {
         "chainId": "chain_1761697789162_puzxhhhyt",
@@ -315,8 +763,8 @@
           }
         ],
         "status": "Edited",
-        "version": 2,
-        "lastUpdatedAt": "2025-10-29T00:48:17.381Z",
+        "version": 4,
+        "lastUpdatedAt": "2025-10-29T01:13:33.542Z",
         "meta": {
           "source": "macroChainTab",
           "requestId": "7ab7473c-f185-40d1-be54-df71fe9f6906",
@@ -324,6 +772,223 @@
         },
         "createdAt": "2025-10-29T00:29:49.162Z",
         "updatedAt": "2025-10-29T00:29:49.164Z"
+      }
+    },
+    "creativityHistory": {
+      "macroChainApproaches": [],
+      "sceneDetailApproaches": [
+        {
+          "approach": "Emphasize character interactions and dialogue opportunities",
+          "detailStyle": "Employ a conversational, accessible tone",
+          "complexity": "Build complex webs of interconnected elements",
+          "timestamp": "2025-10-29T01:00:43.307Z"
+        },
+        {
+          "approach": "Create scenes with unexpected plot twists and revelations",
+          "detailStyle": "Use a mysterious, enigmatic narrative voice",
+          "complexity": "Focus on single, focused objectives with depth",
+          "timestamp": "2025-10-29T00:54:51.932Z"
+        },
+        {
+          "approach": "Focus on environmental challenges and survival elements",
+          "detailStyle": "Employ a conversational, accessible tone",
+          "complexity": "Emphasize straightforward, linear progression",
+          "timestamp": "2025-10-29T00:54:47.912Z"
+        },
+        {
+          "approach": "Highlight environmental storytelling and world-building",
+          "detailStyle": "Employ a scholarly, academic tone",
+          "complexity": "Create branching paths with multiple outcomes",
+          "timestamp": "2025-10-29T00:54:17.608Z"
+        },
+        {
+          "approach": "Focus on character backstory integration and personal growth",
+          "detailStyle": "Use rich, evocative language with vivid imagery",
+          "complexity": "Create intricate, multi-layered scenes with hidden depths",
+          "timestamp": "2025-10-29T00:54:11.448Z"
+        },
+        {
+          "approach": "Emphasize exploration of mysterious locations and ancient secrets",
+          "detailStyle": "Adopt a dramatic, theatrical style",
+          "complexity": "Build complex webs of interconnected elements",
+          "timestamp": "2025-10-29T00:54:11.022Z"
+        },
+        {
+          "approach": "Focus on time manipulation and reality-bending elements",
+          "detailStyle": "Use a mysterious, enigmatic narrative voice",
+          "complexity": "Focus on simple, direct encounters with clear objectives",
+          "timestamp": "2025-10-29T00:54:10.074Z"
+        },
+        {
+          "approach": "Focus on action sequences and dynamic encounters",
+          "detailStyle": "Employ a conversational, accessible tone",
+          "complexity": "Create branching paths with multiple outcomes",
+          "timestamp": "2025-10-29T00:54:07.202Z"
+        }
+      ],
+      "lastUpdated": "2025-10-29T01:00:43.308Z"
+    },
+    "sceneDetails": {
+      "scene_6_1761697789162": {
+        "sceneId": "scene_6_1761697789162",
+        "title": "The Balance of Power",
+        "objective": "Decide whom to ally with in a climactic showdown as the factions converge on the artifact, determining Elderglen's fate amidst moral ambiguity and impending chaos.",
+        "sequence": 1,
+        "sceneType": "investigation",
+        "narrativeCore": {
+          "goal": "The adventurers aim to discern the motivations of various factions regarding the source of silence.",
+          "conflict": "Trust issues arise as each faction attempts to sway the adventurers to their side.",
+          "revelation": "The adventurers learn that the artifact may control not just sound, but the emotions of those nearby.",
+          "transition": "This leads to a tension-filled discussion about the implications of using the artifact."
+        },
+        "dynamicElements": {
+          "npcProfiles": [
+            {
+              "name": "Mayor Elara",
+              "motivation": "To maintain order and protect her town from further chaos.",
+              "personality": "Stressed and desperate, she speaks with urgency, sometimes punctuating her statements with a forced laugh."
+            },
+            {
+              "name": "Thorne",
+              "motivation": "To preserve the town's culture through music and stories.",
+              "personality": "Mysterious and whimsical, he often speaks in riddles, his tone both playful and grave."
+            },
+            {
+              "name": "Ilyana",
+              "motivation": "To exploit the situation for profit while also restoring sound.",
+              "personality": "Cunning and persuasive, she often uses charm and a subtle sense of humor to manipulate others."
+            }
+          ],
+          "environment": "The abandoned bell tower stands in the center of a fog-blanketed square, shadowed by the surrounding buildings. Echoes of footsteps reverberate softly, disturbing the silence. The air feels heavy with unspoken tension.",
+          "challenge": {
+            "type": "skill",
+            "dc": 15,
+            "failureConsequence": "Failure to persuade a faction may lead to misinformation being spread, causing distrust among the adventurers and NPCs."
+          },
+          "revealedInfo": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically."
+          ],
+          "contextOut": {
+            "world_state": {},
+            "story_facts": [
+              "The factions' goals are revealed to be more complex than initially suspected."
+            ],
+            "world_seeds": {
+              "locations": [
+                "The Whispering Woods now hold greater significance as the source of the artifact's power."
+              ],
+              "factions": [
+                "The Whisper Seekers and Shadow Merchants reveal hidden agendas."
+              ],
+              "constraints": [
+                "Each decision made during this scene influences future interactions with factions."
+              ]
+            },
+            "characterMoments": [
+              "Iris finds herself torn between her artistic passion and the moral dilemmas presented by the artifact, prompting a deeper reflection on her connection to sound."
+            ]
+          }
+        },
+        "status": "NeedsRegen",
+        "version": 3,
+        "lastUpdatedAt": "2025-10-29T01:13:33.542Z",
+        "contextOut": {
+          "keyEvents": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically.",
+            "The factions' goals are revealed to be more complex than initially suspected.",
+            "Iris finds herself torn between her artistic passion and the moral dilemmas presented by the artifact, prompting a deeper reflection on her connection to sound."
+          ],
+          "revealedInfo": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Whispering Woods now hold greater significance as the source of the artifact's power."
+            ],
+            "factions": [
+              "The Whisper Seekers and Shadow Merchants reveal hidden agendas."
+            ],
+            "constraints": [
+              "Each decision made during this scene influences future interactions with factions."
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "The adventurers aim to discern the motivations of various factions regarding the source of silence."
+            }
+          ],
+          "playerDecisions": []
+        },
+        "uses": {
+          "backgroundV": 0,
+          "charactersV": 1,
+          "prevSceneV": {},
+          "version": 1761699656371
+        },
+        "lockedAt": "2025-10-29T01:00:56.402Z"
+      },
+      "scene_2_1761699364752": {
+        "id": "scene_2_1761699364752",
+        "sequence": 2,
+        "title": "Echoes in the Halls",
+        "objective": "Investigate the ancient library's forgotten lore to uncover clues about the silence's origin and its potential expansion.",
+        "status": "Draft",
+        "meta": {
+          "gmIntent": "wander around the halls"
+        },
+        "createdAt": "2025-10-29T00:56:04.752Z",
+        "lastUpdatedAt": "2025-10-29T00:56:04.752Z",
+        "version": 1
+      },
+      "scene_2_1761699377316": {
+        "id": "scene_2_1761699377316",
+        "sequence": 2,
+        "title": "Echoes Beneath the Hollow",
+        "objective": "Explore the hidden passages beneath the Market Square to uncover clues about the artifact and its connection to the silence.",
+        "status": "Draft",
+        "meta": {
+          "gmIntent": "wander around the halls"
+        },
+        "createdAt": "2025-10-29T00:56:17.316Z",
+        "lastUpdatedAt": "2025-10-29T00:56:17.316Z",
+        "version": 1
+      },
+      "scene_2_1761699676907": {
+        "id": "scene_2_1761699676907",
+        "sequence": 2,
+        "title": "Echoes of the Enigma",
+        "objective": "Explore the ancient library to uncover clues about the origins of the silence and its mysterious link to the Whispering Woods.",
+        "status": "Draft",
+        "meta": {
+          "gmIntent": "wondering around the halls"
+        },
+        "createdAt": "2025-10-29T01:01:16.907Z",
+        "lastUpdatedAt": "2025-10-29T01:01:16.907Z",
+        "version": 1
       }
     }
   }

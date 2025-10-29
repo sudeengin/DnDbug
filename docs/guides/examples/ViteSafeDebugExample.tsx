@@ -1,7 +1,10 @@
 // Example component demonstrating Vite-safe debug system
+// NOTE: This is a reference example. Import paths need adjustment if running from this location.
 import React, { useState, useEffect } from 'react';
-import { log, scopedLog, perfLog, conditional } from '../lib/debugHelpers';
-import { isDebugMode } from '../lib/isDebugMode';
+// From docs/guides/examples/, correct paths would be:
+// '../../../src/lib/debugHelpers' and '../../../src/lib/isDebugMode'
+import { log, scopedLog, perfLog, conditional } from '../../../src/lib/debugHelpers';
+import { isDebugMode } from '../../../src/lib/isDebugMode';
 
 export default function ViteSafeDebugExample() {
   const [count, setCount] = useState(0);

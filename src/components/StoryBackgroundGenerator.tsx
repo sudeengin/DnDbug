@@ -135,6 +135,16 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
       return;
     }
 
+    // CRITICAL: Log when macro chain generation is triggered
+    log.info('🚨 MACRO CHAIN GENERATION TRIGGERED:', {
+      sessionId,
+      storyConcept: storyConcept.trim(),
+      background: !!background,
+      characters: 'unknown', // We don't have access to characters state here
+      timestamp: new Date().toISOString(),
+      trigger: 'manual_button_click'
+    });
+
     if (onChainGenerated) {
       onChainGenerated({
         concept: storyConcept.trim(),
@@ -145,6 +155,16 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
 
   const lockBackground = async (locked: boolean) => {
     if (!sessionId) return;
+
+    // CRITICAL: Log when background is being locked/unlocked
+    log.info('🔒 BACKGROUND LOCK STATE CHANGING:', {
+      sessionId,
+      locked,
+      background: !!background,
+      storyConcept: !!storyConcept,
+      timestamp: new Date().toISOString(),
+      warning: 'This should NOT trigger automatic macro chain generation!'
+    });
 
     try {
       await postJSON('/api/context/lock', {

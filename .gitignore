@@ -7,6 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Rotated logs
+*.log.*
+*.log-[0-9]*
+*.log.[0-9]*
+
 node_modules
 dist
 dist-ssr
@@ -38,4 +43,4 @@ node_modules/
 
 # Task files
 # tasks.json
-# tasks/ 
+# tasks/

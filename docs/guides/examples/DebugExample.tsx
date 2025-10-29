@@ -1,6 +1,8 @@
 // Example of how to use the simple debug system in any component
+// NOTE: This is a reference example. Import paths need adjustment if running from this location.
 import React, { useState, useEffect } from 'react';
-import debug from '../lib/simpleDebug';
+// From docs/guides/examples/, correct path would be: '../../../src/lib/simpleDebug'
+import debug from '../../../src/lib/simpleDebug';
 
 export default function DebugExample() {
   const [count, setCount] = useState(0);

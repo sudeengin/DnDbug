@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { HeroUIProvider } from "@heroui/react";
 import AppLayout from "./components/AppLayout";
 import { ToastProvider } from "./components/ui/toast";
 import SimpleDebugToggle from "./components/SimpleDebugToggle";
@@ -37,12 +38,14 @@ export default function App() {
   }, []);
 
   return (
-    <ToastProvider>
-      <AppLayout 
-        project={project} 
-        onProjectChange={setProject}
-      />
-      <SimpleDebugToggle />
-    </ToastProvider>
+    <HeroUIProvider>
+      <ToastProvider>
+        <AppLayout 
+          project={project} 
+          onProjectChange={setProject}
+        />
+        <SimpleDebugToggle />
+      </ToastProvider>
+    </HeroUIProvider>
   );
 }

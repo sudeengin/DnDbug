@@ -59,3 +59,17 @@
 }
 
 html, body, #root { height: 100%; }
+
+/* Override HeroUI dropdown menu background to match card surfaces */
+div[data-slot="popover"] {
+  background-color: #151A22 !important;
+  border: 1px solid #2A3340 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  opacity: 1 !important;
+}
+
+div[data-slot="popover"] > div {
+  background-color: #151A22 !important;
+  opacity: 1 !important;
+}

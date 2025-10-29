@@ -1,3 +1,10 @@
+/**
+ * @deprecated This component uses debugCollector which is not actively used.
+ * The app uses simpleDebug instead. See SimpleDebugToggle for the active debug UI.
+ * 
+ * This file is kept for reference but should not be used in production.
+ */
+
 // Debug Panel Component for managing debug mode and viewing logs
 import React, { useState, useEffect } from 'react';
 import type { DebugLog } from '../lib/debugCollector';

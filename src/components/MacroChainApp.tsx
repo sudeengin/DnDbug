@@ -60,6 +60,15 @@ export default function MacroChainApp() {
   };
 
   const handleGenerateChain = async (request: GenerateChainRequest) => {
+    // CRITICAL: Log when macro chain generation is triggered
+    log.info('🚨 MACRO CHAIN GENERATION REQUESTED:', {
+      sessionId,
+      concept: request.concept,
+      meta: request.meta,
+      timestamp: new Date().toISOString(),
+      trigger: 'handleGenerateChain_called'
+    });
+
     try {
       logAction('generate-chain-started', { request, sessionId });
       logTestPhase('generate', 'Starting chain generation', request);

@@ -414,7 +414,6 @@ app.get('/', (req, res) => {
       'POST /api/context/lock',
       'POST /api/chain/lock',
       'POST /api/chain/unlock',
-      'POST /api/scene/lock',
       'POST /api/scene/unlock',
       'POST /api/scene/update',
       'POST /api/scene/delete',
@@ -982,110 +981,20 @@ app.post('/api/chain/lock', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields: sessionId, chainId' });
     }
     
-    // CRITICAL: Force fresh reload of session context to avoid stale data
-    // This ensures we get the latest version after any recent edits
-    const { loadSessionContext } = await import('./api/storage.js');
-    const { saveSessionContext } = await import('./api/storage.js');
-    const sessionContext = await loadSessionContext(sessionId);
-    
-    if (!sessionContext) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
-    
-    // Find the macro chain in the session context first
-    let macroChain = null;
-    if (sessionContext.macroChains && sessionContext.macroChains[chainId]) {
-      macroChain = sessionContext.macroChains[chainId];
-    } else if (sessionContext.blocks?.custom?.macroChain?.chainId === chainId) {
-      macroChain = sessionContext.blocks.custom.macroChain;
-    }
-    
-    // If not found in session context, try the old storage system
-    if (!macroChain) {
-      try {
-        const { loadChain } = await import('./api/storage.js');
-        macroChain = await loadChain(chainId);
-        
-        // If found in old storage, store it in session context for future use
-        if (macroChain) {
-          if (!sessionContext.macroChains) {
-            sessionContext.macroChains = {};
-          }
-          sessionContext.macroChains[chainId] = macroChain;
-          sessionContext.updatedAt = new Date().toISOString();
-          await saveSessionContext(sessionId, sessionContext);
-          console.log(`Chain ${chainId} migrated from old storage to session context`);
-        }
-      } catch (error) {
-        console.warn('Failed to load chain from old storage:', error);
-      }
-    }
-    
-    // Debug logging
-    console.log('Chain lock debug:', {
-      sessionId,
-      chainId,
-      hasMacroChains: !!sessionContext.macroChains,
-      macroChainsKeys: sessionContext.macroChains ? Object.keys(sessionContext.macroChains) : [],
-      foundChain: !!macroChain
-    });
-    
-    // Validate that macro chain exists
-    if (!macroChain) {
-      return res.status(404).json({ error: 'Macro chain not found. Generate a chain first.' });
-    }
-    
-    // Check if already locked
-    if (macroChain.status === 'Locked') {
-      return res.status(409).json({ error: 'Macro chain is already locked' });
-    }
-    
-    // Lock the macro chain
-    const lockedChain = {
-      ...macroChain,
-      status: 'Locked',
-      lockedAt: new Date().toISOString(),
-      lastUpdatedAt: new Date().toISOString(),
-      version: (macroChain.version || 0) + 1
-    };
-    
-    // Update session context
-    if (!sessionContext.macroChains) {
-      sessionContext.macroChains = {};
-    }
-    sessionContext.macroChains[chainId] = lockedChain;
-    
-    // CRITICAL: Also update the context.blocks.custom.macroChain to keep UI in sync
-    if (!sessionContext.blocks.custom) {
-      sessionContext.blocks.custom = {};
-    }
-    sessionContext.blocks.custom.macroChain = {
-      chainId: lockedChain.chainId,
-      scenes: lockedChain.scenes,
-      status: lockedChain.status,
-      version: lockedChain.version,
-      lastUpdatedAt: lockedChain.lastUpdatedAt,
-      meta: lockedChain.meta,
-      createdAt: lockedChain.createdAt,
-      updatedAt: lockedChain.updatedAt,
-      lockedAt: lockedChain.lockedAt
-    };
-    
-    sessionContext.updatedAt = new Date().toISOString();
-    
-    // Save to storage
-    await saveSessionContext(sessionId, sessionContext);
-    
-    console.log(`Macro chain ${chainId} locked for session ${sessionId}`);
+    // Use unified lock service
+    const { lockChain } = await import('./api/lib/lockService.js');
+    const { chain } = await lockChain(sessionId, chainId, true);
     
     res.json({
       ok: true,
-      chain: lockedChain
+      chain
     });
     
   } catch (error) {
     console.error('Error locking macro chain:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const statusCode = error.message.includes('not found') ? 404 :
+                       error.message.includes('already locked') ? 409 : 500;
+    res.status(statusCode).json({ error: error.message || 'Internal server error' });
   }
 });
 
@@ -1097,108 +1006,23 @@ app.post('/api/chain/unlock', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields: sessionId, chainId' });
     }
     
-    // Get session context
-    const { getOrCreateSessionContext } = await import('./api/context.js');
-    const { saveSessionContext } = await import('./api/storage.js');
-    const sessionContext = await getOrCreateSessionContext(sessionId);
+    // Use unified lock service
+    const { lockChain } = await import('./api/lib/lockService.js');
+    const { chain, sessionContext } = await lockChain(sessionId, chainId, false);
     
-    // Find the macro chain in the session context first
-    let macroChain = null;
-    if (sessionContext.macroChains && sessionContext.macroChains[chainId]) {
-      macroChain = sessionContext.macroChains[chainId];
-    }
-    
-    // If not found in session context, try the old storage system
-    if (!macroChain) {
-      try {
-        const { loadChain } = await import('./api/storage.js');
-        macroChain = await loadChain(chainId);
-        
-        // If found in old storage, store it in session context for future use
-        if (macroChain) {
-          if (!sessionContext.macroChains) {
-            sessionContext.macroChains = {};
-          }
-          sessionContext.macroChains[chainId] = macroChain;
-          sessionContext.updatedAt = new Date().toISOString();
-          await saveSessionContext(sessionId, sessionContext);
-          console.log(`Chain ${chainId} migrated from old storage to session context`);
-        }
-      } catch (error) {
-        console.warn('Failed to load chain from old storage:', error);
-      }
-    }
-    
-    // Validate that macro chain exists
-    if (!macroChain) {
-      return res.status(404).json({ error: 'Macro chain not found' });
-    }
-    
-    // Check if already unlocked
-    if (macroChain.status !== 'Locked') {
-      return res.status(409).json({ error: 'Macro chain is not locked' });
-    }
-    
-    // Unlock the macro chain - set to Edited
-    const unlockedChain = {
-      ...macroChain,
-      status: 'Edited',
-      lockedAt: undefined,
-      lastUpdatedAt: new Date().toISOString(),
-      version: (macroChain.version || 0) + 1
-    };
-    
-    // Update session context
-    if (!sessionContext.macroChains) {
-      sessionContext.macroChains = {};
-    }
-    sessionContext.macroChains[chainId] = unlockedChain;
-    
-    // CRITICAL: Also update the context.blocks.custom.macroChain to keep UI in sync
-    if (!sessionContext.blocks.custom) {
-      sessionContext.blocks.custom = {};
-    }
-    sessionContext.blocks.custom.macroChain = {
-      chainId: unlockedChain.chainId,
-      scenes: unlockedChain.scenes,
-      status: unlockedChain.status,
-      version: unlockedChain.version,
-      lastUpdatedAt: unlockedChain.lastUpdatedAt,
-      meta: unlockedChain.meta,
-      createdAt: unlockedChain.createdAt,
-      updatedAt: unlockedChain.updatedAt,
-      lockedAt: unlockedChain.lockedAt
-    };
-    
-    // Mark all scene details as NeedsRegen since chain was unlocked
+    // Collect affected scenes (all sceneDetails marked as NeedsRegen)
     const affectedScenes = [];
     if (sessionContext.sceneDetails) {
       for (const [sceneId, sceneDetail] of Object.entries(sessionContext.sceneDetails)) {
-        if (sceneDetail && sceneDetail.sceneId) {
-          // Mark as NeedsRegen
-          const updatedDetail = {
-            ...sceneDetail,
-            status: 'NeedsRegen',
-            lastUpdatedAt: new Date().toISOString(),
-            version: (sceneDetail.version || 0) + 1
-          };
-          
-          sessionContext.sceneDetails[sceneId] = updatedDetail;
+        if (sceneDetail && sceneDetail.status === 'NeedsRegen') {
           affectedScenes.push(sceneId);
         }
       }
     }
     
-    sessionContext.updatedAt = new Date().toISOString();
-    
-    // Save to storage
-    await saveSessionContext(sessionId, sessionContext);
-    
-    console.log(`Macro chain ${chainId} unlocked for session ${sessionId}, affected scenes:`, affectedScenes);
-    
     res.json({
       ok: true,
-      chain: unlockedChain,
+      chain,
       affectedScenes
     });
     
@@ -1227,75 +1051,6 @@ app.get('/api/debug/session/:sessionId', async (req, res) => {
 });
 
 // Scene Lock/Unlock API Routes
-app.post('/api/scene/lock', async (req, res) => {
-  try {
-    const { sessionId, sceneId } = req.body;
-    
-    if (!sessionId || !sceneId) {
-      return res.status(400).json({ error: 'Missing required fields: sessionId, sceneId' });
-    }
-    
-    // Get session context
-    const { getOrCreateSessionContext } = await import('./api/context.js');
-    const { saveSessionContext } = await import('./api/storage.js');
-    const sessionContext = await getOrCreateSessionContext(sessionId);
-    
-    // Find the scene detail in the session context
-    let sceneDetail = null;
-    if (sessionContext.sceneDetails && sessionContext.sceneDetails[sceneId]) {
-      sceneDetail = sessionContext.sceneDetails[sceneId];
-    }
-    
-    // Debug logging
-    console.log('Scene lock debug:', {
-      sessionId,
-      sceneId,
-      hasSceneDetails: !!sessionContext.sceneDetails,
-      sceneDetailsKeys: sessionContext.sceneDetails ? Object.keys(sessionContext.sceneDetails) : [],
-      foundSceneDetail: !!sceneDetail
-    });
-    
-    // Validate that scene detail exists
-    if (!sceneDetail) {
-      return res.status(404).json({ error: 'Scene detail not found. Generate scene detail first.' });
-    }
-    
-    // Check if already locked
-    if (sceneDetail.status === 'Locked') {
-      return res.status(409).json({ error: 'Scene is already locked' });
-    }
-    
-    // Lock the scene
-    const lockedDetail = {
-      ...sceneDetail,
-      status: 'Locked',
-      lockedAt: new Date().toISOString(),
-      lastUpdatedAt: new Date().toISOString(),
-      version: (sceneDetail.version || 0) + 1
-    };
-    
-    // Update session context
-    if (!sessionContext.sceneDetails) {
-      sessionContext.sceneDetails = {};
-    }
-    sessionContext.sceneDetails[sceneId] = lockedDetail;
-    sessionContext.updatedAt = new Date().toISOString();
-    
-    // Save to storage
-    await saveSessionContext(sessionId, sessionContext);
-    
-    console.log(`Scene ${sceneId} locked for session ${sessionId}`);
-    
-    res.json({
-      ok: true,
-      detail: lockedDetail
-    });
-    
-  } catch (error) {
-    console.error('Error locking scene:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 app.post('/api/scene/unlock', async (req, res) => {
   try {
@@ -1416,8 +1171,13 @@ app.post('/api/characters/lock', async (req, res) => {
   return handler(req, res);
 });
 
+// Background lock endpoint - uses context/lock with blockType='background'
+// This endpoint is maintained for backward compatibility but routes to context/lock
 app.post('/api/background/lock', async (req, res) => {
-  const { default: handler } = await import('./api/background/lock.js?' + Date.now());
+  const { default: handler } = await import('./api/context/lock.js?' + Date.now());
+  // Transform request to match context/lock format
+  req.body = { ...req.body, blockType: 'background' };
+  req.method = 'PATCH'; // context/lock uses PATCH
   return handler(req, res);
 });
 
@@ -1522,7 +1282,6 @@ app.listen(PORT, () => {
   console.log(`   POST /api/context/lock`);
   console.log(`   POST /api/chain/lock`);
   console.log(`   POST /api/chain/unlock`);
-  console.log(`   POST /api/scene/lock`);
   console.log(`   POST /api/scene/unlock`);
   console.log(`   POST /api/scene/update`);
   console.log(`   POST /api/scene/delete`);

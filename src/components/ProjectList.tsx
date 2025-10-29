@@ -1,6 +1,38 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Breadcrumbs,
+  BreadcrumbItem,
+  Skeleton,
+} from "@heroui/react";
 import { getJSON, deleteJSON } from '../lib/api';
 import logger from '@/utils/logger';
+import {
+  Plus,
+  Upload,
+  Search,
+  Grid3x3,
+  List,
+  MoreVertical,
+  Folder,
+} from 'lucide-react';
 
 const log = logger.ui;
 
@@ -21,10 +53,12 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<string>('recent');
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
   useEffect(() => {
-    // Add a small delay to ensure servers are ready
     const timer = setTimeout(() => {
       loadProjects();
     }, 100);
@@ -69,20 +103,22 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
   };
 
   const handleDeleteClick = (projectId: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering the project selection
-    setShowDeleteConfirm(projectId);
+    e.stopPropagation();
+    setProjectToDelete(projectId);
+    onDeleteOpen();
   };
 
-  const handleDeleteConfirm = async (projectId: string) => {
+  const handleDeleteConfirm = async () => {
+    if (!projectToDelete) return;
+    
     try {
-      setDeletingProjectId(projectId);
+      setDeletingProjectId(projectToDelete);
       setError(null);
       
-      const response = await deleteJSON<{ ok: boolean; data: any }>(`/api/projects/${projectId}`);
+      const response = await deleteJSON<{ ok: boolean; data: any }>(`/api/projects/${projectToDelete}`);
       
       if (response.ok) {
-        // Remove the project from the local state
-        setProjects(prevProjects => prevProjects.filter(p => p.id !== projectId));
+        setProjects(prevProjects => prevProjects.filter(p => p.id !== projectToDelete));
         log.info('Project deleted successfully:', response.data);
       } else {
         setError('Failed to delete project');
@@ -92,156 +128,297 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
       setError(error instanceof Error ? error.message : 'Failed to delete project');
     } finally {
       setDeletingProjectId(null);
-      setShowDeleteConfirm(null);
+      setProjectToDelete(null);
+      onDeleteClose();
     }
   };
 
   const handleDeleteCancel = () => {
-    setShowDeleteConfirm(null);
+    setProjectToDelete(null);
+    onDeleteClose();
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading projects...</p>
-        </div>
-      </div>
-    );
-  }
+  // Filter and sort projects
+  const filteredProjects = projects.filter(project =>
+    project.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const sortedProjects = [...filteredProjects].sort((a, b) => {
+    switch (sortBy) {
+      case 'name':
+        return a.title.localeCompare(b.title);
+      case 'created':
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case 'recent':
+      default:
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    }
+  });
+
+  // Main container styling with solid background and generous padding
+  const containerClass = "min-h-screen bg-[#151420] pt-10 pb-16 px-3 sm:px-6 md:px-8";
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            Your Projects
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Select an existing project or create a new one
-          </p>
+    <div className={containerClass}>
+      <div className="max-w-[1440px] mx-auto">
+        {/* Breadcrumbs */}
+        <Breadcrumbs className="mb-2 text-[#A4AEC0]" size="sm">
+          <BreadcrumbItem>Home</BreadcrumbItem>
+          <BreadcrumbItem>Projects</BreadcrumbItem>
+        </Breadcrumbs>
+
+        {/* Header Row */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-[28px] leading-[36px] font-semibold text-[#E6EAF2]">Your Projects</h1>
+            <p className="text-[14px] leading-[22px] text-[#A4AEC0] mt-1">
+              Select an existing project or create a new one
+            </p>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <Button
+              variant="bordered"
+              radius="md"
+              startContent={<Upload className="w-4 h-4" />}
+              className="rounded-[12px] border-[#2A3340] text-[#E6EAF2] hover:bg-[#1A1F2A] focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+            >
+              Import
+            </Button>
+            <Button
+              color="primary"
+              variant="solid"
+              radius="md"
+              startContent={<Plus className="w-4 h-4" />}
+              onClick={onCreateNew}
+              className="rounded-[12px] text-[#0B0F10] bg-[#FFB703] hover:bg-[#E6A502] active:bg-[#CC9402] font-medium focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+            >
+              Create Project
+            </Button>
+          </div>
         </div>
 
+        {/* Utility Bar */}
+        <div className="flex flex-wrap gap-2 items-center mb-8">
+          <Input
+            size="md"
+            radius="md"
+            variant="bordered"
+            startContent={<Search className="w-4 h-4 text-[#7B8698]" />}
+            placeholder="Search projects…"
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+            className="flex-1 min-w-[200px] px-4 py-2 rounded-[12px] bg-[#151A22] border border-[#2A3340] text-[#E6EAF2] placeholder-[#7B8698] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)]"
+            classNames={{
+              input: "px-4 py-2 text-[#E6EAF2] focus:outline-none",
+              inputWrapper: "bg-[#151A22] rounded-[12px] border-[#2A3340] hover:border-[#2A3340] data-[hover=true]:border-[#2A3340] focus-within:outline-none focus-within:ring-2 focus-within:ring-[rgba(255,255,255,0.15)] focus-within:border-[#2A3340]",
+            }}
+          />
+          <Select
+            size="md"
+            radius="md"
+            variant="bordered"
+            selectedKeys={[sortBy]}
+            onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
+            className="min-w-[200px] rounded-[12px] bg-[#151A22] border border-[#2A3340] text-[#E6EAF2] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)]"
+            classNames={{
+              trigger: "bg-[#151A22] rounded-[12px] border-[#2A3340] px-4 py-2 text-[#E6EAF2] hover:border-[#2A3340] data-[hover=true]:border-[#2A3340] focus-within:outline-none focus-within:ring-2 focus-within:ring-[rgba(255,255,255,0.15)] focus-within:border-[#2A3340]",
+              value: "text-[#E6EAF2]",
+            }}
+          >
+            <SelectItem key="recent" className="text-[#E6EAF2]">Recently Updated</SelectItem>
+            <SelectItem key="name" className="text-[#E6EAF2]">Name A–Z</SelectItem>
+            <SelectItem key="created" className="text-[#E6EAF2]">Created Date</SelectItem>
+          </Select>
+          <div className="ml-auto flex gap-2">
+            <Button
+              variant="bordered"
+              isIconOnly
+              aria-label="Grid view"
+              radius="md"
+              className="rounded-[12px] border-[#2A3340] text-[#A4AEC0] hover:bg-[#1A1F2A] focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+            >
+              <Grid3x3 className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="bordered"
+              isIconOnly
+              aria-label="List view"
+              radius="md"
+              className="rounded-[12px] border-[#2A3340] text-[#A4AEC0] hover:bg-[#1A1F2A] focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+            >
+              <List className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-            <div className="flex items-center">
-              <svg className="h-5 w-5 text-red-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              {error}
+          <div className="mb-8 bg-[#151A22] border border-[#EF4444] rounded-[16px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+            <div className="flex items-center gap-2 text-[#EF4444]">
+              <span className="text-sm">{error}</span>
             </div>
           </div>
         )}
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              onClick={() => onProjectSelected(project)}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group relative"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="text-lg font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+        {/* Loading State */}
+        {loading && (
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i} className="bg-[#151A22] border border-[#2A3340] rounded-[16px] shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4 rounded-lg" />
+                </CardHeader>
+                <CardBody>
+                  <Skeleton className="h-4 w-full rounded-lg mb-2" />
+                  <Skeleton className="h-4 w-2/3 rounded-lg" />
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && sortedProjects.length === 0 && (
+          <Card className="bg-[#151A22] border border-[#2A3340] rounded-[16px] max-w-md mx-auto text-center min-h-[200px] shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+            <CardBody className="items-center gap-4 p-8">
+              <Folder className="w-12 h-12 text-[#7B8698]" />
+              <h3 className="text-[18px] leading-[26px] font-medium text-[#E6EAF2]">No projects yet</h3>
+              <p className="text-[14px] leading-[22px] text-[#A4AEC0]">
+                {searchQuery ? 'No projects match your search' : 'Create your first project to get started.'}
+              </p>
+              {!searchQuery && (
+                <Button
+                  color="primary"
+                  variant="solid"
+                  radius="md"
+                  onClick={onCreateNew}
+                  startContent={<Plus className="w-4 h-4" />}
+                  className="rounded-[12px] mt-4 text-[#0B0F10] bg-[#FFB703] hover:bg-[#E6A502] active:bg-[#CC9402] font-medium focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+                >
+                  Create Project
+                </Button>
+              )}
+            </CardBody>
+          </Card>
+        )}
+
+        {/* Project Grid */}
+        {!loading && sortedProjects.length > 0 && (
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {sortedProjects.map((project) => (
+              <Card
+                key={project.id}
+                className="bg-[#151A22] border border-[#2A3340] rounded-[16px] text-[#E6EAF2] shadow-[0_8px_24px_rgba(0,0,0,0.45)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.55)] hover:border-[#2A3340]/80 transition-all duration-200 cursor-pointer group"
+                isPressable
+                onPress={() => onProjectSelected(project)}
+              >
+                <CardHeader className="flex justify-between items-start pb-2 p-6">
+                  <h3 className="text-[18px] leading-[26px] font-medium text-[#E6EAF2] flex-1 pr-2">
                     {project.title}
                   </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Created: {formatDate(project.createdAt)}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Updated: {formatDate(project.updatedAt)}
-                  </p>
-                </div>
-                <div className="ml-4 flex items-center space-x-2">
-                  <button
-                    onClick={(e) => handleDeleteClick(project.id, e)}
-                    disabled={deletingProjectId === project.id}
-                    className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded"
-                    title="Delete project"
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        isIconOnly
+                        variant="light"
+                        size="sm"
+                        aria-label="Project menu"
+                        className="text-[#A4AEC0] hover:text-[#E6EAF2] hover:bg-[#1A1F2A] min-w-6 h-6 focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Project actions"
+                      onAction={(key) => {
+                        if (key === 'delete') {
+                          handleDeleteClick(project.id, { stopPropagation: () => {} } as any);
+                        } else if (key === 'open') {
+                          onProjectSelected(project);
+                        }
+                      }}
+                      classNames={{
+                        base: "!bg-[#151A22] !opacity-100 !border !border-[#2A3340] !shadow-[0_8px_24px_rgba(0,0,0,0.45)] rounded-[12px] p-2",
+                      }}
+                    >
+                      <DropdownItem key="open">Open</DropdownItem>
+                      <DropdownItem key="rename">Rename</DropdownItem>
+                      <DropdownItem key="duplicate">Duplicate</DropdownItem>
+                      <DropdownItem key="archive">Archive</DropdownItem>
+                      <DropdownItem key="delete" className="text-danger" color="danger">
+                        Delete
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </CardHeader>
+                <CardBody className="pt-0 pb-2 px-6">
+                  <div className="text-[#7B8698] text-[12px] leading-[18px] space-y-1">
+                    <div>Created: {formatDate(project.createdAt)}</div>
+                    <div>Updated: {formatDate(project.updatedAt)}</div>
+                  </div>
+                </CardBody>
+                <CardFooter className="pt-2 justify-end px-6 pb-6">
+                  <Button
+                    variant="light"
+                    size="sm"
+                    radius="md"
+                    className="rounded-[12px] text-[#E6EAF2] hover:bg-[#1A1F2A] focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onProjectSelected(project);
+                    }}
                   >
-                    {deletingProjectId === project.id ? (
-                      <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    ) : (
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    )}
-                  </button>
-                  <svg className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {projects.length === 0 && !error && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
-            <p className="text-gray-600 mb-6">Create your first project to get started</p>
+                    Open
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
           </div>
         )}
 
-        <div className="text-center">
-          <button
-            onClick={onCreateNew}
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-          >
-            <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Create New Project
-          </button>
-        </div>
-
-        {/* Delete Confirmation Dialog */}
-        {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-              <div className="mt-3 text-center">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                  <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4">
-                  Delete Project
-                </h3>
-                <div className="mt-2 px-7 py-3">
-                  <p className="text-sm text-gray-500">
-                    Are you sure you want to delete this project? This action cannot be undone.
-                  </p>
-                </div>
-                <div className="items-center px-4 py-3">
-                  <button
-                    onClick={() => handleDeleteConfirm(showDeleteConfirm)}
-                    disabled={deletingProjectId === showDeleteConfirm}
-                    className="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 disabled:opacity-50"
-                  >
-                    {deletingProjectId === showDeleteConfirm ? 'Deleting...' : 'Delete'}
-                  </button>
-                  <button
-                    onClick={handleDeleteCancel}
-                    disabled={deletingProjectId === showDeleteConfirm}
-                    className="px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md w-24 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Delete Confirmation Modal */}
+        <Modal
+          isOpen={isDeleteOpen}
+          onClose={handleDeleteCancel}
+          radius="lg"
+          classNames={{
+            base: "bg-[#151A22] border border-[#2A3340] rounded-[16px] shadow-[0_8px_24px_rgba(0,0,0,0.45)]",
+            header: "border-b border-[#2A3340]",
+            footer: "border-t border-[#2A3340]",
+          }}
+        >
+          <ModalContent>
+            <ModalHeader className="text-[#E6EAF2]">Delete Project</ModalHeader>
+            <ModalBody>
+              <p className="text-[#A4AEC0] text-sm">
+                Are you sure you want to delete this project? This action cannot be undone.
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="bordered"
+                radius="md"
+                onPress={handleDeleteCancel}
+                disabled={!!deletingProjectId}
+                className="rounded-[12px] border-[#2A3340] text-[#E6EAF2] hover:bg-[#1A1F2A] focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+              >
+                Cancel
+              </Button>
+              <Button
+                color="danger"
+                variant="solid"
+                radius="md"
+                onPress={handleDeleteConfirm}
+                disabled={!!deletingProjectId}
+                isLoading={!!deletingProjectId}
+                className="rounded-[12px] bg-[#EF4444] hover:bg-[#DC2626] text-white font-medium focus:ring-2 focus:ring-[rgba(255,183,3,0.55)]"
+              >
+                {deletingProjectId ? 'Deleting...' : 'Delete'}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
     </div>
   );
