@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { SessionContext, Blueprint, PlayerHook, WorldSeed, StylePreferences, StoryConcept } from '../types/macro-chain';
 import { analyzeConceptContextConflicts, type ConflictAnalysis } from '../utils/conflict-detection';
 import logger from '@/utils/logger';
+import { Button } from './ui/button';
 
 const log = logger.context;
 
@@ -232,17 +233,14 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
       <div className="bg-cyan-50 p-3 rounded-lg border-l-4 border-cyan-400">
         <div className="flex justify-between items-center mb-2">
           <h4 className="font-semibold text-cyan-800">Story Concept</h4>
-          <button
+          <Button
             onClick={toggleStoryConceptLock}
-            className={`px-2 py-1 text-xs rounded ${
-              isLocked 
-                ? 'bg-green-100 text-green-800 hover:bg-green-200' 
-                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-            }`}
+            variant={isLocked ? 'secondary' : 'primary'}
+            size="sm"
             title={isLocked ? 'Unlock story concept' : 'Lock story concept'}
           >
             {isLocked ? '🔒 Locked' : '🔓 Unlocked'}
-          </button>
+          </Button>
         </div>
         
         <div className="mb-2">
@@ -455,19 +453,8 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
         )}
 
         <div className="flex gap-2 mt-3">
-          <button
-            onClick={saveEdit}
-            disabled={loading}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-          >
-            Save
-          </button>
-          <button
-            onClick={cancelEditing}
-            className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            Cancel
-          </button>
+          <Button onClick={saveEdit} disabled={loading} variant="primary" size="sm">Save</Button>
+          <Button onClick={cancelEditing} variant="secondary" size="sm">Cancel</Button>
         </div>
       </div>
     );
@@ -486,20 +473,8 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Session Context</h3>
         <div className="flex gap-2">
-          <button
-            onClick={loadContext}
-            disabled={loading}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-          >
-            Refresh
-          </button>
-          <button
-            onClick={clearContext}
-            disabled={loading}
-            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
-          >
-            Clear
-          </button>
+          <Button onClick={loadContext} disabled={loading} variant="secondary" size="sm">Refresh</Button>
+          <Button onClick={clearContext} disabled={loading} variant="destructive" size="sm">Clear</Button>
         </div>
       </div>
 
@@ -568,30 +543,10 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ sessionId, onContext
       <div className="mt-4">
         <h4 className="font-semibold mb-2">Add Context</h4>
         <div className="flex gap-2 mb-4">
-          <button
-            onClick={() => startEditing('blueprint')}
-            className="px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200"
-          >
-            Blueprint
-          </button>
-          <button
-            onClick={() => startEditing('player_hooks')}
-            className="px-3 py-1 bg-green-100 text-green-800 rounded hover:bg-green-200"
-          >
-            Player Hooks
-          </button>
-          <button
-            onClick={() => startEditing('world_seeds')}
-            className="px-3 py-1 bg-purple-100 text-purple-800 rounded hover:bg-purple-200"
-          >
-            World Seeds
-          </button>
-          <button
-            onClick={() => startEditing('style_prefs')}
-            className="px-3 py-1 bg-orange-100 text-orange-800 rounded hover:bg-orange-200"
-          >
-            Style Prefs
-          </button>
+          <Button onClick={() => startEditing('blueprint')} variant="secondary" size="sm">Blueprint</Button>
+          <Button onClick={() => startEditing('player_hooks')} variant="secondary" size="sm">Player Hooks</Button>
+          <Button onClick={() => startEditing('world_seeds')} variant="secondary" size="sm">World Seeds</Button>
+          <Button onClick={() => startEditing('style_prefs')} variant="secondary" size="sm">Style Prefs</Button>
         </div>
         
         {renderEditForm()}

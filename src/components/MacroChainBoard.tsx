@@ -19,6 +19,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import InlineEdit from './InlineEdit';
+import { Button } from './ui/button';
 import type { MacroChain, MacroScene, UpdateChainRequest } from '../types/macro-chain';
 import { postJSON } from '../lib/api';
 import logger from '@/utils/logger';
@@ -165,15 +166,17 @@ function SortableSceneItem({
           {/* Action Buttons */}
           <div className="pt-3 border-t border-gray-200">
             {isEditing ? (
-              <button
+              <Button
                 onClick={() => onDeleteScene(scene.id)}
-                className="w-full px-3 py-2 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
+                variant="destructive"
+                size="sm"
+                className="w-full justify-center"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
                 <span>Delete Scene</span>
-              </button>
+              </Button>
             ) : isSceneLocked ? (
               <div className="space-y-2">
                 <div className="w-full px-3 py-2 text-sm bg-green-600 text-white rounded flex items-center justify-center space-x-2">
@@ -182,28 +185,26 @@ function SortableSceneItem({
                   </svg>
                   <span>Scene Locked</span>
                 </div>
-                <button
+                <Button
                   onClick={() => onGenerateNextScene(scene)}
-                  className="w-full px-3 py-2 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors flex items-center justify-center space-x-2"
+                  variant="primary"
+                  size="sm"
+                  className="w-full justify-center"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                   <span>Generate Next Scene</span>
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="space-y-2">
-                <button
+                <Button
                   onClick={() => onGenerateNextScene(scene)}
                   disabled={isChainLocked || !isNextSceneToLock || isGenerating}
-                  className={`w-full px-3 py-2 text-sm rounded transition-colors flex items-center justify-center space-x-2 ${
-                    isChainLocked || isGenerating
-                      ? 'bg-gray-100 text-gray-500 cursor-not-allowed' 
-                      : isNextSceneToLock
-                        ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                        : 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                  }`}
+                  variant={isChainLocked || !isNextSceneToLock ? 'secondary' : 'primary'}
+                  size="sm"
+                  className="w-full justify-center"
                 >
                   {isChainLocked ? (
                     <span>🔒 Chain Locked</span>
@@ -222,17 +223,19 @@ function SortableSceneItem({
                   ) : (
                     <span>⏳ Generate Scene {expectedNextOrder} first</span>
                   )}
-                </button>
+                </Button>
                 {!isChainLocked && (
-                  <button
+                  <Button
                     onClick={() => onDeleteScene(scene.id)}
-                    className="w-full px-3 py-2 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors flex items-center justify-center space-x-2"
+                    variant="destructive"
+                    size="sm"
+                    className="w-full justify-center"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                     <span>Delete Scene</span>
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
@@ -861,14 +864,15 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
                   You've locked Scene {lastLockedScene.order}. Describe what should happen in the next scene.
                 </p>
               </div>
-              <button
+              <Button
                 onClick={() => setShowGmIntent(false)}
-                className="text-gray-400 hover:text-gray-600"
+                variant="secondary"
+                size="sm"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+              </Button>
             </div>
 
             <div className="mb-4">
@@ -888,16 +892,19 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
                 This will create Scene {lastLockedScene.order + 1} based on your intent.
               </p>
               <div className="flex space-x-2">
-                <button
+                <Button
                   onClick={() => setShowGmIntent(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  variant="secondary"
+                  size="sm"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleGenerateNextScene}
                   disabled={!gmIntent.trim() || generatingSceneId === 'generating_next'}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  variant="primary"
+                  size="sm"
+                  className="flex items-center space-x-2"
                 >
                   {generatingSceneId === 'generating_next' ? (
                     <>
@@ -910,7 +917,7 @@ export default function MacroChainBoard({ chain, onUpdate, loading = false, sess
                   ) : (
                     <span>Generate Next Scene</span>
                   )}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

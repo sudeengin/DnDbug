@@ -310,12 +310,13 @@ export default function MacroChainApp() {
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">Generated Macro Chain</h2>
-                <button
+                <Button
                   onClick={handleNewChain}
-                  className="text-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  variant="secondary"
+                  size="sm"
                 >
                   Generate New Chain
-                </button>
+                </Button>
               </div>
               <MacroChainBoard 
                 chain={chain} 

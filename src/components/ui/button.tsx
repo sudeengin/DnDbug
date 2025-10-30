@@ -10,8 +10,12 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: "bg-[#7c63e5] text-white hover:bg-[#6b54d4] focus-visible:ring-[rgba(124,99,229,0.3)] shadow-sm",
-        secondary: "bg-[#2A3340] text-[#EDEDED] border border-[#2A3340] hover:bg-[#374151] hover:border-[#374151] focus-visible:ring-[rgba(42,51,64,0.3)]",
-        destructive: "bg-[#DC2626] text-white hover:bg-[#B91C1C] focus-visible:ring-[rgba(220,38,38,0.3)] shadow-sm",
+        // Muted neutral for secondary actions
+        secondary: "bg-[#1C1F2B] text-gray-300 border border-[#2A3340] hover:bg-[#2A3340] hover:text-white focus-visible:ring-[rgba(42,51,64,0.35)]",
+        // Transparent/ghost for icon-only or tertiary actions
+        tertiary: "bg-transparent text-[#C9D1D9] hover:bg-[#1b2230] focus-visible:ring-[rgba(27,34,48,0.35)]",
+        // Softer destructive
+        destructive: "bg-red-700/70 text-white hover:bg-red-600 focus-visible:ring-[rgba(220,38,38,0.3)] shadow-sm",
       },
       size: {
         default: "px-4 py-2 min-h-[40px]",

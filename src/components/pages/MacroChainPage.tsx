@@ -416,7 +416,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
         <Button 
           onClick={handleGenerateChain} 
           disabled={!isBackgroundLocked || !isCharactersLocked || generatingChain || hasChain}
-          className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          variant="primary"
         >
           {generatingChain ? (
             <>

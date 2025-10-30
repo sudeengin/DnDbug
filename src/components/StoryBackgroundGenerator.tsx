@@ -3,6 +3,7 @@ import { postJSON, getJSON } from '../lib/api';
 import type { GenerateBackgroundRequest, GenerateBackgroundResponse, BackgroundData, SessionContext } from '../types/macro-chain';
 import logger from '@/utils/logger';
 import { Lock, Unlock } from 'lucide-react';
+import { Button } from './ui/button';
 
 const log = logger.background;
 
@@ -119,35 +120,6 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
     setNumberOfPlayers(4);
     setBackground(null);
     setError(null);
-  };
-
-  const handleGenerateChain = async () => {
-    if (!storyConcept.trim()) {
-      setError('Please enter a story concept first!');
-      return;
-    }
-
-    if (!sessionId) {
-      setError('No active session');
-      return;
-    }
-
-    // CRITICAL: Log when macro chain generation is triggered
-    log.info('🚨 MACRO CHAIN GENERATION TRIGGERED:', {
-      sessionId,
-      storyConcept: storyConcept.trim(),
-      background: !!background,
-      characters: 'unknown', // We don't have access to characters state here
-      timestamp: new Date().toISOString(),
-      trigger: 'manual_button_click'
-    });
-
-    if (onChainGenerated) {
-      onChainGenerated({
-        concept: storyConcept.trim(),
-        meta: { gameType: 'D&D', players: '4', level: '5' }
-      });
-    }
   };
 
   const lockBackground = async (locked: boolean) => {
@@ -274,29 +246,21 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button
+            <Button
               onClick={handleGenerateBackground}
               disabled={isGenerating || loading || !storyConcept.trim() || isLocked}
-              className="px-6 py-2 bg-[#3B82F6] text-white rounded-[12px] font-semibold hover:bg-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+              variant="primary"
             >
               {isGenerating ? 'Generating...' : 'Generate Background'}
-            </button>
-            
-            <button
-              onClick={handleGenerateChain}
-              disabled={loading || !storyConcept.trim()}
-              className="px-6 py-2 bg-[#10B981] text-white rounded-[12px] font-semibold hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-[rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
-            >
-              Generate Chain
-            </button>
-            
+            </Button>
+
             {background && (
-              <button
+              <Button
                 onClick={handleClear}
-                className="px-6 py-2 bg-[#374151] text-white rounded-[12px] font-semibold hover:bg-[#4B5563] focus:outline-none focus:ring-2 focus:ring-[rgba(55,65,81,0.3)] transition-all duration-200 shadow-sm"
+                variant="secondary"
               >
                 Clear
-              </button>
+              </Button>
             )}
           </div>
 
@@ -315,14 +279,12 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             <div className="flex items-center space-x-3">
               {!isEditing && (
                 <>
-                  <button
+                  <Button
                     onClick={() => lockBackground(!isLocked)}
                     disabled={loading}
-                    className={`px-3 py-1 text-sm font-medium rounded-[12px] flex items-center gap-2 transition-all duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed ${
-                      isLocked
-                        ? 'bg-[#374151] text-white border border-[#4B5563] hover:shadow-[0_2px_6px_rgba(0,0,0,0.2)]'
-                        : 'bg-[#16a34a] text-white border border-[#15803d] hover:shadow-[0_2px_6px_rgba(0,0,0,0.2)]'
-                    }`}
+                    variant={isLocked ? 'secondary' : 'primary'}
+                    size="sm"
+                    className="flex items-center gap-2"
                   >
                     {isLocked ? (
                       <>
@@ -335,31 +297,34 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                         <span>Unlocked</span>
                       </>
                     )}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={startEditing}
                     disabled={isLocked}
-                    className="px-4 py-2 text-sm bg-[#374151] text-[#F0F4F8] rounded-[12px] hover:bg-[#4B5563] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                    variant="secondary"
+                    size="sm"
                   >
                     Edit
-                  </button>
+                  </Button>
                 </>
               )}
               {isEditing && (
                 <>
-                  <button
+                  <Button
                     onClick={saveEdit}
                     disabled={isGenerating}
-                    className="px-4 py-2 text-sm bg-[#10B981] text-white rounded-[12px] hover:bg-[#059669] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                    variant="primary"
+                    size="sm"
                   >
                     {isGenerating ? 'Saving...' : 'Save'}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={cancelEdit}
-                    className="px-4 py-2 text-sm bg-[#374151] text-[#F0F4F8] rounded-[12px] hover:bg-[#4B5563] transition-all duration-200 font-medium"
+                    variant="secondary"
+                    size="sm"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </>
               )}
             </div>

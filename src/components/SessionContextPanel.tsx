@@ -136,7 +136,7 @@ export default function SessionContextPanel({ sessionId, context, onContextUpdat
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-sm font-medium text-blue-900">Status Indicators</h4>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={fetchContext}
             disabled={loading}
@@ -220,7 +220,7 @@ export default function SessionContextPanel({ sessionId, context, onContextUpdat
                 <div className="flex items-center space-x-2">
                   <Button
                     size="sm"
-                    variant={isIncluded ? "default" : "outline"}
+                    variant={isIncluded ? "primary" : "secondary"}
                     onClick={() => toggleBlockInclusion(blockType)}
                     disabled={!blockData}
                   >

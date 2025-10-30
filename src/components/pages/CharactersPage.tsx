@@ -8,6 +8,8 @@ import debug from '../../lib/simpleDebug';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
 import CharactersTable from '../CharactersTable';
 import CharacterForm from '../CharacterForm';
+import CharacterDetailPage from './CharacterDetailPage';
+import { getCharacterIdFromUrl, navigateToCharacter, clearCharacterFromUrl } from '../../lib/router';
 import logger from '@/utils/logger';
 
 const log = logger.character;
@@ -25,7 +27,8 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   const [isLocked, setIsLocked] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'generated' | 'saved'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all'>('all');
+  const [viewCharacterId, setViewCharacterId] = useState<string | null>(null);
 
   // Check if background is locked
   const isBackgroundLocked = context?.locks?.background === true;
@@ -71,6 +74,12 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     }
     if (sessionId) {
       loadCharacters();
+    }
+    const handleHash = () => setViewCharacterId(getCharacterIdFromUrl());
+    handleHash();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('hashchange', handleHash);
+      return () => window.removeEventListener('hashchange', handleHash);
     }
   }, [sessionId]);
 
@@ -172,33 +181,41 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       return;
     }
 
+    const action = isLocked ? 'unlock' : 'lock';
+    const confirmed = typeof window !== 'undefined' ? window.confirm(`Are you sure you want to ${action} all characters?`) : true;
+    if (!confirmed) return;
+
     setLoading(true);
     setError(null);
 
     try {
-      const response = await postJSON('/api/characters/lock', { sessionId, locked: true });
+      const nextLocked = !isLocked;
+      const response = await postJSON('/api/characters/lock', { sessionId, locked: nextLocked });
       
       if (response.ok) {
-        setIsLocked(true);
+        setIsLocked(nextLocked);
         // Refresh context
         if (context) {
           const updatedContext = { ...context };
-          if (updatedContext.blocks.characters) {
-            updatedContext.blocks.characters.locked = true;
-            updatedContext.blocks.characters.lockedAt = response.lockedAt;
+          if (!updatedContext.blocks) (updatedContext as any).blocks = {};
+          if (!(updatedContext as any).blocks.characters) {
+            (updatedContext as any).blocks.characters = { list: characters, locked: nextLocked, version: Date.now() } as any;
+          } else {
+            (updatedContext as any).blocks.characters.locked = nextLocked;
+            (updatedContext as any).blocks.characters.lockedAt = (response as any).lockedAt;
           }
           if (!updatedContext.locks) {
-            updatedContext.locks = {};
+            (updatedContext as any).locks = {};
           }
-          updatedContext.locks.characters = true;
+          (updatedContext as any).locks.characters = nextLocked;
           onContextUpdate(updatedContext);
         }
       } else {
-        setError(response.error || 'Failed to lock characters');
+        setError(response.error || `Failed to ${action} characters`);
       }
     } catch (err) {
-      setError('Failed to lock characters');
-      log.error('Error locking characters:', err);
+      setError(`Failed to ${isLocked ? 'unlock' : 'lock'} characters`);
+      log.error('Error updating characters lock:', err);
     } finally {
       setLoading(false);
     }
@@ -207,6 +224,18 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   const handleEditCharacter = (character: Character) => {
     setEditingCharacter(character);
     setShowForm(true);
+  };
+
+  const handleViewCharacter = (character: Character) => {
+    if (!sessionId) return;
+    navigateToCharacter(sessionId, character.id);
+    setViewCharacterId(character.id);
+  };
+
+  const handleBackToList = () => {
+    if (!sessionId) return;
+    clearCharacterFromUrl(sessionId);
+    setViewCharacterId(null);
   };
 
   const handleSaveCharacter = async (updatedCharacter: Character) => {
@@ -259,55 +288,10 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     return { label: 'Draft', variant: 'outline' as const };
   };
 
-  // Filter characters based on status
-  const getFilteredCharacters = () => {
-    if (statusFilter === 'all') {
-      return characters;
-    }
-    return characters.filter(char => char.status === statusFilter);
-  };
+  // Filter characters (only 'all')
+  const getFilteredCharacters = () => characters;
 
-  // Handle character status changes
-  const handleSaveCharacterStatus = async (character: Character) => {
-    try {
-      const updatedCharacter = { ...character, status: 'saved' as const };
-      const response = await postJSON('/api/characters/upsert', {
-        sessionId,
-        character: updatedCharacter
-      });
-      
-      if (response.ok) {
-        setCharacters(prev => 
-          prev.map(char => char.id === character.id ? updatedCharacter : char)
-        );
-        log.info('Character status updated to saved:', character.name);
-      } else {
-        setError('Failed to save character status');
-      }
-    } catch (err) {
-      setError('Failed to save character status');
-      log.error('Error saving character status:', err);
-    }
-  };
-
-  const handleDiscardCharacter = async (character: Character) => {
-    try {
-      const response = await postJSON('/api/characters/delete', {
-        sessionId,
-        characterId: character.id
-      });
-      
-      if (response.ok) {
-        setCharacters(prev => prev.filter(char => char.id !== character.id));
-        log.info('Character discarded:', character.name);
-      } else {
-        setError('Failed to discard character');
-      }
-    } catch (err) {
-      setError('Failed to discard character');
-      log.error('Error discarding character:', err);
-    }
-  };
+  // Per-card status toggling removed. Edits are saved via form; lock is global.
 
   const handleDeleteCharacter = async (character: Character) => {
     try {
@@ -328,13 +312,11 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     }
   };
 
-  // Get character status badge
-  const getCharacterStatusBadge = (character: Character) => {
-    const status = character.status || 'generated';
-    if (status === 'saved') {
-      return { label: 'Saved', variant: 'default' as const, className: 'bg-green-100 text-green-800' };
-    }
-    return { label: 'Generated', variant: 'outline' as const, className: 'bg-yellow-100 text-yellow-800' };
+  // Character badge reflects only global lock state
+  const getCharacterStatusBadge = (_character: Character) => {
+    return isLocked
+      ? { label: 'Locked', variant: 'default' as const, className: 'bg-green-900/20 text-green-300 border border-green-700/40' }
+      : { label: 'Draft', variant: 'outline' as const, className: 'bg-yellow-900/20 text-yellow-300 border border-yellow-700/40' };
   };
 
   const status = getStatusBadge();
@@ -344,85 +326,69 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Characters</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-gray-200">Characters</h2>
+          <p className="text-gray-400 mt-1">
             Generate and manage playable characters for your campaign
           </p>
         </div>
-        <Badge variant={status.variant}>
+        <div className="text-sm text-gray-400 flex items-center gap-2">
           {status.label}
-        </Badge>
+        </div>
       </div>
 
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="bg-[#151A22] border-[#2A3340]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-700">Background Status</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-300">Background Status</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              {hasBackground ? (
-                isBackgroundLocked ? (
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
-                ) : (
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                )
-              ) : (
-                <div className="w-3 h-3 rounded-full bg-gray-300" />
-              )}
-              <span className="text-sm text-gray-600">
+              <div className="w-2.5 h-2.5 rounded-full bg-gray-500" />
+              <span className="text-sm text-gray-400">
                 {hasBackground ? (isBackgroundLocked ? 'Locked' : 'Draft') : 'Not Created'}
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-[#151A22] border-[#2A3340]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-700">Characters Status</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-300">Characters Status</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
-              {characters && characters.length > 0 ? (
-                isLocked ? (
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
-                ) : (
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                )
-              ) : (
-                <div className="w-3 h-3 rounded-full bg-gray-300" />
-              )}
-              <span className="text-sm text-gray-600">
+              <div className="w-2.5 h-2.5 rounded-full bg-gray-500" />
+              <span className="text-sm text-gray-400">
                 {characters && characters.length > 0 ? (isLocked ? 'Locked' : 'Draft') : 'Not Generated'}
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-[#151A22] border-[#2A3340]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-700">Character Count</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-300">Character Count</CardTitle>
           </CardHeader>
           <CardContent>
-            <span className="text-2xl font-bold text-gray-900">{characters?.length || 0}</span>
-            <p className="text-sm text-gray-600">of 3-5 characters</p>
+            <span className="text-2xl font-bold text-gray-200">{characters?.length || 0}</span>
+            <p className="text-sm text-gray-400">of 3-5 characters</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
+        <div className="bg-red-900/20 border border-red-700/40 rounded-md p-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-5 w-5 text-red-300" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-2 text-sm text-red-700">
+              <h3 className="text-sm font-medium text-red-300">Error</h3>
+              <div className="mt-2 text-sm text-red-200">
                 <p>{error}</p>
               </div>
             </div>
@@ -436,44 +402,35 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
           <Button
             onClick={handleGenerateCharacters}
             disabled={!isBackgroundLocked || loading}
-            className="bg-blue-600 hover:bg-blue-700"
+            variant="primary"
           >
             {loading ? 'Generating...' : 'Generate Characters'}
           </Button>
         )}
         
-        {characters && characters.length > 0 && !isLocked && (
+        {characters && characters.length > 0 && (
           <Button
             onClick={handleLockCharacters}
             disabled={loading}
-            className="bg-green-600 hover:bg-green-700"
+            variant="primary"
           >
-            {loading ? 'Locking...' : 'Lock Characters'}
+            {loading ? (isLocked ? 'Unlocking...' : 'Locking...') : (isLocked ? 'Unlock Characters' : 'Lock Characters')}
           </Button>
-        )}
-
-        {characters && characters.length > 0 && isLocked && (
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>Characters are locked and ready for play</span>
-          </div>
         )}
       </div>
 
       {/* Requirements Banner */}
       {!isBackgroundLocked && (!characters || characters.length === 0) && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+        <div className="bg-yellow-900/20 border border-yellow-700/40 rounded-md p-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-5 w-5 text-yellow-300" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">Background Required</h3>
-              <div className="mt-2 text-sm text-yellow-700">
+              <h3 className="text-sm font-medium text-yellow-300">Background Required</h3>
+              <div className="mt-2 text-sm text-yellow-200">
                 <p>You must create and lock the Background before generating characters.</p>
               </div>
             </div>
@@ -481,23 +438,33 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         </div>
       )}
 
-      {/* Characters Table */}
-      {characters && characters.length > 0 && (
+      {/* Character Detail vs. List */}
+      {viewCharacterId ? (
+        (() => {
+          const character = characters.find(c => c.id === viewCharacterId);
+          if (!character) return null;
+          return (
+            <CharacterDetailPage 
+              character={character} 
+              onBack={handleBackToList}
+              onEdit={() => handleEditCharacter(character)}
+            />
+          );
+        })()
+      ) : (characters && characters.length > 0 && (
         <>
           {/* Filter Section */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-gray-200">
                 Characters ({getFilteredCharacters().length})
               </h3>
-              <Select value={statusFilter} onValueChange={(value: 'all' | 'generated' | 'saved') => setStatusFilter(value)}>
-                <SelectTrigger className="w-32">
+              <Select value={statusFilter} onValueChange={(_value: 'all') => setStatusFilter('all')}>
+                <SelectTrigger className="w-32 rounded-[12px] border-[#2A3340] bg-[#0f141b] text-[#E0E0E0]">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[#151A22] border-[#2A3340] text-[#E0E0E0]">
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="generated">Generated</SelectItem>
-                  <SelectItem value="saved">Saved</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -507,13 +474,12 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
             characters={getFilteredCharacters()}
             isLocked={isLocked}
             onEditCharacter={handleEditCharacter}
-            onSaveCharacter={handleSaveCharacterStatus}
-            onDiscardCharacter={handleDiscardCharacter}
             onDeleteCharacter={handleDeleteCharacter}
             getCharacterStatusBadge={getCharacterStatusBadge}
+            onViewCharacter={handleViewCharacter}
           />
         </>
-      )}
+      ))}
 
       {/* Character Form Modal */}
       {showForm && editingCharacter && (

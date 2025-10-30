@@ -65,7 +65,7 @@ export default function ContextPage({ sessionId, context, onContextUpdate }: Con
             <Badge variant="upToDate">{stats.locked} locked</Badge>
           </div>
           <Button 
-            variant="outline" 
+            variant="secondary" 
             size="sm" 
             onClick={handleRefresh}
             disabled={loading}

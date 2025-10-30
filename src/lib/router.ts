@@ -34,6 +34,27 @@ export function setUrlParams(sessionId: string, tab?: string, scene?: number) {
   window.history.replaceState({}, '', url.toString());
 }
 
+// Character detail helpers (use hash: #tab=characters&character=<id>)
+export function getCharacterIdFromUrl(): string | null {
+  const hash = window.location.hash;
+  const match = hash.match(/character=([^&]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+export function navigateToCharacter(sessionId: string, characterId: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('sessionId', sessionId);
+  url.hash = `#tab=characters&character=${encodeURIComponent(characterId)}`;
+  window.history.replaceState({}, '', url.toString());
+}
+
+export function clearCharacterFromUrl(sessionId: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('sessionId', sessionId);
+  url.hash = `#tab=characters`;
+  window.history.replaceState({}, '', url.toString());
+}
+
 export function navigateToProjectCreate() {
   window.location.href = '/';
 }

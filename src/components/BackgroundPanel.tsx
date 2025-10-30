@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { postJSON, getJSON } from '../lib/api';
+import { Button } from './ui/button';
 import logger from '@/utils/logger';
 
 const log = logger.background;
@@ -206,46 +207,47 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
         <div className="flex items-center space-x-2">
           {background && !isEditing && (
             <>
-              <button
+              <Button
                 onClick={() => lockBackground(!currentIsLocked)}
-                className={`px-3 py-1 text-sm rounded transition-colors ${
-                  currentIsLocked
-                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                    : 'bg-green-100 text-green-700 hover:bg-green-200'
-                }`}
+                variant={currentIsLocked ? 'secondary' : 'primary'}
+                size="sm"
               >
                 {currentIsLocked ? '🔒 Locked' : '🔓 Unlocked'}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={startEditing}
                 disabled={currentIsLocked}
-                className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 disabled:opacity-50 transition-colors"
+                variant="secondary"
+                size="sm"
               >
                 Edit
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setShowJson(!showJson)}
-                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                variant="secondary"
+                size="sm"
               >
                 {showJson ? 'Hide JSON' : 'Show JSON'}
-              </button>
+              </Button>
             </>
           )}
           {isEditing && (
             <>
-              <button
+              <Button
                 onClick={saveEdit}
                 disabled={currentLoading}
-                className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50 transition-colors"
+                variant="primary"
+                size="sm"
               >
                 {currentLoading ? 'Saving...' : 'Save'}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={cancelEdit}
-                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                variant="secondary"
+                size="sm"
               >
                 Cancel
-              </button>
+              </Button>
             </>
           )}
         </div>
@@ -532,12 +534,13 @@ export default function BackgroundPanel({ sessionId, onBackgroundUpdate, onLockT
                   {currentIsLocked ? '🔒 Locked' : '🔓 Unlocked'}
                 </span>
               </div>
-              <button
+              <Button
                 onClick={deleteBackground}
-                className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                variant="destructive"
+                size="sm"
               >
                 Delete Background
-              </button>
+              </Button>
             </div>
           )}
         </div>

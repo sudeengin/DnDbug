@@ -218,25 +218,28 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button
+            <Button
               onClick={handleSwitchProject}
-              className="flex items-center gap-1.5 text-[#EDEDED] hover:text-[#FFB703] transition-colors duration-200 text-sm font-medium"
+              variant="secondary"
+              size="sm"
+              className="flex items-center gap-1.5"
               type="button"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 mr-1" />
               <span>All Projects</span>
-            </button>
+            </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
-              className="rounded-[12px] bg-[#2A3340] border-[#2A3340] text-[#FFFFFF] hover:bg-[#374151] hover:shadow-[0_4px_12px_rgba(0,0,0,0.25)] cursor-pointer transition-all duration-150 px-4 py-2"
+              className="rounded-[12px]"
             >
               <Upload className="w-4 h-4 mr-2" />
               Import
             </Button>
             <Button
               size="sm"
-              className="rounded-[12px] bg-[#FFB703] text-[#0B0F10] hover:bg-[#E6A502] font-medium"
+              variant="primary"
+              className="rounded-[12px] font-medium"
               onClick={handleCreateNew}
             >
               <Plus className="w-4 h-4 mr-2" />

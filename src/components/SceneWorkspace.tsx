@@ -263,10 +263,18 @@ export default function SceneWorkspace({
           </Badge>
         </div>
         <div className="flex items-center gap-2">
-          {canGenerate && <Button onClick={handleGenerateDetail}>Generate Detail</Button>}
-          {canLock && <Button onClick={handleLockScene}>Lock Scene</Button>}
-          {canUnlock && <Button variant="secondary" onClick={handleUnlockScene}>Unlock Scene</Button>}
-          {canGenerateNext && <Button onClick={handleGenerateNext}>Generate Next</Button>}
+          {canGenerate && (
+            <Button onClick={handleGenerateDetail} variant="primary">Generate Detail</Button>
+          )}
+          {canLock && (
+            <Button onClick={handleLockScene} variant="primary">Lock Scene</Button>
+          )}
+          {canUnlock && (
+            <Button variant="secondary" onClick={handleUnlockScene}>Unlock Scene</Button>
+          )}
+          {canGenerateNext && (
+            <Button onClick={handleGenerateNext} variant="primary">Generate Next</Button>
+          )}
         </div>
       </header>
 
@@ -334,17 +342,16 @@ export default function SceneWorkspace({
                     <Button
                       onClick={handleGenerateNextScene}
                       disabled={!gmIntent.trim() || loading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      variant="primary"
                     >
                       {loading ? 'Generating...' : 'Generate Next Scene'}
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="secondary"
                       onClick={() => {
                         setShowGmIntent(false);
                         setGmIntent('');
                       }}
-                      className="text-blue-600 hover:text-blue-700"
                     >
                       Cancel
                     </Button>
