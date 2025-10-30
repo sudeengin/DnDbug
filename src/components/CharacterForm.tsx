@@ -186,8 +186,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
       });
 
     } catch (error) {
+      const errorMessage = (error as any).message || 'Unknown error';
       console.error('Error regenerating field:', error);
-      alert(`Error regenerating field: ${error.message}`);
+      alert(`Error regenerating field: ${errorMessage}`);
     } finally {
       setIsRegenerating(false);
       setRegeneratingField(null);

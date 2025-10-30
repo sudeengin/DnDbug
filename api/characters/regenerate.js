@@ -34,7 +34,8 @@ function renderRegeneratePrompt(backgroundData, character, fieldName, gmIntent =
     voiceTone: "How they speak or behave (e.g., 'Soft and deliberate', 'Gruff and direct')",
     inventoryHint: "Small symbolic item they carry (e.g., 'An aged journal', 'A rusted locket')",
     backgroundHistory: "1-2 paragraphs of their full backstory including upbringing and defining events",
-    flawOrWeakness: "Defining flaw, vice, or vulnerability that makes them human"
+    flawOrWeakness: "Defining flaw, vice, or vulnerability that makes them human",
+    physicalDescription: "Detailed appearance including build, distinguishing features, clothing style, and any notable physical characteristics"
   };
 
   const fieldDescription = fieldDescriptions[fieldName] || "Character field";
@@ -87,6 +88,11 @@ INSTRUCTIONS:
 - Focus on personality traits and behavior patterns
 - Should be 2-3 sentences
 - Make it distinctive and memorable for roleplay`;
+  } else if (fieldName === 'physicalDescription') {
+    prompt += `
+- Should be 2-3 sentences describing appearance
+- Include: build, height/weight, distinguishing features, clothing style
+- Be specific and memorable for roleplay`;
   }
 
   if (gmIntent) {
@@ -128,7 +134,7 @@ export default async function handler(req, res) {
     const validFields = [
       'personality', 'motivation', 'connectionToStory', 'gmSecret', 
       'potentialConflict', 'voiceTone', 'inventoryHint', 'backgroundHistory', 
-      'flawOrWeakness'
+      'flawOrWeakness', 'physicalDescription'
     ];
     
     if (!validFields.includes(fieldName)) {
