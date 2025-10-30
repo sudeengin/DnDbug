@@ -1,0 +1,99 @@
+---
+description: Protect theme styling from accidental loss during refactors
+globs: **/*.tsx, **/*.ts
+alwaysApply: true
+---
+
+# Theme Protection Guidelines
+
+## 🎯 Core Principle
+
+**All theme styling must be centralized or use pre-styled components.** This prevents accidental loss during refactors, merges, or code updates.
+
+## ✅ Always Use
+
+### 1. Pre-Styled Components (Preferred)
+```tsx
+import { StyledInput, StyledTextarea, StyledLabel } from '@/components/ui/styled-input';
+
+// ✅ DO: Use styled components
+<StyledInput placeholder="Enter name" />
+<StyledTextarea rows={3} />
+<StyledLabel htmlFor="name">Name</StyledLabel>
+```
+
+### 2. Theme Constants
+```tsx
+import { themeClasses } from '@/lib/theme';
+
+// ✅ DO: Use theme constants
+<Input className={themeClasses.inputText} />
+<div className={themeClasses.modalContainer} />
+```
+
+### 3. Theme Object
+```tsx
+import { theme } from '@/lib/theme';
+
+// ✅ DO: Reference theme values
+<div className={theme.background.primary} />
+```
+
+## ❌ Never Use
+
+### Hard-coded theme colors
+```tsx
+// ❌ DON'T: Hard-code theme colors
+<Input className="rounded-[12px] bg-[#0f141b] border-[#2A3340]" />
+<div className="bg-[#151A22]" />
+```
+
+### White backgrounds (unless intentional)
+```tsx
+// ❌ DON'T: Use white backgrounds (this app is dark theme)
+<div className="bg-white" />
+```
+
+### Inline styling that bypasses theme
+```tsx
+// ❌ DON'T: Create new styling patterns without adding to theme.ts
+<div className="bg-slate-900 border-slate-700" /> // Should use theme.ts values
+```
+
+## 🔧 When Adding New Styling
+
+1. **Check `src/lib/theme.ts` first** - Does a similar pattern exist?
+2. **Add to theme.ts** - Don't create one-off classes
+3. **Use theme constants** - Reference `theme.*` or `themeClasses.*`
+4. **Create styled component** - If pattern is repeated 3+ times
+
+## 🚨 Before Committing
+
+1. **Run theme checker**: `npm run check-theme`
+2. **Review git diff** - Look for removed theme classes
+3. **Search for white backgrounds**: `grep -r "bg-white" src/components`
+4. **Visual check** - Ensure dark theme is preserved
+
+## 📖 Documentation
+
+See `docs/guides/THEME_SYSTEM.md` for complete documentation, examples, and migration guides.
+
+## 🔄 Recovery Process
+
+If styling is lost:
+
+1. ✅ Check `src/lib/theme.ts` - Theme constants are preserved
+2. ✅ Check git history - `git log --all --grep="theme"`
+3. ✅ Use styled components - Replace raw components
+4. ✅ Reference docs - `docs/guides/THEME_SYSTEM.md`
+
+## 🎨 Theme File Location
+
+- **Theme constants**: `src/lib/theme.ts`
+- **Styled components**: `src/components/ui/styled-*.tsx`
+- **Documentation**: `docs/guides/THEME_SYSTEM.md`
+- **Checker script**: `scripts/check-theme-regressions.js`
+
+---
+
+**Remember**: The goal is to make styling changes **intentional and centralized**. If styling is lost, it should be easily recoverable from `theme.ts`.

@@ -9,7 +9,9 @@
     "dev:full": "./start-dev.sh",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check-theme": "node scripts/check-theme-regressions.js",
+    "check-theme:file": "node scripts/check-theme-regressions.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
