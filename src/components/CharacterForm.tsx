@@ -118,12 +118,13 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     
     return (
       <div>
-        <Label htmlFor={fieldName}>{label}</Label>
+        <Label htmlFor={fieldName} className="text-gray-300">{label}</Label>
         <Input
           id={fieldName}
           value={stringValue}
           onChange={(e) => handleArrayChange(e.target.value)}
           placeholder={placeholder}
+          className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
         />
         <p className="text-xs text-gray-500 mt-1">
           Separate multiple items with commas
@@ -217,11 +218,11 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     return (
       <div>
         <div className="flex items-center justify-between mb-2">
-          <Label htmlFor={fieldName}>{label}</Label>
+          <Label htmlFor={fieldName} className="text-gray-300">{label}</Label>
           {canRegenerate && (
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={() => handleRegenerateField(fieldName)}
               disabled={isRegenerating}
@@ -253,19 +254,19 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
 
   if (isLocked) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="bg-[#151A22] border border-[#2A3340] rounded-[12px] p-6 max-w-md w-full mx-4 shadow-xl">
           <div className="text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
-              <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-900/20 mb-4">
+              <svg className="h-6 w-6 text-yellow-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Characters Locked</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <h3 className="text-lg font-medium text-gray-200 mb-2">Characters Locked</h3>
+            <p className="text-sm text-gray-400 mb-4">
               Characters are locked and cannot be edited. Unlock them first to make changes.
             </p>
-            <Button onClick={onClose} variant="outline">
+            <Button onClick={onClose} variant="secondary">
               Close
             </Button>
           </div>
@@ -275,11 +276,11 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div className="bg-[#151A22] border border-[#2A3340] rounded-[12px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Edit Character</h2>
-          <Button variant="ghost" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <h2 className="text-xl font-semibold text-gray-200">Edit Character</h2>
+          <Button variant="tertiary" onClick={onClose} className="text-gray-400 hover:text-gray-200">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -290,32 +291,34 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="name">Character Name *</Label>
+              <Label htmlFor="name" className="text-gray-300">Character Name *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="Enter character name"
                 required
+                className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
             </div>
             <div>
-              <Label htmlFor="role">Role *</Label>
+              <Label htmlFor="role" className="text-gray-300">Role *</Label>
               <Input
                 id="role"
                 value={formData.role}
                 onChange={(e) => handleChange('role', e.target.value)}
                 placeholder="e.g., Wandering Scholar, Mercenary Captain"
                 required
+                className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
             </div>
             <div>
-              <Label htmlFor="race">Race *</Label>
+              <Label htmlFor="race" className="text-gray-300">Race *</Label>
               <Select value={formData.race || ''} onValueChange={(value) => handleChange('race', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="rounded-[12px] border-[#2A3340] bg-[#0f141b] text-[#E0E0E0]">
                   <SelectValue placeholder="Select race" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[#151A22] border-[#2A3340] text-[#E0E0E0]">
                   {RACES.map(race => (
                     <SelectItem key={race} value={race}>{race}</SelectItem>
                   ))}
@@ -326,12 +329,12 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="class">Class *</Label>
+              <Label htmlFor="class" className="text-gray-300">Class *</Label>
               <Select value={formData.class || ''} onValueChange={(value) => handleChange('class', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="rounded-[12px] border-[#2A3340] bg-[#0f141b] text-[#E0E0E0]">
                   <SelectValue placeholder="Select class" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[#151A22] border-[#2A3340] text-[#E0E0E0]">
                   {CLASSES.map(cls => (
                     <SelectItem key={cls} value={cls}>{cls}</SelectItem>
                   ))}
@@ -339,21 +342,22 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               </Select>
             </div>
             <div>
-              <Label htmlFor="subrace">Subrace</Label>
+              <Label htmlFor="subrace" className="text-gray-300">Subrace</Label>
               <Input
                 id="subrace"
                 value={formData.subrace || ''}
                 onChange={(e) => handleChange('subrace', e.target.value)}
                 placeholder="e.g., High Elf, Wood Elf, Mountain Dwarf"
+                className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
             </div>
             <div>
-              <Label htmlFor="alignment">Alignment</Label>
+              <Label htmlFor="alignment" className="text-gray-300">Alignment</Label>
               <Select value={formData.alignment || ''} onValueChange={(value) => handleChange('alignment', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="rounded-[12px] border-[#2A3340] bg-[#0f141b] text-[#E0E0E0]">
                   <SelectValue placeholder="Select alignment" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[#151A22] border-[#2A3340] text-[#E0E0E0]">
                   {ALIGNMENTS.map(alignment => (
                     <SelectItem key={alignment} value={alignment}>{alignment}</SelectItem>
                   ))}
@@ -364,7 +368,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="age">Age</Label>
+              <Label htmlFor="age" className="text-gray-300">Age</Label>
               <Input
                 id="age"
                 type="number"
@@ -373,24 +377,27 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
                 placeholder="Character's age in years"
                 min="1"
                 max="1000"
+                className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
             </div>
             <div>
-              <Label htmlFor="height">Height</Label>
+              <Label htmlFor="height" className="text-gray-300">Height</Label>
               <Input
                 id="height"
                 value={formData.height || ''}
                 onChange={(e) => handleChange('height', e.target.value)}
                 placeholder="e.g., 5'7&quot;, 6'2&quot;"
+                className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
             </div>
             <div>
-              <Label htmlFor="deity">Deity</Label>
+              <Label htmlFor="deity" className="text-gray-300">Deity</Label>
               <Input
                 id="deity"
                 value={formData.deity || ''}
                 onChange={(e) => handleChange('deity', e.target.value)}
                 placeholder="Religious affiliation or deity"
+                className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -404,6 +411,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               placeholder="2-3 sentences describing their personality traits and behavior"
               rows={3}
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
@@ -415,6 +423,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               placeholder="What drives them in this specific story?"
               rows={2}
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
@@ -426,6 +435,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               placeholder="Direct link to the background context or story premise"
               rows={2}
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
@@ -436,6 +446,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               onChange={(e) => handleChange('voiceTone', e.target.value)}
               placeholder="e.g., Soft and deliberate, Gruff and direct"
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
@@ -446,6 +457,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               onChange={(e) => handleChange('inventoryHint', e.target.value)}
               placeholder="e.g., An aged journal, A rusted locket"
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
@@ -457,6 +469,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               placeholder="1-2 paragraphs of their full backstory including upbringing and defining events"
               rows={4}
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
@@ -468,6 +481,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               placeholder="Defining flaw, vice, or vulnerability that makes them human"
               rows={2}
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
@@ -479,6 +493,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               placeholder="Hidden truth or past connection that players don't know"
               rows={3}
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
             <p className="text-xs text-gray-500 mt-1">
               This information is only visible to the GM and will be masked in the character list.
@@ -493,12 +508,13 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               placeholder="Internal or external tension that could cause problems"
               rows={2}
               required
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
             />
           </FieldWithRegenerate>
 
           {/* Additional Character Sheet Fields */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Character Sheet Details</h3>
+          <div className="border-t border-[#2A3340] pt-6">
+            <h3 className="text-lg font-medium text-gray-200 mb-4">Character Sheet Details</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ArrayField 
@@ -534,17 +550,18 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
                   onChange={(e) => handleChange('physicalDescription', e.target.value)}
                   placeholder="Detailed appearance including build, distinguishing features, clothing style"
                   rows={3}
+                  className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
                 />
               </FieldWithRegenerate>
             </div>
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="flex justify-end space-x-3 pt-4 border-t border-[#2A3340]">
+            <Button type="button" variant="secondary" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" variant="primary">
               Save Character
             </Button>
           </div>
@@ -557,6 +574,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           onConfirm={handleGmIntentConfirm}
           fieldName={regeneratingField || ''}
           characterName={formData.name}
+          isLoading={isRegenerating}
         />
       </div>
     </div>
