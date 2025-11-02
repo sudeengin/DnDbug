@@ -38,7 +38,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['equipment-preferences']));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [isEditing, setIsEditing] = useState(false);
   const [overrideRace, setOverrideRace] = useState(false);
   const [overrideBackground, setOverrideBackground] = useState(false);
@@ -849,27 +849,114 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         </Button>
       </div>
 
-      {/* Character Overview Badge */}
+      {/* Step Progress Tracker */}
       {character && (
-        <div className="flex items-center gap-3 p-4 bg-[#151A22] border border-[#2A3340] rounded-xl">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">Name:</span>
-            <span className="text-base font-semibold text-white">{character.name}</span>
+        <div className="bg-[#151A22] border border-[#2A3340] rounded-xl p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white">Character Creation Progress</h3>
+            <div className="text-xs text-gray-400">
+              {character.name} • {storyCharacters.find(c => c.id === selectedStoryCharacterId)?.class || 'Unknown Class'}
+            </div>
           </div>
-          <div className="h-4 w-px bg-[#2A3340]" />
+          
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">Class:</span>
-            <span className="text-base font-semibold text-white">
-              {selectedStoryCharacterId 
-                ? (storyCharacters.find(c => c.id === selectedStoryCharacterId)?.class || '—') 
-                : '—'}
-            </span>
+            {/* Step 1: Background */}
+            <div className="flex items-center flex-1">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${
+                backgroundLocked 
+                  ? 'bg-green-500 border-green-500 text-white' 
+                  : 'bg-[#1C1F2B] border-[#7c63e5] text-[#7c63e5]'
+              }`}>
+                {backgroundLocked ? (
+                  <CheckCircle2 className="w-4 h-4" />
+                ) : (
+                  <span className="text-sm font-semibold">1</span>
+                )}
+              </div>
+              <div className="ml-2 flex-1">
+                <div className={`text-xs font-medium ${backgroundLocked ? 'text-green-300' : 'text-white'}`}>
+                  Background
+                </div>
+                {backgroundLocked && (
+                  <div className="text-xs text-gray-400 truncate">{character.background.name}</div>
+                )}
+              </div>
+            </div>
+
+            {/* Connector */}
+            <div className={`h-0.5 w-8 transition-colors ${backgroundLocked ? 'bg-green-500' : 'bg-[#2A3340]'}`} />
+
+            {/* Step 2: Ability Scores */}
+            <div className="flex items-center flex-1">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${
+                abilityScoresLocked 
+                  ? 'bg-green-500 border-green-500 text-white' 
+                  : backgroundLocked
+                  ? 'bg-[#1C1F2B] border-[#7c63e5] text-[#7c63e5]'
+                  : 'bg-[#1C1F2B] border-[#2A3340] text-gray-500'
+              }`}>
+                {abilityScoresLocked ? (
+                  <CheckCircle2 className="w-4 h-4" />
+                ) : (
+                  <span className="text-sm font-semibold">2</span>
+                )}
+              </div>
+              <div className="ml-2 flex-1">
+                <div className={`text-xs font-medium ${
+                  abilityScoresLocked ? 'text-green-300' : backgroundLocked ? 'text-white' : 'text-gray-500'
+                }`}>
+                  Abilities
+                </div>
+                {abilityScoresLocked && (
+                  <div className="text-xs text-gray-400">Assigned</div>
+                )}
+              </div>
+            </div>
+
+            {/* Connector */}
+            <div className={`h-0.5 w-8 transition-colors ${abilityScoresLocked ? 'bg-green-500' : 'bg-[#2A3340]'}`} />
+
+            {/* Step 3: Equipment */}
+            <div className="flex items-center flex-1">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${
+                equipmentLocked 
+                  ? 'bg-green-500 border-green-500 text-white' 
+                  : abilityScoresLocked
+                  ? 'bg-[#1C1F2B] border-[#7c63e5] text-[#7c63e5]'
+                  : 'bg-[#1C1F2B] border-[#2A3340] text-gray-500'
+              }`}>
+                {equipmentLocked ? (
+                  <CheckCircle2 className="w-4 h-4" />
+                ) : (
+                  <span className="text-sm font-semibold">3</span>
+                )}
+              </div>
+              <div className="ml-2 flex-1">
+                <div className={`text-xs font-medium ${
+                  equipmentLocked ? 'text-green-300' : abilityScoresLocked ? 'text-white' : 'text-gray-500'
+                }`}>
+                  Equipment
+                </div>
+                {equipmentLocked && (
+                  <div className="text-xs text-gray-400">Selected</div>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="h-4 w-px bg-[#2A3340]" />
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">Background:</span>
-            <span className="text-base font-semibold text-white">{character.background.name}</span>
-          </div>
+
+          {/* Completion Status */}
+          {equipmentLocked && (
+            <div className="mt-4 pt-4 border-t border-[#2A3340] flex items-center justify-between">
+              <div className="flex items-center gap-2 text-green-300">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="text-sm font-medium">Character sheet complete!</span>
+              </div>
+              <Button size="sm" variant="primary" onClick={handleSave}>
+                <Save className="w-3 h-3 mr-1" />
+                Save Character
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
@@ -881,32 +968,58 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           <Collapsible 
             open={!backgroundLocked} 
             onOpenChange={(open) => {
-              if (open) {
+              if (open && backgroundLocked) {
+                // Allow expanding to review
                 setBackgroundLocked(false);
-                // Collapse Step 2 when reopening Step 1
+                // Collapse later steps
                 const newExpanded = new Set(expandedSections);
                 newExpanded.delete('ability-scores');
+                newExpanded.delete('equipment-preferences');
                 setExpandedSections(newExpanded);
+                setAbilityScoresLocked(false);
+                setEquipmentLocked(false);
               }
             }}
           >
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
+                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 border-b border-gray-700 pb-3">
                   <div className="flex items-center gap-3">
-                    <span className="group-hover:underline underline-offset-4">Step 1: Choose a Background</span>
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${
+                      backgroundLocked 
+                        ? 'bg-green-500 border-green-500' 
+                        : 'bg-[#1C1F2B] border-[#7c63e5]'
+                    }`}>
+                      {backgroundLocked ? (
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      ) : (
+                        <span className="text-sm font-semibold text-[#7c63e5]">1</span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-base font-semibold group-hover:underline underline-offset-4">
+                        Step 1: Choose a Background
+                      </div>
+                      {backgroundLocked && (
+                        <div className="text-sm text-gray-400 font-normal mt-0.5">
+                          Selected: {character.background.name}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
                     {backgroundLocked && (
                       <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
-                        <Lock className="w-3 h-3 mr-1" />
-                        Locked: {character.background.name}
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Complete
                       </Badge>
                     )}
+                    {!backgroundLocked ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronRight className="w-5 h-5" />
+                    )}
                   </div>
-                  {!backgroundLocked ? (
-                    <ChevronDown className="w-5 h-5" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5" />
-                  )}
                 </CardTitle>
               </CardHeader>
             </CollapsibleTrigger>
@@ -954,20 +1067,55 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           >
             <CollapsibleTrigger asChild disabled={!backgroundLocked}>
               <CardHeader className={`transition-colors rounded-t-2xl ${backgroundLocked ? 'cursor-pointer group hover:bg-[#1A1F2E]' : 'cursor-not-allowed'}`}>
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
+                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 border-b border-gray-700 pb-3">
                   <div className="flex items-center gap-3">
-                    <span className="group-hover:underline underline-offset-4">Step 2: Assign Ability Scores</span>
-                    {backgroundLocked && (
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${
+                      abilityScoresLocked 
+                        ? 'bg-green-500 border-green-500' 
+                        : backgroundLocked
+                        ? 'bg-[#1C1F2B] border-[#7c63e5]'
+                        : 'bg-[#1C1F2B] border-[#2A3340]'
+                    }`}>
+                      {abilityScoresLocked ? (
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      ) : (
+                        <span className={`text-sm font-semibold ${backgroundLocked ? 'text-[#7c63e5]' : 'text-gray-500'}`}>2</span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-base font-semibold group-hover:underline underline-offset-4">
+                        Step 2: Assign Ability Scores
+                      </div>
+                      {abilityScoresLocked && (
+                        <div className="text-sm text-gray-400 font-normal mt-0.5">
+                          Scores assigned and locked
+                        </div>
+                      )}
+                      {!backgroundLocked && (
+                        <div className="text-sm text-gray-400 font-normal mt-0.5">
+                          Complete Step 1 first
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {abilityScoresLocked && (
+                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Complete
+                      </Badge>
+                    )}
+                    {backgroundLocked && !abilityScoresLocked && (
                       <Badge variant="outline" className="text-xs bg-blue-900/30 text-blue-300 border border-blue-600/30">
                         Ready
                       </Badge>
                     )}
+                    {expandedSections.has('ability-scores') ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronRight className="w-5 h-5" />
+                    )}
                   </div>
-                  {expandedSections.has('ability-scores') ? (
-                    <ChevronDown className="w-5 h-5" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5" />
-                  )}
                 </CardTitle>
               </CardHeader>
             </CollapsibleTrigger>
@@ -1101,8 +1249,9 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     <Button
                       onClick={() => {
                         setAbilityScoresLocked(true);
-                        // Expand Step 3 and scroll to it
+                        // Collapse Step 2 and expand Step 3
                         const newExpanded = new Set(expandedSections);
+                        newExpanded.delete('ability-scores');
                         newExpanded.add('equipment-preferences');
                         setExpandedSections(newExpanded);
                         
@@ -1135,7 +1284,15 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => setAbilityScoresLocked(false)}
+                      onClick={() => {
+                        setAbilityScoresLocked(false);
+                        setEquipmentLocked(false);
+                        // Re-expand Step 2
+                        const newExpanded = new Set(expandedSections);
+                        newExpanded.add('ability-scores');
+                        newExpanded.delete('equipment-preferences');
+                        setExpandedSections(newExpanded);
+                      }}
                       className="ml-4"
                     >
                       Unlock to Edit
@@ -1197,26 +1354,55 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           >
             <CollapsibleTrigger asChild disabled={!abilityScoresLocked}>
               <CardHeader className={`transition-colors rounded-t-2xl ${abilityScoresLocked ? 'cursor-pointer group hover:bg-[#1A1F2E]' : 'cursor-not-allowed'}`}>
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
+                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 border-b border-gray-700 pb-3">
                   <div className="flex items-center gap-3">
-                    <span className="group-hover:underline underline-offset-4">Step 3: Choose Equipment</span>
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${
+                      equipmentLocked 
+                        ? 'bg-green-500 border-green-500' 
+                        : abilityScoresLocked
+                        ? 'bg-[#1C1F2B] border-[#7c63e5]'
+                        : 'bg-[#1C1F2B] border-[#2A3340]'
+                    }`}>
+                      {equipmentLocked ? (
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      ) : (
+                        <span className={`text-sm font-semibold ${abilityScoresLocked ? 'text-[#7c63e5]' : 'text-gray-500'}`}>3</span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-base font-semibold group-hover:underline underline-offset-4">
+                        Step 3: Choose Equipment
+                      </div>
+                      {equipmentLocked && (
+                        <div className="text-sm text-gray-400 font-normal mt-0.5">
+                          Equipment selected and locked
+                        </div>
+                      )}
+                      {!abilityScoresLocked && (
+                        <div className="text-sm text-gray-400 font-normal mt-0.5">
+                          Complete Step 2 first
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {equipmentLocked && (
+                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Complete
+                      </Badge>
+                    )}
                     {abilityScoresLocked && !equipmentLocked && (
                       <Badge variant="outline" className="text-xs bg-blue-900/30 text-blue-300 border border-blue-600/30">
                         Ready
                       </Badge>
                     )}
-                    {equipmentLocked && (
-                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
-                        <Lock className="w-3 h-3 mr-1" />
-                        Locked
-                      </Badge>
+                    {expandedSections.has('equipment-preferences') ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronRight className="w-5 h-5" />
                     )}
                   </div>
-                  {expandedSections.has('equipment-preferences') ? (
-                    <ChevronDown className="w-5 h-5" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5" />
-                  )}
                 </CardTitle>
               </CardHeader>
             </CollapsibleTrigger>
@@ -1438,6 +1624,10 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     <Button
                       onClick={() => {
                         setEquipmentLocked(true);
+                        // Collapse Step 3 after locking
+                        const newExpanded = new Set(expandedSections);
+                        newExpanded.delete('equipment-preferences');
+                        setExpandedSections(newExpanded);
                       }}
                       variant="primary"
                       className="px-6 py-2"
@@ -1466,7 +1656,13 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => setEquipmentLocked(false)}
+                      onClick={() => {
+                        setEquipmentLocked(false);
+                        // Re-expand Step 3
+                        const newExpanded = new Set(expandedSections);
+                        newExpanded.add('equipment-preferences');
+                        setExpandedSections(newExpanded);
+                      }}
                       className="ml-4"
                     >
                       Unlock to Edit
