@@ -20,6 +20,7 @@ import {
   ABILITY_SCORE_NAMES 
 } from '../../types/srd-2014';
 import logger from '@/utils/logger';
+import BackgroundSelector from '../BackgroundSelector';
 
 const log = logger.character;
 
@@ -37,11 +38,12 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['core-info']));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['equipment-preferences']));
   const [isEditing, setIsEditing] = useState(false);
   const [overrideRace, setOverrideRace] = useState(false);
   const [overrideBackground, setOverrideBackground] = useState(false);
   const [backgroundExplicit, setBackgroundExplicit] = useState(false);
+  const [backgroundLocked, setBackgroundLocked] = useState(false);
   const [hasEditedScores, setHasEditedScores] = useState(false);
 
   // Debug logging
@@ -478,6 +480,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       console.log('Converted character:', srdCharacter);
       setCharacter(srdCharacter);
       setBackgroundExplicit(false);
+      setBackgroundLocked(false);
       setSelectedStoryCharacterId(storyChar.id);
       validateCharacterData(srdCharacter);
       setIsEditing(true);
@@ -760,86 +763,119 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         </Button>
       </div>
 
+      {/* Character Overview Badge */}
+      {character && (
+        <div className="flex items-center gap-3 p-4 bg-[#151A22] border border-[#2A3340] rounded-xl">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-400">Name:</span>
+            <span className="text-base font-semibold text-white">{character.name}</span>
+          </div>
+          <div className="h-4 w-px bg-[#2A3340]" />
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-400">Class:</span>
+            <span className="text-base font-semibold text-white">
+              {selectedStoryCharacterId 
+                ? (storyCharacters.find(c => c.id === selectedStoryCharacterId)?.class || '—') 
+                : '—'}
+            </span>
+          </div>
+          <div className="h-4 w-px bg-[#2A3340]" />
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-400">Background:</span>
+            <span className="text-base font-semibold text-white">{character.background.name}</span>
+          </div>
+        </div>
+      )}
+
       {/* Character Sheet Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Step 1: Background Selection */}
-        <Card id="step-1-background" className="lg:col-span-2 bg-[#151A22] border border-[#2A3340] rounded-xl p-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-lg font-semibold text-white">Step 1: Choose a Background</div>
-            <Badge variant="outline" className="text-xs bg-[#2A3340] text-gray-300 border-0">Background: {backgroundExplicit ? character.background.name : 'Not Selected'}</Badge>
-          </div>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {SRD_BACKGROUNDS.map(bg => (
-                <div
-                  key={bg.name}
-                  className={`bg-[#131A24] border rounded-xl p-4 ${character.background.name === bg.name ? 'border-[#7c63e5]' : 'border-[#2A3340]'}`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="text-white font-semibold">{bg.name}</div>
-                      <div className="text-xs text-gray-300 mt-1">
-                        {bg.feature?.name ? (
-                          <span>Feature: {bg.feature.name}</span>
-                        ) : (
-                          <span>Background option</span>
-                        )}
-                      </div>
-                    </div>
-                    {character.background.name === bg.name && (
-                      <div className="flex items-center gap-1">
-                        <CheckCircle2 className="w-4 h-4 text-green-400" />
-                        <Badge variant="outline" className="text-xs bg-[#2A3340] text-gray-300 border-0">Selected</Badge>
-                      </div>
+        <Card id="step-1-background" className="lg:col-span-2 bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">
+          <Collapsible 
+            open={!backgroundLocked} 
+            onOpenChange={(open) => {
+              if (open) {
+                setBackgroundLocked(false);
+                // Collapse Step 2 when reopening Step 1
+                const newExpanded = new Set(expandedSections);
+                newExpanded.delete('ability-scores');
+                setExpandedSections(newExpanded);
+              }
+            }}
+          >
+            <CollapsibleTrigger asChild>
+              <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
+                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
+                  <div className="flex items-center gap-3">
+                    <span className="group-hover:underline underline-offset-4">Step 1: Choose a Background</span>
+                    {backgroundLocked && (
+                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
+                        <Lock className="w-3 h-3 mr-1" />
+                        Locked: {character.background.name}
+                      </Badge>
                     )}
                   </div>
-                  <div className="text-xs text-gray-400 mt-2 space-y-1">
-                    {bg.skillProficiencies?.length > 0 && (
-                      <div><span className="text-gray-500">Skills:</span> {bg.skillProficiencies.join(', ')}</div>
-                    )}
-                    {bg.toolProficiencies?.length > 0 && (
-                      <div><span className="text-gray-500">Tools:</span> {bg.toolProficiencies.join(', ')}</div>
-                    )}
-                    {bg.languages?.length > 0 && (
-                      <div><span className="text-gray-500">Languages:</span> {bg.languages.join(', ')}</div>
-                    )}
-                    {bg.feature?.description && (
-                      <div className="line-clamp-3"><span className="text-gray-500">About:</span> {bg.feature.description}</div>
-                    )}
-                  </div>
-                  <div className="mt-3">
-                    <Button
-                      size="sm"
-                      variant={character.background.name === bg.name ? 'primary' : 'secondary'}
-                      onClick={() => {
-                        handleBackgroundChange(bg.name);
-                        setTimeout(() => {
-                          const el = document.getElementById('step-2-ability-scores');
-                          if (el) el.scrollIntoView({ behavior: 'smooth' });
-                        }, 50);
-                      }}
-                    >
-                      {character.background.name === bg.name ? 'Selected' : `Select ${bg.name}`}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                  {!backgroundLocked ? (
+                    <ChevronDown className="w-5 h-5" />
+                  ) : (
+                    <ChevronRight className="w-5 h-5" />
+                  )}
+                </CardTitle>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="p-6 md:p-8">
+                <p className="text-sm text-gray-400 mb-6">
+                  Select a background that fits your character's history and role. Each background provides skill proficiencies, tool proficiencies, and a special feature. <strong>Click the info icon</strong> on any card to see full details.
+                </p>
+                
+                <BackgroundSelector
+                  backgrounds={SRD_BACKGROUNDS}
+                  selectedBackground={backgroundExplicit ? character.background.name : null}
+                  suggestedBackgrounds={getSuggestedBackgroundsByClass()}
+                  onSelect={handleBackgroundChange}
+                  onLock={() => {
+                    setBackgroundLocked(true);
+                    // Expand Step 2 and scroll to it
+                    const newExpanded = new Set(expandedSections);
+                    newExpanded.add('ability-scores');
+                    setExpandedSections(newExpanded);
+                    
+                    setTimeout(() => {
+                      const el = document.getElementById('step-2-ability-scores');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }, 100);
+                  }}
+                  isLocked={backgroundLocked}
+                />
+              </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
         </Card>
 
         {/* Step 2: Ability Scores (locked until background chosen) */}
-        <Card id="step-2-ability-scores" className={`relative lg:col-span-2 bg-[#121722] border-2 rounded-2xl shadow-xl ${!backgroundExplicit ? 'border-[#2A3340] opacity-60' : 'border-[#7c63e5]/40 shadow-[#7c63e5]/10'}`}>
+        <Card id="step-2-ability-scores" className={`relative lg:col-span-2 bg-[#121722] border-2 rounded-2xl shadow-xl transition-all duration-300 overflow-hidden ${
+          !backgroundLocked 
+            ? 'border-[#2A3340]' 
+            : 'border-[#7c63e5]/40 shadow-[#7c63e5]/10'
+        }`}>
           <Collapsible 
             open={expandedSections.has('ability-scores')} 
-            onOpenChange={() => backgroundExplicit && toggleSection('ability-scores')}
+            onOpenChange={() => backgroundLocked && toggleSection('ability-scores')}
           >
-            <CollapsibleTrigger asChild disabled={!backgroundExplicit}>
-              <CardHeader className={`transition-colors rounded-t-2xl ${backgroundExplicit ? 'cursor-pointer group hover:bg-[#1A1F2E]' : 'cursor-not-allowed'}`}>
+            <CollapsibleTrigger asChild disabled={!backgroundLocked}>
+              <CardHeader className={`transition-colors rounded-t-2xl ${backgroundLocked ? 'cursor-pointer group hover:bg-[#1A1F2E]' : 'cursor-not-allowed'}`}>
                 <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
                   <div className="flex items-center gap-3">
                     <span className="group-hover:underline underline-offset-4">Step 2: Assign Ability Scores</span>
+                    {backgroundLocked && (
+                      <Badge variant="outline" className="text-xs bg-blue-900/30 text-blue-300 border border-blue-600/30">
+                        Ready
+                      </Badge>
+                    )}
                   </div>
                   {expandedSections.has('ability-scores') ? (
                     <ChevronDown className="w-5 h-5" />
@@ -850,7 +886,22 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               </CardHeader>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <CardContent className={`space-y-6 text-left max-w-[960px] p-6 md:p-8 ${!backgroundExplicit ? 'opacity-50 pointer-events-none' : ''}`}>
+              <CardContent className="space-y-6 text-left max-w-[960px] p-6 md:p-8">
+                
+                {/* Success Banner */}
+                {backgroundLocked && (
+                  <div className="bg-green-900/20 border border-green-600/30 rounded-lg p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-green-300">
+                        Background locked: {character.background.name}
+                      </p>
+                      <p className="text-xs text-green-400/80 mt-1">
+                        Now assign your ability scores based on your race, class, and background.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 {/* Context summary */}
                 {(() => {
                   const storyChar = selectedStoryCharacterId ? storyCharacters.find(c => c.id === selectedStoryCharacterId) : null;
@@ -960,28 +1011,58 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               </CardContent>
             </CollapsibleContent>
           </Collapsible>
-              {/* Lock overlay */}
-              {!backgroundExplicit && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-[#0f131b]/90 border border-[#2A3340] text-gray-200 text-sm rounded-lg px-4 py-3">
-                    Please select a background to unlock ability score assignment suggestions.
-                  </div>
-                </div>
-              )}
+          
+          {/* Frosted Glass Lock Overlay - Embedded within Step 2 */}
+          <div 
+            className={`absolute inset-0 flex items-center justify-center rounded-2xl ring-1 ring-[#2A3340]/50 transition-all duration-500 ${
+              !backgroundLocked 
+                ? 'opacity-100 pointer-events-auto z-10' 
+                : 'opacity-0 pointer-events-none'
+            }`}
+            style={{
+              background: 'rgba(21, 20, 32, 0.75)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+            }}
+          >
+            <div className="text-center max-w-[320px] px-6">
+              {/* Lock Icon */}
+              <div className="mb-4">
+                <Lock className="w-10 h-10 text-gray-300 mx-auto" />
+              </div>
+              
+              {/* Headline */}
+              <h3 className="text-base font-semibold text-white mb-3">
+                Step 1 Required
+              </h3>
+              
+              {/* Description with Step 1 Reference */}
+              <p className="text-sm text-gray-300 leading-relaxed mb-4">
+                Please select and lock a background in{' '}
+                <span className="font-semibold text-green-300">Step 1: Choose a Background</span>
+                {' '}to unlock ability score assignment.
+              </p>
+              
+              {/* Subtle hint */}
+              <div className="text-xs text-gray-400 italic">
+                Locked until Step 1 is completed
+              </div>
+            </div>
+          </div>
         </Card>
-        
-        {/* Story Character Reference */}
-        {selectedStoryCharacterId && (
+
+        {/* Step 3: Equipment Preferences */}
+        {character.customEquipmentPreferences && character.customEquipmentPreferences.length > 0 && (
           <Card className="lg:col-span-2 bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">
             <Collapsible 
-              open={expandedSections.has('story-reference')} 
-              onOpenChange={() => toggleSection('story-reference')}
+              open={expandedSections.has('equipment-preferences')} 
+              onOpenChange={() => toggleSection('equipment-preferences')}
             >
               <CollapsibleTrigger asChild>
                 <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
-                  <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2 group-hover:text-[#7c63e5]">
-                    <span>Story Character Reference</span>
-                    {expandedSections.has('story-reference') ? (
+                  <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
+                    <span className="group-hover:underline underline-offset-4">Step 3: Equipment Loadout</span>
+                    {expandedSections.has('equipment-preferences') ? (
                       <ChevronDown className="w-5 h-5" />
                     ) : (
                       <ChevronRight className="w-5 h-5" />
@@ -991,286 +1072,36 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <CardContent className="space-y-4 text-left max-w-[760px] p-6 md:p-8">
-                  {(() => {
-                    const storyChar = storyCharacters.find(c => c.id === selectedStoryCharacterId);
-                    if (!storyChar) return null;
-                    
-                    return (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Original Role</div>
-                            <div className="text-base text-gray-100">{storyChar.role}</div>
-                          </div>
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Class</div>
-                            <div className="text-base text-gray-100">{storyChar.class}</div>
-                          </div>
+                  <p className="text-sm text-gray-400 mb-4">
+                    Select your starting equipment based on your class & background. These preferences were defined in your story character.
+                  </p>
+                  
+                  <div className="bg-[#1C1F2B] border border-[#2A3340] rounded-xl p-4">
+                    <Label className="text-sm font-medium text-white mb-3 block">Equipment Preferences</Label>
+                    <div className="text-sm text-gray-300 space-y-2">
+                      {character.customEquipmentPreferences.map((item, index) => (
+                        <div key={index} className="flex items-start gap-2">
+                          <span className="text-[#7c63e5] mt-1">•</span>
+                          <span>{item}</span>
                         </div>
-
-                        <div className="mb-4">
-                          <div className="text-sm text-gray-400">Personality</div>
-                          <div className="text-base text-gray-100">{storyChar.personality}</div>
-                        </div>
-
-                        <div className="mb-4">
-                          <div className="text-sm text-gray-400">Motivation</div>
-                          <div className="text-base text-gray-100">{storyChar.motivation}</div>
-                        </div>
-
-                        <div className="mb-4">
-                          <div className="text-sm text-gray-400">Connection to Story</div>
-                          <div className="text-base text-gray-100">{storyChar.connectionToStory}</div>
-                        </div>
-
-                        <div className="mb-4">
-                          <div className="text-sm text-gray-400">Background History</div>
-                          <div className="text-base text-gray-100">{storyChar.backgroundHistory}</div>
-                        </div>
-
-                        <div className="mb-4">
-                          <div className="text-sm text-gray-400">Flaw or Weakness</div>
-                          <div className="text-base text-gray-100">{storyChar.flawOrWeakness}</div>
-                        </div>
-                        
-                        {storyChar.keyRelationships.length > 0 && (
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Key Relationships</div>
-                            <div className="text-base text-gray-100 space-y-1">
-                              {storyChar.keyRelationships.map((rel, index) => (
-                                <div key={index}>• {rel}</div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
-                        {/* Additional SRD Fields */}
-                        {storyChar.languages && storyChar.languages.length > 0 && (
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Languages</div>
-                            <div className="text-base text-gray-100">{storyChar.languages.join(', ')}</div>
-                          </div>
-                        )}
-                        
-                        {storyChar.alignment && (
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Alignment</div>
-                            <div className="text-base text-gray-100">{storyChar.alignment}</div>
-                          </div>
-                        )}
-                        
-                        {storyChar.deity && (
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Deity</div>
-                            <div className="text-base text-gray-100">{storyChar.deity}</div>
-                          </div>
-                        )}
-                        
-                        {storyChar.physicalDescription && (
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Physical Description</div>
-                            <div className="text-base text-gray-100">{storyChar.physicalDescription}</div>
-                          </div>
-                        )}
-                        
-                        {storyChar.equipmentPreferences && storyChar.equipmentPreferences.length > 0 && (
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Equipment Preferences</div>
-                            <div className="text-base text-gray-100 space-y-1">
-                              {storyChar.equipmentPreferences.map((item, index) => (
-                                <div key={index}>• {item}</div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
-                        {storyChar.subrace && (
-                          <div className="mb-4">
-                            <div className="text-sm text-gray-400">Subrace</div>
-                            <div className="text-base text-gray-100">{storyChar.subrace}</div>
-                          </div>
-                        )}
-                      </>
-                    );
-                  })()}
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4 flex items-start gap-3">
+                    <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-blue-300">Equipment Note</p>
+                      <p className="text-xs text-blue-400/80 mt-1">
+                        Your background ({character.background.name}) also provides: {character.background.equipment.join(', ')}
+                      </p>
+                    </div>
+                  </div>
                 </CardContent>
               </CollapsibleContent>
             </Collapsible>
           </Card>
         )}
-        
-        {/* Core Info Section */}
-        <Card className="bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">
-          <Collapsible 
-            open={expandedSections.has('core-info')} 
-            onOpenChange={() => toggleSection('core-info')}
-          >
-            <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2 group-hover:text-[#7c63e5]">
-                  <span className="group-hover:underline underline-offset-4">Core Information</span>
-                  {expandedSections.has('core-info') ? (
-                    <ChevronDown className="w-5 h-5" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5" />
-                  )}
-                </CardTitle>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="space-y-4 text-left max-w-[760px] p-6 md:p-8">
-                <div>
-                  <Label htmlFor="name" className="text-sm text-gray-400">Character Name</Label>
-                  {isEditing ? (
-                    <Input
-                      id="name"
-                      value={character.name}
-                      onChange={(e) => handleFieldChange('name', e.target.value)}
-                      className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-4 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5]"
-                    />
-                  ) : (
-                    <div className="text-base text-gray-100">{character.name}</div>
-                  )}
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="level" className="text-sm text-gray-400 flex items-center gap-1">Level <span title="Level affects hit points, spell slots, and features granted by your class."><Info className="w-3 h-3 text-gray-500" /></span></Label>
-                    {isEditing ? (
-                      <Input
-                        id="level"
-                        type="number"
-                        min="1"
-                        max="20"
-                        value={character.level}
-                        onChange={(e) => {
-                          const storyChar = selectedStoryCharacterId ? storyCharacters.find(c => c.id === selectedStoryCharacterId) : null;
-                          if (!storyChar?.class) {
-                            console.warn('Please choose a class before adjusting level.');
-                          }
-                          handleFieldChange('level', parseInt(e.target.value) || 1)
-                        }}
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-4 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5]"
-                      />
-                    ) : (
-                      <div className="text-base text-gray-100">{character.level}</div>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="ruleset" className="text-sm text-gray-400">Ruleset</Label>
-                    <div className="text-base text-gray-100">{character.ruleset}</div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="race" className="text-sm text-gray-400">Race</Label>
-                  {overrideRace ? (
-                    <Select value={character.race.name} onValueChange={handleRaceChange}>
-                      <SelectTrigger className="bg-[#1C1F2B] text-white border border-[#2A3340] rounded-lg focus:ring-[#7c63e5] focus:border-[#7c63e5]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#1C1F2B] text-gray-300 border border-[#2A3340] max-h-64 overflow-auto">
-                        {SRD_RACES.map(race => (
-                          <SelectItem key={race.name} value={race.name}>{race.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <div className="text-lg font-semibold text-white">{character.race.name}</div>
-                      <Button size="sm" variant="secondary" className="h-7 px-2 py-1" onClick={() => setOverrideRace(true)}>Change</Button>
-                    </div>
-                  )}
-                </div>
-
-                {character.subrace && (
-                  <div>
-                    <Label htmlFor="subrace" className="text-sm text-gray-400">Subrace</Label>
-                    {isEditing ? (
-                      <Select value={character.subrace.name} onValueChange={handleSubraceChange}>
-                        <SelectTrigger className="bg-[#1C1F2B] text-white border border-[#2A3340] rounded-lg focus:ring-[#7c63e5] focus:border-[#7c63e5]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#1C1F2B] text-gray-300 border border-[#2A3340]">
-                          {character.race.subraces?.map(subrace => (
-                            <SelectItem key={subrace.name} value={subrace.name}>{subrace.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <div className="text-lg font-semibold text-white">{character.subrace.name}</div>
-                    )}
-                  </div>
-                )}
-
-                <div>
-                  <Label htmlFor="background" className="text-sm text-gray-400">Background</Label>
-                  {overrideBackground ? (
-                    <Select value={character.background.name} onValueChange={handleBackgroundChange}>
-                      <SelectTrigger className="bg-[#1C1F2B] text-white border border-[#2A3340] rounded-lg focus:ring-[#7c63e5] focus:border-[#7c63e5]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#1C1F2B] text-gray-300 border border-[#2A3340] max-h-64 overflow-auto">
-                        {SRD_BACKGROUNDS.map(background => (
-                          <SelectItem key={background.name} value={background.name}>{background.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <div className="text-lg font-semibold text-white">{character.background.name}</div>
-                      <Button size="sm" variant="secondary" className="h-7 px-2 py-1" onClick={() => setOverrideBackground(true)}>Change</Button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Custom Fields from Story Character */}
-                {(character.customAge || character.customHeight || character.customPhysicalDescription) && (
-                  <div className="border-t border-[#2A3340] pt-4 mt-4">
-                    <h4 className="text-sm font-medium text-white mb-3">Story Character Details</h4>
-                    
-                    {character.customAge && (
-                      <div className="mb-2">
-                        <Label className="text-sm font-medium text-gray-400">Age</Label>
-                        <div className="text-sm text-gray-300">{character.customAge} years</div>
-                      </div>
-                    )}
-                    
-                    {character.customHeight && (
-                      <div className="mb-2">
-                        <Label className="text-sm font-medium text-gray-400">Height</Label>
-                        <div className="text-sm text-gray-300">{character.customHeight}</div>
-                      </div>
-                    )}
-                    
-                    {character.customPhysicalDescription && (
-                      <div className="mb-2">
-                        <Label className="text-sm font-medium text-gray-400">Physical Description</Label>
-                        <div className="text-sm text-gray-300">{character.customPhysicalDescription}</div>
-                      </div>
-                    )}
-                    
-                    {character.customEquipmentPreferences && character.customEquipmentPreferences.length > 0 && (
-                      <div className="mb-2">
-                        <Label className="text-sm font-medium text-gray-400">Equipment Preferences</Label>
-                        <div className="text-sm text-gray-300">
-                          {character.customEquipmentPreferences.map((item, index) => (
-                            <div key={index}>• {item}</div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-                {/* (Explanations moved to step sections) */}
-
-              </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
-        </Card>
-
-        
 
         {/* Race Details Section */}
         <Card className="bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">
