@@ -45,6 +45,21 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
   const [backgroundExplicit, setBackgroundExplicit] = useState(false);
   const [backgroundLocked, setBackgroundLocked] = useState(false);
   const [hasEditedScores, setHasEditedScores] = useState(false);
+  const [abilityScoresLocked, setAbilityScoresLocked] = useState(false);
+  const [equipmentLocked, setEquipmentLocked] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState<{
+    weapons: string[];
+    armor: string;
+    tools: string[];
+    packs: string[];
+    miscellaneous: string[];
+  }>({
+    weapons: [],
+    armor: '',
+    tools: [],
+    packs: [],
+    miscellaneous: []
+  });
 
   // Debug logging
   useEffect(() => {
@@ -203,6 +218,77 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       { name: 'Sage', reason: 'Broad knowledge benefits many classes.' },
       { name: 'Folk Hero', reason: 'General utility and story fit.' }
     ];
+  };
+
+  const getSuggestedEquipment = () => {
+    const classType = getNormalizedClass();
+    const backgroundName = character?.background.name.toLowerCase() || '';
+    const raceName = character?.race.name.toLowerCase() || '';
+    
+    const suggestions = {
+      weapons: [] as string[],
+      armor: '',
+      tools: [] as string[],
+      packs: [] as string[],
+      miscellaneous: [] as string[]
+    };
+
+    // Class-based weapon suggestions
+    if (classType?.includes('wizard')) {
+      suggestions.weapons = ['Quarterstaff', 'Dagger'];
+      suggestions.armor = 'None (Mage Armor spell recommended)';
+      suggestions.packs = ['Scholar\'s Pack'];
+      suggestions.miscellaneous = ['Spellbook', 'Component Pouch', 'Arcane Focus'];
+    } else if (classType?.includes('fighter')) {
+      suggestions.weapons = ['Longsword', 'Shield', 'Light Crossbow'];
+      suggestions.armor = 'Chain Mail';
+      suggestions.packs = ['Dungeoneer\'s Pack'];
+      suggestions.miscellaneous = ['20 Bolts'];
+    } else if (classType?.includes('rogue')) {
+      suggestions.weapons = ['Rapier', 'Shortbow', 'Dagger (2)'];
+      suggestions.armor = 'Leather Armor';
+      suggestions.packs = ['Burglar\'s Pack'];
+      suggestions.miscellaneous = ['Thieves\' Tools', '20 Arrows'];
+    } else if (classType?.includes('cleric')) {
+      suggestions.weapons = ['Mace', 'Shield'];
+      suggestions.armor = 'Scale Mail';
+      suggestions.packs = ['Priest\'s Pack'];
+      suggestions.miscellaneous = ['Holy Symbol', 'Prayer Book'];
+    } else {
+      // Default for other classes
+      suggestions.weapons = ['Longsword', 'Shield'];
+      suggestions.armor = 'Leather Armor';
+      suggestions.packs = ['Explorer\'s Pack'];
+    }
+
+    // Background-based tool additions
+    if (backgroundName.includes('criminal')) {
+      suggestions.tools = ['Thieves\' Tools', 'Gaming Set'];
+    } else if (backgroundName.includes('acolyte')) {
+      suggestions.tools = ['Holy Symbol'];
+      suggestions.miscellaneous.push('Incense (5 sticks)', 'Prayer Book');
+    } else if (backgroundName.includes('folk hero')) {
+      suggestions.tools = ['Artisan\'s Tools', 'Smith\'s Tools'];
+      suggestions.miscellaneous.push('Iron Pot', 'Shovel');
+    }
+
+    // Race-based additions
+    if (raceName.includes('dwarf')) {
+      if (!suggestions.tools.some(t => t.includes('Smith') || t.includes('Mason') || t.includes('Brewer'))) {
+        suggestions.tools.push('Smith\'s Tools or Mason\'s Tools');
+      }
+    } else if (raceName.includes('elf')) {
+      if (!suggestions.weapons.some(w => w.includes('Longbow') || w.includes('Shortbow'))) {
+        suggestions.miscellaneous.push('Longbow proficiency (racial)');
+      }
+    }
+
+    return suggestions;
+  };
+
+  const applySuggestedEquipment = () => {
+    const suggested = getSuggestedEquipment();
+    setSelectedEquipment(suggested);
   };
 
   type Preset = { id: string; name: string; description: string; scores: Partial<AbilityScores> };
@@ -986,7 +1072,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                         </span>
                       </Label>
                       <div className="flex items-center space-x-2">
-                        {isEditing ? (
+                        {isEditing && !abilityScoresLocked ? (
                           <Input
                             id={ability}
                             type="number"
@@ -1008,6 +1094,54 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     </div>
                   ))}
                 </div>
+
+                {/* Lock Ability Scores Button */}
+                {!abilityScoresLocked && hasEditedScores && (
+                  <div className="mt-6 flex justify-center">
+                    <Button
+                      onClick={() => {
+                        setAbilityScoresLocked(true);
+                        // Expand Step 3 and scroll to it
+                        const newExpanded = new Set(expandedSections);
+                        newExpanded.add('equipment-preferences');
+                        setExpandedSections(newExpanded);
+                        
+                        setTimeout(() => {
+                          const el = document.getElementById('step-3-equipment');
+                          if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }
+                        }, 100);
+                      }}
+                      variant="primary"
+                      className="px-6 py-2"
+                    >
+                      <Lock className="w-4 h-4 mr-2" />
+                      Lock Ability Scores & Continue
+                    </Button>
+                  </div>
+                )}
+
+                {/* Locked Confirmation */}
+                {abilityScoresLocked && (
+                  <div className="mt-6 bg-green-900/20 border border-green-600/30 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-green-300">Ability Scores Locked</p>
+                        <p className="text-xs text-green-400/80 mt-1">You can now proceed to equipment selection.</p>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => setAbilityScoresLocked(false)}
+                      className="ml-4"
+                    >
+                      Unlock to Edit
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </CollapsibleContent>
           </Collapsible>
@@ -1051,57 +1185,336 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           </div>
         </Card>
 
-        {/* Step 3: Equipment Preferences */}
-        {character.customEquipmentPreferences && character.customEquipmentPreferences.length > 0 && (
-          <Card className="lg:col-span-2 bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">
-            <Collapsible 
-              open={expandedSections.has('equipment-preferences')} 
-              onOpenChange={() => toggleSection('equipment-preferences')}
-            >
-              <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
-                  <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
-                    <span className="group-hover:underline underline-offset-4">Step 3: Equipment Loadout</span>
-                    {expandedSections.has('equipment-preferences') ? (
-                      <ChevronDown className="w-5 h-5" />
-                    ) : (
-                      <ChevronRight className="w-5 h-5" />
+        {/* Step 3: Equipment Selection */}
+        <Card id="step-3-equipment" className={`relative lg:col-span-2 bg-[#121722] border-2 rounded-2xl shadow-xl transition-all duration-300 overflow-hidden ${
+          !abilityScoresLocked 
+            ? 'border-[#2A3340]' 
+            : 'border-[#7c63e5]/40 shadow-[#7c63e5]/10'
+        }`}>
+          <Collapsible 
+            open={expandedSections.has('equipment-preferences')} 
+            onOpenChange={() => abilityScoresLocked && toggleSection('equipment-preferences')}
+          >
+            <CollapsibleTrigger asChild disabled={!abilityScoresLocked}>
+              <CardHeader className={`transition-colors rounded-t-2xl ${abilityScoresLocked ? 'cursor-pointer group hover:bg-[#1A1F2E]' : 'cursor-not-allowed'}`}>
+                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2">
+                  <div className="flex items-center gap-3">
+                    <span className="group-hover:underline underline-offset-4">Step 3: Choose Equipment</span>
+                    {abilityScoresLocked && !equipmentLocked && (
+                      <Badge variant="outline" className="text-xs bg-blue-900/30 text-blue-300 border border-blue-600/30">
+                        Ready
+                      </Badge>
                     )}
-                  </CardTitle>
-                </CardHeader>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <CardContent className="space-y-4 text-left max-w-[760px] p-6 md:p-8">
-                  <p className="text-sm text-gray-400 mb-4">
-                    Select your starting equipment based on your class & background. These preferences were defined in your story character.
-                  </p>
-                  
-                  <div className="bg-[#1C1F2B] border border-[#2A3340] rounded-xl p-4">
-                    <Label className="text-sm font-medium text-white mb-3 block">Equipment Preferences</Label>
-                    <div className="text-sm text-gray-300 space-y-2">
-                      {character.customEquipmentPreferences.map((item, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <span className="text-[#7c63e5] mt-1">•</span>
-                          <span>{item}</span>
-                        </div>
-                      ))}
-                    </div>
+                    {equipmentLocked && (
+                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
+                        <Lock className="w-3 h-3 mr-1" />
+                        Locked
+                      </Badge>
+                    )}
                   </div>
-                  
-                  <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4 flex items-start gap-3">
-                    <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                  {expandedSections.has('equipment-preferences') ? (
+                    <ChevronDown className="w-5 h-5" />
+                  ) : (
+                    <ChevronRight className="w-5 h-5" />
+                  )}
+                </CardTitle>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="space-y-6 text-left max-w-[960px] p-6 md:p-8">
+                
+                {/* Success Banner */}
+                {abilityScoresLocked && !equipmentLocked && (
+                  <div className="bg-green-900/20 border border-green-600/30 rounded-lg p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-blue-300">Equipment Note</p>
-                      <p className="text-xs text-blue-400/80 mt-1">
-                        Your background ({character.background.name}) also provides: {character.background.equipment.join(', ')}
+                      <p className="text-sm font-medium text-green-300">Ability Scores Locked</p>
+                      <p className="text-xs text-green-400/80 mt-1">
+                        Select your starting gear based on your character's background and race. You may use the suggested loadout or customize freely.
                       </p>
                     </div>
                   </div>
-                </CardContent>
-              </CollapsibleContent>
-            </Collapsible>
-          </Card>
-        )}
+                )}
+
+                {/* Suggested Equipment */}
+                <div className="bg-[#131A24] border border-[#2A3340] rounded-xl p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-semibold text-white">Suggested Equipment</h3>
+                    <Button 
+                      size="sm" 
+                      variant="primary"
+                      onClick={applySuggestedEquipment}
+                      disabled={equipmentLocked}
+                    >
+                      Use Suggested Loadout
+                    </Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(() => {
+                      const suggested = getSuggestedEquipment();
+                      return (
+                        <>
+                          {suggested.weapons.length > 0 && (
+                            <div className="bg-[#161D28] border border-[#2A3340] rounded-lg p-3">
+                              <div className="text-xs font-medium text-gray-400 mb-2">Weapons</div>
+                              <div className="text-sm text-gray-300 space-y-1">
+                                {suggested.weapons.map((w, i) => (
+                                  <div key={i} className="flex items-center gap-2">
+                                    <span className="text-[#7c63e5]">•</span>
+                                    <span>{w}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {suggested.armor && (
+                            <div className="bg-[#161D28] border border-[#2A3340] rounded-lg p-3">
+                              <div className="text-xs font-medium text-gray-400 mb-2">Armor</div>
+                              <div className="text-sm text-gray-300">{suggested.armor}</div>
+                            </div>
+                          )}
+                          
+                          {suggested.packs.length > 0 && (
+                            <div className="bg-[#161D28] border border-[#2A3340] rounded-lg p-3">
+                              <div className="text-xs font-medium text-gray-400 mb-2">Packs</div>
+                              <div className="text-sm text-gray-300 space-y-1">
+                                {suggested.packs.map((p, i) => (
+                                  <div key={i} className="flex items-center gap-2">
+                                    <span className="text-[#7c63e5]">•</span>
+                                    <span>{p}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {suggested.tools.length > 0 && (
+                            <div className="bg-[#161D28] border border-[#2A3340] rounded-lg p-3">
+                              <div className="text-xs font-medium text-gray-400 mb-2">Tools</div>
+                              <div className="text-sm text-gray-300 space-y-1">
+                                {suggested.tools.map((t, i) => (
+                                  <div key={i} className="flex items-center gap-2">
+                                    <span className="text-[#7c63e5]">•</span>
+                                    <span>{t}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {suggested.miscellaneous.length > 0 && (
+                            <div className="bg-[#161D28] border border-[#2A3340] rounded-lg p-3 md:col-span-2">
+                              <div className="text-xs font-medium text-gray-400 mb-2">Miscellaneous</div>
+                              <div className="text-sm text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
+                                {suggested.miscellaneous.map((m, i) => (
+                                  <div key={i} className="flex items-center gap-2">
+                                    <span className="text-[#7c63e5]">•</span>
+                                    <span>{m}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                {/* Manual Equipment Selection */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-white border-b border-[#2A3340] pb-2">Custom Equipment Selection</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Weapons */}
+                    <div>
+                      <Label className="text-sm text-gray-400 mb-2 block">Weapons</Label>
+                      <Textarea
+                        value={selectedEquipment.weapons.join(', ')}
+                        onChange={(e) => setSelectedEquipment({
+                          ...selectedEquipment,
+                          weapons: e.target.value.split(',').map(w => w.trim()).filter(w => w)
+                        })}
+                        disabled={equipmentLocked}
+                        placeholder="e.g., Longsword, Shield"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[60px]"
+                      />
+                    </div>
+
+                    {/* Armor */}
+                    <div>
+                      <Label className="text-sm text-gray-400 mb-2 block">Armor</Label>
+                      <Input
+                        value={selectedEquipment.armor}
+                        onChange={(e) => setSelectedEquipment({ ...selectedEquipment, armor: e.target.value })}
+                        disabled={equipmentLocked}
+                        placeholder="e.g., Chain Mail"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5]"
+                      />
+                    </div>
+
+                    {/* Tools */}
+                    <div>
+                      <Label className="text-sm text-gray-400 mb-2 block">Tools</Label>
+                      <Textarea
+                        value={selectedEquipment.tools.join(', ')}
+                        onChange={(e) => setSelectedEquipment({
+                          ...selectedEquipment,
+                          tools: e.target.value.split(',').map(t => t.trim()).filter(t => t)
+                        })}
+                        disabled={equipmentLocked}
+                        placeholder="e.g., Thieves' Tools"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[60px]"
+                      />
+                    </div>
+
+                    {/* Packs */}
+                    <div>
+                      <Label className="text-sm text-gray-400 mb-2 block">Packs</Label>
+                      <Textarea
+                        value={selectedEquipment.packs.join(', ')}
+                        onChange={(e) => setSelectedEquipment({
+                          ...selectedEquipment,
+                          packs: e.target.value.split(',').map(p => p.trim()).filter(p => p)
+                        })}
+                        disabled={equipmentLocked}
+                        placeholder="e.g., Explorer's Pack"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[60px]"
+                      />
+                    </div>
+
+                    {/* Miscellaneous */}
+                    <div className="md:col-span-2">
+                      <Label className="text-sm text-gray-400 mb-2 block">Miscellaneous Items</Label>
+                      <Textarea
+                        value={selectedEquipment.miscellaneous.join(', ')}
+                        onChange={(e) => setSelectedEquipment({
+                          ...selectedEquipment,
+                          miscellaneous: e.target.value.split(',').map(m => m.trim()).filter(m => m)
+                        })}
+                        disabled={equipmentLocked}
+                        placeholder="e.g., Rope (50 ft.), Torch (10)"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[80px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Background Equipment Note */}
+                {character.background.equipment.length > 0 && (
+                  <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4 flex items-start gap-3">
+                    <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-blue-300">From Your Background</p>
+                      <p className="text-xs text-blue-400/80 mt-1">
+                        Your {character.background.name} background also provides: {character.background.equipment.join(', ')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Story Character Equipment Preferences */}
+                {character.customEquipmentPreferences && character.customEquipmentPreferences.length > 0 && (
+                  <div className="bg-purple-900/20 border border-purple-600/30 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-purple-300 mb-2">Story Character Preferences</p>
+                        <div className="text-xs text-purple-400/80 space-y-1">
+                          {character.customEquipmentPreferences.map((item, index) => (
+                            <div key={index}>• {item}</div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Lock Equipment Button */}
+                {!equipmentLocked && (
+                  <div className="mt-6 flex justify-center">
+                    <Button
+                      onClick={() => {
+                        setEquipmentLocked(true);
+                      }}
+                      variant="primary"
+                      className="px-6 py-2"
+                      disabled={
+                        selectedEquipment.weapons.length === 0 && 
+                        !selectedEquipment.armor && 
+                        selectedEquipment.packs.length === 0
+                      }
+                    >
+                      <Lock className="w-4 h-4 mr-2" />
+                      Lock Equipment & Finalize
+                    </Button>
+                  </div>
+                )}
+
+                {/* Locked Confirmation */}
+                {equipmentLocked && (
+                  <div className="mt-6 bg-green-900/20 border border-green-600/30 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-green-300">Equipment Locked</p>
+                        <p className="text-xs text-green-400/80 mt-1">Your character sheet is now complete!</p>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => setEquipmentLocked(false)}
+                      className="ml-4"
+                    >
+                      Unlock to Edit
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Frosted Glass Lock Overlay - Embedded within Step 3 */}
+          <div 
+            className={`absolute inset-0 flex items-center justify-center rounded-2xl ring-1 ring-[#2A3340]/50 transition-all duration-500 ${
+              !abilityScoresLocked 
+                ? 'opacity-100 pointer-events-auto z-10' 
+                : 'opacity-0 pointer-events-none'
+            }`}
+            style={{
+              background: 'rgba(21, 20, 32, 0.75)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+            }}
+          >
+            <div className="text-center max-w-[320px] px-6">
+              {/* Lock Icon */}
+              <div className="mb-4">
+                <Lock className="w-10 h-10 text-gray-300 mx-auto" />
+              </div>
+              
+              {/* Headline */}
+              <h3 className="text-base font-semibold text-white mb-3">
+                Step 2 Required
+              </h3>
+              
+              {/* Description */}
+              <p className="text-sm text-gray-300 leading-relaxed mb-4">
+                Please assign and lock ability scores in{' '}
+                <span className="font-semibold text-green-300">Step 2: Assign Ability Scores</span>
+                {' '}to unlock equipment selection.
+              </p>
+              
+              {/* Subtle hint */}
+              <div className="text-xs text-gray-400 italic">
+                Locked until Step 2 is completed
+              </div>
+            </div>
+          </div>
+        </Card>
 
         {/* Race Details Section */}
         <Card className="bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">

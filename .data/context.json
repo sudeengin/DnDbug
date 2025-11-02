@@ -1061,176 +1061,123 @@
       "characters": {
         "list": [
           {
-            "name": "Elaria Nightwhisper",
+            "name": "Kaelin Duskwalker",
             "role": "Wandering Scholar",
-            "race": "High Elf",
+            "race": "Half-Elf",
             "class": "Wizard",
-            "personality": "Elaria is introspective and cautious, often contemplating the deeper meanings behind events. Her sharp intellect is tempered by a quiet empathy for others.",
-            "motivation": "Elaria seeks to uncover the forbidden knowledge lost in the silence, hoping to redeem her family name among the Scholars of the Lost.",
-            "connectionToStory": "She believes that the key to understanding the silence lies within ancient libraries now reduced to ashes.",
-            "gmSecret": "Elaria's mentor was secretly a Silent Keeper, feeding her misinformation to lead her to the silence's heart for a sacrificial ritual. She unknowingly carries a tome that holds the final incantation for the ritual.",
-            "potentialConflict": "Elaria's pursuit of knowledge may lead her to unwittingly unleash the silence further.",
+            "personality": "Kaelin is introspective and analytical, often lost in thought as he attempts to piece together mysteries. Despite his quiet demeanor, he is fiercely curious and driven by a need to uncover hidden truths.",
+            "motivation": "Kaelin seeks the source of the mysterious silence to unlock ancient knowledge that has been lost to time.",
+            "connectionToStory": "As a member of the Scholars of the Lost, Kaelin believes that understanding the curse will provide insights into forgotten magics.",
+            "gmSecret": "Kaelin's mentor, who disappeared years ago, is actually the Cult Leader of the Silent Keepers, orchestrating events to bring about an era of eternal silence.",
+            "potentialConflict": "His obsession with forbidden knowledge may lead him to make questionable alliances.",
             "voiceTone": "Soft and deliberate",
             "inventoryHint": "An aged journal filled with cryptic notes",
             "motifAlignment": [
               "Echoes of the past",
-              "Transformation and identity"
+              "Secrets buried beneath ruins"
             ],
-            "backgroundHistory": "Born to a family of esteemed scholars, Elaria was drawn to the mysteries of the world. A devastating fire at the Great Library took her parents from her, leaving her with the burden of restoring their legacy. She joined the Scholars of the Lost, delving into forbidden texts in search of answers.",
+            "backgroundHistory": "Born to a human father and an elven mother, Kaelin grew up at the intersection of two worlds. His childhood was filled with stories of ancient lore, fueling his desire to study arcane traditions. A defining moment was discovering a hidden library beneath his family home, inspiring his journey into the dead lands.",
             "keyRelationships": [
-              "A Lost Scribe, a trusted friend",
-              "Her late mentor from the Silent Keepers",
-              "The Scholars of the Lost"
+              "His missing mentor, now a cult leader",
+              "A Lost Scribe who assists him with translations"
             ],
-            "flawOrWeakness": "Elaria is susceptible to moments of profound silence where she becomes catatonic, losing herself to an inner void that echoes with the remnants of the curse. She desperately conceals these episodes, fearing they signify a deeper connection to the curse she's trying to unravel.",
+            "flawOrWeakness": "His quest for knowledge often blinds him to immediate dangers.",
             "languages": [
               "Common",
               "Elvish",
-              "Draconic",
-              "Sylvan"
+              "Draconic"
             ],
-            "alignment": "Neutral Good",
+            "alignment": "True Neutral",
             "deity": null,
-            "physicalDescription": "Slender build with piercing green eyes, often draped in robes of deep midnight blue embroidered with arcane symbols.",
+            "physicalDescription": "Lean build, long dark hair, pale skin with green eyes; wears worn robes marked with arcane symbols.",
             "equipmentPreferences": [
               "Spellbook",
-              "Arcane Focus",
-              "Component Pouch",
-              "Dagger"
+              "Component pouch",
+              "Dagger",
+              "Wand"
             ],
-            "subrace": "High Elf",
-            "age": 287,
-            "height": "6'8\"",
+            "subrace": null,
+            "age": 34,
+            "height": "5'9\"",
             "proficiencies": [
               "Arcana",
               "History",
               "Investigation",
-              "Arcana Tools"
+              "Insight"
             ],
-            "id": "char_1761853192358_1wvas36id",
-            "status": "saved"
+            "id": "char_1761861964588_amjvmqsrx",
+            "status": "generated"
           },
           {
-            "name": "Thorn Bloodforge",
-            "role": "Mercenary Captain",
-            "race": "Half-Orc",
-            "class": "Fighter",
-            "personality": "Gruff and direct, Thorn is fiercely loyal to his comrades and driven by a sense of duty. He struggles with inner demons from his past.",
-            "motivation": "Thorn seeks redemption for a past mistake that led to the loss of his previous company. He hopes to find absolution by ending the curse.",
-            "connectionToStory": "He aims to protect the party against the monstrous creatures born from the silence, which he sees as a second chance to prove his worth.",
-            "gmSecret": "Thorn unknowingly holds a fragment of the forgotten relic within his weapon, a piece that the Guardian seeks to reassemble for unknown purposes.",
-            "potentialConflict": "Thorn's guilt may cause him to take reckless actions to protect others, endangering himself and the group.",
-            "voiceTone": "Gruff and direct",
-            "inventoryHint": "A rusted locket containing a faded portrait",
+            "name": "Brynna Stoneheart",
+            "role": "Knight Errant",
+            "race": "Dwarf",
+            "class": "Paladin",
+            "personality": "Brynna is stalwart and unwavering, her sense of duty driving her every action. She has a compassionate heart, even for those who have strayed from the path of righteousness.",
+            "motivation": "She seeks personal redemption for past failures and believes lifting the curse can restore honor to her name.",
+            "connectionToStory": "Brynna hopes to find the cause of the silence to prevent further transformation of innocents into monsters.",
+            "gmSecret": "Brynna's order once guarded the secrets of the silence, but their failure led to the current curse. Her quest is as much about restoring their honor as it is about saving others.",
+            "potentialConflict": "Her guilt over her order's past failure may cloud her judgment in critical moments.",
+            "voiceTone": "Gruff but compassionate",
+            "inventoryHint": "A rusted locket with her order's insignia",
             "motifAlignment": [
               "Transformation and identity",
-              "Secrets buried beneath ruins"
+              "Hope amidst despair"
             ],
-            "backgroundHistory": "Raised amidst the War-Scarred Remnants, Thorn learned the ways of battle early. After a tragic error led to the fall of his band, he became a mercenary, driven by the hope of redeeming himself through acts of valor.",
+            "backgroundHistory": "Raised in the high halls of dwarven nobility, Brynna was groomed to become a protector of her people. However, a mission gone awry left her scarred and exiled. Haunted by the memory of her fallen comrades, she now roams the lands seeking atonement.",
             "keyRelationships": [
-              "The Guardian, an enigmatic figure",
-              "A former comrade from the War-Scarred Remnants",
-              "An estranged sibling who joined the Silent Keepers"
+              "The War-Scarred Remnants, remnants of her former order",
+              "An Old Seer who gives her guidance"
             ],
-            "flawOrWeakness": "Haunted by past failures, Thorn's fear of making mistakes can paralyze him at critical moments.",
+            "flawOrWeakness": "Her desire for redemption can make her reckless and stubborn.",
             "languages": [
               "Common",
-              "Orc",
+              "Dwarvish",
               "Giant"
             ],
-            "alignment": "Chaotic Good",
-            "deity": "Tempus",
-            "physicalDescription": "Imposing and muscular, Thorn wears battered armor adorned with scars from past battles. His eyes, a piercing grey, reflect years of hard experience.",
+            "alignment": "Lawful Good",
+            "deity": "Moradin",
+            "physicalDescription": "Stocky and muscular, with auburn braided hair and a series of scars across her face; clad in worn but well-kept armor.",
             "equipmentPreferences": [
-              "Greatsword",
-              "Chain Mail",
-              "Battleaxe",
-              "Shield"
+              "Warhammer",
+              "Shield",
+              "Chain mail",
+              "Holy symbol"
             ],
-            "subrace": null,
-            "age": 35,
-            "height": "6'4\"",
+            "subrace": "Mountain Dwarf",
+            "age": 78,
+            "height": "4'5\"",
             "proficiencies": [
               "Athletics",
               "Intimidation",
-              "Survival",
+              "Religion",
               "Smith's Tools"
             ],
-            "id": "char_1761853192358_4s1a5nj2r",
+            "id": "char_1761861964588_tilf4et3t",
             "status": "generated"
           },
           {
-            "name": "Sylas Voss",
-            "role": "Shadowy Tracker",
-            "race": "Tiefling",
-            "class": "Rogue",
-            "personality": "Sylas is enigmatic and unpredictable, often favoring cunning and wit over brute force. His loyalty is hard-won but unbreakable once earned.",
-            "motivation": "Driven by personal revenge, Sylas seeks the source of the silence that transformed his brother into a monster.",
-            "connectionToStory": "His extensive knowledge of the land's twisted paths provides invaluable guidance through the cursed terrain.",
-            "gmSecret": "Sylas's bloodline is tied to the Guardian of the silence, making him a key to both its continuation and potential end. This lineage has cursed his family for generations.",
-            "potentialConflict": "Sylas's thirst for vengeance may cloud his judgment, potentially leading the group astray.",
-            "voiceTone": "Smooth and persuasive",
-            "inventoryHint": "A small, intricately carved bone talisman",
-            "motifAlignment": [
-              "The duality of silence",
-              "Echoes of the past"
-            ],
-            "backgroundHistory": "Born under an ill omen, Sylas grew up on the edges of society, honing his skills to survive. After his brother fell victim to the silence's curse, Sylas joined the Hunters of Nightmares, vowing to track down and destroy the source of their torment.",
-            "keyRelationships": [
-              "An Old Seer, who foretold his brother's fate",
-              "The Hunters of Nightmares",
-              "His cursed brother, now a monster roaming the lands"
-            ],
-            "flawOrWeakness": "Sylas's inability to trust others often isolates him, making collaboration difficult.",
-            "languages": [
-              "Common",
-              "Infernal",
-              "Thieves' Cant"
-            ],
-            "alignment": "Chaotic Neutral",
-            "deity": null,
-            "physicalDescription": "Lean and agile, with midnight blue skin and curling horns. Sylas prefers dark, utilitarian clothing that blends into the shadows.",
-            "equipmentPreferences": [
-              "Shortsword",
-              "Dagger",
-              "Thieves' Tools",
-              "Leather Armor"
-            ],
-            "subrace": null,
-            "age": 28,
-            "height": "6'0\"",
-            "proficiencies": [
-              "Stealth",
-              "Sleight of Hand",
-              "Deception",
-              "Thieves' Tools"
-            ],
-            "id": "char_1761853192358_ba1100rw9",
-            "status": "generated"
-          },
-          {
-            "name": "Kaela Brightwood",
-            "role": "Mystic Herbalist",
+            "name": "Elyra Moonshadow",
+            "role": "Ranger of the Wilds",
             "race": "Wood Elf",
-            "class": "Druid",
-            "personality": "Kaela is serene and wise, with a deep connection to nature. Her calm demeanor masks an unyielding determination to protect the natural world.",
-            "motivation": "Kaela aims to cleanse the land of the silence, restoring its natural beauty and balance.",
-            "connectionToStory": "Her herbalism knowledge offers remedies against the monstrous creatures' effects, and she seeks the heart of the dead lands to reverse the curse.",
-            "gmSecret": "Kaela is the last guardian of an ancient grove tied to the cracked oracle stones, which are integral to the silence's origin. Her presence has kept the grove alive, but its power wanes.",
-            "potentialConflict": "Her pacifist nature conflicts with the necessity of violence, causing internal strife when forced into combat.",
-            "voiceTone": "Calm and nurturing",
-            "inventoryHint": "A pouch of enchanted seeds that resonate with nature's whispers",
+            "class": "Ranger",
+            "personality": "Elyra is vigilant and resourceful, her connection to the natural world providing her with a deep sense of tranquility and purpose. She prefers solitude but is fiercely loyal to those she deems worthy.",
+            "motivation": "Elyra aims to protect the fragile balance of nature, seeking the curse's source to halt the corruption spreading through the land.",
+            "connectionToStory": "A protector of the forests, she knows the land's creatures best and has allied with the Hunters of Nightmares to understand the curse.",
+            "gmSecret": "Elyra once received a vision from the Guardian, showing her a future where nature perishes unless the silence is ended. The Guardian's true identity and motives remain a mystery to her.",
+            "potentialConflict": "Her mistrust of outsiders could hinder collaboration with new allies.",
+            "voiceTone": "Quiet and measured",
+            "inventoryHint": "A carved wooden amulet depicting a crescent moon",
             "motifAlignment": [
               "The duality of silence",
-              "Secrets buried beneath ruins"
+              "Transformation and identity"
             ],
-            "backgroundHistory": "Raised among the remnants of a once-thriving forest, Kaela learned the secrets of nature's magic from an early age. When the silence began to encroach upon her home, she took up the mantle of protector, wandering to find a way to restore what has been lost.",
+            "backgroundHistory": "Elyra was raised in the heart of the ancient forest, learning the ways of the ranger from a young age. Her defining moment came when her village was attacked by twisted creatures, prompting her to hunt the source of their affliction.",
             "keyRelationships": [
-              "An Old Seer who guided her path",
-              "The Guardian, who she believes holds answers",
-              "The War-Scarred Remnants, who once protected her forest"
+              "The Hunters of Nightmares, her allies in the wilderness",
+              "The Guardian, a figure in her visions"
             ],
-            "flawOrWeakness": "Kaela's idealism sometimes blinds her to harsh realities, leaving her vulnerable to manipulation.",
+            "flawOrWeakness": "Her solitary nature often makes her dismissive of others' perspectives.",
             "languages": [
               "Common",
               "Elvish",
@@ -1238,42 +1185,90 @@
             ],
             "alignment": "Neutral Good",
             "deity": "Silvanus",
-            "physicalDescription": "Graceful and willowy, with hair the color of autumn leaves. She wears garments woven from leaves and bark, accented by a simple, glowing crystal pendant.",
+            "physicalDescription": "Slender with an athletic build, long silver hair, and green eyes; wears a cloak of leaves and leather armor.",
             "equipmentPreferences": [
-              "Quarterstaff",
-              "Herbalism Kit",
-              "Druidic Focus",
-              "Leather Armor"
+              "Longbow",
+              "Short swords",
+              "Leather armor",
+              "Herbalism kit"
             ],
             "subrace": "Wood Elf",
-            "age": 112,
-            "height": "5'5\"",
+            "age": 120,
+            "height": "5'11\"",
             "proficiencies": [
               "Nature",
-              "Medicine",
               "Survival",
+              "Stealth",
               "Herbalism Kit"
             ],
-            "id": "char_1761853192358_85v07d3px",
+            "id": "char_1761861964588_nqqrfx5t8",
+            "status": "generated"
+          },
+          {
+            "name": "Malik the Shadowed",
+            "role": "Rogue Scout",
+            "race": "Half-Orc",
+            "class": "Rogue",
+            "personality": "Malik is cunning and adaptable, with a sharp mind and an eye for opportunity. Though often perceived as aloof, he values loyalty above all else.",
+            "motivation": "Malik is driven by a personal vendetta against those who transformed his village into monsters, seeking justice through uncovering the silence's secrets.",
+            "connectionToStory": "Having once been prey to the Silent Keepers' rituals, Malik searches for the cult's weaknesses to dismantle their power.",
+            "gmSecret": "Unbeknownst to Malik, he possesses a hidden talent for magic inherited from his ancestors, and his burgeoning abilities may be the key to breaking the curse.",
+            "potentialConflict": "His thirst for revenge might lead him down a dark path, causing strife with more honorable allies.",
+            "voiceTone": "Quick and sharp",
+            "inventoryHint": "A blackened dagger with intricate engravings",
+            "motifAlignment": [
+              "Secrets buried beneath ruins",
+              "Echoes of the past"
+            ],
+            "backgroundHistory": "Born into a small village at the edge of the cursed lands, Malik's life was forever altered when the Silent Keepers attacked. Surviving only through his wits, he vowed to avenge his lost kin. His cunning and agility make him an expert scout, slipping through enemy lines undetected.",
+            "keyRelationships": [
+              "A survivor from his village, now his trusted ally",
+              "The Silent Keepers, his sworn enemies"
+            ],
+            "flawOrWeakness": "His quest for vengeance often clouds his judgment, making him impulsive.",
+            "languages": [
+              "Common",
+              "Orc",
+              "Thieves' Cant"
+            ],
+            "alignment": "Chaotic Neutral",
+            "deity": null,
+            "physicalDescription": "Lithe and muscular, with dark gray skin and short black hair; wears dark leathers and carries a myriad of hidden blades.",
+            "equipmentPreferences": [
+              "Daggers",
+              "Thieves' tools",
+              "Shortbow",
+              "Leather armor"
+            ],
+            "subrace": null,
+            "age": 28,
+            "height": "6'2\"",
+            "proficiencies": [
+              "Stealth",
+              "Acrobatics",
+              "Sleight of Hand",
+              "Thieves' Tools"
+            ],
+            "id": "char_1761861964588_g6sqatdd2",
             "status": "generated"
           }
         ],
         "locked": false,
-        "version": 1761856444845
+        "version": 1761861964588
       }
     },
     "locks": {
       "background": true,
-      "characters": false
+      "characters": true
     },
     "meta": {
       "backgroundV": 0,
-      "charactersV": 4,
+      "charactersV": 5,
       "macroSnapshotV": 0,
-      "updatedAt": "2025-10-30T20:29:54.846Z"
+      "updatedAt": "2025-11-01T07:54:59.112Z"
     },
-    "version": 76,
+    "version": 80,
     "createdAt": "2025-10-29T20:03:10.904Z",
-    "updatedAt": "2025-10-30T21:59:29.279Z"
+    "updatedAt": "2025-11-01T14:26:33.956Z"
   }
 }
