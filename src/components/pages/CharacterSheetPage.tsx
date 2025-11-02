@@ -1316,19 +1316,19 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               WebkitBackdropFilter: 'blur(12px)',
             }}
           >
-            <div className="text-center max-w-[320px] px-6">
+            <div className="text-center max-w-[360px] px-8 py-6">
               {/* Lock Icon */}
-              <div className="mb-4">
+              <div className="mb-5">
                 <Lock className="w-10 h-10 text-gray-300 mx-auto" />
               </div>
               
               {/* Headline */}
-              <h3 className="text-base font-semibold text-white mb-3">
+              <h3 className="text-base font-semibold text-white mb-4">
                 Step 1 Required
               </h3>
               
               {/* Description with Step 1 Reference */}
-              <p className="text-sm text-gray-300 leading-relaxed mb-4">
+              <p className="text-sm text-gray-300 leading-relaxed mb-5">
                 Please select and lock a background in{' '}
                 <span className="font-semibold text-green-300">Step 1: Choose a Background</span>
                 {' '}to unlock ability score assignment.
@@ -1686,19 +1686,19 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               WebkitBackdropFilter: 'blur(12px)',
             }}
           >
-            <div className="text-center max-w-[320px] px-6">
+            <div className="text-center max-w-[360px] px-8 py-6">
               {/* Lock Icon */}
-              <div className="mb-4">
+              <div className="mb-5">
                 <Lock className="w-10 h-10 text-gray-300 mx-auto" />
               </div>
               
               {/* Headline */}
-              <h3 className="text-base font-semibold text-white mb-3">
+              <h3 className="text-base font-semibold text-white mb-4">
                 Step 2 Required
               </h3>
               
               {/* Description */}
-              <p className="text-sm text-gray-300 leading-relaxed mb-4">
+              <p className="text-sm text-gray-300 leading-relaxed mb-5">
                 Please assign and lock ability scores in{' '}
                 <span className="font-semibold text-green-300">Step 2: Assign Ability Scores</span>
                 {' '}to unlock equipment selection.
