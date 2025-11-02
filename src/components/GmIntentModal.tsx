@@ -12,6 +12,10 @@ interface GmIntentModalProps {
   fieldName: string;
   characterName: string;
   isLoading?: boolean;
+  hasClassChanged?: boolean;
+  hasRaceChanged?: boolean;
+  newClass?: string;
+  newRace?: string;
 }
 
 const fieldDisplayNames = {
@@ -24,7 +28,11 @@ const fieldDisplayNames = {
   inventoryHint: 'Inventory Hint',
   backgroundHistory: 'Background History',
   flawOrWeakness: 'Flaw or Weakness',
-  physicalDescription: 'Physical Description'
+  physicalDescription: 'Physical Description',
+  languages: 'Languages',
+  proficiencies: 'Proficiencies',
+  equipmentPreferences: 'Equipment Preferences',
+  motifAlignment: 'Motif Alignments'
 };
 
 export default function GmIntentModal({ 
@@ -33,7 +41,11 @@ export default function GmIntentModal({
   onConfirm, 
   fieldName, 
   characterName,
-  isLoading = false
+  isLoading = false,
+  hasClassChanged = false,
+  hasRaceChanged = false,
+  newClass,
+  newRace
 }: GmIntentModalProps) {
   const [intent, setIntent] = useState('');
   const log = logger.ui;
@@ -46,14 +58,55 @@ export default function GmIntentModal({
     setIntent('');
   };
 
-  const handleSkip = () => {
-    log.info('GM Intent Modal skip', { characterName, fieldName });
-    debug.info('GmIntentModal', 'Skip', { characterName, fieldName });
-    onConfirm('');
-    setIntent('');
+  const fieldDisplayName = fieldDisplayNames[fieldName as keyof typeof fieldDisplayNames] || fieldName;
+
+  // Determine context-aware title and message
+  const hasChanges = hasClassChanged || hasRaceChanged;
+  
+  const getModalTitle = () => {
+    if (hasClassChanged && hasRaceChanged) {
+      return "Regenerate Section Based on New Class and Race";
+    } else if (hasClassChanged) {
+      return "Regenerate Section Based on New Class";
+    } else if (hasRaceChanged) {
+      return "Regenerate Section Based on New Race";
+    }
+    return "Regenerate Section";
+  };
+  
+  const getBodyText = () => {
+    if (hasClassChanged && hasRaceChanged) {
+      return {
+        main: `The selected class has changed to ${newClass} and race has changed to ${newRace}. Would you like to regenerate this section to reflect these changes?`,
+        recommendation: `This is recommended to ensure the character's ${fieldDisplayName.toLowerCase()} match their updated class and race.`
+      };
+    } else if (hasClassChanged) {
+      return {
+        main: `The selected class has changed to ${newClass}. Would you like to regenerate this section to reflect the new class?`,
+        recommendation: `This is recommended to ensure the character's ${fieldDisplayName.toLowerCase()} match their updated class.`
+      };
+    } else if (hasRaceChanged) {
+      return {
+        main: `The selected race has changed to ${newRace}. Would you like to regenerate this section to reflect the new race?`,
+        recommendation: `This is recommended to ensure the character's ${fieldDisplayName.toLowerCase()} match their updated race.`
+      };
+    }
+    return {
+      main: `Would you like to regenerate this section with fresh suggestions?`,
+      recommendation: `This will generate new options while maintaining consistency with the character's existing background and story.`
+    };
   };
 
-  const fieldDisplayName = fieldDisplayNames[fieldName as keyof typeof fieldDisplayNames] || fieldName;
+  const getIntentPlaceholder = () => {
+    if (hasClassChanged && !hasRaceChanged && newClass) {
+      return `Leave blank to use the default ${newClass} context.`;
+    } else if (hasRaceChanged && !hasClassChanged && newRace) {
+      return `Leave blank to use the default ${newRace} context.`;
+    } else if (hasClassChanged && hasRaceChanged && newClass && newRace) {
+      return `Leave blank to use the default ${newClass} and ${newRace} context.`;
+    }
+    return "Leave blank to use existing character context.";
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -70,12 +123,15 @@ export default function GmIntentModal({
 
   if (!isOpen) return null;
 
+  const bodyText = getBodyText();
+
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-[#151A22] border border-[#2A3340] rounded-[12px] p-6 max-w-md w-full mx-4 shadow-xl">
-        <div className="flex items-center justify-between mb-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-200">
-            Regenerate {fieldDisplayName}
+            {getModalTitle()}
           </h3>
           <Button variant="tertiary" onClick={onClose} className="text-gray-400 hover:text-gray-200">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -84,32 +140,41 @@ export default function GmIntentModal({
           </Button>
         </div>
 
-        <div className="mb-4">
-          <p className="text-sm text-gray-300 mb-2">
-            Regenerating <strong>{fieldDisplayName}</strong> for <strong>{characterName}</strong>
+        {/* Body */}
+        <div className="mb-6 space-y-3">
+          <p className="text-sm text-gray-300 leading-relaxed">
+            {bodyText.main}
           </p>
-          <p className="text-sm text-gray-400">
-            Optionally provide your intent or specific direction for the regeneration. 
-            Leave blank to regenerate with existing context.
+          
+          <p className="text-sm text-gray-400 leading-relaxed">
+            {bodyText.recommendation}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Optional Intent Field */}
           <div>
-            <Label htmlFor="intent" className="text-gray-300">GM Intent (Optional)</Label>
+            <Label htmlFor="intent" className="text-gray-300 text-sm mb-2 block">
+              GM Intent (Optional)
+            </Label>
+            <p className="text-xs text-gray-500 mb-2">
+              You can add a short instruction to guide the regeneration.
+            </p>
             <Textarea
               id="intent"
               value={intent}
               onChange={(e) => setIntent(e.target.value)}
-              placeholder="e.g., Make them more mysterious, Focus on their tragic past, Emphasize their connection to the main villain..."
+              placeholder={getIntentPlaceholder()}
               rows={3}
-              className="mt-1 rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500 px-4 py-2"
+              className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500 px-4 py-2"
             />
           </div>
 
-          <div className="flex justify-end space-x-3">
-            <Button type="button" variant="outline" onClick={handleSkip} disabled={isLoading}>
-              Skip Intent
+          {/* Buttons */}
+          <div className="flex justify-end space-x-3 pt-2">
+            <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
+              Cancel
             </Button>
             <Button type="submit" variant="primary" disabled={isLoading}>
               {isLoading ? (
@@ -121,7 +186,7 @@ export default function GmIntentModal({
                   Regenerating...
                 </span>
               ) : (
-                'Regenerate'
+                'Regenerate Section'
               )}
             </Button>
           </div>

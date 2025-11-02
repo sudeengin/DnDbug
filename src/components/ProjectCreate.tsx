@@ -1,4 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Input,
+  Button,
+} from "@heroui/react";
+import { X } from 'lucide-react';
 import { postJSON } from '../lib/api';
 import logger from '@/utils/logger';
 
@@ -13,12 +21,25 @@ interface Project {
 
 interface ProjectCreateProps {
   onProjectCreated: (project: Project) => void;
+  onCancel?: () => void;
 }
 
-export default function ProjectCreate({ onProjectCreated }: ProjectCreateProps) {
+export default function ProjectCreate({ onProjectCreated, onCancel }: ProjectCreateProps) {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // ESC key support to close modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && onCancel) {
+        onCancel();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onCancel]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,52 +72,73 @@ export default function ProjectCreate({ onProjectCreated }: ProjectCreateProps) 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create New Project
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Start a new D&D campaign or story project
-          </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Project Title
-            </label>
-            <input
-              id="title"
-              name="title"
-              type="text"
-              required
-              className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="e.g., Curse of Strahd Campaign"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              disabled={loading}
-            />
+    <div className="min-h-screen bg-[#0a0e13] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="max-w-lg w-full bg-[#151A22] border border-[#2A3340] rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.5)] mx-auto">
+        <CardHeader className="flex flex-row items-start justify-between px-10 pt-10 pb-6">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-semibold text-white">
+              Create New Project
+            </h2>
+            <p className="text-sm text-gray-400">
+              Start a new D&D campaign or story project
+            </p>
           </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
+          {onCancel && (
+            <Button
+              isIconOnly
+              variant="light"
+              onPress={onCancel}
+              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-lg"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </Button>
           )}
+        </CardHeader>
+        
+        <CardBody className="px-10 pb-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-200">
+                Project Title
+              </label>
+              <Input
+                id="title"
+                name="title"
+                type="text"
+                required
+                autoFocus
+                placeholder="e.g., Curse of Strahd Campaign"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                disabled={loading}
+                radius="lg"
+                classNames={{
+                  base: "w-full",
+                  input: "text-white placeholder:text-gray-400",
+                  inputWrapper: "bg-[#1f2733] border-transparent hover:bg-[#1f2733] focus-within:bg-[#1f2733] group-data-[focus=true]:bg-[#1f2733]",
+                }}
+              />
+            </div>
 
-          <div>
-            <button
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <Button
               type="submit"
               disabled={loading || !title.trim()}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#7c63e5] hover:bg-[#6b52d9] text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
+              radius="lg"
+              size="lg"
             >
               {loading ? 'Creating...' : 'Create Project'}
-            </button>
-          </div>
-        </form>
-      </div>
+            </Button>
+          </form>
+        </CardBody>
+      </Card>
     </div>
   );
 }

@@ -23,7 +23,17 @@ function getOpenAI() {
 // Character field regeneration prompt template
 function renderRegeneratePrompt(backgroundData, character, fieldName, gmIntent = null) {
   const backgroundJson = JSON.stringify(backgroundData, null, 2);
-  const characterJson = JSON.stringify(character, null, 2);
+  
+  // For class/race-dependent fields, strip out the old value so AI doesn't try to maintain consistency with it
+  const classRaceDependentFields = ['languages', 'proficiencies', 'equipmentPreferences'];
+  let characterForPrompt = { ...character };
+  
+  if (classRaceDependentFields.includes(fieldName)) {
+    // Remove the field we're regenerating so AI generates fresh based purely on class/race
+    delete characterForPrompt[fieldName];
+  }
+  
+  const characterJson = JSON.stringify(characterForPrompt, null, 2);
   
   const fieldDescriptions = {
     personality: "2-3 sentences describing their personality traits and behavior",
@@ -35,12 +45,24 @@ function renderRegeneratePrompt(backgroundData, character, fieldName, gmIntent =
     inventoryHint: "Small symbolic item they carry (e.g., 'An aged journal', 'A rusted locket')",
     backgroundHistory: "1-2 paragraphs of their full backstory including upbringing and defining events",
     flawOrWeakness: "Defining flaw, vice, or vulnerability that makes them human",
-    physicalDescription: "Detailed appearance including build, distinguishing features, clothing style, and any notable physical characteristics"
+    physicalDescription: "Detailed appearance including build, distinguishing features, clothing style, and any notable physical characteristics",
+    languages: "Comma-separated list of languages the character knows based on race, class, and background (e.g., 'Common, Elvish, Dwarvish')",
+    proficiencies: "Comma-separated list of skill proficiencies, tool proficiencies, and weapon proficiencies based on class, race, and background (e.g., 'Athletics, Stealth, Thieves Tools, Longswords')",
+    equipmentPreferences: "Comma-separated list of typical equipment and gear the character prefers based on class and background (e.g., 'Quarterstaff, Spellbook, Component pouch, Ink and quill')",
+    motifAlignment: "Comma-separated list of thematic motifs that align with the character's personality and the background setting (e.g., 'decay, secrets, family curses')"
   };
 
   const fieldDescription = fieldDescriptions[fieldName] || "Character field";
   
+  // Extract class and race for emphasis at the top
+  const characterClass = character.class || 'Unknown';
+  const characterRace = character.race || 'Unknown';
+  
   let prompt = `You are a D&D GM character designer regenerating a specific field for an existing character. Follow the rules strictly and return valid JSON only.
+
+⚠️ CRITICAL CHARACTER INFO:
+- CLASS: ${characterClass}
+- RACE: ${characterRace}
 
 BACKGROUND CONTEXT (read-only):
 ${backgroundJson}
@@ -65,7 +87,14 @@ INSTRUCTIONS:
 - Maintain the character's established race, class, role, and overall personality
 - Ensure the new field doesn't contradict other character details
 
-3. FIELD-SPECIFIC REQUIREMENTS`;
+3. CLASS/RACE-DEPENDENT FIELDS (languages, proficiencies, equipmentPreferences)
+- When regenerating these fields, PRIORITIZE the character's current class and race
+- IGNORE existing values that don't match the current class/race
+- Generate new values PURELY based on D&D 5e rules for the current class and race
+- If the character's class is Druid, provide Druid equipment (NOT wizard or other class equipment)
+- If the character's race is Elf, provide Elf languages and proficiencies (NOT human or other race features)
+
+4. FIELD-SPECIFIC REQUIREMENTS`;
 
   if (fieldName === 'gmSecret') {
     prompt += `
@@ -93,6 +122,59 @@ INSTRUCTIONS:
 - Should be 2-3 sentences describing appearance
 - Include: build, height/weight, distinguishing features, clothing style
 - Be specific and memorable for roleplay`;
+  } else if (fieldName === 'languages') {
+    prompt += `
+- Return a comma-separated list of languages
+- Base STRICTLY on character's CURRENT race and class - ignore existing languages that don't match
+- Follow D&D 5e rules for language proficiencies
+- DO NOT carry over languages from a different race (e.g., if race is Dwarf, include Dwarvish; if Elf, include Elvish)
+- Examples by race:
+  * Elf: "Common, Elvish"
+  * Dwarf: "Common, Dwarvish"
+  * Dragonborn: "Common, Draconic"
+  * Human: "Common" plus one extra language based on background`;
+  } else if (fieldName === 'proficiencies') {
+    prompt += `
+- Return a comma-separated list of proficiencies
+- Include skill proficiencies, tool proficiencies, and weapon proficiencies
+- Base STRICTLY on character's CURRENT class and race per D&D 5e rules - ignore existing proficiencies that don't match
+- DO NOT carry over proficiencies from a different class
+- Examples by class:
+  * Druid: "Nature, Animal Handling, Perception, Herbalism Kit"
+  * Wizard: "Arcana, History, Investigation, Religion"
+  * Rogue: "Stealth, Sleight of Hand, Acrobatics, Thieves' Tools"
+  * Fighter: "Athletics, Intimidation, All Armor, All Weapons"`;
+  } else if (fieldName === 'equipmentPreferences') {
+    prompt += `
+- Return a comma-separated list of equipment for a ${characterClass}
+- ⚠️ CRITICAL: The character's class is ${characterClass} - generate equipment ONLY for this class
+- COMPLETELY IGNORE any narrative context, background, or personality that suggests other classes
+- Follow D&D 5e starting equipment for ${characterClass} class EXACTLY
+- DO NOT include equipment from other classes under ANY circumstances
+
+REQUIRED EQUIPMENT BY CLASS:
+- Barbarian: "Greataxe, Handaxes, Javelins, Explorer's Pack, Leather Armor"
+- Bard: "Rapier, Lute, Leather Armor, Dagger, Entertainer's Pack"
+- Cleric: "Mace, Shield, Chain Mail, Holy Symbol, Priest's Pack"
+- Druid: "Wooden Shield, Druidic Focus, Scimitar, Leather Armor, Herbalism Kit"
+- Fighter: "Longsword, Shield, Chain Mail, Crossbow, Adventurer's Pack"
+- Monk: "Shortsword, Dart, Explorer's Pack, Simple Weapon"
+- Paladin: "Longsword, Shield, Plate Mail, Holy Symbol, Priest's Pack"
+- Ranger: "Longbow, Shortswords, Leather Armor, Explorer's Pack, Arrows"
+- Rogue: "Rapier, Shortbow, Thieves' Tools, Leather Armor, Burglar's Pack"
+- Sorcerer: "Dagger, Component Pouch, Crossbow, Dungeoneer's Pack, Arcane Focus"
+- Warlock: "Dagger, Arcane Focus, Leather Armor, Scholar's Pack, Crossbow"
+- Wizard: "Spellbook, Arcane Focus, Component Pouch, Quarterstaff, Scholar's Pack"
+
+⚠️ For class ${characterClass}, use equipment from the ${characterClass} list ONLY.
+Do NOT use Cleric equipment if class is Druid. Do NOT use Wizard equipment if class is Cleric.
+The class is ${characterClass}. Generate ${characterClass} equipment.`;
+  } else if (fieldName === 'motifAlignment') {
+    prompt += `
+- Return a comma-separated list of thematic motifs
+- Base on background setting's motifs and character's personality
+- Connect to the story's tone and atmosphere
+- Examples: "decay, secrets, family curses" or "light, hope, redemption"`;
   }
 
   if (gmIntent) {
@@ -123,7 +205,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { sessionId, characterId, fieldName, gmIntent } = req.body;
+    const { sessionId, characterId, fieldName, gmIntent, characterData } = req.body;
 
     if (!sessionId || !characterId || !fieldName) {
       res.status(400).json({ error: 'sessionId, characterId, and fieldName are required' });
@@ -134,7 +216,8 @@ export default async function handler(req, res) {
     const validFields = [
       'personality', 'motivation', 'connectionToStory', 'gmSecret', 
       'potentialConflict', 'voiceTone', 'inventoryHint', 'backgroundHistory', 
-      'flawOrWeakness', 'physicalDescription'
+      'flawOrWeakness', 'physicalDescription', 'languages', 'proficiencies',
+      'equipmentPreferences', 'motifAlignment'
     ];
     
     if (!validFields.includes(fieldName)) {
@@ -171,16 +254,46 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Find the character
-    const character = charactersBlock.list.find(c => c.id === characterId);
-    if (!character) {
-      res.status(404).json({ error: 'Character not found' });
-      return;
+    // Use provided characterData if available (has latest changes), otherwise load from database
+    let character;
+    if (characterData) {
+      character = characterData;
+      log.info('Using provided character data (latest changes):', {
+        sessionId,
+        characterId,
+        characterClass: character.class,
+        characterRace: character.race
+      });
+    } else {
+      // Find the character from database
+      character = charactersBlock.list.find(c => c.id === characterId);
+      if (!character) {
+        res.status(404).json({ error: 'Character not found' });
+        return;
+      }
+      log.info('Loaded character from database:', {
+        sessionId,
+        characterId,
+        characterClass: character.class,
+        characterRace: character.race
+      });
     }
 
     // Generate regenerated field using AI
     const openai = getOpenAI();
     const prompt = renderRegeneratePrompt(bg, character, fieldName, gmIntent);
+    
+    // Log prompt details for debugging
+    log.info('Regeneration prompt details:', {
+      sessionId,
+      characterId,
+      characterName: character.name,
+      characterClass: character.class,
+      characterRace: character.race,
+      fieldName,
+      promptLength: prompt.length,
+      promptPreview: prompt.substring(0, 500)
+    });
     
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
@@ -203,6 +316,16 @@ export default async function handler(req, res) {
     if (!responseText) {
       throw new Error('No response from OpenAI');
     }
+
+    // Log AI response for debugging
+    log.info('OpenAI regeneration response:', {
+      sessionId,
+      characterId,
+      fieldName,
+      characterClass: character.class,
+      responsePreview: responseText.substring(0, 300),
+      fullResponseLength: responseText.length
+    });
 
     // Parse the response - handle different formats
     let regeneratedField;

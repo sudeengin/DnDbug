@@ -1274,330 +1274,994 @@
   "project_1762114846888_x6con4zna": {
     "sessionId": "project_1762114846888_x6con4zna",
     "blocks": {
+      "custom": {
+        "macroChain": {
+          "chainId": "chain_1761697789162_puzxhhhyt",
+          "scenes": [
+            {
+              "id": "scene_6_1761697789162",
+              "order": 1,
+              "title": "The Balance of Power",
+              "objective": "Decide whom to ally with in a climactic showdown as the factions converge on the artifact, determining Elderglen's fate amidst moral ambiguity and impending chaos."
+            }
+          ],
+          "status": "Edited",
+          "version": 4,
+          "lastUpdatedAt": "2025-10-29T01:13:33.542Z",
+          "meta": {
+            "source": "macroChainTab",
+            "requestId": "7ab7473c-f185-40d1-be54-df71fe9f6906",
+            "isDraftIdeaBank": true
+          },
+          "createdAt": "2025-10-29T00:29:49.162Z",
+          "updatedAt": "2025-10-29T00:29:49.164Z"
+        }
+      },
       "story_concept": {
-        "concept": "In the shadow of a sprawling valley stands Veyra’s Rest — a quiet town that moves in perfect rhythm. Every bell toll, every market trade, every whispered prayer happens in eerie unison. To the untrained eye, it looks like harmony. To those who listen closely, it feels like a single thought breathing through a hundred mouths.\n\nThe town is ruled not by crown or council, but by a *Hivemind* — a vast psychic network binding every villager into one will. No crime. No lies. No freedom. Outsiders who stay too long begin to dream in the town’s voice, until even their heartbeat falls in step with the rest.\n\nFar beyond the valley, a distant kingdom grows desperate. The Hivemind holds an ancient relic — a core of crystal thought said to amplify its control. If stolen, it could break the connection and free the town. Or, if disturbed, it could awaken something far worse.\n\nSo a small band of envoys is sent under moonlight: spies, thieves, and soldiers disguised as pilgrims. Their task is clear — retrieve the relic without alerting the Hivemind. But in Veyra’s Rest, *every whisper is heard*, *every heartbeat is shared*, and *every lie echoes in a thousand minds*.\n\nThe deeper they move into the town’s pulse, the more their own thoughts begin to blur. Who among them is still free — and who has already been claimed?\n\nBecause in Veyra’s Rest, silence isn’t safety.\nIt’s the sound of something thinking.",
-        "timestamp": "2025-11-02T20:51:37.549Z"
+        "concept": "silence",
+        "timestamp": "2025-10-29T00:46:21.957Z"
       },
       "background": {
-        "premise": "A band of envoys seeks to infiltrate the Hivemind-controlled town of Veyra’s Rest to steal a relic that could free its inhabitants.",
+        "premise": "In the town of Whispering Hollow, an unnatural silence has descended, muting voices and music, and it falls to a group of adventurers to uncover the source of this eerie phenomenon.",
         "tone_rules": [
-          "Maintain an atmosphere of eerie synchronicity.",
-          "Emphasize the tension between freedom and control.",
-          "Highlight the unsettling nature of shared thoughts.",
-          "Keep a constant undercurrent of paranoia.",
-          "Focus on the surreal blending of identities."
+          "Maintain an atmosphere of suspense and intrigue.",
+          "Emphasize the unnatural stillness and its unsettling effects.",
+          "Incorporate moments of eerie calm before bursts of action.",
+          "Balance mystery with occasional dark humor.",
+          "Avoid overt horror; focus more on psychological tension."
         ],
         "stakes": [
-          "Failure to retrieve the relic could mean the envoys are absorbed into the Hivemind.",
-          "Breaking the Hivemind's control could destabilize the town, causing chaos.",
-          "Discovery by the Hivemind could alert it to the kingdom's intentions.",
-          "The relic's disturbance might awaken a greater threat.",
-          "The envoys risk losing their own identities."
+          "The town's survival depends on breaking the silence.",
+          "Failure to act could lead to the silence spreading beyond Whispering Hollow.",
+          "Personal relationships are strained by the inability to communicate.",
+          "The adventurers' sanity and trust in one another are tested."
         ],
         "mysteries": [
-          "What is the true nature of the Hivemind?",
-          "How does the relic amplify the Hivemind's control?",
-          "Who among the envoys is already compromised?",
-          "What hidden motives do each of the envoys have?",
-          "Is there a deeper power lurking beneath Veyra’s Rest?"
+          "What is causing the silence in Whispering Hollow?",
+          "Why are only certain individuals unaffected?",
+          "What ancient secrets lie beneath the town's foundations?",
+          "Who benefits from the silence?"
         ],
         "factions": [
-          "The Hivemind: A psychic network controlling the town.",
-          "The Envoys: Spies, thieves, and soldiers on a secret mission.",
-          "The Townsfolk: Unwitting extensions of the Hivemind.",
-          "The Kingdom: Desperate to undermine the Hivemind's power.",
-          "The Whisperers: A rumored group resisting the Hivemind from within."
+          "The Silent Ones, a cult embracing the phenomenon.",
+          "The Town Council, desperate to maintain order.",
+          "The Whisper Seekers, a group of scholars and mages investigating the silence.",
+          "The Shadow Merchants, exploiting the chaos for profit."
         ],
         "location_palette": [
-          "Veyra’s Rest Town Square: The heart of synchronized activity.",
-          "The Chapel of Unified Thoughts: Where prayers blend into the Hivemind.",
-          "The Crystal Chamber: Where the relic is kept under guard.",
-          "The Valley's Edge: The boundary between freedom and control.",
-          "The Whispering Woods: A place of rumored resistance."
+          "Whispering Hollow's Market Square, eerily quiet.",
+          "The abandoned bell tower at the town's center.",
+          "The Whispering Woods, where the silence is strongest.",
+          "The ancient library, full of forgotten lore."
         ],
         "npc_roster_skeleton": [
-          "Elder Jaron: The town's spokesperson, both charismatic and unsettling.",
-          "Seraphine, the Seer: Claims to sense disruptions in the Hivemind.",
-          "Captain Lorn: Leader of the envoys, struggling with inner voices.",
-          "Mira, the Smith: A local with a glimmer of independent thought.",
-          "The Faceless One: A mysterious figure rumored to navigate the Hivemind undetected."
+          "Mayor Elara, struggling to keep the town calm.",
+          "Thorne, a mysterious bard immune to the silence.",
+          "Elder Fenn, leader of the Whisper Seekers.",
+          "Ilyana, a cunning trader among the Shadow Merchants."
         ],
         "motifs": [
-          "Echoing heartbeats.",
-          "Shared dreams.",
-          "Crystalline reflections.",
-          "Silent whispers.",
-          "Blending shadows."
+          "Echoes and whispers.",
+          "Broken instruments and silent songs.",
+          "Symbols of sound and music.",
+          "The contrast between silence and noise."
         ],
         "doNots": [
-          "Avoid overt violence; focus on psychological tension.",
-          "Do not break the surreal atmosphere with unrelated humor.",
-          "Avoid clear-cut good vs evil; emphasize moral ambiguity.",
-          "Do not reveal the Hivemind's nature too quickly.",
-          "Avoid excessive exposition; let mysteries unfold naturally."
+          "Do not introduce overtly supernatural monsters.",
+          "Avoid clear-cut villains; maintain moral ambiguity.",
+          "Do not rely on predictable plot twists.",
+          "Avoid excessive combat; focus on investigation."
         ],
         "playstyle_implications": [
-          "Encourage players to explore psychological dimensions of their characters.",
-          "Focus on stealth and subtlety over brute force.",
-          "Allow for dynamic shifts in trust and suspicion among players.",
-          "Provide opportunities for players to experience shared dream sequences.",
-          "Create challenges that test players' ability to maintain their individuality."
+          "Encourage problem-solving and investigation.",
+          "Foster cooperative storytelling and character development.",
+          "Focus on atmospheric roleplay over combat.",
+          "Offer opportunities for creative use of spells and skills."
         ],
-        "numberOfPlayers": 5
+        "numberOfPlayers": 4
       },
       "characters": {
         "list": [
           {
-            "name": "Elysia Thornbloom",
-            "role": "Rogue Investigator",
+            "name": "Iris Thorne",
+            "role": "Whispering Bard",
             "race": "Half-Elf",
-            "class": "Rogue",
-            "personality": "Elysia is inquisitive and sharp-witted, often masking her caution with humor. She has a keen eye for details and a tendency to distrust overt displays of emotion.",
-            "motivation": "Elysia seeks to uncover the truth behind the Hivemind's control and free the townsfolk from its grasp.",
-            "connectionToStory": "Elysia's father disappeared in Veyra’s Rest years ago, presumed absorbed by the Hivemind. Her quest is as much personal as it is professional.",
-            "gmSecret": "Elysia's father was a member of the Whisperers and left her a coded journal that holds secrets about the Hivemind's origin. She hasn't deciphered it yet, but the journal is the key to unraveling the relic's power.",
-            "potentialConflict": "Her suspicion of others often leads to friction within the group, especially when secrets are involved.",
-            "voiceTone": "Quick and sarcastic, often laced with a dry wit.",
-            "inventoryHint": "An intricately carved magnifying glass given by her father.",
+            "class": "Bard",
+            "personality": "Curious and enigmatic, Iris often speaks in riddles and enjoys weaving stories that captivate her audience. Her demeanor is calm, almost hauntingly serene.",
+            "motivation": "To uncover the secrets hidden within the silence and bring sound back to Whispering Hollow.",
+            "connectionToStory": "She was drawn to Whispering Hollow after hearing rumors of the town's eerie silence, which challenges her innate connection to sound and music.",
+            "gmSecret": "Iris is the descendant of a long-lost bard whose final song was the catalyst for the silence now enveloping Whispering Hollow. This song is hidden within her subconscious, waiting to be unlocked.",
+            "potentialConflict": "Her desire to solve the mystery might lead her to take dangerous risks, endangering herself and others.",
+            "voiceTone": "Soft and melodic, often with an echoing quality.",
+            "inventoryHint": "An ancient, silent lyre.",
             "motifAlignment": [
-              "Shared dreams",
-              "Crystalline reflections"
+              "Echoes and whispers",
+              "Broken instruments and silent songs"
             ],
-            "backgroundHistory": "Born to a human mother and an elven father in a bustling city, Elysia was always on the outskirts of both communities. Her father's disappearance led her to the art of investigation, and she trained with the city's renowned detective guild. The call to Veyra’s Rest is both a professional mission and a personal vendetta.",
+            "backgroundHistory": "Born to a human mother and an elven father in a distant village, Iris grew up surrounded by music. Her love for melodies led her to travel the world, collecting stories and songs. A mysterious dream compelled her to journey to Whispering Hollow, where the silence challenges her very identity.",
             "keyRelationships": [
-              "The Whisperers",
-              "Captain Lorn",
-              "Her missing father"
+              "Thorne, a mysterious bard immune to the silence",
+              "Elder Fenn, leader of the Whisper Seekers"
             ],
-            "flawOrWeakness": "Her mistrust makes it hard for her to form strong alliances.",
+            "flawOrWeakness": "Iris is overly trusting, believing in the goodness of others, which can be easily exploited.",
             "languages": [
               "Common",
               "Elvish",
-              "Thieves' Cant"
+              "Sylvan",
+              "Draconic"
             ],
-            "alignment": "Chaotic Neutral",
-            "deity": null,
-            "physicalDescription": "Lean and agile, with striking green eyes and hair that seems to change with the light. She wears dark, practical clothing that blends into the shadows.",
+            "alignment": "Neutral Good",
+            "deity": "Sehanine Moonbow",
+            "physicalDescription": "Slender and graceful with long, silver hair cascading down her back. She wears flowing robes that seem to shimmer like starlight.",
             "equipmentPreferences": [
+              "Lute",
               "Dagger",
-              "Thieves' Tools",
+              "Entertainer's Pack",
+              "Lyre",
               "Leather Armor"
             ],
             "subrace": null,
-            "age": 29,
+            "age": 34,
             "height": "5'6\"",
             "proficiencies": [
-              "Stealth",
-              "Investigation",
-              "Thieves' Tools"
+              "Performance",
+              "Deception",
+              "Insight",
+              "Persuasion"
             ],
-            "id": "char_1762119151503_az7sxm7ht",
+            "id": "char_1761698856930_gmtmd9mzk",
             "status": "generated"
           },
           {
-            "name": "Thorin Stonefoot",
-            "role": "Dwarven Guardian",
+            "name": "Garrick Flint",
+            "role": "Skeptical Scholar",
             "race": "Dwarf",
-            "class": "Paladin",
-            "personality": "Thorin is steadfast and loyal, with an unwavering sense of duty. He speaks with conviction and acts as a moral compass for his companions.",
-            "motivation": "Bound by an oath to his clan, Thorin seeks to protect the realm from any threat, and the Hivemind represents an affront to the freedom he cherishes.",
-            "connectionToStory": "Thorin's clan once guarded the relic, and he views its theft by the Hivemind as a personal disgrace that must be rectified.",
-            "gmSecret": "The relic is actually a dwarven artifact created by Thorin's ancestors, meant to amplify their unity in battle. It was corrupted by an unknown force, leading to the current Hivemind's power.",
-            "potentialConflict": "His rigid adherence to tradition sometimes clashes with the more flexible approaches of his companions.",
-            "voiceTone": "Gruff and resonant, carrying the weight of centuries of tradition.",
-            "inventoryHint": "A dwarven sigil ring symbolizing his clan's honor.",
+            "class": "Wizard",
+            "personality": "Pragmatic and analytical, Garrick approaches problems with a scientific mindset. He often doubts anything that lacks empirical evidence.",
+            "motivation": "To scientifically document and understand the phenomenon affecting Whispering Hollow.",
+            "connectionToStory": "Garrick is a member of the Whisper Seekers, invited by Elder Fenn to lend his expertise in arcane studies.",
+            "gmSecret": "Garrick's research unknowingly led to the discovery of an ancient symbol that amplifies the silence. His notes hold the key to reversing the effect, but they must be deciphered correctly.",
+            "potentialConflict": "His skepticism often puts him at odds with more superstitious or instinctual companions.",
+            "voiceTone": "Gruff and deliberate, with an unmistakable dwarven accent.",
+            "inventoryHint": "A notebook filled with cryptic runes.",
             "motifAlignment": [
-              "Echoing heartbeats",
-              "Blending shadows"
+              "Symbols of sound and music",
+              "The contrast between silence and noise"
             ],
-            "backgroundHistory": "Raised in the stone halls of his mountain home, Thorin learned the values of honor and duty from a young age. When the relic was stolen, he left his clan to pursue the thieves, driven by a desire to restore his people's honor and reclaim the artifact.",
+            "backgroundHistory": "Raised among scholars in a dwarven stronghold, Garrick was always fascinated by the unknown. His pursuit of knowledge led him to Whispering Hollow, intrigued by tales of a place where even the sound of a pickaxe is muted.",
             "keyRelationships": [
-              "His Dwarven Clan",
-              "Elder Jaron",
-              "Captain Lorn"
+              "Elder Fenn, leader of the Whisper Seekers",
+              "Ilyana, a cunning trader among the Shadow Merchants"
             ],
-            "flawOrWeakness": "Stubbornness often leads him to dismiss new ideas that challenge his beliefs.",
+            "flawOrWeakness": "Garrick is stubbornly logical, often dismissing ideas that can't be quantified or measured.",
             "languages": [
               "Common",
               "Dwarvish",
-              "Undercommon"
+              "Gnomish",
+              "Draconic"
             ],
-            "alignment": "Lawful Good",
-            "deity": "Moradin",
-            "physicalDescription": "Stocky and muscular, with a long braided beard and deep-set eyes that glow with inner fire. He wears a heavy suit of armor adorned with clan runes.",
+            "alignment": "Lawful Neutral",
+            "deity": null,
+            "physicalDescription": "Stocky and broad-shouldered, Garrick wears simple robes covered with notes and arcane symbols. His beard is meticulously groomed, and his eyes shine with intelligence.",
             "equipmentPreferences": [
-              "Warhammer",
-              "Shield",
-              "Chain Mail"
+              "Spellbook",
+              "Quarterstaff",
+              "Scholar's Pack",
+              "Component Pouch"
             ],
             "subrace": "Mountain Dwarf",
-            "age": 120,
+            "age": 112,
             "height": "4'8\"",
-            "proficiencies": [
-              "Athletics",
-              "Intimidation",
-              "Smith's Tools"
-            ],
-            "id": "char_1762119151503_6cffb1mx2",
-            "status": "generated"
-          },
-          {
-            "name": "Zara Nightwind",
-            "role": "Mystic Wanderer",
-            "race": "Tiefling",
-            "class": "Warlock",
-            "personality": "Zara is enigmatic and serene, with a presence that often unnerves those around her. She speaks in riddles and sees the world through the lens of prophecy.",
-            "motivation": "Driven by visions of a world consumed by the Hivemind, Zara seeks to alter the future and prevent its dark prophecy from coming true.",
-            "connectionToStory": "Her visions led her to Veyra’s Rest, where she believes the key to altering the fate of the world lies within the town's secrets.",
-            "gmSecret": "Zara's visions are connected to the Hivemind itself, which uses her as an unwitting vessel to spread its influence. Her presence is both a boon and a bane to her companions.",
-            "potentialConflict": "Her cryptic nature and connection to the Hivemind create distrust among the envoys.",
-            "voiceTone": "Ethereal and poetic, often speaking in cryptic phrases.",
-            "inventoryHint": "A shard of obsidian that seems to pulse with an inner light.",
-            "motifAlignment": [
-              "Silent whispers",
-              "Crystalline reflections"
-            ],
-            "backgroundHistory": "Born under an ominous star, Zara wandered the lands seeking meaning. Her life changed when she was granted powers by an ancient entity that filled her mind with prophecies of doom. Her travels brought her to Veyra’s Rest, guided by visions of the Hivemind's power.",
-            "keyRelationships": [
-              "Seraphine, the Seer",
-              "The Faceless One",
-              "Her mysterious patron"
-            ],
-            "flawOrWeakness": "Her connection to the Hivemind makes her susceptible to its influence.",
-            "languages": [
-              "Common",
-              "Infernal",
-              "Celestial"
-            ],
-            "alignment": "True Neutral",
-            "deity": null,
-            "physicalDescription": "Slender with dark purple skin, curved horns, and eyes that glow a faint red. Her clothing is simple yet elegant, adorned with mystical symbols.",
-            "equipmentPreferences": [
-              "Arcane Focus",
-              "Dagger",
-              "Leather Armor"
-            ],
-            "subrace": null,
-            "age": 30,
-            "height": "5'9\"",
-            "proficiencies": [
-              "Arcana",
-              "Persuasion",
-              "Deception"
-            ],
-            "id": "char_1762119151503_e9hfdniyt",
-            "status": "generated"
-          },
-          {
-            "name": "Rolan Emberwhisper",
-            "role": "Arcane Trickster",
-            "race": "Halfling",
-            "class": "Rogue",
-            "personality": "Rolan is charming and mischievous, with a penchant for illusions and tricks. He thrives in situations that require quick thinking and creativity.",
-            "motivation": "Rolan is driven by the thrill of the heist and the promise of unraveling the mysteries of Veyra’s Rest.",
-            "connectionToStory": "A renowned thief, Rolan was hired by the kingdom to infiltrate the Hivemind-controlled town and retrieve the relic.",
-            "gmSecret": "Rolan's true aim is to steal the relic for himself, hoping to harness its power to become the greatest thief in history. However, he is unaware of the danger it poses.",
-            "potentialConflict": "His ulterior motive and playful nature can cause distrust within the group.",
-            "voiceTone": "Playful and quick, with a hint of mischief in every word.",
-            "inventoryHint": "A deck of enchanted playing cards.",
-            "motifAlignment": [
-              "Blending shadows",
-              "Echoing heartbeats"
-            ],
-            "backgroundHistory": "Born to a family of entertainers, Rolan was drawn to the art of deception from a young age. His life as a thief brought him fame and notoriety, and when the kingdom sought his skills for their mission in Veyra’s Rest, he saw an opportunity for the greatest heist of his career.",
-            "keyRelationships": [
-              "The Kingdom",
-              "Captain Lorn",
-              "A rival thief in the capital"
-            ],
-            "flawOrWeakness": "His greed and arrogance often cloud his judgment.",
-            "languages": [
-              "Common",
-              "Halfling",
-              "Thieves' Cant"
-            ],
-            "alignment": "Chaotic Neutral",
-            "deity": null,
-            "physicalDescription": "Small and nimble, with sandy hair and bright eyes that are always scanning for opportunities. He dresses in vibrant colors that reflect his flamboyant personality.",
-            "equipmentPreferences": [
-              "Shortsword",
-              "Thieves' Tools",
-              "Light Armor"
-            ],
-            "subrace": null,
-            "age": 35,
-            "height": "3'2\"",
-            "proficiencies": [
-              "Sleight of Hand",
-              "Deception",
-              "Performance"
-            ],
-            "id": "char_1762119151503_1bjy5u24f",
-            "status": "generated"
-          },
-          {
-            "name": "Leora Windwhisper",
-            "role": "Arcane Scholar",
-            "race": "Human",
-            "class": "Wizard",
-            "personality": "Leora is analytical and methodical, with a thirst for knowledge that is both her strength and weakness. She often gets lost in thought, pondering the mysteries of the arcane.",
-            "motivation": "To study and understand the relic and the arcane forces at play within Veyra’s Rest.",
-            "connectionToStory": "Leora was sent by the kingdom's arcane academy to investigate the source of the Hivemind's power and report her findings.",
-            "gmSecret": "Leora is unknowingly connected to a line of powerful sorcerers who once attempted to control the relic. Her latent abilities could either help her allies or attract the Hivemind's attention.",
-            "potentialConflict": "Her single-minded focus on research can lead her to overlook immediate dangers.",
-            "voiceTone": "Precise and thoughtful, often pausing before speaking to weigh her words.",
-            "inventoryHint": "A well-worn tome filled with notes and arcane symbols.",
-            "motifAlignment": [
-              "Shared dreams",
-              "Silent whispers"
-            ],
-            "backgroundHistory": "Raised in the heart of the kingdom, Leora showed an early affinity for magic and was accepted into the arcane academy at a young age. Her insatiable curiosity about the Hivemind's power made her the ideal candidate for the mission to Veyra’s Rest.",
-            "keyRelationships": [
-              "The Arcane Academy",
-              "Seraphine, the Seer",
-              "A fellow researcher"
-            ],
-            "flawOrWeakness": "Her obsession with the arcane sometimes blinds her to personal connections.",
-            "languages": [
-              "Common",
-              "Draconic",
-              "Elvish"
-            ],
-            "alignment": "Neutral Good",
-            "deity": "Oghma",
-            "physicalDescription": "Tall and slender, with long auburn hair and piercing blue eyes. She wears robes embroidered with arcane symbols, carrying an air of scholarly authority.",
-            "equipmentPreferences": [
-              "Quarterstaff",
-              "Spellbook",
-              "Arcane Focus"
-            ],
-            "subrace": null,
-            "age": 27,
-            "height": "5'10\"",
             "proficiencies": [
               "Arcana",
               "History",
-              "Insight"
+              "Investigation",
+              "Alchemy Supplies"
             ],
-            "id": "char_1762119151503_zxktz4ut5",
+            "id": "char_1761698856930_2pjteucrt",
+            "status": "generated"
+          },
+          {
+            "name": "Elowen Whisperwind",
+            "role": "Cunning Ranger",
+            "race": "Elf",
+            "class": "Ranger",
+            "personality": "Reserved and observant, Elowen prefers solitude and silence, using them to blend into her surroundings. She has a strong sense of justice and protects those she cares for.",
+            "motivation": "To protect Whispering Hollow from the encroaching silence and discover its source.",
+            "connectionToStory": "Elowen is a native of the Whispering Woods, feeling a deep connection to the land and a responsibility to safeguard it.",
+            "gmSecret": "Elowen's family holds an ancient elven secret about the Whispering Woods' role in the town's history. Her ancestors once guarded a powerful artifact hidden beneath the woods, potentially linked to the silence.",
+            "potentialConflict": "Her loyalty to the forest can sometimes cloud her judgment, causing her to act without fully understanding the consequences.",
+            "voiceTone": "Quiet and measured, often speaking in poetic phrases.",
+            "inventoryHint": "A carved wooden whistle that produces no sound.",
+            "motifAlignment": [
+              "Whispers and echoes",
+              "The contrast between silence and noise"
+            ],
+            "backgroundHistory": "Elowen was raised by a community of elves that lived in harmony with the Whispering Woods. She learned to track and hunt in silence, becoming one with the forest. When the silence began to spread, she knew she had to act.",
+            "keyRelationships": [
+              "The Silent Ones, a cult embracing the phenomenon",
+              "Mayor Elara, struggling to keep the town calm"
+            ],
+            "flawOrWeakness": "Elowen tends to be overly secretive, keeping her intentions and plans to herself.",
+            "languages": [
+              "Common",
+              "Elvish",
+              "Sylvan"
+            ],
+            "alignment": "Chaotic Good",
+            "deity": "Rillifane Rallathil",
+            "physicalDescription": "Tall and lithe, with hair the color of autumn leaves. She wears earthy tones and practical clothing suitable for blending into the forest.",
+            "equipmentPreferences": [
+              "Longbow",
+              "Shortsword",
+              "Traveler's Clothes",
+              "Herbalism Kit"
+            ],
+            "subrace": "Wood Elf",
+            "age": 150,
+            "height": "5'9\"",
+            "proficiencies": [
+              "Stealth",
+              "Survival",
+              "Nature",
+              "Perception"
+            ],
+            "id": "char_1761698856930_z4403y5ie",
+            "status": "generated"
+          },
+          {
+            "name": "Thorn Blackwood",
+            "role": "Rogue Trader",
+            "race": "Human",
+            "class": "Rogue",
+            "personality": "Charming and quick-witted, Thorn is a master of persuasion. He is always looking for an angle, but his moral compass is guided by a strict personal code.",
+            "motivation": "To profit from the chaos in Whispering Hollow while uncovering the truth behind the silence.",
+            "connectionToStory": "Thorn is connected to the Shadow Merchants, a faction exploiting the town's turmoil, yet he seeks more than just profit.",
+            "gmSecret": "Thorn's family were once influential in Whispering Hollow but fell from grace after a scandal. Unbeknownst to him, his ancestor's actions are tied to the silence, and restoring his family's name might require breaking the curse.",
+            "potentialConflict": "His ambition might lead him to make deals or alliances that conflict with the party's goals.",
+            "voiceTone": "Smooth and persuasive, with a hint of mischief.",
+            "inventoryHint": "A silver coin etched with a family crest.",
+            "motifAlignment": [
+              "Symbols of sound and music",
+              "The contrast between silence and noise"
+            ],
+            "backgroundHistory": "Growing up on the streets of Whispering Hollow, Thorn learned to survive through cunning and charm. With the silence threatening his old haunts and contacts, he sees an opportunity to reclaim his family's lost honor.",
+            "keyRelationships": [
+              "Ilyana, a cunning trader among the Shadow Merchants",
+              "The Town Council, desperate to maintain order"
+            ],
+            "flawOrWeakness": "Thorn is overly confident, sometimes underestimating the danger of a situation.",
+            "languages": [
+              "Common",
+              "Thieves' Cant",
+              "Gnomish"
+            ],
+            "alignment": "Neutral",
+            "deity": null,
+            "physicalDescription": "Lean and agile, with dark hair and a roguish grin. Thorn dresses in simple but well-kept clothing, with hidden pockets for his various tools.",
+            "equipmentPreferences": [
+              "Dagger",
+              "Thieves' Tools",
+              "Disguise Kit",
+              "Leather Armor"
+            ],
+            "subrace": null,
+            "age": 28,
+            "height": "5'11\"",
+            "proficiencies": [
+              "Stealth",
+              "Deception",
+              "Sleight of Hand",
+              "Thieves' Tools"
+            ],
+            "id": "char_1761698856930_ate6in892",
             "status": "generated"
           }
         ],
         "locked": false,
-        "version": 1762119151503
-      }
+        "version": 1761698856930
+      },
+      "story_facts": [
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The silence is connected to an ancient artifact beneath the Whispering Woods, affecting those selectively.",
+            "The artifact beneath the Whispering Woods resonates with specific individuals.",
+            "Elowen Whisperwind feels a personal resolve to delve into the Whispering Woods, reconnecting with her roots."
+          ],
+          "revealedInfo": [
+            "The silence is connected to an ancient artifact beneath the Whispering Woods, affecting those selectively."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "Artifact Chamber beneath Whispering Woods"
+            ],
+            "factions": [
+              "Whisper Seekers"
+            ],
+            "constraints": [
+              "The silence may only be lifted with knowledge from the artifact."
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "Navigate the intricate alliances within Whispering Hollow to determine the best course of action for restoring sound."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:19.819Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact's location lies beneath the ancient library, believed to be a nexus of the town's historic sound conduits.",
+            "The artifact could either restore or permanently sever the town's connection to sound.",
+            "Garrick Flint realizes the scientific ramifications of his allegiance choices.",
+            "Iris Thorne's relationship with Thorne deepens, as music forms an unspoken bond."
+          ],
+          "revealedInfo": [
+            "The artifact's location lies beneath the ancient library, believed to be a nexus of the town's historic sound conduits."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Subterranean Conduits under the ancient library"
+            ],
+            "factions": [
+              "A new faction of soundkeepers emerges"
+            ],
+            "constraints": [
+              "The decision on alliances impacts the artifact's eventual use"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "The adventurers must navigate allegiances among Whispering Hollow's factions and determine the truth about the artifact causing the silence."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:21.345Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact is a relic tied to a hidden history of Whispering Hollow, revealing that the silence is not merely a curse but a consequence of an unresolved conflict.",
+            "The artifact's historical significance is revealed, altering the adventurers’ understanding of their quest.",
+            "Iris wrestles with her desire to restore music against the pragmatic plans Ilyana presents, testing her artistic integrity."
+          ],
+          "revealedInfo": [
+            "The artifact is a relic tied to a hidden history of Whispering Hollow, revealing that the silence is not merely a curse but a consequence of an unresolved conflict."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [],
+            "factions": [
+              "The Shadow Merchants are revealed as a potential manipulative force in the town's affairs."
+            ],
+            "constraints": []
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "To navigate the tensions between factions and choose an ally to confront the growing silence's source."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:23.904Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact beneath the market square was once used by ancient mages to enforce peace through silence.",
+            "The artifact's purpose and origin have been revealed.",
+            {
+              "character": "Iris Thorne",
+              "moment": "Uses her bardic skills to interpret non-verbal cues, easing the tense negotiations."
+            },
+            {
+              "character": "Garrick Flint",
+              "moment": "Applies his scientific expertise to understand the artifact's mechanism."
+            },
+            {
+              "character": "Elowen Whisperwind",
+              "moment": "Leverages her local knowledge to facilitate meetings between the factions."
+            },
+            {
+              "character": "Thorn Blackwood",
+              "moment": "Sneaks around to gather critical information, overhearing important secrets."
+            }
+          ],
+          "revealedInfo": [
+            "The artifact beneath the market square was once used by ancient mages to enforce peace through silence."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "Underground chamber beneath the market square"
+            ],
+            "factions": [
+              "Ancient Guardian Sect"
+            ],
+            "constraints": [
+              "Artifact must not be destroyed"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "Identify the source of the silence in Whispering Hollow and negotiate alliances among competing interests."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:24.311Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact is a seal that suppresses a power linked to the silence.",
+            "The Whisper Seekers and Shadow Merchants are both descendants of the original creators.",
+            "The artifact is central to controlling the silence.",
+            "Iris confronts her beliefs about sound's intrinsic power.",
+            "Garrick uncovers layers of arcane history linking to his studies.",
+            "Elowen strengthens her resolve to safeguard the land.",
+            "Thorn sees the potential for both profit and revelation."
+          ],
+          "revealedInfo": [
+            "The artifact is a seal that suppresses a power linked to the silence.",
+            "The Whisper Seekers and Shadow Merchants are both descendants of the original creators."
+          ],
+          "stateChanges": {
+            "faction_tensions": "heightened",
+            "artifact_awareness": "increased"
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Arcane Vault beneath the Library"
+            ],
+            "factions": [
+              "Ancient alignments between Whisper Seekers and Shadow Merchants"
+            ],
+            "constraints": [
+              "Artifacts must not be removed from their original sites without risk"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "Unite or divide the party in making a pivotal decision regarding the looming conflict among local factions."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:34.363Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "Whispers in the Market Square",
+          "keyEvents": [
+            "Townsfolk believe the silence is linked to an ancient secret buried beneath the town.",
+            "Mayor Elara knows of a tale involving a forbidden pact made generations ago.",
+            "The connection between the silence and the town's history is growing clearer.",
+            "Iris Thorne shares her own fears about the loss of music and sound, prompting the group to discuss their personal connections to sound."
+          ],
+          "revealedInfo": [
+            "Townsfolk believe the silence is linked to an ancient secret buried beneath the town.",
+            "Mayor Elara knows of a tale involving a forbidden pact made generations ago."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne, the Bard": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The ancient library is suggested as a place to find more information."
+            ],
+            "factions": [],
+            "constraints": []
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "Whispers in the Market Square",
+              "status": "active",
+              "description": "To uncover clues about the silence affecting Whispering Hollow and learn the townspeople's fears and suspicions."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:54:59.813Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Silent Convergence",
+          "keyEvents": [
+            "An ancient pact was made with a forgotten deity, silencing the town when the deity's domain was trespassed upon.",
+            "An ancient artifact under the market square is linked to the town's silence.",
+            "The pact includes a clause that can end the silence if uncovered and properly understood.",
+            "Iris feels a mystical pull towards the location of the artifact, her bardic senses tingling with suppressed sound.",
+            "Garrick sketches quick diagrams, piecing together ley line maps and arcane theories related to the silence.",
+            "Elowen senses a disturbing shift in the natural order around the market square, feeling the land's muted plea for help.",
+            "Thorn's mind races with the potential for profit and power but also a growing understanding of the magnitude of the artifact's implications."
+          ],
+          "revealedInfo": [
+            "An ancient pact was made with a forgotten deity, silencing the town when the deity's domain was trespassed upon."
+          ],
+          "stateChanges": {
+            "SilenceAreaExpanded": false
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Elder Fenn": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "Underneath the Market Square"
+            ],
+            "factions": [
+              "The Whisper Seekers",
+              "The Shadow Merchants"
+            ],
+            "constraints": [
+              "Must resolve the silence without destroying the artifact"
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Silent Convergence",
+              "status": "active",
+              "description": "The adventurers aim to investigate the origins of the silence in Whispering Hollow and understand its effects on the town and its factions."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T00:55:22.545Z"
+        },
+        {
+          "fromScene": "scene_6_1761697789162",
+          "sceneTitle": "The Balance of Power",
+          "keyEvents": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically.",
+            "The factions' goals are revealed to be more complex than initially suspected.",
+            "Iris finds herself torn between her artistic passion and the moral dilemmas presented by the artifact, prompting a deeper reflection on her connection to sound."
+          ],
+          "revealedInfo": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Whispering Woods now hold greater significance as the source of the artifact's power."
+            ],
+            "factions": [
+              "The Whisper Seekers and Shadow Merchants reveal hidden agendas."
+            ],
+            "constraints": [
+              "Each decision made during this scene influences future interactions with factions."
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "The adventurers aim to discern the motivations of various factions regarding the source of silence."
+            }
+          ],
+          "playerDecisions": [],
+          "timestamp": "2025-10-29T01:00:56.377Z"
+        }
+      ]
     },
     "locks": {
-      "background": false
+      "background": true,
+      "characters": true
     },
     "meta": {
       "backgroundV": 0,
-      "charactersV": 0,
+      "charactersV": 1,
       "macroSnapshotV": 0,
-      "updatedAt": "2025-11-02T20:31:10.301Z"
+      "updatedAt": "2025-10-29T00:47:44.292Z"
     },
-    "version": 110,
-    "createdAt": "2025-11-02T20:31:10.301Z",
-    "updatedAt": "2025-11-02T21:32:40.944Z"
+    "version": 62,
+    "createdAt": "2025-10-29T00:43:23.470Z",
+    "updatedAt": "2025-11-02T20:29:55.186Z",
+    "macroChains": {
+      "chain_1761697789162_puzxhhhyt": {
+        "chainId": "chain_1761697789162_puzxhhhyt",
+        "scenes": [
+          {
+            "id": "scene_6_1761697789162",
+            "order": 1,
+            "title": "The Balance of Power",
+            "objective": "Decide whom to ally with in a climactic showdown as the factions converge on the artifact, determining Elderglen's fate amidst moral ambiguity and impending chaos."
+          }
+        ],
+        "status": "Edited",
+        "version": 4,
+        "lastUpdatedAt": "2025-10-29T01:13:33.542Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "7ab7473c-f185-40d1-be54-df71fe9f6906",
+          "isDraftIdeaBank": true
+        },
+        "createdAt": "2025-10-29T00:29:49.162Z",
+        "updatedAt": "2025-10-29T00:29:49.164Z"
+      }
+    },
+    "creativityHistory": {
+      "macroChainApproaches": [],
+      "sceneDetailApproaches": [
+        {
+          "approach": "Emphasize character interactions and dialogue opportunities",
+          "detailStyle": "Employ a conversational, accessible tone",
+          "complexity": "Build complex webs of interconnected elements",
+          "timestamp": "2025-10-29T01:00:43.307Z"
+        },
+        {
+          "approach": "Create scenes with unexpected plot twists and revelations",
+          "detailStyle": "Use a mysterious, enigmatic narrative voice",
+          "complexity": "Focus on single, focused objectives with depth",
+          "timestamp": "2025-10-29T00:54:51.932Z"
+        },
+        {
+          "approach": "Focus on environmental challenges and survival elements",
+          "detailStyle": "Employ a conversational, accessible tone",
+          "complexity": "Emphasize straightforward, linear progression",
+          "timestamp": "2025-10-29T00:54:47.912Z"
+        },
+        {
+          "approach": "Highlight environmental storytelling and world-building",
+          "detailStyle": "Employ a scholarly, academic tone",
+          "complexity": "Create branching paths with multiple outcomes",
+          "timestamp": "2025-10-29T00:54:17.608Z"
+        },
+        {
+          "approach": "Focus on character backstory integration and personal growth",
+          "detailStyle": "Use rich, evocative language with vivid imagery",
+          "complexity": "Create intricate, multi-layered scenes with hidden depths",
+          "timestamp": "2025-10-29T00:54:11.448Z"
+        },
+        {
+          "approach": "Emphasize exploration of mysterious locations and ancient secrets",
+          "detailStyle": "Adopt a dramatic, theatrical style",
+          "complexity": "Build complex webs of interconnected elements",
+          "timestamp": "2025-10-29T00:54:11.022Z"
+        },
+        {
+          "approach": "Focus on time manipulation and reality-bending elements",
+          "detailStyle": "Use a mysterious, enigmatic narrative voice",
+          "complexity": "Focus on simple, direct encounters with clear objectives",
+          "timestamp": "2025-10-29T00:54:10.074Z"
+        },
+        {
+          "approach": "Focus on action sequences and dynamic encounters",
+          "detailStyle": "Employ a conversational, accessible tone",
+          "complexity": "Create branching paths with multiple outcomes",
+          "timestamp": "2025-10-29T00:54:07.202Z"
+        }
+      ],
+      "lastUpdated": "2025-10-29T01:00:43.308Z"
+    },
+    "sceneDetails": {
+      "scene_6_1761697789162": {
+        "sceneId": "scene_6_1761697789162",
+        "title": "The Balance of Power",
+        "objective": "Decide whom to ally with in a climactic showdown as the factions converge on the artifact, determining Elderglen's fate amidst moral ambiguity and impending chaos.",
+        "sequence": 1,
+        "sceneType": "investigation",
+        "narrativeCore": {
+          "goal": "The adventurers aim to discern the motivations of various factions regarding the source of silence.",
+          "conflict": "Trust issues arise as each faction attempts to sway the adventurers to their side.",
+          "revelation": "The adventurers learn that the artifact may control not just sound, but the emotions of those nearby.",
+          "transition": "This leads to a tension-filled discussion about the implications of using the artifact."
+        },
+        "dynamicElements": {
+          "npcProfiles": [
+            {
+              "name": "Mayor Elara",
+              "motivation": "To maintain order and protect her town from further chaos.",
+              "personality": "Stressed and desperate, she speaks with urgency, sometimes punctuating her statements with a forced laugh."
+            },
+            {
+              "name": "Thorne",
+              "motivation": "To preserve the town's culture through music and stories.",
+              "personality": "Mysterious and whimsical, he often speaks in riddles, his tone both playful and grave."
+            },
+            {
+              "name": "Ilyana",
+              "motivation": "To exploit the situation for profit while also restoring sound.",
+              "personality": "Cunning and persuasive, she often uses charm and a subtle sense of humor to manipulate others."
+            }
+          ],
+          "environment": "The abandoned bell tower stands in the center of a fog-blanketed square, shadowed by the surrounding buildings. Echoes of footsteps reverberate softly, disturbing the silence. The air feels heavy with unspoken tension.",
+          "challenge": {
+            "type": "skill",
+            "dc": 15,
+            "failureConsequence": "Failure to persuade a faction may lead to misinformation being spread, causing distrust among the adventurers and NPCs."
+          },
+          "revealedInfo": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically."
+          ],
+          "contextOut": {
+            "world_state": {},
+            "story_facts": [
+              "The factions' goals are revealed to be more complex than initially suspected."
+            ],
+            "world_seeds": {
+              "locations": [
+                "The Whispering Woods now hold greater significance as the source of the artifact's power."
+              ],
+              "factions": [
+                "The Whisper Seekers and Shadow Merchants reveal hidden agendas."
+              ],
+              "constraints": [
+                "Each decision made during this scene influences future interactions with factions."
+              ]
+            },
+            "characterMoments": [
+              "Iris finds herself torn between her artistic passion and the moral dilemmas presented by the artifact, prompting a deeper reflection on her connection to sound."
+            ]
+          }
+        },
+        "status": "NeedsRegen",
+        "version": 3,
+        "lastUpdatedAt": "2025-10-29T01:13:33.542Z",
+        "contextOut": {
+          "keyEvents": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically.",
+            "The factions' goals are revealed to be more complex than initially suspected.",
+            "Iris finds herself torn between her artistic passion and the moral dilemmas presented by the artifact, prompting a deeper reflection on her connection to sound."
+          ],
+          "revealedInfo": [
+            "The artifact can amplify or suppress emotions, making it a potent tool against those who would use it unethically."
+          ],
+          "stateChanges": {
+            "ruins_explored": true,
+            "scene_completed": true
+          },
+          "npcRelationships": {
+            "Mayor Elara": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Thorne": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            },
+            "Ilyana": {
+              "trust_level": 3,
+              "last_interaction": "first encounter",
+              "attitude": "neutral"
+            }
+          },
+          "environmentalState": {
+            "locations": [
+              "The Whispering Woods now hold greater significance as the source of the artifact's power."
+            ],
+            "factions": [
+              "The Whisper Seekers and Shadow Merchants reveal hidden agendas."
+            ],
+            "constraints": [
+              "Each decision made during this scene influences future interactions with factions."
+            ]
+          },
+          "plotThreads": [
+            {
+              "thread_id": "scene_1_thread",
+              "title": "The Balance of Power",
+              "status": "active",
+              "description": "The adventurers aim to discern the motivations of various factions regarding the source of silence."
+            }
+          ],
+          "playerDecisions": []
+        },
+        "uses": {
+          "backgroundV": 0,
+          "charactersV": 1,
+          "prevSceneV": {},
+          "version": 1761699656371
+        },
+        "lockedAt": "2025-10-29T01:00:56.402Z"
+      },
+      "scene_2_1761699364752": {
+        "id": "scene_2_1761699364752",
+        "sequence": 2,
+        "title": "Echoes in the Halls",
+        "objective": "Investigate the ancient library's forgotten lore to uncover clues about the silence's origin and its potential expansion.",
+        "status": "Draft",
+        "meta": {
+          "gmIntent": "wander around the halls"
+        },
+        "createdAt": "2025-10-29T00:56:04.752Z",
+        "lastUpdatedAt": "2025-10-29T00:56:04.752Z",
+        "version": 1
+      },
+      "scene_2_1761699377316": {
+        "id": "scene_2_1761699377316",
+        "sequence": 2,
+        "title": "Echoes Beneath the Hollow",
+        "objective": "Explore the hidden passages beneath the Market Square to uncover clues about the artifact and its connection to the silence.",
+        "status": "Draft",
+        "meta": {
+          "gmIntent": "wander around the halls"
+        },
+        "createdAt": "2025-10-29T00:56:17.316Z",
+        "lastUpdatedAt": "2025-10-29T00:56:17.316Z",
+        "version": 1
+      },
+      "scene_2_1761699676907": {
+        "id": "scene_2_1761699676907",
+        "sequence": 2,
+        "title": "Echoes of the Enigma",
+        "objective": "Explore the ancient library to uncover clues about the origins of the silence and its mysterious link to the Whispering Woods.",
+        "status": "Draft",
+        "meta": {
+          "gmIntent": "wondering around the halls"
+        },
+        "createdAt": "2025-10-29T01:01:16.907Z",
+        "lastUpdatedAt": "2025-10-29T01:01:16.907Z",
+        "version": 1
+      }
+    }
   }
 }

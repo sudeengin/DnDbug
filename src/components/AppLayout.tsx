@@ -104,7 +104,12 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
   // Show project selection/creation if no project exists
   if (!project || !sessionId) {
     if (showProjectCreate) {
-      return <ProjectCreate onProjectCreated={handleProjectCreated} />;
+      return (
+        <ProjectCreate 
+          onProjectCreated={handleProjectCreated}
+          onCancel={() => setShowProjectCreate(false)}
+        />
+      );
     }
     return <ProjectList onProjectSelected={handleProjectSelected} onCreateNew={handleCreateNew} />;
   }
@@ -205,7 +210,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div>
-              <h1 className="text-2xl font-bold text-[#EDEDED] mb-1">Onur's Hivemind</h1>
+              <h1 className="text-2xl font-bold text-[#EDEDED] mb-1">{project?.title || 'Untitled Project'}</h1>
               <div className="flex items-center gap-3 mt-1">
                 <span className="text-sm text-[#B0B0B0] font-mono">Session ID: {sessionId}</span>
                 <div className="flex items-center gap-2">

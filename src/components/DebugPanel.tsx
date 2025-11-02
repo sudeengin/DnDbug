@@ -60,8 +60,8 @@ export default function DebugPanel({ isOpen, onClose }: DebugPanelProps) {
     return () => clearInterval(interval);
   }, [isOpen]);
 
-  const handleExport = () => {
-    debug.download();
+  const handleExport = async () => {
+    await debug.download();
   };
 
   const handleUpload = async () => {

@@ -3,6 +3,7 @@ import { getJSON } from '../../lib/api';
 import type { Project, SessionContext } from '../../types/macro-chain';
 import logger from '@/utils/logger';
 import { Check, Lock } from 'lucide-react';
+import { HealthStatusBadge } from '../HealthStatusBadge';
 
 const log = logger.ui;
 
@@ -80,6 +81,9 @@ export default function OverviewPage({ sessionId, project, context, onContextUpd
 
   return (
     <div className="space-y-6">
+      {/* Health Status */}
+      <HealthStatusBadge sessionId={sessionId} />
+      
       {/* Project Overview Card */}
       <div className="bg-[#151A22] rounded-[16px] border border-[#2A3340] p-6">
         <div className="flex flex-col gap-4">

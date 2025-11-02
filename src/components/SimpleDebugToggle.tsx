@@ -5,6 +5,7 @@ import { debug } from '../lib/simpleDebug';
 export default function SimpleDebugToggle() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [logCount, setLogCount] = useState(0);
+  const [errorCount, setErrorCount] = useState(0);
   const [showAutoExport, setShowAutoExport] = useState(false);
 
   useEffect(() => {
@@ -14,6 +15,7 @@ export default function SimpleDebugToggle() {
       
       const stats = debug.getStats();
       setLogCount(stats.total);
+      setErrorCount(stats.byLevel.error);
     };
 
     checkStatus();
@@ -21,12 +23,12 @@ export default function SimpleDebugToggle() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     if (isEnabled) {
       // If turning debug mode OFF and there are logs, auto-export
       if (logCount > 0) {
         const filename = `debug-auto-export-${new Date().toISOString().slice(0, 19)}.json`;
-        debug.download(filename);
+        await debug.download(filename);
         console.log(`🔍 Debug: Auto-exported ${logCount} logs to ${filename}`);
         setShowAutoExport(true);
         // Hide the notification after 3 seconds
@@ -39,8 +41,8 @@ export default function SimpleDebugToggle() {
     setIsEnabled(!isEnabled);
   };
 
-  const handleExport = () => {
-    debug.download();
+  const handleExport = async () => {
+    await debug.download();
   };
 
   const handleClear = () => {
@@ -71,8 +73,15 @@ export default function SimpleDebugToggle() {
         </div>
       )}
       
+      {/* Error count indicator - red badge with priority */}
+      {errorCount > 0 && (
+        <div className="bg-red-600 text-white text-xs px-3 py-1.5 rounded-full shadow-lg font-bold animate-pulse">
+          ⚠️ {errorCount} {errorCount === 1 ? 'error' : 'errors'}
+        </div>
+      )}
+      
       {/* Log count indicator */}
-      {logCount > 0 && (
+      {logCount > 0 && errorCount === 0 && (
         <div className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full shadow-lg">
           {logCount} logs
         </div>

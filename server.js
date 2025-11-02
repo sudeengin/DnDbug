@@ -889,6 +889,52 @@ app.get('/api/context/get', async (req, res) => {
   }
 });
 
+app.get('/api/context/health', async (req, res) => {
+  try {
+    const { sessionId } = req.query;
+
+    if (!sessionId) {
+      return res.status(400).json({ 
+        error: 'sessionId query parameter is required' 
+      });
+    }
+
+    // Import the storage function
+    const { loadSessionContext } = await import('./api/storage.js');
+    
+    const sessionContext = await loadSessionContext(sessionId);
+
+    const health = {
+      sessionId,
+      exists: !!sessionContext,
+      timestamp: new Date().toISOString()
+    };
+
+    if (sessionContext) {
+      health.version = sessionContext.version;
+      health.hasBackground = !!(sessionContext.blocks && sessionContext.blocks.background);
+      health.hasCharacters = !!(sessionContext.blocks && sessionContext.blocks.characters);
+      health.hasMacroChains = !!sessionContext.macroChains;
+      health.macroChainCount = sessionContext.macroChains ? Object.keys(sessionContext.macroChains).length : 0;
+      health.blocksCount = sessionContext.blocks ? Object.keys(sessionContext.blocks).length : 0;
+      health.locks = sessionContext.locks || {};
+      health.createdAt = sessionContext.createdAt;
+      health.updatedAt = sessionContext.updatedAt;
+    }
+
+    console.log('Session health check:', health);
+
+    res.status(200).json({ 
+      ok: true, 
+      data: health 
+    });
+
+  } catch (error) {
+    console.error('Error in context/health:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/context/clear', async (req, res) => {
   try {
     const { sessionId } = req.body;

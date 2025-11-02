@@ -18,7 +18,6 @@ interface StoryBackgroundGeneratorProps {
 
 export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChainGenerated, onLockToggle, loading = false, sessionId, isLocked = false }: StoryBackgroundGeneratorProps) {
   const [storyConcept, setStoryConcept] = useState('');
-  const [numberOfPlayers, setNumberOfPlayers] = useState<number>(4);
   const [background, setBackground] = useState<BackgroundData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,9 +84,7 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
       const response = await postJSON<GenerateBackgroundResponse>('/api/generate_background', {
         sessionId,
         concept: storyConcept.trim(),
-        meta: {
-          numberOfPlayers: numberOfPlayers
-        }
+        meta: {}
       });
 
       if (!response.ok) {
@@ -117,7 +114,6 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
 
   const handleClear = () => {
     setStoryConcept('');
-    setNumberOfPlayers(4);
     setBackground(null);
     setError(null);
   };
@@ -225,24 +221,6 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
                 Story concept loaded from context. To modify, clear and re-enter.
               </p>
             )}
-          </div>
-
-          <div>
-            <label htmlFor="numberOfPlayers" className="block text-[14px] leading-[20px] font-medium text-[#F0F4F8] mb-2">
-              Number of Players
-            </label>
-            <input
-              type="number"
-              id="numberOfPlayers"
-              min="1"
-              max="6"
-              value={numberOfPlayers}
-              onChange={(e) => setNumberOfPlayers(parseInt(e.target.value) || 4)}
-              placeholder="4"
-              className="w-full px-4 py-2 bg-[#1E1D2A] border border-[#2A3340] rounded-[12px] text-[#F0F4F8] placeholder-[#A9B4C4] focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.15)] focus:border-[#2A3340] transition-all duration-200"
-              disabled={isGenerating || loading}
-            />
-            <p className="mt-2 text-xs text-[#A9B4C4] opacity-75">How many players will participate? (3–6 recommended)</p>
           </div>
 
           <div className="flex flex-wrap gap-3">

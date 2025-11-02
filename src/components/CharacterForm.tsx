@@ -6,6 +6,8 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import GmIntentModal from './GmIntentModal';
 import type { Character } from '../types/macro-chain';
+import logger from '@/utils/logger';
+import debug from '@/lib/simpleDebug';
 
 interface CharacterFormProps {
   character: Character;
@@ -86,6 +88,11 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
   const [showGmIntentModal, setShowGmIntentModal] = useState(false);
   const [regeneratingField, setRegeneratingField] = useState<string | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  
+  // Track original class and race to detect changes
+  const [originalClass] = useState(character.class);
+  const [originalRace] = useState(character.race);
 
   useEffect(() => {
     setFormData(character);
@@ -133,6 +140,79 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     );
   };
 
+  // Helper component for array fields with regenerate button
+  const ArrayFieldWithRegenerate = ({ 
+    fieldName, 
+    label, 
+    placeholder = "Enter items separated by commas"
+  }: { 
+    fieldName: keyof Character; 
+    label: string; 
+    placeholder?: string;
+  }) => {
+    const value = (formData[fieldName] as string[]) || [];
+    const stringValue = value.join(', ');
+    const canRegenerate = sessionId && !isLocked;
+    
+    const handleArrayChange = (inputValue: string) => {
+      const array = inputValue.split(',').map(item => item.trim()).filter(item => item.length > 0);
+      handleChange(fieldName, array);
+    };
+
+    // Determine tooltip text
+    const hasClassChanged = formData.class !== originalClass;
+    const hasRaceChanged = formData.race !== originalRace;
+    const tooltipText = (hasClassChanged || hasRaceChanged) 
+      ? "Regenerate with updated class/race" 
+      : "Get a fresh version";
+    
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <Label htmlFor={fieldName} className="text-gray-300">{label}</Label>
+          {canRegenerate && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => handleRegenerateField(fieldName as string)}
+              disabled={isRegenerating}
+              className="text-xs"
+              title={tooltipText}
+            >
+              {isRegenerating && regeneratingField === fieldName ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Regenerating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Regenerate
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+        <Input
+          id={fieldName}
+          value={stringValue}
+          onChange={(e) => handleArrayChange(e.target.value)}
+          placeholder={placeholder}
+          className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Separate multiple items with commas
+        </p>
+      </div>
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
@@ -143,6 +223,18 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
       alert('Session ID is required for regeneration');
       return;
     }
+    
+    // Log class/race change detection for debugging
+    console.log('Regenerate field - class/race check:', {
+      fieldName,
+      originalClass,
+      currentClass: formData.class,
+      originalRace,
+      currentRace: formData.race,
+      hasClassChanged: formData.class !== originalClass,
+      hasRaceChanged: formData.race !== originalRace
+    });
+    
     setRegeneratingField(fieldName);
     setShowGmIntentModal(true);
   };
@@ -154,6 +246,20 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     setShowGmIntentModal(false);
 
     try {
+      debug.info('CharacterForm', 'Regenerate field request', {
+        characterId: formData.id,
+        characterName: formData.name,
+        fieldName: regeneratingField,
+        currentClass: formData.class,
+        currentRace: formData.race,
+        originalClass,
+        originalRace,
+        hasClassChanged: formData.class !== originalClass,
+        hasRaceChanged: formData.race !== originalRace,
+        hasGmIntent: !!intent,
+        sessionId
+      });
+
       const response = await fetch('/api/characters/regenerate', {
         method: 'POST',
         headers: {
@@ -163,28 +269,69 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           sessionId,
           characterId: formData.id,
           fieldName: regeneratingField,
-          gmIntent: intent || undefined
+          gmIntent: intent || undefined,
+          // Send the current form data so backend uses the updated class/race
+          characterData: formData
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
+        
+        // Log the API error with full context
+        debug.error('CharacterForm', 'Regenerate field failed', {
+          url: '/api/characters/regenerate',
+          status: response.status,
+          statusText: response.statusText,
+          characterId: formData.id,
+          characterName: formData.name,
+          fieldName: regeneratingField,
+          errorMessage: error.error,
+          errorResponse: error,
+          requestBody: {
+            sessionId,
+            characterId: formData.id,
+            fieldName: regeneratingField,
+            hasGmIntent: !!intent
+          }
+        });
+        
         throw new Error(error.error || 'Failed to regenerate field');
       }
 
       const result = await response.json();
       
+      // Handle array fields vs string fields
+      const arrayFields = ['languages', 'proficiencies', 'equipmentPreferences', 'motifAlignment'];
+      const isArrayField = arrayFields.includes(regeneratingField);
+      
+      // Get old value for comparison
+      const oldValue = formData[regeneratingField as keyof Character];
+      
+      // Convert comma-separated string to array if needed
+      const fieldValue = isArrayField 
+        ? result.regeneratedField.split(',').map((item: string) => item.trim()).filter((item: string) => item.length > 0)
+        : result.regeneratedField;
+      
+      debug.info('CharacterForm', 'Regenerate field success', {
+        characterId: formData.id,
+        characterName: formData.name,
+        fieldName: regeneratingField,
+        oldValue,
+        newValue: fieldValue,
+        changed: JSON.stringify(oldValue) !== JSON.stringify(fieldValue)
+      });
+      
       // Update the form data with the regenerated field
+      // Don't call onSave() here - let user manually save when ready
       setFormData(prev => ({
         ...prev,
-        [regeneratingField]: result.regeneratedField
+        [regeneratingField]: fieldValue
       }));
 
-      // Also update the character in the parent component
-      onSave({
-        ...formData,
-        [regeneratingField]: result.regeneratedField
-      });
+      // Show success feedback
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 3000);
 
     } catch (error) {
       const errorMessage = (error as any).message || 'Unknown error';
@@ -517,12 +664,12 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             <h3 className="text-lg font-medium text-gray-200 mb-4">Character Sheet Details</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ArrayField 
+              <ArrayFieldWithRegenerate 
                 fieldName="languages" 
                 label="Languages" 
                 placeholder="e.g., Common, Elvish, Dwarvish, Draconic"
               />
-              <ArrayField 
+              <ArrayFieldWithRegenerate 
                 fieldName="proficiencies" 
                 label="Proficiencies" 
                 placeholder="e.g., Athletics, Stealth, Thieves' Tools, Herbalism Kit"
@@ -530,12 +677,12 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <ArrayField 
+              <ArrayFieldWithRegenerate 
                 fieldName="equipmentPreferences" 
                 label="Equipment Preferences" 
                 placeholder="e.g., Quarterstaff, Spellbook, Component pouch, Ink and quill"
               />
-              <ArrayField 
+              <ArrayFieldWithRegenerate 
                 fieldName="motifAlignment" 
                 label="Motif Alignment" 
                 placeholder="e.g., decay, secrets, family curses"
@@ -575,7 +722,21 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           fieldName={regeneratingField || ''}
           characterName={formData.name}
           isLoading={isRegenerating}
+          hasClassChanged={formData.class !== originalClass}
+          hasRaceChanged={formData.race !== originalRace}
+          newClass={formData.class}
+          newRace={formData.race}
         />
+
+        {/* Success Toast */}
+        {showSuccessToast && (
+          <div className="fixed bottom-4 right-4 bg-green-900/90 border border-green-600/50 text-green-100 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 z-50">
+            <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-sm font-medium">Section updated successfully</span>
+          </div>
+        )}
       </div>
     </div>
   );

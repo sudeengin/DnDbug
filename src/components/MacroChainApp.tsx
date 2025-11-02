@@ -193,7 +193,12 @@ export default function MacroChainApp() {
   // Show project selection/creation if no project exists
   if (!project || !sessionId) {
     if (showProjectCreate) {
-      return <ProjectCreate onProjectCreated={handleProjectCreated} />;
+      return (
+        <ProjectCreate 
+          onProjectCreated={handleProjectCreated}
+          onCancel={() => setShowProjectCreate(false)}
+        />
+      );
     }
     return <ProjectList onProjectSelected={handleProjectSelected} onCreateNew={handleCreateNew} />;
   }

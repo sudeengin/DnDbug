@@ -285,9 +285,9 @@ export const debugUtils = {
   /**
    * Download debug report
    */
-  download: (filename?: string) => {
+  download: async (filename?: string) => {
     if (isDebugMode.enabled()) {
-      debug.download(filename);
+      await debug.download(filename);
     }
   },
 

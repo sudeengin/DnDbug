@@ -3,6 +3,8 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { postJSON, getJSON } from '../../lib/api';
 import debug from '../../lib/simpleDebug';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
@@ -29,6 +31,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   const [showForm, setShowForm] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all'>('all');
   const [viewCharacterId, setViewCharacterId] = useState<string | null>(null);
+  const [numberOfPlayers, setNumberOfPlayers] = useState<number>(4); // Default: 4 players (valid range: 3-6)
 
   // Check if background is locked
   const isBackgroundLocked = context?.locks?.background === true;
@@ -66,6 +69,13 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       debug.error('CharactersPage', 'Error state set', { error });
     }
   }, [error]);
+
+  // Initialize numberOfPlayers from context if available
+  useEffect(() => {
+    if (context?.blocks?.background?.numberOfPlayers) {
+      setNumberOfPlayers(context.blocks.background.numberOfPlayers);
+    }
+  }, [context?.blocks?.background]);
 
   // Load context and characters on mount
   useEffect(() => {
@@ -129,8 +139,8 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     setError(null);
 
     try {
-      debug.info('CharactersPage', 'Starting character generation', { sessionId });
-      const response = await postJSON('/api/characters/generate', { sessionId });
+      debug.info('CharactersPage', 'Starting character generation', { sessionId, numberOfPlayers });
+      const response = await postJSON('/api/characters/generate', { sessionId, numberOfPlayers });
       
       if (response.ok) {
         debug.info('CharactersPage', 'Character generation successful', { 
@@ -169,6 +179,84 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     } finally {
       setLoading(false);
       debug.info('CharactersPage', 'Character generation completed', { 
+        loading: false,
+        hasError: !!error 
+      });
+    }
+  };
+
+  const handleRegenerateCharacters = async () => {
+    debug.info('CharactersPage', 'Regenerate characters button clicked', { 
+      sessionId, 
+      isBackgroundLocked,
+      currentCharactersCount: characters?.length || 0,
+      isLocked
+    });
+
+    if (!isBackgroundLocked) {
+      const errorMsg = 'Background must be locked before regenerating characters';
+      setError(errorMsg);
+      debug.warn('CharactersPage', 'Regenerate characters blocked', { reason: errorMsg });
+      return;
+    }
+
+    if (isLocked) {
+      const errorMsg = 'Characters are locked. Unlock them first to regenerate.';
+      setError(errorMsg);
+      debug.warn('CharactersPage', 'Regenerate characters blocked', { reason: errorMsg });
+      return;
+    }
+    
+    const confirmed = typeof window !== 'undefined' 
+      ? window.confirm(`Are you sure you want to regenerate characters? This will create ${numberOfPlayers} new characters and replace the existing ones.`)
+      : true;
+    
+    if (!confirmed) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      debug.info('CharactersPage', 'Starting character regeneration', { sessionId, numberOfPlayers });
+      const response = await postJSON('/api/characters/generate', { sessionId, numberOfPlayers });
+      
+      if (response.ok) {
+        debug.info('CharactersPage', 'Character regeneration successful', { 
+          charactersGenerated: response.list?.length || 0,
+          characters: response.list 
+        });
+        setCharacters(response.list || []);
+        setIsLocked(false);
+        // Refresh context
+        if (context) {
+          const updatedContext = { ...context };
+          updatedContext.blocks.characters = {
+            list: response.list || [],
+            locked: false,
+            version: Date.now()
+          };
+          onContextUpdate(updatedContext);
+        }
+      } else {
+        const errorMsg = response.error || 'Failed to regenerate characters';
+        setError(errorMsg);
+        debug.error('CharactersPage', 'Character regeneration failed', { 
+          error: errorMsg, 
+          response 
+        });
+      }
+    } catch (err) {
+      const errorMsg = 'Failed to regenerate characters';
+      setError(errorMsg);
+      log.error('Error regenerating characters:', err);
+      debug.error('CharactersPage', 'Character regeneration exception', { 
+        error: errorMsg, 
+        exception: err,
+        sessionId 
+      });
+    } finally {
+      setLoading(false);
+      debug.info('CharactersPage', 'Character regeneration completed', { 
         loading: false,
         hasError: !!error 
       });
@@ -272,6 +360,49 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     setEditingCharacter(null);
   };
 
+  const handleNumberOfPlayersChange = (value: string) => {
+    // Allow empty string while typing
+    if (value === '') {
+      setNumberOfPlayers(0);
+      return;
+    }
+    
+    const numValue = parseInt(value) || 4;
+    // Match API clamping: minimum 3, maximum 6
+    const clampedValue = Math.min(Math.max(numValue, 3), 6);
+    setNumberOfPlayers(clampedValue);
+  };
+
+  const handleNumberOfPlayersBlur = async () => {
+    // When user leaves the field, ensure valid value and save (minimum 3, maximum 6)
+    const validValue = numberOfPlayers === 0 || numberOfPlayers < 3 ? 4 : Math.min(numberOfPlayers, 6);
+    setNumberOfPlayers(validValue);
+    
+    // Save to context
+    if (sessionId && context?.blocks?.background) {
+      try {
+        await postJSON('/api/context/append', {
+          sessionId,
+          blockType: 'background',
+          data: {
+            ...context.blocks.background,
+            numberOfPlayers: validValue
+          }
+        });
+        
+        // Update local context
+        const updatedContext = { ...context };
+        updatedContext.blocks.background = {
+          ...updatedContext.blocks.background,
+          numberOfPlayers: validValue
+        };
+        onContextUpdate(updatedContext);
+      } catch (error) {
+        log.error('Failed to save numberOfPlayers to context:', error);
+      }
+    }
+  };
+
   const getStatusBadge = () => {
     if (!hasBackground) {
       return { label: 'No Background', variant: 'secondary' as const };
@@ -336,6 +467,29 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         </div>
       </div>
 
+      {/* Number of Players Input */}
+      <div className="bg-[#151A22] border border-[#2A3340] rounded-[16px] p-6 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+        <div className="max-w-xs">
+          <Label htmlFor="numberOfPlayers" className="text-[14px] leading-[20px] font-medium text-[#F0F4F8] mb-2 block">
+            How many players are in your campaign?
+          </Label>
+          <Input
+            type="number"
+            id="numberOfPlayers"
+            min="3"
+            max="6"
+            value={numberOfPlayers || ''}
+            onChange={(e) => handleNumberOfPlayersChange(e.target.value)}
+            onBlur={handleNumberOfPlayersBlur}
+            disabled={isLocked}
+            className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
+          />
+          <p className="text-xs text-[#A9B4C4] mt-2">
+            This determines how many character slots will be generated (3–6 players)
+          </p>
+        </div>
+      </div>
+
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-[#151A22] border-[#2A3340]">
@@ -372,7 +526,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
           </CardHeader>
           <CardContent>
             <span className="text-2xl font-bold text-gray-200">{characters?.length || 0}</span>
-            <p className="text-sm text-gray-400">of 3-5 characters</p>
+            <p className="text-sm text-gray-400">of {numberOfPlayers} {numberOfPlayers === 1 ? 'character' : 'characters'}</p>
           </CardContent>
         </Card>
       </div>
@@ -409,13 +563,23 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         )}
         
         {characters && characters.length > 0 && (
-          <Button
-            onClick={handleLockCharacters}
-            disabled={loading}
-            variant="primary"
-          >
-            {loading ? (isLocked ? 'Unlocking...' : 'Locking...') : (isLocked ? 'Unlock Characters' : 'Lock Characters')}
-          </Button>
+          <>
+            <Button
+              onClick={handleRegenerateCharacters}
+              disabled={loading || isLocked || !isBackgroundLocked}
+              variant="secondary"
+              title={isLocked ? 'Unlock characters first to regenerate' : 'Generate a new set of characters'}
+            >
+              {loading ? 'Regenerating...' : 'Regenerate Characters'}
+            </Button>
+            <Button
+              onClick={handleLockCharacters}
+              disabled={loading}
+              variant="primary"
+            >
+              {loading ? (isLocked ? 'Unlocking...' : 'Locking...') : (isLocked ? 'Unlock Characters' : 'Lock Characters')}
+            </Button>
+          </>
         )}
       </div>
 

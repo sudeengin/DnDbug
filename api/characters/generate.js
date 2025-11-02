@@ -134,7 +134,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { sessionId } = req.body;
+    const { sessionId, numberOfPlayers } = req.body;
 
     if (!sessionId) {
       res.status(400).json({ error: 'sessionId is required' });
@@ -144,7 +144,8 @@ export default async function handler(req, res) {
     // Get prompt context and check if background is locked
     const promptContext = await buildPromptContext(sessionId);
     const bg = promptContext.background;
-    const playerCount = promptContext.numberOfPlayers;
+    // Use numberOfPlayers from request body if provided, otherwise fall back to context
+    const playerCount = numberOfPlayers !== undefined ? numberOfPlayers : promptContext.numberOfPlayers;
     
     // Debug logging
     log.info('Character generation debug:', {
@@ -152,7 +153,9 @@ export default async function handler(req, res) {
       hasBackground: !!bg,
       backgroundType: typeof bg,
       backgroundKeys: bg ? Object.keys(bg) : 'no background',
-      playerCount,
+      numberOfPlayersFromRequest: numberOfPlayers,
+      playerCountFromContext: promptContext.numberOfPlayers,
+      playerCountUsed: playerCount,
       promptContextKeys: Object.keys(promptContext)
     });
     
