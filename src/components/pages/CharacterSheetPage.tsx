@@ -1060,7 +1060,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           !backgroundLocked 
             ? 'border-[#2A3340]' 
             : 'border-[#7c63e5]/40 shadow-[#7c63e5]/10'
-        }`}>
+        } ${!backgroundLocked ? 'min-h-[320px]' : ''}`}>
           <Collapsible 
             open={expandedSections.has('ability-scores')} 
             onOpenChange={() => backgroundLocked && toggleSection('ability-scores')}
@@ -1347,7 +1347,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           !abilityScoresLocked 
             ? 'border-[#2A3340]' 
             : 'border-[#7c63e5]/40 shadow-[#7c63e5]/10'
-        }`}>
+        } ${!abilityScoresLocked ? 'min-h-[320px]' : ''}`}>
           <Collapsible 
             open={expandedSections.has('equipment-preferences')} 
             onOpenChange={() => abilityScoresLocked && toggleSection('equipment-preferences')}
