@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { AlertTriangle, Info } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -9,6 +10,18 @@ import type { Character } from '../types/macro-chain';
 import logger from '@/utils/logger';
 import debug from '@/lib/simpleDebug';
 
+const AFFECTED_FIELDS: (keyof Character)[] = [
+  'personality',
+  'motivation',
+  'connectionToStory',
+  'backgroundHistory',
+  'voiceTone',
+  'equipmentPreferences',
+  'proficiencies',
+  'languages',
+  'motifAlignment'
+] as const;
+
 interface CharacterFormProps {
   character: Character;
   onSave: (character: Character) => void;
@@ -16,6 +29,8 @@ interface CharacterFormProps {
   isLocked: boolean;
   sessionId?: string;
 }
+
+const BULK_REGENERATE_ID = '__bulk_regenerate__';
 
 const ALIGNMENTS = [
   'Lawful Good',
@@ -87,22 +102,103 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
   const [formData, setFormData] = useState<Character>(character);
   const [showGmIntentModal, setShowGmIntentModal] = useState(false);
   const [regeneratingField, setRegeneratingField] = useState<string | null>(null);
-  const [isRegenerating, setIsRegenerating] = useState(false);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [regenerationStatus, setRegenerationStatus] = useState<Record<string, boolean>>({});
+  const [isBulkRegenerating, setIsBulkRegenerating] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [outdatedFields, setOutdatedFields] = useState<Record<string, boolean>>({});
+  const [gmIntentPreset, setGmIntentPreset] = useState('');
+  const [bulkRegenerationQueue, setBulkRegenerationQueue] = useState<(keyof Character)[]>([]);
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   // Track original class and race to detect changes
   const [originalClass] = useState(character.class);
   const [originalRace] = useState(character.race);
+  const [originalRole] = useState(character.role);
+  const identitySignature = `${formData.class || ''}|${formData.race || ''}|${formData.role || ''}`;
+  const originalIdentitySignature = `${originalClass || ''}|${originalRace || ''}|${originalRole || ''}`;
+  const previousIdentitySignature = useRef(identitySignature);
+
+  const hasClassChanged = formData.class !== originalClass;
+  const hasRaceChanged = formData.race !== originalRace;
+  const hasRoleChanged = formData.role !== originalRole;
+  const hasIdentityChanged = hasClassChanged || hasRaceChanged || hasRoleChanged;
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setFormData(character);
   }, [character]);
+
+  useEffect(() => {
+    const revertedToOriginal = identitySignature === originalIdentitySignature;
+
+    if (revertedToOriginal) {
+      setOutdatedFields({});
+      previousIdentitySignature.current = identitySignature;
+      return;
+    }
+
+    if (identitySignature !== previousIdentitySignature.current) {
+      previousIdentitySignature.current = identitySignature;
+      setOutdatedFields(prev => {
+        const next = { ...prev };
+        AFFECTED_FIELDS.forEach(field => {
+          next[field] = true;
+        });
+        return next;
+      });
+    }
+  }, [identitySignature, originalIdentitySignature]);
 
   const handleChange = (field: keyof Character, value: string | string[] | number) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+    toastTimeoutRef.current = setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const ensureStringArray = (value: Character[keyof Character]): string[] => {
+    if (Array.isArray(value)) {
+      return value.filter((item): item is string => typeof item === 'string');
+    }
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    }
+    return [];
+  };
+
+  const isFieldRegenerating = (fieldName: keyof Character | string) => Boolean(regenerationStatus[fieldName]);
+  const pendingOutdatedFields = useMemo(
+    () => AFFECTED_FIELDS.filter(field => outdatedFields[field]),
+    [outdatedFields]
+  );
+  const hasOutdatedFields = pendingOutdatedFields.length > 0;
+
+  const setFieldRegenerationStatus = (fieldName: string, isActive: boolean) => {
+    setRegenerationStatus(prev => {
+      if (isActive) {
+        if (prev[fieldName]) return prev;
+        return { ...prev, [fieldName]: true };
+      }
+      if (!prev[fieldName]) return prev;
+      const next = { ...prev };
+      delete next[fieldName];
+      return next;
+    });
   };
 
   // Helper component for array fields
@@ -115,7 +211,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     label: string; 
     placeholder?: string;
   }) => {
-    const value = (formData[fieldName] as string[]) || [];
+    const value = ensureStringArray(formData[fieldName]);
     const stringValue = value.join(', ');
     
     const handleArrayChange = (inputValue: string) => {
@@ -144,13 +240,15 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
   const ArrayFieldWithRegenerate = ({ 
     fieldName, 
     label, 
-    placeholder = "Enter items separated by commas"
+    placeholder = "Enter items separated by commas",
+    isOutdated = false
   }: { 
     fieldName: keyof Character; 
     label: string; 
     placeholder?: string;
+    isOutdated?: boolean;
   }) => {
-    const value = (formData[fieldName] as string[]) || [];
+    const value = ensureStringArray(formData[fieldName]);
     const stringValue = value.join(', ');
     const canRegenerate = sessionId && !isLocked;
     
@@ -160,10 +258,8 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     };
 
     // Determine tooltip text
-    const hasClassChanged = formData.class !== originalClass;
-    const hasRaceChanged = formData.race !== originalRace;
-    const tooltipText = (hasClassChanged || hasRaceChanged) 
-      ? "Regenerate with updated class/race" 
+    const tooltipText = hasIdentityChanged 
+      ? "Regenerate with updated identity" 
       : "Get a fresh version";
     
     return (
@@ -173,14 +269,14 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           {canRegenerate && (
             <Button
               type="button"
-              variant="secondary"
+              variant="primary"
               size="sm"
-              onClick={() => handleRegenerateField(fieldName as string)}
-              disabled={isRegenerating}
-              className="text-xs"
+              onClick={() => handleRegenerateField(fieldName)}
+              disabled={isFieldRegenerating(fieldName) || isBulkRegenerating}
+              className="text-xs min-h-[32px]"
               title={tooltipText}
             >
-              {isRegenerating && regeneratingField === fieldName ? (
+              {isFieldRegenerating(fieldName) ? (
                 <>
                   <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -199,6 +295,14 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             </Button>
           )}
         </div>
+        {isOutdated && (
+          <div className="mb-3 flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-100 p-3 text-sm text-yellow-800">
+            <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" />
+            <p>
+              This section may be outdated due to recent changes in Race, Class, or Role. Regenerate it to keep everything consistent.
+            </p>
+          </div>
+        )}
         <Input
           id={fieldName}
           value={stringValue}
@@ -218,46 +322,69 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     onSave(formData);
   };
 
-  const handleRegenerateField = (fieldName: string) => {
+  const handleRegenerateField = (fieldName: keyof Character) => {
     if (!sessionId) {
       alert('Session ID is required for regeneration');
       return;
     }
     
     // Log class/race change detection for debugging
-    console.log('Regenerate field - class/race check:', {
+    console.log('Regenerate field - class/race/role check:', {
       fieldName,
       originalClass,
       currentClass: formData.class,
       originalRace,
       currentRace: formData.race,
-      hasClassChanged: formData.class !== originalClass,
-      hasRaceChanged: formData.race !== originalRace
+      originalRole,
+      currentRole: formData.role,
+      hasClassChanged,
+      hasRaceChanged,
+      hasRoleChanged
     });
     
+    const intentPieces: string[] = [];
+    if (hasClassChanged && formData.class) {
+      intentPieces.push(`Now a ${formData.class}`);
+    }
+    if (hasRaceChanged && formData.race) {
+      intentPieces.push(`Race changed to ${formData.race}`);
+    }
+    if (hasRoleChanged && formData.role) {
+      intentPieces.push(`Role updated to ${formData.role}`);
+    }
+
+    setGmIntentPreset(intentPieces.join('. '));
+    setBulkRegenerationQueue([]);
     setRegeneratingField(fieldName);
     setShowGmIntentModal(true);
   };
 
-  const handleGmIntentConfirm = async (intent: string) => {
-    if (!regeneratingField || !sessionId) return;
+  const performRegeneration = async (
+    fieldName: keyof Character,
+    intent?: string,
+    options?: { silent?: boolean }
+  ) => {
+    if (!sessionId) {
+      throw new Error('Session ID is required for regeneration');
+    }
 
-    setIsRegenerating(true);
-    setShowGmIntentModal(false);
+    setFieldRegenerationStatus(fieldName, true);
 
     try {
       debug.info('CharacterForm', 'Regenerate field request', {
         characterId: formData.id,
         characterName: formData.name,
-        fieldName: regeneratingField,
+        fieldName,
         currentClass: formData.class,
         currentRace: formData.race,
         originalClass,
         originalRace,
-        hasClassChanged: formData.class !== originalClass,
-        hasRaceChanged: formData.race !== originalRace,
+        hasClassChanged,
+        hasRaceChanged,
+        hasRoleChanged,
         hasGmIntent: !!intent,
-        sessionId
+        sessionId,
+        isBulk: options?.silent || false
       });
 
       const response = await fetch('/api/characters/regenerate', {
@@ -268,84 +395,123 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
         body: JSON.stringify({
           sessionId,
           characterId: formData.id,
-          fieldName: regeneratingField,
+          fieldName,
           gmIntent: intent || undefined,
-          // Send the current form data so backend uses the updated class/race
           characterData: formData
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        
-        // Log the API error with full context
+
         debug.error('CharacterForm', 'Regenerate field failed', {
           url: '/api/characters/regenerate',
           status: response.status,
           statusText: response.statusText,
           characterId: formData.id,
           characterName: formData.name,
-          fieldName: regeneratingField,
+          fieldName,
           errorMessage: error.error,
           errorResponse: error,
           requestBody: {
             sessionId,
             characterId: formData.id,
-            fieldName: regeneratingField,
+            fieldName,
             hasGmIntent: !!intent
           }
         });
-        
         throw new Error(error.error || 'Failed to regenerate field');
       }
 
       const result = await response.json();
-      
-      // Handle array fields vs string fields
       const arrayFields = ['languages', 'proficiencies', 'equipmentPreferences', 'motifAlignment'];
-      const isArrayField = arrayFields.includes(regeneratingField);
-      
-      // Get old value for comparison
-      const oldValue = formData[regeneratingField as keyof Character];
-      
-      // Convert comma-separated string to array if needed
+      const isArrayField = arrayFields.includes(fieldName);
+      const oldValue = formData[fieldName as keyof Character];
       const fieldValue = isArrayField 
         ? result.regeneratedField.split(',').map((item: string) => item.trim()).filter((item: string) => item.length > 0)
         : result.regeneratedField;
-      
+
       debug.info('CharacterForm', 'Regenerate field success', {
         characterId: formData.id,
         characterName: formData.name,
-        fieldName: regeneratingField,
+        fieldName,
         oldValue,
         newValue: fieldValue,
         changed: JSON.stringify(oldValue) !== JSON.stringify(fieldValue)
       });
-      
-      // Update the form data with the regenerated field
-      // Don't call onSave() here - let user manually save when ready
+
       setFormData(prev => ({
         ...prev,
-        [regeneratingField]: fieldValue
+        [fieldName]: fieldValue
       }));
 
-      // Show success feedback
-      setShowSuccessToast(true);
-      setTimeout(() => setShowSuccessToast(false), 3000);
+      setOutdatedFields(prev => {
+        if (prev[fieldName]) {
+          const next = { ...prev };
+          delete next[fieldName];
+          return next;
+        }
+        return prev;
+      });
 
+      if (!options?.silent) {
+        showToast('Section updated successfully');
+      }
+    } finally {
+      setFieldRegenerationStatus(fieldName, false);
+    }
+  };
+
+  const handleGmIntentConfirm = async (intent: string) => {
+    if (!regeneratingField) return;
+
+    setShowGmIntentModal(false);
+
+    if (regeneratingField === BULK_REGENERATE_ID) {
+      if (!bulkRegenerationQueue.length) {
+        setRegeneratingField(null);
+        setGmIntentPreset('');
+        return;
+      }
+
+      setIsBulkRegenerating(true);
+      try {
+        for (const field of bulkRegenerationQueue) {
+          await performRegeneration(field, intent || undefined, { silent: true });
+        }
+        showToast('All affected sections regenerated successfully');
+        setBulkRegenerationQueue([]);
+      } catch (error) {
+        const errorMessage = (error as any).message || 'Unknown error';
+        console.error('Error regenerating fields:', error);
+        alert(`Error regenerating fields: ${errorMessage}`);
+      } finally {
+        setIsBulkRegenerating(false);
+        setRegeneratingField(null);
+        setGmIntentPreset('');
+      }
+      return;
+    }
+
+    try {
+      await performRegeneration(regeneratingField as keyof Character, intent || undefined);
     } catch (error) {
       const errorMessage = (error as any).message || 'Unknown error';
       console.error('Error regenerating field:', error);
       alert(`Error regenerating field: ${errorMessage}`);
     } finally {
-      setIsRegenerating(false);
       setRegeneratingField(null);
+      setGmIntentPreset('');
     }
   };
 
   const handleGmIntentCancel = () => {
     setShowGmIntentModal(false);
     setRegeneratingField(null);
+    setGmIntentPreset('');
+    if (bulkRegenerationQueue.length) {
+      setBulkRegenerationQueue([]);
+    }
   };
 
   // Helper component for fields with regenerate buttons
@@ -353,12 +519,14 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     fieldName, 
     label, 
     children, 
-    isTextarea = false 
+    isTextarea = false,
+    isOutdated = false
   }: { 
-    fieldName: string; 
+    fieldName: keyof Character; 
     label: string; 
     children: React.ReactNode; 
     isTextarea?: boolean;
+    isOutdated?: boolean;
   }) => {
     const canRegenerate = sessionId && !isLocked;
     
@@ -369,13 +537,13 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           {canRegenerate && (
             <Button
               type="button"
-              variant="secondary"
+              variant="primary"
               size="sm"
               onClick={() => handleRegenerateField(fieldName)}
-              disabled={isRegenerating}
-              className="text-xs"
+              disabled={isFieldRegenerating(fieldName) || isBulkRegenerating}
+              className="text-xs min-h-[32px]"
             >
-              {isRegenerating && regeneratingField === fieldName ? (
+              {isFieldRegenerating(fieldName) ? (
                 <>
                   <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -394,9 +562,45 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             </Button>
           )}
         </div>
+        {isOutdated && (
+          <div className="mb-3 flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-100 p-3 text-sm text-yellow-800">
+            <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" />
+            <p>
+              This section may be outdated due to recent changes in Race, Class, or Role. Regenerate it to keep everything consistent.
+            </p>
+          </div>
+        )}
         {children}
       </div>
     );
+  };
+
+  const isFieldOutdated = (fieldName: keyof Character) => Boolean(outdatedFields[fieldName]);
+
+  const handleRegenerateAllClick = () => {
+    if (!sessionId) {
+      alert('Session ID is required for regeneration');
+      return;
+    }
+
+    const fieldsToRegenerate = pendingOutdatedFields;
+    if (!fieldsToRegenerate.length) return;
+
+    const intentPieces: string[] = [];
+    if (hasClassChanged && formData.class) {
+      intentPieces.push(`Now a ${formData.class}`);
+    }
+    if (hasRaceChanged && formData.race) {
+      intentPieces.push(`Race changed to ${formData.race}`);
+    }
+    if (hasRoleChanged && formData.role) {
+      intentPieces.push(`Role updated to ${formData.role}`);
+    }
+
+    setGmIntentPreset(intentPieces.join('. '));
+    setBulkRegenerationQueue(fieldsToRegenerate);
+    setRegeneratingField(BULK_REGENERATE_ID);
+    setShowGmIntentModal(true);
   };
 
   if (isLocked) {
@@ -434,6 +638,41 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           </Button>
         </div>
 
+        {hasIdentityChanged && hasOutdatedFields && (
+          <div className="mb-4 flex flex-col gap-3 rounded-lg border border-yellow-200 bg-yellow-100 px-4 py-4 text-yellow-800 shadow-sm md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-200/60 text-yellow-700">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold">Some sections may be outdated.</p>
+                <p className="text-xs mt-1">
+                  Regenerate them individually or update every affected section at once to reflect the new Race, Class, or Role.
+                </p>
+              </div>
+            </div>
+            <Button 
+              type="button" 
+              variant="primary" 
+              className="w-full md:w-auto"
+              disabled={isBulkRegenerating || !pendingOutdatedFields.length || !sessionId || isLocked}
+              onClick={handleRegenerateAllClick}
+            >
+              {isBulkRegenerating ? (
+                <span className="inline-flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0a12 12 0 100 24v-4a8 8 0 01-8-8z" />
+                  </svg>
+                  Regenerating...
+                </span>
+              ) : (
+                'Regenerate All'
+              )}
+            </Button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -458,6 +697,12 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
                 required
                 className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
+              <div className="mt-2 flex items-start gap-2 text-xs text-gray-400">
+                <Info className="h-3.5 w-3.5 mt-0.5 text-gray-500" />
+                <p>
+                  Role stays free-form so you can write archetypes like "spy", "beast hunter", or "deserter general". It guides narration even though it isn&rsquo;t bound to mechanics.
+                </p>
+              </div>
             </div>
             <div>
               <Label htmlFor="race" className="text-gray-300">Race *</Label>
@@ -550,7 +795,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           </div>
 
           {/* Character Details */}
-          <FieldWithRegenerate fieldName="personality" label="Personality *">
+          <FieldWithRegenerate fieldName="personality" label="Personality *" isOutdated={isFieldOutdated('personality')}>
             <Textarea
               id="personality"
               value={formData.personality}
@@ -562,7 +807,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             />
           </FieldWithRegenerate>
 
-          <FieldWithRegenerate fieldName="motivation" label="Motivation *">
+          <FieldWithRegenerate fieldName="motivation" label="Motivation *" isOutdated={isFieldOutdated('motivation')}>
             <Textarea
               id="motivation"
               value={formData.motivation}
@@ -574,7 +819,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             />
           </FieldWithRegenerate>
 
-          <FieldWithRegenerate fieldName="connectionToStory" label="Connection to Story *">
+          <FieldWithRegenerate fieldName="connectionToStory" label="Connection to Story *" isOutdated={isFieldOutdated('connectionToStory')}>
             <Textarea
               id="connectionToStory"
               value={formData.connectionToStory}
@@ -586,7 +831,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             />
           </FieldWithRegenerate>
 
-          <FieldWithRegenerate fieldName="voiceTone" label="Voice Tone *">
+          <FieldWithRegenerate fieldName="voiceTone" label="Voice Tone *" isOutdated={isFieldOutdated('voiceTone')}>
             <Input
               id="voiceTone"
               value={formData.voiceTone}
@@ -608,7 +853,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
             />
           </FieldWithRegenerate>
 
-          <FieldWithRegenerate fieldName="backgroundHistory" label="Background History *">
+          <FieldWithRegenerate fieldName="backgroundHistory" label="Background History *" isOutdated={isFieldOutdated('backgroundHistory')}>
             <Textarea
               id="backgroundHistory"
               value={formData.backgroundHistory}
@@ -668,11 +913,13 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
                 fieldName="languages" 
                 label="Languages" 
                 placeholder="e.g., Common, Elvish, Dwarvish, Draconic"
+                isOutdated={isFieldOutdated('languages')}
               />
               <ArrayFieldWithRegenerate 
                 fieldName="proficiencies" 
                 label="Proficiencies" 
                 placeholder="e.g., Athletics, Stealth, Thieves' Tools, Herbalism Kit"
+                isOutdated={isFieldOutdated('proficiencies')}
               />
             </div>
 
@@ -681,11 +928,13 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
                 fieldName="equipmentPreferences" 
                 label="Equipment Preferences" 
                 placeholder="e.g., Quarterstaff, Spellbook, Component pouch, Ink and quill"
+                isOutdated={isFieldOutdated('equipmentPreferences')}
               />
               <ArrayFieldWithRegenerate 
                 fieldName="motifAlignment" 
                 label="Motif Alignment" 
                 placeholder="e.g., decay, secrets, family curses"
+                isOutdated={isFieldOutdated('motifAlignment')}
               />
             </div>
 
@@ -721,20 +970,23 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           onConfirm={handleGmIntentConfirm}
           fieldName={regeneratingField || ''}
           characterName={formData.name}
-          isLoading={isRegenerating}
-          hasClassChanged={formData.class !== originalClass}
-          hasRaceChanged={formData.race !== originalRace}
+          isLoading={regeneratingField ? isFieldRegenerating(regeneratingField) : false}
+          hasClassChanged={hasClassChanged}
+          hasRaceChanged={hasRaceChanged}
+          hasRoleChanged={hasRoleChanged}
           newClass={formData.class}
           newRace={formData.race}
+          newRole={formData.role}
+          defaultIntent={gmIntentPreset}
         />
 
         {/* Success Toast */}
-        {showSuccessToast && (
+        {toastMessage && (
           <div className="fixed bottom-4 right-4 bg-green-900/90 border border-green-600/50 text-green-100 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-bottom-2 z-50">
             <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-sm font-medium">Section updated successfully</span>
+            <span className="text-sm font-medium">{toastMessage}</span>
           </div>
         )}
       </div>

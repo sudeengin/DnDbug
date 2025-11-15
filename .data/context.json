@@ -1343,252 +1343,157 @@
           "Provide opportunities for players to experience shared dream sequences.",
           "Create challenges that test players' ability to maintain their individuality."
         ],
-        "numberOfPlayers": 5
+        "numberOfPlayers": 3
       },
       "characters": {
         "list": [
           {
-            "name": "Elysia Thornbloom",
-            "role": "Rogue Investigator",
-            "race": "Half-Elf",
-            "class": "Rogue",
-            "personality": "Elysia is inquisitive and sharp-witted, often masking her caution with humor. She has a keen eye for details and a tendency to distrust overt displays of emotion.",
-            "motivation": "Elysia seeks to uncover the truth behind the Hivemind's control and free the townsfolk from its grasp.",
-            "connectionToStory": "Elysia's father disappeared in Veyra’s Rest years ago, presumed absorbed by the Hivemind. Her quest is as much personal as it is professional.",
-            "gmSecret": "Elysia's father was a member of the Whisperers and left her a coded journal that holds secrets about the Hivemind's origin. She hasn't deciphered it yet, but the journal is the key to unraveling the relic's power.",
-            "potentialConflict": "Her suspicion of others often leads to friction within the group, especially when secrets are involved.",
-            "voiceTone": "Quick and sarcastic, often laced with a dry wit.",
-            "inventoryHint": "An intricately carved magnifying glass given by her father.",
-            "motifAlignment": [
-              "Shared dreams",
-              "Crystalline reflections"
-            ],
-            "backgroundHistory": "Born to a human mother and an elven father in a bustling city, Elysia was always on the outskirts of both communities. Her father's disappearance led her to the art of investigation, and she trained with the city's renowned detective guild. The call to Veyra’s Rest is both a professional mission and a personal vendetta.",
-            "keyRelationships": [
-              "The Whisperers",
-              "Captain Lorn",
-              "Her missing father"
-            ],
-            "flawOrWeakness": "Her mistrust makes it hard for her to form strong alliances.",
-            "languages": [
-              "Common",
-              "Elvish",
-              "Thieves' Cant"
-            ],
-            "alignment": "Chaotic Neutral",
-            "deity": null,
-            "physicalDescription": "Lean and agile, with striking green eyes and hair that seems to change with the light. She wears dark, practical clothing that blends into the shadows.",
-            "equipmentPreferences": [
-              "Dagger",
-              "Thieves' Tools",
-              "Leather Armor"
-            ],
-            "subrace": null,
-            "age": 29,
-            "height": "5'6\"",
-            "proficiencies": [
-              "Stealth",
-              "Investigation",
-              "Thieves' Tools"
-            ],
-            "id": "char_1762119151503_az7sxm7ht",
-            "status": "generated"
-          },
-          {
-            "name": "Thorin Stonefoot",
-            "role": "Dwarven Guardian",
-            "race": "Dwarf",
-            "class": "Paladin",
-            "personality": "Thorin is steadfast and loyal, with an unwavering sense of duty. He speaks with conviction and acts as a moral compass for his companions.",
-            "motivation": "Bound by an oath to his clan, Thorin seeks to protect the realm from any threat, and the Hivemind represents an affront to the freedom he cherishes.",
-            "connectionToStory": "Thorin's clan once guarded the relic, and he views its theft by the Hivemind as a personal disgrace that must be rectified.",
-            "gmSecret": "The relic is actually a dwarven artifact created by Thorin's ancestors, meant to amplify their unity in battle. It was corrupted by an unknown force, leading to the current Hivemind's power.",
-            "potentialConflict": "His rigid adherence to tradition sometimes clashes with the more flexible approaches of his companions.",
-            "voiceTone": "Gruff and resonant, carrying the weight of centuries of tradition.",
-            "inventoryHint": "A dwarven sigil ring symbolizing his clan's honor.",
+            "name": "Elara Moonshadow",
+            "role": "Mystic Seeker",
+            "race": "Elf",
+            "class": "Fighter",
+            "personality": "Elara embodies a quiet determination and a serene, almost otherworldly presence that captivates those around her. Her stoic demeanor often masks an intense inner world where thoughts are meticulously analyzed, ever wary of the Hivemind's insidious reach. She is both introspective and intuitive, frequently contemplating the thin line between shared consciousness and individual identity, while maintaining a keen awareness of the potential dangers lurking in her visions.",
+            "motivation": "Driven by a compulsion deeper than mere duty, Elara seeks to unravel the enigma of her visions and the relic, believing that the key to freeing Veyra’s Rest also lies in understanding her own mysterious lineage. Her desire to liberate the town is intertwined with an urgent need to discover how her past connects to the Hivemind’s power and to prevent the chilling possibility of losing herself to its whispers. In this journey, she hopes to safeguard not only the town's inhabitants but her own identity, ensuring that her role is one of restoration, not ruin.",
+            "connectionToStory": "Since childhood, Elara's dreams have been haunted by the synchronized whispers and shadowed streets of Veyra’s Rest, a place she has never seen but knows intimately through visions. These dreams revealed glimpses of a crystal relic, pulsing with an eerie light that called to her in the night. Driven by these visions, Elara joined the envoys to uncover the truth behind her connection to the town and the relic, sensing that they hold the keys to unlocking ancient mysteries of her lineage and arcane power she has yet to understand.",
+            "gmSecret": "Elara is unknowingly the last descendant of the Hivemind's original creators. Her presence near the relic could either disrupt or strengthen its power, a fact known only to the Hivemind itself.",
+            "potentialConflict": "Her lineage, if discovered, could lead to both internal doubts about her allegiance and external distrust from her companions.",
+            "voiceTone": "Elara's voice is calm and measured, each word chosen with precision, creating an almost musical cadence that seems to weave through the air, hinting at the hidden depth and wisdom she carries.",
+            "inventoryHint": "A translucent crystal shard, its surface etched with indecipherable runes, whispering faint echoes of past thoughts.",
             "motifAlignment": [
               "Echoing heartbeats",
-              "Blending shadows"
-            ],
-            "backgroundHistory": "Raised in the stone halls of his mountain home, Thorin learned the values of honor and duty from a young age. When the relic was stolen, he left his clan to pursue the thieves, driven by a desire to restore his people's honor and reclaim the artifact.",
-            "keyRelationships": [
-              "His Dwarven Clan",
-              "Elder Jaron",
-              "Captain Lorn"
-            ],
-            "flawOrWeakness": "Stubbornness often leads him to dismiss new ideas that challenge his beliefs.",
-            "languages": [
-              "Common",
-              "Dwarvish",
-              "Undercommon"
-            ],
-            "alignment": "Lawful Good",
-            "deity": "Moradin",
-            "physicalDescription": "Stocky and muscular, with a long braided beard and deep-set eyes that glow with inner fire. He wears a heavy suit of armor adorned with clan runes.",
-            "equipmentPreferences": [
-              "Warhammer",
-              "Shield",
-              "Chain Mail"
-            ],
-            "subrace": "Mountain Dwarf",
-            "age": 120,
-            "height": "4'8\"",
-            "proficiencies": [
-              "Athletics",
-              "Intimidation",
-              "Smith's Tools"
-            ],
-            "id": "char_1762119151503_6cffb1mx2",
-            "status": "generated"
-          },
-          {
-            "name": "Zara Nightwind",
-            "role": "Mystic Wanderer",
-            "race": "Tiefling",
-            "class": "Warlock",
-            "personality": "Zara is enigmatic and serene, with a presence that often unnerves those around her. She speaks in riddles and sees the world through the lens of prophecy.",
-            "motivation": "Driven by visions of a world consumed by the Hivemind, Zara seeks to alter the future and prevent its dark prophecy from coming true.",
-            "connectionToStory": "Her visions led her to Veyra’s Rest, where she believes the key to altering the fate of the world lies within the town's secrets.",
-            "gmSecret": "Zara's visions are connected to the Hivemind itself, which uses her as an unwitting vessel to spread its influence. Her presence is both a boon and a bane to her companions.",
-            "potentialConflict": "Her cryptic nature and connection to the Hivemind create distrust among the envoys.",
-            "voiceTone": "Ethereal and poetic, often speaking in cryptic phrases.",
-            "inventoryHint": "A shard of obsidian that seems to pulse with an inner light.",
-            "motifAlignment": [
+              "Shared dreams",
               "Silent whispers",
               "Crystalline reflections"
             ],
-            "backgroundHistory": "Born under an ominous star, Zara wandered the lands seeking meaning. Her life changed when she was granted powers by an ancient entity that filled her mind with prophecies of doom. Her travels brought her to Veyra’s Rest, guided by visions of the Hivemind's power.",
+            "backgroundHistory": "Elara was born in the twilight glades of the Elven realms, her early life steeped in the ethereal melodies of her kin. Her father, an elven sage, and her human mother, a wandering scholar, fostered in her a profound reverence for knowledge and a curiosity for the arcane. As a child, Elara's nights were haunted by vivid dreams of a distant place called Veyra’s Rest, visions she would later learn were shared by her parents in cryptic whispers. When she came of age, a fateful encounter with an ancient elven relic that pulsed in harmony with her dreams solidified her determination to understand her connection to the Hivemind. Driven by the belief that her lineage held the key to freeing Veyra’s Rest, Elara joined the envoys, her purpose entwined with the town's enigmatic relic.",
             "keyRelationships": [
-              "Seraphine, the Seer",
-              "The Faceless One",
-              "Her mysterious patron"
+              "Captain Lorn - Fellow envoy and leader",
+              "Seraphine, the Seer - Respected elder who guided her arcane studies"
             ],
-            "flawOrWeakness": "Her connection to the Hivemind makes her susceptible to its influence.",
+            "flawOrWeakness": "Elara is haunted by self-doubt, stemming from the fear that her arcane pursuits and visions might be leading her down a path of isolation and potential madness, mirroring the Hivemind’s control she seeks to break.",
             "languages": [
               "Common",
-              "Infernal",
-              "Celestial"
-            ],
-            "alignment": "True Neutral",
-            "deity": null,
-            "physicalDescription": "Slender with dark purple skin, curved horns, and eyes that glow a faint red. Her clothing is simple yet elegant, adorned with mystical symbols.",
-            "equipmentPreferences": [
-              "Arcane Focus",
-              "Dagger",
-              "Leather Armor"
-            ],
-            "subrace": null,
-            "age": 30,
-            "height": "5'9\"",
-            "proficiencies": [
-              "Arcana",
-              "Persuasion",
-              "Deception"
-            ],
-            "id": "char_1762119151503_e9hfdniyt",
-            "status": "generated"
-          },
-          {
-            "name": "Rolan Emberwhisper",
-            "role": "Arcane Trickster",
-            "race": "Halfling",
-            "class": "Rogue",
-            "personality": "Rolan is charming and mischievous, with a penchant for illusions and tricks. He thrives in situations that require quick thinking and creativity.",
-            "motivation": "Rolan is driven by the thrill of the heist and the promise of unraveling the mysteries of Veyra’s Rest.",
-            "connectionToStory": "A renowned thief, Rolan was hired by the kingdom to infiltrate the Hivemind-controlled town and retrieve the relic.",
-            "gmSecret": "Rolan's true aim is to steal the relic for himself, hoping to harness its power to become the greatest thief in history. However, he is unaware of the danger it poses.",
-            "potentialConflict": "His ulterior motive and playful nature can cause distrust within the group.",
-            "voiceTone": "Playful and quick, with a hint of mischief in every word.",
-            "inventoryHint": "A deck of enchanted playing cards.",
-            "motifAlignment": [
-              "Blending shadows",
-              "Echoing heartbeats"
-            ],
-            "backgroundHistory": "Born to a family of entertainers, Rolan was drawn to the art of deception from a young age. His life as a thief brought him fame and notoriety, and when the kingdom sought his skills for their mission in Veyra’s Rest, he saw an opportunity for the greatest heist of his career.",
-            "keyRelationships": [
-              "The Kingdom",
-              "Captain Lorn",
-              "A rival thief in the capital"
-            ],
-            "flawOrWeakness": "His greed and arrogance often cloud his judgment.",
-            "languages": [
-              "Common",
-              "Halfling",
-              "Thieves' Cant"
-            ],
-            "alignment": "Chaotic Neutral",
-            "deity": null,
-            "physicalDescription": "Small and nimble, with sandy hair and bright eyes that are always scanning for opportunities. He dresses in vibrant colors that reflect his flamboyant personality.",
-            "equipmentPreferences": [
-              "Shortsword",
-              "Thieves' Tools",
-              "Light Armor"
-            ],
-            "subrace": null,
-            "age": 35,
-            "height": "3'2\"",
-            "proficiencies": [
-              "Sleight of Hand",
-              "Deception",
-              "Performance"
-            ],
-            "id": "char_1762119151503_1bjy5u24f",
-            "status": "generated"
-          },
-          {
-            "name": "Leora Windwhisper",
-            "role": "Arcane Scholar",
-            "race": "Human",
-            "class": "Wizard",
-            "personality": "Leora is analytical and methodical, with a thirst for knowledge that is both her strength and weakness. She often gets lost in thought, pondering the mysteries of the arcane.",
-            "motivation": "To study and understand the relic and the arcane forces at play within Veyra’s Rest.",
-            "connectionToStory": "Leora was sent by the kingdom's arcane academy to investigate the source of the Hivemind's power and report her findings.",
-            "gmSecret": "Leora is unknowingly connected to a line of powerful sorcerers who once attempted to control the relic. Her latent abilities could either help her allies or attract the Hivemind's attention.",
-            "potentialConflict": "Her single-minded focus on research can lead her to overlook immediate dangers.",
-            "voiceTone": "Precise and thoughtful, often pausing before speaking to weigh her words.",
-            "inventoryHint": "A well-worn tome filled with notes and arcane symbols.",
-            "motifAlignment": [
-              "Shared dreams",
-              "Silent whispers"
-            ],
-            "backgroundHistory": "Raised in the heart of the kingdom, Leora showed an early affinity for magic and was accepted into the arcane academy at a young age. Her insatiable curiosity about the Hivemind's power made her the ideal candidate for the mission to Veyra’s Rest.",
-            "keyRelationships": [
-              "The Arcane Academy",
-              "Seraphine, the Seer",
-              "A fellow researcher"
-            ],
-            "flawOrWeakness": "Her obsession with the arcane sometimes blinds her to personal connections.",
-            "languages": [
-              "Common",
-              "Draconic",
               "Elvish"
             ],
             "alignment": "Neutral Good",
-            "deity": "Oghma",
-            "physicalDescription": "Tall and slender, with long auburn hair and piercing blue eyes. She wears robes embroidered with arcane symbols, carrying an air of scholarly authority.",
+            "deity": "Mystra, the goddess of magic",
+            "physicalDescription": "Slender and graceful, her skin has a faint luminescence. She wears flowing garments that shimmer with hues of midnight blue and deep purple.",
+            "equipmentPreferences": "Longsword, Shield, Chain Mail, Crossbow, Adventurer's Pack",
+            "subrace": "Half-Elf",
+            "age": 28,
+            "height": "5'9\"",
+            "proficiencies": [
+              "Athletics",
+              "Perception",
+              "Acrobatics",
+              "All Armor",
+              "Shields",
+              "Simple Weapons",
+              "Martial Weapons"
+            ],
+            "id": "char_1763218061363_zp18u6yvb",
+            "status": "generated"
+          },
+          {
+            "name": "Thorin Stoneheart",
+            "role": "Guardian of Shadows",
+            "race": "Dwarf",
+            "class": "Rogue",
+            "personality": "Thorin is stoic and pragmatic, with a dry wit. He's a loyal protector but is also wary of those who hide their true intentions.",
+            "motivation": "Thorin is driven by the need to prove himself against the unyielding control of the Hivemind, seeking to liberate the town of Veyra’s Rest.",
+            "connectionToStory": "A former mercenary, Thorin was hired by the kingdom to infiltrate Veyra’s Rest, but his personal drive stems from a familial connection to the land.",
+            "gmSecret": "Thorin's ancestor was one of the original settlers of Veyra’s Rest, a fact hidden from him by his family. This connection allows him to occasionally sense the Hivemind's presence more acutely.",
+            "potentialConflict": "His distrust of magic-users can cause friction with other party members, particularly Elara.",
+            "voiceTone": "Gruff and deliberate, with a hint of a Dwarven accent.",
+            "inventoryHint": "An old family crest, tarnished but still recognizable.",
+            "motifAlignment": [
+              "Blending shadows",
+              "Echoing heartbeats",
+              "Silent whispers"
+            ],
+            "backgroundHistory": "Born into a family of craftsmen, Thorin chose the path of a mercenary to escape the shadows of his ancestors' misdeeds. His skills in stealth and protection were honed over years spent in dangerous territories.",
+            "keyRelationships": [
+              "Mira, the Smith - Distant relative and potential ally within the town",
+              "Captain Lorn - Respects but remains cautious of"
+            ],
+            "flawOrWeakness": "Thorin is highly suspicious, often leading him to see betrayal where there is none.",
+            "languages": [
+              "Common",
+              "Dwarvish"
+            ],
+            "alignment": "Lawful Neutral",
+            "deity": null,
+            "physicalDescription": "Broad-shouldered and stout, with a beard braided with small iron rings. His attire is practical, consisting of dark leathers and a hooded cloak.",
             "equipmentPreferences": [
-              "Quarterstaff",
-              "Spellbook",
-              "Arcane Focus"
+              "Shortsword",
+              "Thieves' tools",
+              "Leather armor"
+            ],
+            "subrace": "Mountain Dwarf",
+            "age": 90,
+            "height": "4'8\"",
+            "proficiencies": [
+              "Stealth",
+              "Perception",
+              "Thieves' Tools"
+            ],
+            "id": "char_1763218061363_5s0nte81d",
+            "status": "generated"
+          },
+          {
+            "name": "Lyra Windwhisper",
+            "role": "Enigmatic Bard",
+            "race": "Tiefling",
+            "class": "Bard",
+            "personality": "Lyra is enigmatic and charismatic, with a talent for weaving stories and songs. Her carefree demeanor masks a deep-seated fear of losing her individuality.",
+            "motivation": "She seeks to document the tale of Veyra’s Rest, hoping to uncover the truth of the Hivemind through her art.",
+            "connectionToStory": "Lyra's music has always resonated with echoes of the Hivemind, compelling her to explore Veyra's Rest as part of the envoys.",
+            "gmSecret": "Unbeknownst to Lyra, her performances can subtly influence the Hivemind's collective thoughts, a latent power stemming from her infernal heritage.",
+            "potentialConflict": "Her fear of conformity can lead to resistance against necessary group decisions, potentially endangering the mission.",
+            "voiceTone": "Lyrical and enchanting, with a playful undertone.",
+            "inventoryHint": "A silver flute, intricately carved with infernal runes.",
+            "motifAlignment": [
+              "Echoing heartbeats",
+              "Crystalline reflections",
+              "Shared dreams"
+            ],
+            "backgroundHistory": "Lyra was raised in a troupe of traveling performers, where she honed her craft. A chance encounter with a seer revealed her potential connection to the town of Veyra’s Rest, sparking her curiosity and determination.",
+            "keyRelationships": [
+              "Elder Jaron - Fascination with his enigmatic leadership",
+              "The Faceless One - Intrigued by the mystery"
+            ],
+            "flawOrWeakness": "Her desire for freedom often blinds her to the value of rules and structure.",
+            "languages": [
+              "Common",
+              "Infernal",
+              "Sylvan"
+            ],
+            "alignment": "Chaotic Neutral",
+            "deity": null,
+            "physicalDescription": "Her skin is a deep red, with curling horns and a tail that twitches with her emotions. She wears colorful, flowing attire that catches the light with each movement.",
+            "equipmentPreferences": [
+              "Rapier",
+              "Lute",
+              "Entertainer's pack"
             ],
             "subrace": null,
-            "age": 27,
-            "height": "5'10\"",
+            "age": 25,
+            "height": "5'6\"",
             "proficiencies": [
-              "Arcana",
-              "History",
-              "Insight"
+              "Performance",
+              "Persuasion",
+              "Acrobatics"
             ],
-            "id": "char_1762119151503_zxktz4ut5",
+            "id": "char_1763218061363_ibrrvh71s",
             "status": "generated"
           }
         ],
         "locked": false,
-        "version": 1762119151503
+        "version": 1763231705983
       }
     },
     "locks": {
-      "background": false
+      "background": true
     },
     "meta": {
       "backgroundV": 0,
@@ -1596,8 +1501,8 @@
       "macroSnapshotV": 0,
       "updatedAt": "2025-11-02T20:31:10.301Z"
     },
-    "version": 110,
+    "version": 148,
     "createdAt": "2025-11-02T20:31:10.301Z",
-    "updatedAt": "2025-11-02T21:32:40.944Z"
+    "updatedAt": "2025-11-15T18:35:05.985Z"
   }
 }

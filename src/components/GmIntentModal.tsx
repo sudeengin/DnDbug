@@ -14,8 +14,13 @@ interface GmIntentModalProps {
   isLoading?: boolean;
   hasClassChanged?: boolean;
   hasRaceChanged?: boolean;
+  hasRoleChanged?: boolean;
   newClass?: string;
   newRace?: string;
+  newRole?: string;
+  defaultIntent?: string;
+  isBulk?: boolean;
+  bulkCount?: number;
 }
 
 const fieldDisplayNames = {
@@ -44,10 +49,15 @@ export default function GmIntentModal({
   isLoading = false,
   hasClassChanged = false,
   hasRaceChanged = false,
+  hasRoleChanged = false,
   newClass,
-  newRace
+  newRace,
+  newRole,
+  defaultIntent = '',
+  isBulk = false,
+  bulkCount = 0
 }: GmIntentModalProps) {
-  const [intent, setIntent] = useState('');
+  const [intent, setIntent] = useState(defaultIntent);
   const log = logger.ui;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -58,54 +68,90 @@ export default function GmIntentModal({
     setIntent('');
   };
 
-  const fieldDisplayName = fieldDisplayNames[fieldName as keyof typeof fieldDisplayNames] || fieldName;
+  useEffect(() => {
+    if (isOpen) {
+      setIntent(defaultIntent);
+    }
+  }, [isOpen, defaultIntent]);
+
+  const fieldDisplayName = isBulk
+    ? 'Affected Sections'
+    : fieldDisplayNames[fieldName as keyof typeof fieldDisplayNames] || fieldName;
 
   // Determine context-aware title and message
-  const hasChanges = hasClassChanged || hasRaceChanged;
-  
+  const changedAttributes = [
+    hasClassChanged ? { label: 'Class', value: newClass } : null,
+    hasRaceChanged ? { label: 'Race', value: newRace } : null,
+    hasRoleChanged ? { label: 'Role', value: newRole } : null,
+  ].filter(Boolean) as Array<{ label: string; value?: string }>;
+
+  const formatList = (items: string[]) => {
+    if (items.length === 0) return '';
+    if (items.length === 1) return items[0];
+    if (items.length === 2) return `${items[0]} and ${items[1]}`;
+    return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+  };
+
   const getModalTitle = () => {
-    if (hasClassChanged && hasRaceChanged) {
-      return "Regenerate Section Based on New Class and Race";
-    } else if (hasClassChanged) {
-      return "Regenerate Section Based on New Class";
-    } else if (hasRaceChanged) {
-      return "Regenerate Section Based on New Race";
+    if (isBulk) {
+      return "Regenerate All Affected Sections";
     }
-    return "Regenerate Section";
+    if (!changedAttributes.length) {
+      return "Regenerate Section";
+    }
+    const labels = changedAttributes.map(attr => attr.label);
+    return `Regenerate Section Based on New ${formatList(labels)}`;
   };
   
   const getBodyText = () => {
-    if (hasClassChanged && hasRaceChanged) {
+    if (isBulk) {
+      if (!changedAttributes.length) {
+        return {
+          main: `Would you like to regenerate every affected section with fresh suggestions?`,
+          recommendation: `This ensures the ${fieldDisplayName.toLowerCase()} reflect your latest updates.`
+        };
+      }
       return {
-        main: `The selected class has changed to ${newClass} and race has changed to ${newRace}. Would you like to regenerate this section to reflect these changes?`,
-        recommendation: `This is recommended to ensure the character's ${fieldDisplayName.toLowerCase()} match their updated class and race.`
-      };
-    } else if (hasClassChanged) {
-      return {
-        main: `The selected class has changed to ${newClass}. Would you like to regenerate this section to reflect the new class?`,
-        recommendation: `This is recommended to ensure the character's ${fieldDisplayName.toLowerCase()} match their updated class.`
-      };
-    } else if (hasRaceChanged) {
-      return {
-        main: `The selected race has changed to ${newRace}. Would you like to regenerate this section to reflect the new race?`,
-        recommendation: `This is recommended to ensure the character's ${fieldDisplayName.toLowerCase()} match their updated race.`
+        main: `The ${formatList(changedAttributes.map(attr => attr.value ? `${attr.label.toLowerCase()} has changed to ${attr.value}` : `${attr.label.toLowerCase()} has been updated`))}. Regenerate all impacted sections (${bulkCount || 'multiple'}) to keep them aligned?`,
+        recommendation: `This is recommended so the character’s ${fieldDisplayName.toLowerCase()} match the updated inputs.`
       };
     }
+    if (!changedAttributes.length) {
+      return {
+        main: `Would you like to regenerate this section with fresh suggestions?`,
+        recommendation: `This will generate new options while maintaining consistency with the character's existing background and story.`
+      };
+    }
+
+    const changePhrases = changedAttributes
+      .map(attr => {
+        if (attr.value) {
+          return `the ${attr.label.toLowerCase()} has changed to ${attr.value}`;
+        }
+        return `the ${attr.label.toLowerCase()} has been updated`;
+      });
+
     return {
-      main: `Would you like to regenerate this section with fresh suggestions?`,
-      recommendation: `This will generate new options while maintaining consistency with the character's existing background and story.`
+      main: `The ${formatList(changePhrases)}. Would you like to regenerate this section to reflect these changes?`,
+      recommendation: `This is recommended to ensure the character's ${fieldDisplayName.toLowerCase()} matches their updated ${formatList(changedAttributes.map(attr => attr.label.toLowerCase()))}.`
     };
   };
-
+  
   const getIntentPlaceholder = () => {
-    if (hasClassChanged && !hasRaceChanged && newClass) {
-      return `Leave blank to use the default ${newClass} context.`;
-    } else if (hasRaceChanged && !hasClassChanged && newRace) {
-      return `Leave blank to use the default ${newRace} context.`;
-    } else if (hasClassChanged && hasRaceChanged && newClass && newRace) {
-      return `Leave blank to use the default ${newClass} and ${newRace} context.`;
+    if (isBulk) {
+      if (!changedAttributes.length) {
+        return "Leave blank to use the existing character context.";
+      }
+      const details = changedAttributes
+        .map(attr => attr.value ? `${attr.label.toLowerCase()} (${attr.value})` : attr.label.toLowerCase());
+      return `Leave blank to use the default ${formatList(details)} context for all sections.`;
     }
-    return "Leave blank to use existing character context.";
+    if (!changedAttributes.length) {
+      return "Leave blank to use existing character context.";
+    }
+    const details = changedAttributes
+      .map(attr => attr.value ? `${attr.label.toLowerCase()} (${attr.value})` : attr.label.toLowerCase());
+    return `Leave blank to use the default ${formatList(details)} context.`;
   };
 
   useEffect(() => {
