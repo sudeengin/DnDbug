@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Alert } from './ui/alert';
 import GmIntentModal from './GmIntentModal';
 import type { Character } from '../types/macro-chain';
 import logger from '@/utils/logger';
@@ -31,6 +32,31 @@ interface CharacterFormProps {
 }
 
 const BULK_REGENERATE_ID = '__bulk_regenerate__';
+
+// Simple Tooltip component for Role field
+const Tooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  return (
+    <div className="relative inline-block">
+      <div
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+        onFocus={() => setIsVisible(true)}
+        onBlur={() => setIsVisible(false)}
+        className="inline-flex items-center"
+      >
+        {children}
+      </div>
+      {isVisible && (
+        <div className="absolute bottom-full left-0 mb-2 z-50 w-64 rounded-md bg-gray-800 text-white text-sm p-3 shadow-lg">
+          {content}
+          <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-gray-800"></div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ALIGNMENTS = [
   'Lawful Good',
@@ -296,8 +322,8 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           )}
         </div>
         {isOutdated && (
-          <div className="mb-3 flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-100 p-3 text-sm text-yellow-800">
-            <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" />
+          <div className="mb-2 flex items-start gap-2 rounded-sm border border-yellow-200 bg-yellow-100 px-3 py-2 text-sm text-yellow-800">
+            <AlertTriangle className="h-4 w-4 text-yellow-700 mt-0.5 shrink-0" />
             <p>
               This section may be outdated due to recent changes in Race, Class, or Role. Regenerate it to keep everything consistent.
             </p>
@@ -563,8 +589,8 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           )}
         </div>
         {isOutdated && (
-          <div className="mb-3 flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-100 p-3 text-sm text-yellow-800">
-            <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" />
+          <div className="mb-2 flex items-start gap-2 rounded-sm border border-yellow-200 bg-yellow-100 px-3 py-2 text-sm text-yellow-800">
+            <AlertTriangle className="h-4 w-4 text-yellow-700 mt-0.5 shrink-0" />
             <p>
               This section may be outdated due to recent changes in Race, Class, or Role. Regenerate it to keep everything consistent.
             </p>
@@ -639,38 +665,41 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
         </div>
 
         {hasIdentityChanged && hasOutdatedFields && (
-          <div className="mb-4 flex flex-col gap-3 rounded-lg border border-yellow-200 bg-yellow-100 px-4 py-4 text-yellow-800 shadow-sm md:flex-row md:items-center md:justify-between">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-200/60 text-yellow-700">
-                <AlertTriangle className="h-5 w-5" />
+          <Alert variant="warning" className="mb-4 bg-yellow-100 border-yellow-300 text-yellow-900 p-4 animate-in fade-in-300">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-2 flex-1">
+                <AlertTriangle className="h-5 w-5 text-yellow-700 mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="font-medium text-sm text-yellow-900 mb-1">
+                    Some sections may be outdated.
+                  </p>
+                  <p className="text-sm text-yellow-800">
+                    Regenerate them individually or update every affected section at once to reflect the new Race, Class, or Role.
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold">Some sections may be outdated.</p>
-                <p className="text-xs mt-1">
-                  Regenerate them individually or update every affected section at once to reflect the new Race, Class, or Role.
-                </p>
-              </div>
+              <Button 
+                type="button" 
+                variant="primary" 
+                size="sm"
+                className="h-8 px-4 text-sm shrink-0"
+                disabled={isBulkRegenerating || !pendingOutdatedFields.length || !sessionId || isLocked}
+                onClick={handleRegenerateAllClick}
+              >
+                {isBulkRegenerating ? (
+                  <span className="inline-flex items-center gap-2">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0a12 12 0 100 24v-4a8 8 0 01-8-8z" />
+                    </svg>
+                    Regenerating...
+                  </span>
+                ) : (
+                  'Regenerate All'
+                )}
+              </Button>
             </div>
-            <Button 
-              type="button" 
-              variant="primary" 
-              className="w-full md:w-auto"
-              disabled={isBulkRegenerating || !pendingOutdatedFields.length || !sessionId || isLocked}
-              onClick={handleRegenerateAllClick}
-            >
-              {isBulkRegenerating ? (
-                <span className="inline-flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0a12 12 0 100 24v-4a8 8 0 01-8-8z" />
-                  </svg>
-                  Regenerating...
-                </span>
-              ) : (
-                'Regenerate All'
-              )}
-            </Button>
-          </div>
+          </Alert>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -688,7 +717,12 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               />
             </div>
             <div>
-              <Label htmlFor="role" className="text-gray-300">Role *</Label>
+              <div className="flex items-center gap-2 mb-1">
+                <Label htmlFor="role" className="text-gray-300">Role *</Label>
+                <Tooltip content="Role stays free-form so you can write archetypes like &quot;spy&quot;, &quot;beast hunter&quot;, or &quot;deserter general&quot;. It guides narration even though it isn't bound to mechanics.">
+                  <Info className="h-4 w-4 text-gray-400 hover:text-gray-300 cursor-help" />
+                </Tooltip>
+              </div>
               <Input
                 id="role"
                 value={formData.role}
@@ -697,12 +731,6 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
                 required
                 className="rounded-[12px] bg-[#0f141b] border-[#2A3340] text-[#E0E0E0] placeholder:text-gray-500"
               />
-              <div className="mt-2 flex items-start gap-2 text-xs text-gray-400">
-                <Info className="h-3.5 w-3.5 mt-0.5 text-gray-500" />
-                <p>
-                  Role stays free-form so you can write archetypes like "spy", "beast hunter", or "deserter general". It guides narration even though it isn&rsquo;t bound to mechanics.
-                </p>
-              </div>
             </div>
             <div>
               <Label htmlFor="race" className="text-gray-300">Race *</Label>

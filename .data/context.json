@@ -1350,7 +1350,7 @@
           {
             "name": "Elara Moonshadow",
             "role": "Mystic Seeker",
-            "race": "Elf",
+            "race": "Human",
             "class": "Fighter",
             "personality": "Elara embodies a quiet determination and a serene, almost otherworldly presence that captivates those around her. Her stoic demeanor often masks an intense inner world where thoughts are meticulously analyzed, ever wary of the Hivemind's insidious reach. She is both introspective and intuitive, frequently contemplating the thin line between shared consciousness and individual identity, while maintaining a keen awareness of the potential dangers lurking in her visions.",
             "motivation": "Driven by a compulsion deeper than mere duty, Elara seeks to unravel the enigma of her visions and the relic, believing that the key to freeing Veyra’s Rest also lies in understanding her own mysterious lineage. Her desire to liberate the town is intertwined with an urgent need to discover how her past connects to the Hivemind’s power and to prevent the chilling possibility of losing herself to its whispers. In this journey, she hopes to safeguard not only the town's inhabitants but her own identity, ensuring that her role is one of restoration, not ruin.",
@@ -1489,7 +1489,7 @@
           }
         ],
         "locked": false,
-        "version": 1763231705983
+        "version": 1763303810587
       }
     },
     "locks": {
@@ -1501,8 +1501,8 @@
       "macroSnapshotV": 0,
       "updatedAt": "2025-11-02T20:31:10.301Z"
     },
-    "version": 148,
+    "version": 149,
     "createdAt": "2025-11-02T20:31:10.301Z",
-    "updatedAt": "2025-11-15T18:35:05.985Z"
+    "updatedAt": "2025-11-16T14:36:50.588Z"
   }
 }

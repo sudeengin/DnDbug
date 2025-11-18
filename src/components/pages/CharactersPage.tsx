@@ -334,9 +334,12 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       });
       
       if (response.ok) {
+        // Update characters list - this will trigger re-render of CharacterDetailPage
+        // The key prop on CharacterDetailPage will force it to re-render with updated data
         setCharacters(response.list);
         setShowForm(false);
         setEditingCharacter(null);
+        
         // Refresh context
         if (context) {
           const updatedContext = { ...context };
@@ -607,8 +610,13 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         (() => {
           const character = characters.find(c => c.id === viewCharacterId);
           if (!character) return null;
+          // Use character ID + key fields + version to force re-render when character data changes
+          // This ensures the detail page updates when race, class, or other key fields change
+          const charactersVersion = context?.blocks?.characters?.version || 0;
+          const characterKey = `${character.id}-${character.race}-${character.class}-${character.name}-v${charactersVersion}`;
           return (
             <CharacterDetailPage 
+              key={characterKey}
               character={character} 
               onBack={handleBackToList}
               onEdit={() => handleEditCharacter(character)}
