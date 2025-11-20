@@ -1350,22 +1350,23 @@
           {
             "name": "Elara Moonshadow",
             "role": "Mystic Seeker",
-            "race": "Human",
-            "class": "Fighter",
-            "personality": "Elara embodies a quiet determination and a serene, almost otherworldly presence that captivates those around her. Her stoic demeanor often masks an intense inner world where thoughts are meticulously analyzed, ever wary of the Hivemind's insidious reach. She is both introspective and intuitive, frequently contemplating the thin line between shared consciousness and individual identity, while maintaining a keen awareness of the potential dangers lurking in her visions.",
-            "motivation": "Driven by a compulsion deeper than mere duty, Elara seeks to unravel the enigma of her visions and the relic, believing that the key to freeing Veyra’s Rest also lies in understanding her own mysterious lineage. Her desire to liberate the town is intertwined with an urgent need to discover how her past connects to the Hivemind’s power and to prevent the chilling possibility of losing herself to its whispers. In this journey, she hopes to safeguard not only the town's inhabitants but her own identity, ensuring that her role is one of restoration, not ruin.",
-            "connectionToStory": "Since childhood, Elara's dreams have been haunted by the synchronized whispers and shadowed streets of Veyra’s Rest, a place she has never seen but knows intimately through visions. These dreams revealed glimpses of a crystal relic, pulsing with an eerie light that called to her in the night. Driven by these visions, Elara joined the envoys to uncover the truth behind her connection to the town and the relic, sensing that they hold the keys to unlocking ancient mysteries of her lineage and arcane power she has yet to understand.",
+            "race": "Elf",
+            "class": "Ranger",
+            "personality": "Elara embodies the ethereal grace and keen perception of her Elven ancestry, intertwined with an intense inner dialogue that echoes the whispers of the Hivemind. Her demeanor is calm and observant, yet her mind is a labyrinth of shared dreams and ancestral calls, making her both a steadfast ally and an enigma to her companions. She often appears lost in thought, as if listening to voices beyond the physical realm, constantly balancing her desire for liberation with the fear of being drawn into the Hivemind's enigmatic embrace.",
+            "motivation": "Elara is driven by the call of ancestral memory etched within her very essence, a resonance that connects her to the Dwarven forges of old. She seeks to unlock the secrets of the relic in Veyra's Rest, driven by an intrinsic duty to meld the art of stone and nature with the arcane mysteries she has glimpsed in her visions. For Elara, the liberation of Veyra’s Rest symbolizes a deeper personal quest to reconnect with her lost Dwarven heritage, believing that by understanding the relic's power, she can prevent the Hivemind from consuming not only her identity but the essence of individuality for all.",
+            "connectionToStory": "Elara has always felt a magnetic pull towards Veyra’s Rest, perceiving it as a place where her fragmented dreams and hidden ancestry intersect with the enigmatic forces of the Hivemind. Her connection to the town is deepened by the eerie synchronicity she experiences in her thoughts, often mirroring the whispers of the Hivemind. These shared dreams have revealed to her the presence of a powerful relic within the Crystal Chamber, believed to amplify the Hivemind's grasp. As a Dwarf Ranger, her intrinsic resilience and attunement to the earth guide her in unraveling the hidden pathways within the town, allowing her to seek out the relic that could liberate the townsfolk and perhaps illuminate the mysterious ties to her own lineage.",
             "gmSecret": "Elara is unknowingly the last descendant of the Hivemind's original creators. Her presence near the relic could either disrupt or strengthen its power, a fact known only to the Hivemind itself.",
             "potentialConflict": "Her lineage, if discovered, could lead to both internal doubts about her allegiance and external distrust from her companions.",
-            "voiceTone": "Elara's voice is calm and measured, each word chosen with precision, creating an almost musical cadence that seems to weave through the air, hinting at the hidden depth and wisdom she carries.",
+            "voiceTone": "Elara's voice carries the steady resonance of a mountain echo, her words deliberate and weighted, as if each syllable is chosen to withstand the test of time. There is a grounding depth to her speech, underscored by a subtle, enduring rhythm that reflects the ancient and enduring wisdom of her Dwarven lineage. Her tones are rich and enveloping, weaving a tapestry of introspection and resolve that entices listeners into the enigmatic realms of shared dreams and elusive truths.",
             "inventoryHint": "A translucent crystal shard, its surface etched with indecipherable runes, whispering faint echoes of past thoughts.",
             "motifAlignment": [
-              "Echoing heartbeats",
               "Shared dreams",
               "Silent whispers",
-              "Crystalline reflections"
+              "Echoing heartbeats",
+              "Crystalline reflections",
+              "Eerie synchronicity"
             ],
-            "backgroundHistory": "Elara was born in the twilight glades of the Elven realms, her early life steeped in the ethereal melodies of her kin. Her father, an elven sage, and her human mother, a wandering scholar, fostered in her a profound reverence for knowledge and a curiosity for the arcane. As a child, Elara's nights were haunted by vivid dreams of a distant place called Veyra’s Rest, visions she would later learn were shared by her parents in cryptic whispers. When she came of age, a fateful encounter with an ancient elven relic that pulsed in harmony with her dreams solidified her determination to understand her connection to the Hivemind. Driven by the belief that her lineage held the key to freeing Veyra’s Rest, Elara joined the envoys, her purpose entwined with the town's enigmatic relic.",
+            "backgroundHistory": "Born in the rugged mountains of the Dwarven stronghold of Khazad-Tal, Elara was raised amidst the echoing chants of the stone halls and the harmonious clang of forging steel. Her father, a master smith, infused his craft with arcane runes, while her mother, a seer, spoke of whispers carried through the stones. From them, Elara inherited a dual legacy of craftsmanship and mysticism, nurturing her unique talents. Her defining moment came during a rare lunar eclipse when she stumbled upon an ancient cave adorned with crystals that sang to her in the language of dreams, revealing visions of Veyra’s Rest and a crystal relic. This encounter ignited her desire to understand the intertwined fates of her lineage and the Hivemind's secrets. With the burden of these revelations and her family’s legacy, she joined the envoys to Veyra’s Rest, driven by a quest to unravel the enigma of the relic and prevent the shroud of the Hivemind from consuming her identity and the freedom of the townsfolk.",
             "keyRelationships": [
               "Captain Lorn - Fellow envoy and leader",
               "Seraphine, the Seer - Respected elder who guided her arcane studies"
@@ -1373,23 +1374,30 @@
             "flawOrWeakness": "Elara is haunted by self-doubt, stemming from the fear that her arcane pursuits and visions might be leading her down a path of isolation and potential madness, mirroring the Hivemind’s control she seeks to break.",
             "languages": [
               "Common",
-              "Elvish"
+              "Dwarvish"
             ],
-            "alignment": "Neutral Good",
+            "alignment": "True Neutral",
             "deity": "Mystra, the goddess of magic",
             "physicalDescription": "Slender and graceful, her skin has a faint luminescence. She wears flowing garments that shimmer with hues of midnight blue and deep purple.",
-            "equipmentPreferences": "Longsword, Shield, Chain Mail, Crossbow, Adventurer's Pack",
+            "equipmentPreferences": [
+              "Longbow",
+              "Shortswords",
+              "Leather Armor",
+              "Explorer's Pack",
+              "Arrows"
+            ],
             "subrace": "Half-Elf",
             "age": 28,
             "height": "5'9\"",
             "proficiencies": [
               "Athletics",
-              "Perception",
-              "Acrobatics",
-              "All Armor",
-              "Shields",
-              "Simple Weapons",
-              "Martial Weapons"
+              "Survival",
+              "Nature",
+              "Insight",
+              "Thieves' Tools",
+              "Longswords",
+              "Shortswords",
+              "Longbows"
             ],
             "id": "char_1763218061363_zp18u6yvb",
             "status": "generated"
@@ -1489,7 +1497,7 @@
           }
         ],
         "locked": false,
-        "version": 1763303810587
+        "version": 1763674084451
       }
     },
     "locks": {
@@ -1501,8 +1509,8 @@
       "macroSnapshotV": 0,
       "updatedAt": "2025-11-02T20:31:10.301Z"
     },
-    "version": 149,
+    "version": 228,
     "createdAt": "2025-11-02T20:31:10.301Z",
-    "updatedAt": "2025-11-16T14:36:50.588Z"
+    "updatedAt": "2025-11-20T21:28:04.452Z"
   }
 }

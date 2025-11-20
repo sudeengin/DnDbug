@@ -10,10 +10,10 @@ export function Alert({ variant = 'default', className, children }: AlertProps) 
   const baseClasses = 'rounded-lg border p-4';
   
   const variantClasses = {
-    default: 'bg-blue-50 border-blue-200 text-blue-800',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    secondary: 'bg-gray-50 border-gray-200 text-gray-800',
-    destructive: 'bg-red-50 border-red-200 text-red-800',
+    default: 'bg-blue-900/20 border-blue-700/40 text-blue-200',
+    warning: 'bg-amber-900/20 border-amber-700/40 text-amber-200', // Dark theme
+    secondary: 'bg-gray-800/50 border-gray-700/50 text-gray-300',
+    destructive: 'bg-red-900/20 border-red-700/40 text-red-200',
   };
 
   return (
@@ -30,7 +30,7 @@ interface AlertIconProps {
 export function AlertIcon({ variant = 'default' }: AlertIconProps) {
   const iconClasses = {
     default: 'text-blue-400',
-    warning: 'text-yellow-400',
+    warning: 'text-amber-400', // Dark theme
     secondary: 'text-gray-400',
     destructive: 'text-red-400',
   };

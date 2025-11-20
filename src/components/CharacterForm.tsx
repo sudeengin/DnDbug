@@ -10,6 +10,7 @@ import GmIntentModal from './GmIntentModal';
 import type { Character } from '../types/macro-chain';
 import logger from '@/utils/logger';
 import debug from '@/lib/simpleDebug';
+import { cn } from '@/lib/utils';
 
 const AFFECTED_FIELDS: (keyof Character)[] = [
   'personality',
@@ -33,13 +34,57 @@ interface CharacterFormProps {
 
 const BULK_REGENERATE_ID = '__bulk_regenerate__';
 
-// Simple Tooltip component for Role field
+// Tooltip component with overflow protection
 const Tooltip = ({ children, content }: { children: React.ReactNode; content: string }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (!isVisible || !tooltipRef.current || !triggerRef.current) return;
+    
+    const tooltip = tooltipRef.current;
+    const trigger = triggerRef.current;
+    
+    // Find the modal container
+    const modal = trigger.closest('.fixed.inset-0')?.querySelector('.max-w-2xl, .max-w-md, [class*="max-w"]');
+    if (!modal) return;
+    
+    const triggerRect = trigger.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const modalRect = (modal as HTMLElement).getBoundingClientRect();
+    
+    // Check available space
+    const spaceRight = modalRect.right - triggerRect.right;
+    const spaceLeft = triggerRect.left - modalRect.left;
+    
+    // Position to right if space available, otherwise to left
+    if (spaceRight >= tooltipRect.width + 16) {
+      tooltip.style.left = '100%';
+      tooltip.style.right = 'auto';
+      tooltip.style.marginLeft = '8px';
+      tooltip.style.marginRight = '0';
+    } else if (spaceLeft >= tooltipRect.width + 16) {
+      tooltip.style.right = '100%';
+      tooltip.style.left = 'auto';
+      tooltip.style.marginRight = '8px';
+      tooltip.style.marginLeft = '0';
+    } else {
+      // Not enough space on either side, position above
+      tooltip.style.left = '50%';
+      tooltip.style.right = 'auto';
+      tooltip.style.transform = 'translateX(-50%)';
+      tooltip.style.bottom = '100%';
+      tooltip.style.top = 'auto';
+      tooltip.style.marginBottom = '8px';
+      tooltip.style.marginTop = '0';
+    }
+  }, [isVisible]);
   
   return (
     <div className="relative inline-block">
       <div
+        ref={triggerRef}
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
         onFocus={() => setIsVisible(true)}
@@ -49,9 +94,13 @@ const Tooltip = ({ children, content }: { children: React.ReactNode; content: st
         {children}
       </div>
       {isVisible && (
-        <div className="absolute bottom-full left-0 mb-2 z-50 w-64 rounded-md bg-gray-800 text-white text-sm p-3 shadow-lg">
+        <div
+          ref={tooltipRef}
+          className="absolute top-1/2 -translate-y-1/2 z-50 w-56 rounded-md bg-gray-800 text-white text-sm p-3 shadow-lg pointer-events-none"
+          style={{ maxWidth: 'calc(100vw - 4rem)' }}
+        >
           {content}
-          <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-gray-800"></div>
+          <div className="absolute right-full top-1/2 -translate-y-1/2 -mr-1 border-4 border-transparent border-r-gray-800"></div>
         </div>
       )}
     </div>
@@ -130,11 +179,16 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
   const [regeneratingField, setRegeneratingField] = useState<string | null>(null);
   const [regenerationStatus, setRegenerationStatus] = useState<Record<string, boolean>>({});
   const [isBulkRegenerating, setIsBulkRegenerating] = useState(false);
+  const [bulkRegenerationProgress, setBulkRegenerationProgress] = useState<{ current: number; total: number } | null>(null);
   const [toastMessage, setToastMessage] = useState('');
   const [outdatedFields, setOutdatedFields] = useState<Record<string, boolean>>({});
   const [gmIntentPreset, setGmIntentPreset] = useState('');
   const [bulkRegenerationQueue, setBulkRegenerationQueue] = useState<(keyof Character)[]>([]);
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showStickyActions, setShowStickyActions] = useState(false);
   
   // Track original class and race to detect changes
   const [originalClass] = useState(character.class);
@@ -157,9 +211,40 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     };
   }, []);
 
+  // Track scroll position to show/hide sticky action bar
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer || isBulkRegenerating) {
+      setShowStickyActions(false);
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollTop = scrollContainer.scrollTop;
+      // Show buttons when scrolled down more than 50px
+      setShowStickyActions(scrollTop > 50);
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial check
+    handleScroll();
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+    };
+  }, [isBulkRegenerating]);
+
   useEffect(() => {
     setFormData(character);
+    setHasUnsavedChanges(false); // Reset when character changes
   }, [character]);
+
+  // Track form changes for unsaved changes detection
+  useEffect(() => {
+    const hasChanges = JSON.stringify(formData) !== JSON.stringify(character);
+    setHasUnsavedChanges(hasChanges);
+  }, [formData, character]);
 
   useEffect(() => {
     const revertedToOriginal = identitySignature === originalIdentitySignature;
@@ -322,9 +407,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           )}
         </div>
         {isOutdated && (
-          <div className="mb-2 flex items-start gap-2 rounded-sm border border-yellow-200 bg-yellow-100 px-3 py-2 text-sm text-yellow-800">
-            <AlertTriangle className="h-4 w-4 text-yellow-700 mt-0.5 shrink-0" />
-            <p>
+          <div className="mb-2 flex items-start gap-2 rounded-[12px] bg-amber-900/20 border border-amber-700/40 px-3 py-2 text-sm text-amber-200">
+            <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+            <p className="text-amber-300/90">
               This section may be outdated due to recent changes in Race, Class, or Role. Regenerate it to keep everything consistent.
             </p>
           </div>
@@ -346,6 +431,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
+    setHasUnsavedChanges(false); // Clear flag after save
   };
 
   const handleRegenerateField = (fieldName: keyof Character) => {
@@ -501,9 +587,12 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
       }
 
       setIsBulkRegenerating(true);
+      setBulkRegenerationProgress({ current: 0, total: bulkRegenerationQueue.length });
       try {
-        for (const field of bulkRegenerationQueue) {
+        for (let i = 0; i < bulkRegenerationQueue.length; i++) {
+          const field = bulkRegenerationQueue[i];
           await performRegeneration(field, intent || undefined, { silent: true });
+          setBulkRegenerationProgress({ current: i + 1, total: bulkRegenerationQueue.length });
         }
         showToast('All affected sections regenerated successfully');
         setBulkRegenerationQueue([]);
@@ -513,6 +602,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
         alert(`Error regenerating fields: ${errorMessage}`);
       } finally {
         setIsBulkRegenerating(false);
+        setBulkRegenerationProgress(null);
         setRegeneratingField(null);
         setGmIntentPreset('');
       }
@@ -535,6 +625,7 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
     setShowGmIntentModal(false);
     setRegeneratingField(null);
     setGmIntentPreset('');
+    setBulkRegenerationProgress(null);
     if (bulkRegenerationQueue.length) {
       setBulkRegenerationQueue([]);
     }
@@ -589,9 +680,9 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           )}
         </div>
         {isOutdated && (
-          <div className="mb-2 flex items-start gap-2 rounded-sm border border-yellow-200 bg-yellow-100 px-3 py-2 text-sm text-yellow-800">
-            <AlertTriangle className="h-4 w-4 text-yellow-700 mt-0.5 shrink-0" />
-            <p>
+          <div className="mb-2 flex items-start gap-2 rounded-[12px] bg-amber-900/20 border border-amber-700/40 px-3 py-2 text-sm text-amber-200">
+            <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+            <p className="text-amber-300/90">
               This section may be outdated due to recent changes in Race, Class, or Role. Regenerate it to keep everything consistent.
             </p>
           </div>
@@ -654,33 +745,82 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-[#151A22] border border-[#2A3340] rounded-[12px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div 
+        ref={scrollContainerRef}
+        className="bg-[#151A22] border border-[#2A3340] rounded-[12px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl"
+      >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-200">Edit Character</h2>
-          <Button variant="tertiary" onClick={onClose} className="text-gray-400 hover:text-gray-200">
+          <Button 
+            variant="tertiary" 
+            onClick={() => {
+              if (hasUnsavedChanges) {
+                setShowCancelConfirm(true);
+              } else {
+                onClose();
+              }
+            }} 
+            className="text-gray-400 hover:text-gray-200"
+          >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </Button>
         </div>
 
+        {/* Sticky Save/Cancel Action Bar - Only shows on scroll */}
+        {!isBulkRegenerating && showStickyActions && (
+          <div 
+            className="sticky top-[-24px] z-10 bg-black/30 backdrop-blur-md border-b-2 border-[#2A3340] -mx-6 px-6 py-6 mb-6 flex items-center justify-end space-x-3 shadow-lg transition-all duration-300 ease-out rounded-t-none min-h-[64px]"
+          >
+            <Button 
+              type="button" 
+              variant="secondary" 
+              onClick={() => {
+                if (hasUnsavedChanges) {
+                  setShowCancelConfirm(true);
+                } else {
+                  onClose();
+                }
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              variant="primary"
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit(e);
+              }}
+            >
+              Save Character
+            </Button>
+          </div>
+        )}
+
         {hasIdentityChanged && hasOutdatedFields && (
-          <Alert variant="warning" className="mb-4 bg-yellow-100 border-yellow-300 text-yellow-900 p-4 animate-in fade-in-300">
+          <div 
+            className={cn(
+              "mb-4 rounded-[12px] bg-amber-900/20 border border-amber-700/40 p-4 animate-in fade-in-300 transition-all duration-200",
+              isBulkRegenerating && "sticky top-[-24px] z-10 bg-[#151A22]/95 backdrop-blur-sm shadow-lg -mx-6 px-6 pt-6 rounded-t-none mb-0"
+            )}
+          >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-2 flex-1">
-                <AlertTriangle className="h-5 w-5 text-yellow-700 mt-0.5 shrink-0" />
+                <AlertTriangle className="h-5 w-5 text-amber-400 mt-0.5 shrink-0" />
                 <div className="flex-1">
-                  <p className="font-medium text-sm text-yellow-900 mb-1">
+                  <p className="font-medium text-sm text-amber-200 mb-1">
                     Some sections may be outdated.
                   </p>
-                  <p className="text-sm text-yellow-800">
+                  <p className="text-sm text-amber-300/90">
                     Regenerate them individually or update every affected section at once to reflect the new Race, Class, or Role.
                   </p>
                 </div>
               </div>
               <Button 
                 type="button" 
-                variant="primary" 
+                variant="warning" 
                 size="sm"
                 className="h-8 px-4 text-sm shrink-0"
                 disabled={isBulkRegenerating || !pendingOutdatedFields.length || !sessionId || isLocked}
@@ -692,14 +832,17 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0a12 12 0 100 24v-4a8 8 0 01-8-8z" />
                     </svg>
-                    Regenerating...
+                    {bulkRegenerationProgress 
+                      ? `Regenerating... (${bulkRegenerationProgress.current} of ${bulkRegenerationProgress.total})`
+                      : 'Regenerating...'
+                    }
                   </span>
                 ) : (
                   'Regenerate All'
                 )}
               </Button>
             </div>
-          </Alert>
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -979,16 +1122,6 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
               </FieldWithRegenerate>
             </div>
           </div>
-
-          {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-4 border-t border-[#2A3340]">
-            <Button type="button" variant="secondary" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary">
-              Save Character
-            </Button>
-          </div>
         </form>
 
         {/* GM Intent Modal */}
@@ -1007,6 +1140,38 @@ export default function CharacterForm({ character, onSave, onClose, isLocked, se
           newRole={formData.role}
           defaultIntent={gmIntentPreset}
         />
+
+        {/* Cancel Confirmation Dialog */}
+        {showCancelConfirm && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60]">
+            <div className="bg-[#151A22] border border-[#2A3340] rounded-[12px] p-6 max-w-md w-full mx-4 shadow-xl">
+              <h3 className="text-lg font-semibold text-gray-200 mb-2">Unsaved Changes</h3>
+              <p className="text-sm text-gray-300 mb-6">
+                You have made changes to this character. Are you sure you want to exit without saving?
+              </p>
+              <div className="flex justify-end space-x-3">
+                <Button 
+                  type="button" 
+                  variant="secondary" 
+                  onClick={() => setShowCancelConfirm(false)}
+                >
+                  Continue Editing
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="destructive" 
+                  onClick={() => {
+                    setShowCancelConfirm(false);
+                    setHasUnsavedChanges(false);
+                    onClose();
+                  }}
+                >
+                  Exit Without Saving
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Success Toast */}
         {toastMessage && (

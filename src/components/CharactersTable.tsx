@@ -71,13 +71,13 @@ export default function CharactersTable({
                       )}
                     </div>
                   </div>
-                  {/* Summary line */}
+                  {/* Summary line - Core identity: Race, Class, Role */}
                   <div className="text-sm text-gray-400">
-                    {(character.subrace || character.race) && character.class ? (
-                      <span>{(character.subrace || character.race)} • {character.class}</span>
-                    ) : (
-                      <span>{character.subrace || character.race || character.class}</span>
-                    )}
+                    {[
+                      character.race,
+                      character.class,
+                      character.role
+                    ].filter(Boolean).join(' • ')}
                   </div>
                 </div>
                 
@@ -86,9 +86,13 @@ export default function CharactersTable({
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {/* Tags (max 2) */}
+              {/* Badges - Complementary information (not Race, Class, or Role) */}
               <div className="flex flex-wrap gap-1">
-                {([character.class, character.alignment].filter(Boolean) as string[]).slice(0,2).map((tag, i) => (
+                {([
+                  character.alignment,
+                  character.subrace,
+                  character.deity
+                ].filter(Boolean) as string[]).slice(0, 2).map((tag, i) => (
                   <Badge key={i} variant="outline" className="text-xs text-gray-300 border-gray-600 bg-transparent">{tag}</Badge>
                 ))}
               </div>

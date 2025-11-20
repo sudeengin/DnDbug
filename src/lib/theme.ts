@@ -70,6 +70,16 @@ export const theme = {
   divider: {
     default: 'border-[#2A3340]',
   },
+
+  // Warning/Alert Colors (Dark Theme)
+  warning: {
+    background: 'bg-amber-900/20',
+    border: 'border-amber-700/40',
+    text: 'text-amber-200',
+    textSecondary: 'text-amber-300',
+    icon: 'text-amber-400',
+    container: 'bg-amber-900/20 border-amber-700/40 text-amber-200',
+  },
 } as const;
 
 /**
@@ -106,5 +116,9 @@ export const themeClasses = {
 
   // Common Borders
   borderDivider: theme.divider.default,
+
+  // Warning Patterns
+  warningContainer: 'rounded-[12px] bg-amber-900/20 border border-amber-700/40 text-amber-200 px-3 py-2',
+  warningBanner: 'rounded-[12px] bg-amber-900/20 border border-amber-700/40 text-amber-200 p-4',
 } as const;
 

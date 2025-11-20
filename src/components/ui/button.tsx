@@ -14,6 +14,8 @@ const buttonVariants = cva(
         secondary: "bg-[#1C1F2B] text-gray-300 border border-[#2A3340] hover:bg-[#2A3340] hover:text-white focus-visible:ring-[rgba(42,51,64,0.35)]",
         // Transparent/ghost for icon-only or tertiary actions
         tertiary: "bg-transparent text-[#C9D1D9] hover:bg-[#1b2230] focus-visible:ring-[rgba(27,34,48,0.35)]",
+        // Warning/amber theme for warning banners and alerts - bright yellow background to stand out
+        warning: "bg-[#ffb703] text-[#311903] border-2 border-[#ffb703] hover:bg-[#ffc733] hover:text-[#311903] hover:border-[#ffc733] focus-visible:ring-[rgba(255,183,3,0.4)] shadow-md shadow-amber-900/20",
         // Softer destructive
         destructive: "bg-red-700/70 text-white hover:bg-red-600 focus-visible:ring-[rgba(220,38,38,0.3)] shadow-sm",
       },
