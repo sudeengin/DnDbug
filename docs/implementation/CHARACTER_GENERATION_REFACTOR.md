@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `/api/characters/generate.js` endpoint has been completely refactored to generate 3–5 **playable characters** with detailed backgrounds and relational context, following D&D 5e style guidelines.
+The `/api/characters/generate.js` endpoint has been completely refactored to generate 3–5 **playable characters** with detailed backgrounds and relational context, following SRD 2014 style guidelines.
 
 ## Key Changes
 
@@ -39,7 +39,7 @@ The character generation now produces characters with the following detailed str
 The prompt has been completely rewritten to focus on:
 
 - **Lore & World Integration**: Uses Background Context data (where, when, tone, motifs, anchors) to guide realism
-- **D&D-Level Background Depth**: Based on D&D 5e manuals with mini origin stories
+- **D&D-Level Background Depth**: Based on SRD 2014 manuals with mini origin stories
 - **Relationships and Hooks**: Creates 2–3 narrative connections per character
 - **Flaws & Secrets**: Playable flaws and GM secrets that avoid clichés
 - **Motif Resonance**: Symbolic connections to visual themes from background
@@ -93,7 +93,7 @@ export interface Character {
 ### ✅ D&D-Level Background Depth
 - Each character has a mini origin story (1–2 paragraphs)
 - Includes upbringing, defining event, and reason for joining
-- Style based on D&D 5e Player's Handbook & Xanathar's Guide
+- Style based on SRD 2014 Player's Handbook & Xanathar's Guide
 
 ### ✅ Relationships and Hooks
 - 2–3 key relationships per character

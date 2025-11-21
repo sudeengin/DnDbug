@@ -90,7 +90,7 @@ INSTRUCTIONS:
 3. CLASS/RACE-DEPENDENT FIELDS (languages, proficiencies, equipmentPreferences)
 - When regenerating these fields, PRIORITIZE the character's current class and race
 - IGNORE existing values that don't match the current class/race
-- Generate new values PURELY based on D&D 5e rules for the current class and race
+- Generate new values PURELY based on SRD 2014 rules for the current class and race
 - If the character's class is Druid, provide Druid equipment (NOT wizard or other class equipment)
 - If the character's race is Elf, provide Elf languages and proficiencies (NOT human or other race features)
 
@@ -111,7 +111,7 @@ INSTRUCTIONS:
 - Should read like a mini origin story
 - Include: upbringing, defining event, and reason for joining the story
 - Use 1–2 short paragraphs (max 10 lines total)
-- Base style on D&D 5e manuals (Player's Handbook & Xanathar's Guide)`;
+- Base style on SRD 2014 manuals (Player's Handbook & Xanathar's Guide)`;
   } else if (fieldName === 'personality') {
     prompt += `
 - Focus on personality traits and behavior patterns
@@ -126,7 +126,7 @@ INSTRUCTIONS:
     prompt += `
 - Return a comma-separated list of languages
 - Base STRICTLY on character's CURRENT race and class - ignore existing languages that don't match
-- Follow D&D 5e rules for language proficiencies
+- Follow SRD 2014 rules for language proficiencies
 - DO NOT carry over languages from a different race (e.g., if race is Dwarf, include Dwarvish; if Elf, include Elvish)
 - Examples by race:
   * Elf: "Common, Elvish"
@@ -137,7 +137,7 @@ INSTRUCTIONS:
     prompt += `
 - Return a comma-separated list of proficiencies
 - Include skill proficiencies, tool proficiencies, and weapon proficiencies
-- Base STRICTLY on character's CURRENT class and race per D&D 5e rules - ignore existing proficiencies that don't match
+- Base STRICTLY on character's CURRENT class and race per SRD 2014 rules - ignore existing proficiencies that don't match
 - DO NOT carry over proficiencies from a different class
 - Examples by class:
   * Druid: "Nature, Animal Handling, Perception, Herbalism Kit"
@@ -149,7 +149,7 @@ INSTRUCTIONS:
 - Return a comma-separated list of equipment for a ${characterClass}
 - ⚠️ CRITICAL: The character's class is ${characterClass} - generate equipment ONLY for this class
 - COMPLETELY IGNORE any narrative context, background, or personality that suggests other classes
-- Follow D&D 5e starting equipment for ${characterClass} class EXACTLY
+- Follow SRD 2014 starting equipment for ${characterClass} class EXACTLY
 - DO NOT include equipment from other classes under ANY circumstances
 
 REQUIRED EQUIPMENT BY CLASS:

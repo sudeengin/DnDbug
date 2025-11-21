@@ -5,6 +5,7 @@ import { Badge } from './ui/badge';
 import { Lock, Info, CheckCircle2, X } from 'lucide-react';
 import type { Background } from '../types/srd-2014';
 import { theme } from '@/lib/theme';
+import { debug } from '@/lib/debugCollector';
 
 interface BackgroundSelectorProps {
   backgrounds: Background[];
@@ -44,9 +45,9 @@ export default function BackgroundSelector({
     : backgrounds;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Filter Options */}
-      <div className="flex items-center gap-2 flex-wrap mb-4">
+      <div className="flex items-center gap-2 flex-wrap">
         <span className="text-sm text-gray-400">Filter:</span>
         <Button
           size="sm"
@@ -69,7 +70,8 @@ export default function BackgroundSelector({
       </div>
 
       {/* Compact Grid of Background Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#2A3340] scrollbar-track-transparent">
+      <div className="border border-[#2A3340] rounded-xl bg-[#151A22] p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {filteredBackgrounds.map(bg => {
           const isSelected = selectedBackground === bg.name;
           const suggested = isSuggested(bg.name);
@@ -86,13 +88,25 @@ export default function BackgroundSelector({
               onClick={() => !isLocked && onSelect(bg.name)}
             >
               <CardContent className="p-0">
-                <div className="px-6 pt-6 pb-5 space-y-4">
+                <div className="px-4 pt-4 pb-3 space-y-3">
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0 space-y-2">
-                    <h3 className="text-sm font-semibold text-white truncate">
-                      {bg.name}
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-semibold text-white truncate">
+                        {bg.name}
+                      </h3>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDetailView(bg);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                        title="View full details"
+                      >
+                        <Info className="w-3.5 h-3.5 text-gray-400 hover:text-gray-300" />
+                      </button>
+                    </div>
                     {bg.feature?.name && (
                       <p className="text-xs text-gray-400 truncate">
                         {bg.feature.name}
@@ -124,33 +138,29 @@ export default function BackgroundSelector({
                     <p className="text-[10px] text-blue-300 line-clamp-2 leading-relaxed">{suggestion.reason}</p>
                   </div>
                 )}
-
-                {/* View Details Button (appears on hover) */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDetailView(bg);
-                  }}
-                  className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-[#1C1F2B] border border-[#2A3340] rounded-lg p-1.5 hover:bg-[#252936]"
-                  title="View full details"
-                >
-                  <Info className="w-3 h-3 text-gray-400" />
-                </button>
                 </div>
               </CardContent>
             </Card>
           );
         })}
+        </div>
       </div>
 
       {/* Sticky Lock Button */}
       {selectedBackground && !isLocked && (
-        <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-[#0f141b] via-[#0f141b] to-transparent pt-6 pb-4 border-t border-[#2A3340]">
+        <div className="sticky bottom-0 left-0 right-0 z-10 bg-[#151A22]/95 backdrop-blur-sm border-t border-[#2A3340] pt-4 pb-4 mt-4 shadow-lg">
           <div className="flex items-center justify-center">
             <Button
               variant="primary"
               size="lg"
-              onClick={onLock}
+              onClick={() => {
+                debug.info('BackgroundSelector', 'Lock button clicked', {
+                  selectedBackground,
+                  isLocked
+                });
+                console.log('[BackgroundSelector] Lock button clicked', { selectedBackground, isLocked });
+                onLock();
+              }}
               className="gap-2 shadow-lg shadow-[#7c63e5]/20 hover:shadow-[#7c63e5]/40"
             >
               <Lock className="w-4 h-4" />

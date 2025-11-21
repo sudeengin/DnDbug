@@ -102,7 +102,7 @@ await fetch('/api/generate_chain', {
     sessionId: 'session_123',
     concept: 'A group of adventurers investigates strange disappearances',
     meta: {
-      gameType: 'D&D 5e',
+      gameType: 'SRD 2014',
       players: '4',
       level: '3-5'
     }
@@ -142,7 +142,7 @@ A group of adventurers investigates strange disappearances
 """
 
 STRUCTURAL_PREFERENCES:
-{"gameType": "D&D 5e", "players": "4", "level": "3-5"}
+{"gameType": "SRD 2014", "players": "4", "level": "3-5"}
 
 CONSTRAINTS:
 - Respect CONTEXT_MEMORY facts and themes (do not contradict).

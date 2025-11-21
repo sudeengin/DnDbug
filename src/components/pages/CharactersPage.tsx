@@ -8,6 +8,7 @@ import { Label } from '../ui/label';
 import { postJSON, getJSON } from '../../lib/api';
 import debug from '../../lib/simpleDebug';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
+import type { SRD2014Character } from '../../types/srd-2014';
 import CharactersTable from '../CharactersTable';
 import CharacterForm from '../CharacterForm';
 import CharacterDetailPage from './CharacterDetailPage';
@@ -32,6 +33,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
   const [statusFilter, setStatusFilter] = useState<'all'>('all');
   const [viewCharacterId, setViewCharacterId] = useState<string | null>(null);
   const [numberOfPlayers, setNumberOfPlayers] = useState<number>(4); // Default: 4 players (valid range: 3-6)
+  const [savedSRDCharacters, setSavedSRDCharacters] = useState<SRD2014Character[]>([]);
 
   // Check if background is locked
   const isBackgroundLocked = context?.locks?.background === true;
@@ -84,6 +86,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     }
     if (sessionId) {
       loadCharacters();
+      loadSavedSRDCharacters();
     }
     const handleHash = () => setViewCharacterId(getCharacterIdFromUrl());
     handleHash();
@@ -121,6 +124,23 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     }
   };
 
+  const loadSavedSRDCharacters = async () => {
+    try {
+      const response = await fetch(`/api/characters/srd2014/list?sessionId=${sessionId}`);
+      const data = await response.json();
+      
+      if (data.ok) {
+        setSavedSRDCharacters(data.characters || []);
+      } else {
+        // Don't set error for this - it's not critical if SRD characters fail to load
+        log.warn('Failed to load saved SRD characters:', data.error);
+      }
+    } catch (err) {
+      // Don't set error for this - it's not critical if SRD characters fail to load
+      log.error('Error loading saved SRD characters:', err);
+    }
+  };
+
   const handleGenerateCharacters = async () => {
     debug.info('CharactersPage', 'Generate characters button clicked', { 
       sessionId, 
@@ -149,6 +169,8 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         });
         setCharacters(response.list || []);
         setIsLocked(false);
+        // Refresh saved SRD characters
+        loadSavedSRDCharacters();
         // Refresh context
         if (context) {
           const updatedContext = { ...context };
@@ -227,6 +249,8 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         });
         setCharacters(response.list || []);
         setIsLocked(false);
+        // Refresh saved SRD characters
+        loadSavedSRDCharacters();
         // Refresh context
         if (context) {
           const updatedContext = { ...context };
@@ -339,6 +363,8 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         setCharacters(response.list);
         setShowForm(false);
         setEditingCharacter(null);
+        // Refresh saved SRD characters
+        loadSavedSRDCharacters();
         
         // Refresh context
         if (context) {
@@ -436,6 +462,8 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
       
       if (response.ok) {
         setCharacters(prev => prev.filter(char => char.id !== character.id));
+        // Refresh saved SRD characters
+        loadSavedSRDCharacters();
         log.info('Character deleted:', character.name);
       } else {
         setError('Failed to delete character');
@@ -451,6 +479,11 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
     return isLocked
       ? { label: 'Locked', variant: 'default' as const, className: 'bg-green-900/20 text-green-300 border border-green-700/40' }
       : { label: 'Draft', variant: 'outline' as const, className: 'bg-yellow-900/20 text-yellow-300 border border-yellow-700/40' };
+  };
+
+  // Check if a character has a saved SRD 2014 character sheet
+  const hasCharacterSheet = (characterId: string): boolean => {
+    return savedSRDCharacters.some(srdChar => srdChar.storyCharacterId === characterId);
   };
 
   const status = getStatusBadge();
@@ -649,6 +682,7 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
             onDeleteCharacter={handleDeleteCharacter}
             getCharacterStatusBadge={getCharacterStatusBadge}
             onViewCharacter={handleViewCharacter}
+            hasCharacterSheet={hasCharacterSheet}
           />
         </>
       ))}

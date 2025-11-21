@@ -92,7 +92,7 @@ Follow the rules strictly and return valid JSON only.
 
 **Key Instructions**:
 1. **Lore & World Integration**: Use background context (tone, motifs, anchors)
-2. **D&D-Level Background Depth**: Base style on D&D 5e manuals (Player's Handbook & Xanathar's Guide)
+2. **D&D-Level Background Depth**: Base style on SRD 2014 manuals (Player's Handbook & Xanathar's Guide)
 3. **Relationships and Hooks**: Create 2-3 narrative connections (family, mentor, rival, guild, cult, etc.)
 4. **Flaws & Secrets**: gmSecret must be 2-3 sentences connecting to background lore
 5. **Motif Resonance**: Connect characters to visual themes symbolically

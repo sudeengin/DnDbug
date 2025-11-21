@@ -43,7 +43,7 @@ INSTRUCTIONS:
 - Use why/what fields to determine central narrative tension
 
 2. D&D-LEVEL BACKGROUND DEPTH
-- Base style on D&D 5e manuals (Player's Handbook & Xanathar's Guide)
+- Base style on SRD 2014 manuals (Player's Handbook & Xanathar's Guide)
 - Each character's backgroundHistory should read like a mini origin story
 - Include: upbringing, defining event, and reason for joining the story
 - Use 1–2 short paragraphs (max 10 lines total)

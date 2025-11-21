@@ -7,7 +7,9 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
-import { ChevronDown, ChevronRight, Save, Download, AlertCircle, Users, Plus, Lock, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '../ui/tooltip';
+import { ChevronDown, ChevronRight, Save, Download, AlertCircle, Users, Plus, Lock, CheckCircle2, AlertTriangle, Info, Trash2 } from 'lucide-react';
 import type { SRD2014Character, AbilityScores, Race, Background } from '../../types/srd-2014';
 import type { Character as StoryCharacter } from '../../types/macro-chain';
 import { 
@@ -17,12 +19,24 @@ import {
   validateAbilityScores,
   SRD_RACES, 
   SRD_BACKGROUNDS,
-  ABILITY_SCORE_NAMES 
+  ABILITY_SCORE_NAMES,
+  STANDARD_ARRAY,
+  POINT_BUY_COSTS
 } from '../../types/srd-2014';
 import logger from '@/utils/logger';
+import { debug } from '@/lib/debugCollector';
 import BackgroundSelector from '../BackgroundSelector';
+import { theme } from '@/lib/theme';
 
 const log = logger.character;
+
+// Helper to log to both console and debug collector
+const logWithDebug = (level: 'info' | 'warn' | 'error', message: string, data?: any) => {
+  // Log to console via logger
+  log[level](message, data);
+  // Also log to debug collector
+  debug[level]('CharacterSheetPage', message, data);
+};
 
 interface CharacterSheetPageProps {
   sessionId: string;
@@ -39,13 +53,29 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState<'background' | 'abilities' | 'equipment'>('background');
+
+  // Log component mount
+  useEffect(() => {
+    logWithDebug('info', 'CharacterSheetPage mounted', { sessionId, hasContext: !!context });
+    return () => {
+      logWithDebug('info', 'CharacterSheetPage unmounted');
+    };
+  }, []);
   const [overrideRace, setOverrideRace] = useState(false);
   const [overrideBackground, setOverrideBackground] = useState(false);
   const [backgroundExplicit, setBackgroundExplicit] = useState(false);
   const [backgroundLocked, setBackgroundLocked] = useState(false);
   const [hasEditedScores, setHasEditedScores] = useState(false);
   const [abilityScoresLocked, setAbilityScoresLocked] = useState(false);
+  const [abilityScoreErrors, setAbilityScoreErrors] = useState<Record<keyof AbilityScores, string | null>>({
+    strength: null,
+    dexterity: null,
+    constitution: null,
+    intelligence: null,
+    wisdom: null,
+    charisma: null
+  });
   const [equipmentLocked, setEquipmentLocked] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<{
     weapons: string[];
@@ -60,6 +90,35 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
     packs: [],
     miscellaneous: []
   });
+  const [appliedPresetId, setAppliedPresetId] = useState<string | null>(null);
+  const [appliedLoadout, setAppliedLoadout] = useState<boolean>(false);
+  const [hasAttemptedRestore, setHasAttemptedRestore] = useState(false);
+
+  // Track last edited character ID for persistence
+  const getLastEditedCharacterId = (): string | null => {
+    try {
+      const id = localStorage.getItem(`lastEditedCharacter_${sessionId}`);
+      logWithDebug('info', 'Getting last edited character ID:', { sessionId, id });
+      return id;
+    } catch (err) {
+      logWithDebug('error', 'Error getting last edited character ID:', err);
+      return null;
+    }
+  };
+
+  const setLastEditedCharacterId = (characterId: string | null) => {
+    try {
+      if (characterId) {
+        localStorage.setItem(`lastEditedCharacter_${sessionId}`, characterId);
+        logWithDebug('info', 'Stored last edited character ID:', { sessionId, characterId });
+      } else {
+        localStorage.removeItem(`lastEditedCharacter_${sessionId}`);
+        logWithDebug('info', 'Cleared last edited character ID:', { sessionId });
+      }
+    } catch (err) {
+      logWithDebug('error', 'Error setting last edited character ID:', err);
+    }
+  };
 
   // Debug logging
   useEffect(() => {
@@ -67,8 +126,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       character: character ? character.name : 'null',
       storyCharacters: storyCharacters.length,
       savedSRDCharacters: savedSRDCharacters.length,
-      selectedStoryCharacterId,
-      isEditing
+      selectedStoryCharacterId
     });
     
     // Debug custom fields
@@ -82,46 +140,219 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         customEquipmentPreferences: character.customEquipmentPreferences
       });
     }
-  }, [character, storyCharacters, savedSRDCharacters, selectedStoryCharacterId, isEditing]);
+  }, [character, storyCharacters, savedSRDCharacters, selectedStoryCharacterId]);
 
-  // Load story characters and existing SRD characters on mount
+  // Clear validation errors when ability scores are locked or method changes
+  useEffect(() => {
+    if (abilityScoresLocked || !character) {
+      setAbilityScoreErrors({
+        strength: null,
+        dexterity: null,
+        constitution: null,
+        intelligence: null,
+        wisdom: null,
+        charisma: null
+      });
+    }
+  }, [abilityScoresLocked, character?.abilityScoreMethod]);
+
+  // Auto-advance tabs when steps are completed
+  useEffect(() => {
+    if (backgroundLocked && activeTab === 'background') {
+      setActiveTab('abilities');
+    }
+  }, [backgroundLocked]);
+
+  useEffect(() => {
+    if (abilityScoresLocked && activeTab === 'abilities') {
+      setActiveTab('equipment');
+    }
+  }, [abilityScoresLocked]);
+
+  // Load story characters and existing SRD characters on mount or when sessionId changes
   useEffect(() => {
     if (sessionId) {
-      loadStoryCharacters();
-      loadSRDCharacters();
+      logWithDebug('info', 'CharacterSheetPage: Loading characters', { sessionId, hasContext: !!context });
+      setHasAttemptedRestore(false); // Reset restore flag when sessionId changes
+      
+      // Load characters immediately
+      const loadData = async () => {
+        await Promise.all([
+          loadStoryCharacters(),
+          loadSRDCharacters()
+        ]);
+        logWithDebug('info', 'CharacterSheetPage: All characters loaded', {
+          sessionId,
+          storyCharactersCount: storyCharacters.length,
+          savedSRDCharactersCount: savedSRDCharacters.length
+        });
+      };
+      
+      loadData().catch(err => {
+        logWithDebug('error', 'CharacterSheetPage: Error loading characters', { error: err, sessionId });
+      });
+    } else {
+      logWithDebug('warn', 'CharacterSheetPage: No sessionId available', { sessionId });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
+
+  // Auto-restore last edited character when saved characters are loaded
+  useEffect(() => {
+    // Only attempt restore once, if we have saved characters and no character is currently loaded
+    if (savedSRDCharacters.length > 0 && !character && !hasAttemptedRestore) {
+      const lastEditedId = getLastEditedCharacterId();
+        logWithDebug('info', 'Auto-restore check:', {
+        savedCount: savedSRDCharacters.length, 
+        lastEditedId,
+        selectedStoryCharacterId,
+        hasAttemptedRestore,
+        savedCharacterIds: savedSRDCharacters.map(c => c.id),
+        savedCharacterNames: savedSRDCharacters.map(c => c.name)
+      });
+      
+      let characterToRestore: SRD2014Character | undefined;
+      
+      // Priority 1: Restore by last edited ID from localStorage
+      if (lastEditedId) {
+        characterToRestore = savedSRDCharacters.find(c => c.id === lastEditedId);
+        if (characterToRestore) {
+          logWithDebug('info', 'Found character by last edited ID:', { 
+            name: characterToRestore.name, 
+            id: characterToRestore.id 
+          });
+        } else {
+          // Character ID in localStorage but not found in saved list - clear it
+          logWithDebug('info', 'Last edited character not found in saved list, clearing stored ID', {
+            lastEditedId,
+            availableIds: savedSRDCharacters.map(c => c.id)
+          });
+          setLastEditedCharacterId(null);
+        }
+      }
+      
+      // Priority 2: If no last edited ID match, try to match by selectedStoryCharacterId
+      if (!characterToRestore && selectedStoryCharacterId) {
+        characterToRestore = savedSRDCharacters.find(c => c.storyCharacterId === selectedStoryCharacterId);
+        if (characterToRestore) {
+          logWithDebug('info', 'Found character by story character ID:', { 
+            name: characterToRestore.name, 
+            id: characterToRestore.id,
+            storyCharacterId: selectedStoryCharacterId
+          });
+          // Store this as the last edited character for future restores
+          setLastEditedCharacterId(characterToRestore.id);
+        }
+      }
+      
+      // Priority 3: If only one saved character exists, auto-load it
+      if (!characterToRestore && savedSRDCharacters.length === 1) {
+        characterToRestore = savedSRDCharacters[0];
+        logWithDebug('info', 'Auto-loading only saved character:', { 
+          name: characterToRestore.name, 
+          id: characterToRestore.id 
+        });
+        // Store this as the last edited character for future restores
+        setLastEditedCharacterId(characterToRestore.id);
+      }
+      
+      // Restore the character if found
+      if (characterToRestore) {
+        // Validate that the saved character has required data
+        if (!characterToRestore.abilityScores) {
+          logWithDebug('warn', 'Saved character missing abilityScores, this may cause validation errors', {
+            characterId: characterToRestore.id,
+            characterName: characterToRestore.name
+          });
+        }
+        
+        logWithDebug('info', 'Auto-restoring character:', { 
+          name: characterToRestore.name, 
+          id: characterToRestore.id,
+          abilityScores: characterToRestore.abilityScores,
+          abilityScoreMethod: characterToRestore.abilityScoreMethod,
+          level: characterToRestore.level,
+          race: characterToRestore.race?.name,
+          background: characterToRestore.background?.name,
+          hasStoryCharacterId: !!characterToRestore.storyCharacterId,
+          fullCharacterData: JSON.stringify(characterToRestore, null, 2)
+        });
+        
+        // Deep clone to ensure we're not mutating the saved character
+        const restoredCharacter = JSON.parse(JSON.stringify(characterToRestore));
+        
+        // Verify the clone has ability scores
+        if (!restoredCharacter.abilityScores) {
+          logWithDebug('error', 'Restored character missing abilityScores after clone', {
+            characterId: restoredCharacter.id,
+            characterName: restoredCharacter.name
+          });
+        }
+        
+        setCharacter(restoredCharacter);
+        validateCharacterData(restoredCharacter);
+        
+        // Restore selectedStoryCharacterId if available
+        if (restoredCharacter.storyCharacterId) {
+          setSelectedStoryCharacterId(restoredCharacter.storyCharacterId);
+        }
+        
+        setHasAttemptedRestore(true);
+        
+        logWithDebug('info', 'Character restored successfully', {
+          name: restoredCharacter.name,
+          abilityScores: restoredCharacter.abilityScores,
+          abilityScoreMethod: restoredCharacter.abilityScoreMethod
+        });
+      } else {
+        // No character to restore, mark as attempted to prevent repeated checks
+        logWithDebug('info', 'No character found to auto-restore');
+        setHasAttemptedRestore(true);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedSRDCharacters, character, hasAttemptedRestore, selectedStoryCharacterId]);
 
   const loadStoryCharacters = async () => {
     try {
+      logWithDebug('info', 'Loading story characters', { sessionId });
       const response = await fetch(`/api/characters/list?sessionId=${sessionId}`);
       const data = await response.json();
       
       if (data.ok) {
-        setStoryCharacters(data.list || []);
+        const characters = data.list || [];
+        logWithDebug('info', 'Loaded story characters', { count: characters.length, sessionId });
+        setStoryCharacters(characters);
       } else {
+        logWithDebug('warn', 'Failed to load story characters', { error: data.error, sessionId });
         setError(data.error || 'Failed to load story characters');
       }
     } catch (err) {
+      logWithDebug('error', 'Error loading story characters', { error: err, sessionId });
       setError('Failed to load story characters');
-      log.error('Error loading story characters:', err);
     }
   };
 
   const loadSRDCharacters = async () => {
     try {
+      logWithDebug('info', 'Loading saved SRD characters', { sessionId });
       const response = await fetch(`/api/characters/srd2014/list?sessionId=${sessionId}`);
       const data = await response.json();
       
       if (data.ok) {
-        setSavedSRDCharacters(data.characters || []);
-        console.log('Loaded saved SRD characters:', data.characters?.length || 0);
+        const characters = data.characters || [];
+        logWithDebug('info', 'Loaded saved SRD characters', { 
+          count: characters.length,
+          characterIds: characters.map((c: SRD2014Character) => c.id),
+          characterNames: characters.map((c: SRD2014Character) => c.name)
+        });
+        setSavedSRDCharacters(characters);
       } else {
-        console.log('No saved SRD characters found or error:', data.error);
+        logWithDebug('warn', 'No saved SRD characters found or error', { error: data.error });
         setSavedSRDCharacters([]);
       }
     } catch (err) {
-      console.error('Error loading SRD characters:', err);
+      logWithDebug('error', 'Error loading SRD characters', { error: err, sessionId });
       setSavedSRDCharacters([]);
     }
   };
@@ -135,6 +366,21 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
     if (!character) return;
 
     const updatedCharacter = { ...character, [field]: value };
+    
+    // If switching to Standard Array method, reset all scores to 0 (unassigned)
+    if (field === 'abilityScoreMethod' && value === 'standard') {
+      const unassignedScores: AbilityScores = {
+        strength: 0,
+        dexterity: 0,
+        constitution: 0,
+        intelligence: 0,
+        wisdom: 0,
+        charisma: 0
+      };
+      updatedCharacter.abilityScores = unassignedScores;
+      updatedCharacter.abilityModifiers = calculateAbilityModifiers(unassignedScores);
+      updatedCharacter.pointBuyTotal = undefined;
+    }
     
     // Recalculate ability modifiers if ability scores changed
     if (field === 'abilityScores') {
@@ -150,10 +396,103 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
     validateCharacterData(updatedCharacter);
   };
 
-  const handleAbilityScoreChange = (ability: keyof AbilityScores, value: string) => {
-    const numValue = parseInt(value) || 8;
-    const newScores = { ...character!.abilityScores, [ability]: numValue };
+  const handleAbilityScoreChange = (ability: keyof AbilityScores, value: string | number) => {
+    if (!character) return;
+    
+    // Handle empty input (but allow 0 for clearing in Standard Array)
+    if (value === '' || value === null || value === undefined) {
+      return;
+    }
+    
+    // Parse value (handles both string from input and number from select)
+    let numValue: number;
+    if (typeof value === 'string') {
+      numValue = parseInt(value);
+      if (isNaN(numValue)) {
+        return; // Invalid input, don't update
+      }
+    } else {
+      numValue = value;
+    }
+    
+    // For Standard Array, allow 0 (clear/unassign) or values from STANDARD_ARRAY
+    if (character.abilityScoreMethod === 'standard') {
+      // Allow 0 for clearing/unassigning
+      if (numValue === 0) {
+        // Clear the assignment - set to 0
+        const newScores = { ...character.abilityScores, [ability]: 0 };
+        handleFieldChange('abilityScores', newScores);
+        setHasEditedScores(true);
+        // Clear validation errors for this ability
+        setAbilityScoreErrors(prev => ({ ...prev, [ability]: null }));
+        return;
+      }
+      // Otherwise, value must be from STANDARD_ARRAY
+      if (!STANDARD_ARRAY.includes(numValue as typeof STANDARD_ARRAY[number])) {
+        return; // Invalid value for standard array
+      }
+    } else {
+      // For Point Buy, clamp to SRD 2014 valid range (8-15 before racial bonuses)
+      numValue = Math.max(8, Math.min(15, numValue));
+    }
+    
+    const newScores = { ...character.abilityScores, [ability]: numValue };
+    
+    // Recalculate point buy cost
+    const newPointBuyTotal = calculatePointBuyCost(newScores);
+    
+    // Real-time validation
+    const errors = validateAbilityScores(newScores, character.abilityScoreMethod);
+    const errorMap: Record<keyof AbilityScores, string | null> = {
+      strength: null,
+      dexterity: null,
+      constitution: null,
+      intelligence: null,
+      wisdom: null,
+      charisma: null
+    };
+    
+    // Map validation errors to specific abilities
+    // For Standard Array, allow 0 (unassigned) during assignment - only show errors for invalid assignments
+    errors.forEach(error => {
+      const abilityMatch = error.match(/(\w+) score/);
+      if (abilityMatch) {
+        const abilityName = abilityMatch[1] as keyof AbilityScores;
+        // Don't show "must be between 8 and 15" error for 0 values in Standard Array (they're unassigned)
+        if (character.abilityScoreMethod === 'standard' && 
+            newScores[abilityName] === 0 && 
+            error.includes('must be between 8 and 15')) {
+          // Skip this error - 0 is valid during assignment
+          return;
+        }
+        errorMap[abilityName] = error;
+      } else if (error.includes('Standard array') || error.includes('Point buy')) {
+        // For Standard Array, only show "must be exactly" error if user has assigned some values incorrectly
+        // Don't show it if all values are still 0 (unassigned)
+        if (character.abilityScoreMethod === 'standard' && error.includes('Standard array')) {
+          const hasAnyAssigned = Object.values(newScores).some(score => score > 0);
+          if (!hasAnyAssigned) {
+            // All unassigned - don't show error yet
+            return;
+          }
+        }
+        // General errors apply to all abilities
+        Object.keys(errorMap).forEach(ab => {
+          errorMap[ab as keyof AbilityScores] = error;
+        });
+      }
+    });
+    
+    setAbilityScoreErrors(errorMap);
+    
+    // Update character with new scores
     handleFieldChange('abilityScores', newScores);
+    
+    // Update point buy total if using point buy
+    if (character.abilityScoreMethod === 'point-buy') {
+      handleFieldChange('pointBuyTotal', newPointBuyTotal);
+    }
+    
     setHasEditedScores(true);
   };
 
@@ -289,6 +628,14 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
   const applySuggestedEquipment = () => {
     const suggested = getSuggestedEquipment();
     setSelectedEquipment(suggested);
+    
+    // Set visual feedback
+    setAppliedLoadout(true);
+    
+    // Clear feedback after 3 seconds
+    setTimeout(() => {
+      setAppliedLoadout(false);
+    }, 3000);
   };
 
   type Preset = { id: string; name: string; description: string; scores: Partial<AbilityScores> };
@@ -326,6 +673,92 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       charisma: preset.scores.charisma ?? character.abilityScores.charisma,
     };
     handleFieldChange('abilityScores', newScores);
+    setHasEditedScores(true);
+    
+    // Set visual feedback
+    setAppliedPresetId(preset.id);
+    
+    // Clear feedback after 3 seconds
+    setTimeout(() => {
+      setAppliedPresetId(null);
+    }, 3000);
+  };
+
+  // Get value assignment info for Standard Array
+  const getStandardArrayValueInfo = (value: number): { ability: keyof AbilityScores | null } => {
+    if (!character || character.abilityScoreMethod !== 'standard') {
+      return { ability: null };
+    }
+    
+    for (const [ability, score] of Object.entries(character.abilityScores)) {
+      if (score === value && score > 0 && STANDARD_ARRAY.includes(score as typeof STANDARD_ARRAY[number])) {
+        return { ability: ability as keyof AbilityScores };
+      }
+    }
+    return { ability: null };
+  };
+
+  // Get all Standard Array values with their status for a specific ability
+  const getStandardArrayValuesWithStatus = (currentAbility: keyof AbilityScores): Array<{
+    value: number;
+    isSelected: boolean;
+    isTaken: boolean;
+    takenBy: keyof AbilityScores | null;
+  }> => {
+    if (!character || character.abilityScoreMethod !== 'standard') {
+      return [];
+    }
+    
+    const currentValue = character.abilityScores[currentAbility];
+    
+    return STANDARD_ARRAY.map(value => {
+      const info = getStandardArrayValueInfo(value);
+      const isSelected = value === currentValue && currentValue > 0;
+      const isTaken = info.ability !== null && info.ability !== currentAbility;
+      
+      return {
+        value,
+        isSelected,
+        isTaken,
+        takenBy: isTaken ? info.ability : null
+      };
+    }).sort((a, b) => {
+      // Sort: Selected first, then available, then taken
+      if (a.isSelected) return -1;
+      if (b.isSelected) return 1;
+      if (a.isTaken && !b.isTaken) return 1;
+      if (!a.isTaken && b.isTaken) return -1;
+      return b.value - a.value; // Descending order
+    });
+  };
+
+  // Get available Standard Array values for a specific ability (for backward compatibility)
+  const getAvailableStandardArrayValues = (currentAbility: keyof AbilityScores): number[] => {
+    if (!character || character.abilityScoreMethod !== 'standard') {
+      return [];
+    }
+    
+    const valuesWithStatus = getStandardArrayValuesWithStatus(currentAbility);
+    // Return only selectable values (selected or available, not taken)
+    return valuesWithStatus
+      .filter(v => v.isSelected || !v.isTaken)
+      .map(v => v.value);
+  };
+
+  // Get remaining unassigned Standard Array values
+  const getRemainingStandardArrayValues = (): number[] => {
+    if (!character || character.abilityScoreMethod !== 'standard') {
+      return [];
+    }
+    
+    const assignedValues = new Set<number>();
+    Object.values(character.abilityScores).forEach(score => {
+      if (score > 0 && STANDARD_ARRAY.includes(score as typeof STANDARD_ARRAY[number])) {
+        assignedValues.add(score);
+      }
+    });
+    
+    return STANDARD_ARRAY.filter(value => !assignedValues.has(value)).sort((a, b) => b - a);
   };
 
   const classPresets = getClassPresets();
@@ -385,19 +818,211 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       const data = await response.json();
 
       if (data.ok) {
-        log.info('Character saved successfully:', character);
-        setIsEditing(false);
+        logWithDebug('info', 'Character saved successfully', {
+          characterId: character.id,
+          characterName: character.name,
+          abilityScores: character.abilityScores,
+          abilityScoreMethod: character.abilityScoreMethod,
+          level: character.level,
+          race: character.race?.name,
+          background: character.background?.name
+        });
         setError(null);
-        // Reload saved characters list
+        
+        // Reload saved characters list to get the latest version
         await loadSRDCharacters();
+        
+        // Reload the saved character from the updated list to ensure we have the latest version
+        // This ensures any server-side modifications or timestamps are reflected
+        const updatedListResponse = await fetch(`/api/characters/srd2014/list?sessionId=${sessionId}`);
+        const updatedListData = await updatedListResponse.json();
+        
+        if (updatedListData.ok && updatedListData.characters) {
+          const savedCharacter = updatedListData.characters.find((c: SRD2014Character) => c.id === character.id);
+          if (savedCharacter) {
+            logWithDebug('info', 'Reloading saved character after save', {
+              characterId: savedCharacter.id,
+              characterName: savedCharacter.name,
+              abilityScores: savedCharacter.abilityScores,
+              abilityScoreMethod: savedCharacter.abilityScoreMethod,
+              hasAbilityScores: !!savedCharacter.abilityScores,
+              abilityScoreKeys: savedCharacter.abilityScores ? Object.keys(savedCharacter.abilityScores) : []
+            });
+            
+            // Update character state with the saved version
+            setCharacter(savedCharacter);
+            validateCharacterData(savedCharacter);
+            // Store the character ID for persistence across page navigations
+            setLastEditedCharacterId(savedCharacter.id);
+            logWithDebug('info', 'Character state updated with saved version', {
+              name: savedCharacter.name,
+              abilityScores: savedCharacter.abilityScores
+            });
+          } else {
+            logWithDebug('warn', 'Saved character not found in reloaded list', {
+              characterId: character.id,
+              availableIds: updatedListData.characters.map((c: SRD2014Character) => c.id)
+            });
+          }
+        } else {
+          logWithDebug('warn', 'Failed to reload saved characters after save', {
+            ok: updatedListData.ok,
+            hasCharacters: !!updatedListData.characters
+          });
+        }
+        
       } else {
         setError(data.error || 'Failed to save character');
+        logWithDebug('error', 'Failed to save character', { error: data.error });
       }
     } catch (err) {
       setError('Failed to save character');
-      log.error('Error saving character:', err);
+      logWithDebug('error', 'Error saving character:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteSRDCharacter = async (characterId: string) => {
+    if (!characterId) {
+      logWithDebug('warn', 'handleDeleteSRDCharacter called without characterId', { characterId });
+      return;
+    }
+
+    const confirmed = typeof window !== 'undefined' 
+      ? window.confirm('Are you sure you want to delete this character sheet? This action cannot be undone.')
+      : true;
+    
+    if (!confirmed) {
+      logWithDebug('info', 'Character sheet deletion cancelled by user', { characterId });
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    logWithDebug('info', 'Starting character sheet deletion', {
+      sessionId,
+      characterId,
+      endpoint: '/api/characters/srd2014/delete'
+    });
+
+    try {
+      const response = await fetch('/api/characters/srd2014/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          characterId
+        }),
+      });
+
+      // Log response details
+      logWithDebug('info', 'Delete API response received', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        contentType: response.headers.get('content-type')
+      });
+
+      // Check if response is ok before parsing JSON
+      if (!response.ok) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        let errorData: any = { status: response.status, statusText: response.statusText };
+
+        // Try to parse error response body if available
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            try {
+              const errorJson = JSON.parse(errorText);
+              errorMessage = errorJson.error || errorMessage;
+              errorData = { ...errorData, ...errorJson, responseBody: errorText };
+            } catch {
+              errorData = { ...errorData, responseBody: errorText };
+            }
+          }
+        } catch (parseErr) {
+          logWithDebug('warn', 'Failed to parse error response body', { 
+            error: parseErr, 
+            status: response.status 
+          });
+        }
+
+        setError(errorMessage);
+        logWithDebug('error', 'Failed to delete character sheet - HTTP error', {
+          sessionId,
+          characterId,
+          status: response.status,
+          statusText: response.statusText,
+          errorMessage,
+          errorData
+        });
+        return;
+      }
+
+      // Parse successful response
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseErr) {
+        setError('Failed to parse server response');
+        logWithDebug('error', 'Failed to parse delete response JSON', {
+          sessionId,
+          characterId,
+          parseError: parseErr,
+          status: response.status
+        });
+        return;
+      }
+
+      if (data.ok) {
+        logWithDebug('info', 'Character sheet deleted successfully', {
+          sessionId,
+          characterId: data.deletedCharacter.id,
+          characterName: data.deletedCharacter.name
+        });
+        
+        // If the deleted character is currently loaded, clear it
+        if (character && character.id === characterId) {
+          setCharacter(null);
+          setLastEditedCharacterId(null);
+          logWithDebug('info', 'Cleared loaded character after deletion', { characterId });
+        }
+        
+        // Reload saved characters list
+        await loadSRDCharacters();
+      } else {
+        const errorMsg = data.error || 'Failed to delete character sheet';
+        setError(errorMsg);
+        logWithDebug('error', 'Delete API returned error response', {
+          sessionId,
+          characterId,
+          error: data.error,
+          responseData: data
+        });
+      }
+    } catch (err) {
+      // Network errors, JSON parse errors, etc.
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError('Failed to delete character sheet');
+      logWithDebug('error', 'Exception while deleting character sheet', {
+        sessionId,
+        characterId,
+        error: errorMessage,
+        errorType: err instanceof Error ? err.constructor.name : typeof err,
+        errorStack: err instanceof Error ? err.stack : undefined,
+        fullError: err
+      });
+    } finally {
+      setLoading(false);
+      logWithDebug('info', 'Character sheet deletion attempt completed', {
+        sessionId,
+        characterId,
+        loading: false
+      });
     }
   };
 
@@ -509,30 +1134,26 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
     // Analyze background story to suggest appropriate SRD background
     const srdBackground = findBestBackgroundMatch(storyChar);
 
+    // For Standard Array method, start with unassigned scores (0) so user can assign through dropdowns
+    const initialAbilityScores: AbilityScores = {
+      strength: 0,
+      dexterity: 0,
+      constitution: 0,
+      intelligence: 0,
+      wisdom: 0,
+      charisma: 0
+    };
+
     const converted = {
       id: `srd_${storyChar.id}`,
       name: storyChar.name, // Keep the original name
       level: 1,
       ruleset: 'SRD2014' as const,
-      abilityScores: {
-        strength: 15,
-        dexterity: 14,
-        constitution: 13,
-        intelligence: 12,
-        wisdom: 10,
-        charisma: 8
-      },
+      abilityScores: initialAbilityScores,
       abilityScoreMethod: 'standard' as const,
       race: srdRace,
       background: srdBackground,
-      abilityModifiers: calculateAbilityModifiers({
-        strength: 15,
-        dexterity: 14,
-        constitution: 13,
-        intelligence: 12,
-        wisdom: 10,
-        charisma: 8
-      }),
+      abilityModifiers: calculateAbilityModifiers(initialAbilityScores),
       // Store reference to original story character
       storyCharacterId: storyChar.id,
       // Custom fields from story character
@@ -559,18 +1180,49 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
     return converted;
   };
 
-  const handleCreateFromStoryCharacter = (storyChar: StoryCharacter) => {
+  const handleCreateFromStoryCharacter = async (storyChar: StoryCharacter) => {
     console.log('Creating character sheet for:', storyChar.name);
     try {
-      const srdCharacter = convertStoryCharacterToSRD(storyChar);
-      console.log('Converted character:', srdCharacter);
-      setCharacter(srdCharacter);
-      setBackgroundExplicit(false);
-      setBackgroundLocked(false);
-      setSelectedStoryCharacterId(storyChar.id);
-      validateCharacterData(srdCharacter);
-      setIsEditing(true);
-      console.log('Character state set, should show character sheet now');
+      // Fetch fresh saved characters data to check if this story character already has a saved sheet
+      // This ensures we have the latest data, especially after a deletion
+      let existingSavedChar: SRD2014Character | undefined;
+      try {
+        const response = await fetch(`/api/characters/srd2014/list?sessionId=${sessionId}`);
+        const data = await response.json();
+        if (data.ok && data.characters) {
+          existingSavedChar = data.characters.find(
+            (c: SRD2014Character) => c.storyCharacterId === storyChar.id
+          );
+          // Update state with fresh data
+          setSavedSRDCharacters(data.characters || []);
+        }
+      } catch (fetchError) {
+        logWithDebug('warn', 'Failed to fetch fresh saved characters, using cached state', { error: fetchError });
+        // Fallback to cached state if fetch fails
+        existingSavedChar = savedSRDCharacters.find(
+        c => c.storyCharacterId === storyChar.id
+      );
+      }
+      
+      if (existingSavedChar) {
+        // Load the existing saved character instead of creating a new one
+        logWithDebug('info', 'Found existing saved character, loading:', existingSavedChar.name);
+        setCharacter(existingSavedChar);
+        setSelectedStoryCharacterId(storyChar.id);
+        validateCharacterData(existingSavedChar);
+        setLastEditedCharacterId(existingSavedChar.id);
+      } else {
+        // Create new character from story character
+        const srdCharacter = convertStoryCharacterToSRD(storyChar);
+        console.log('Converted character:', srdCharacter);
+        setCharacter(srdCharacter);
+        setBackgroundExplicit(false);
+        setBackgroundLocked(false);
+        setSelectedStoryCharacterId(storyChar.id);
+        validateCharacterData(srdCharacter);
+        // Don't set lastEditedCharacterId until it's saved
+        console.log('Character state set, should show character sheet now');
+      }
     } catch (error) {
       console.error('Error creating character sheet:', error);
       setError('Failed to create character sheet');
@@ -643,6 +1295,12 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                         onClick={() => {
                           setCharacter(srdChar);
                           validateCharacterData(srdChar);
+                          // Store the character ID for persistence
+                          setLastEditedCharacterId(srdChar.id);
+                          // Restore selectedStoryCharacterId if available
+                          if (srdChar.storyCharacterId) {
+                            setSelectedStoryCharacterId(srdChar.storyCharacterId);
+                          }
                         }}
                         className="flex-1 rounded-xl"
                       >
@@ -662,8 +1320,18 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                           URL.revokeObjectURL(url);
                         }}
                         className="rounded-xl"
+                        title="Download Character Sheet"
                       >
                         <Download className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="destructive"
+                        onClick={() => handleDeleteSRDCharacter(srdChar.id)}
+                        className="rounded-xl"
+                        title="Delete Character Sheet"
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
@@ -674,17 +1342,23 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         )}
 
         {/* Story Characters Section */}
-        {storyCharacters.length > 0 && (
+        {(() => {
+          // Filter out story characters that already have saved character sheets
+          const availableStoryCharacters = storyCharacters.filter(storyChar => 
+            !savedSRDCharacters.some(srdChar => srdChar.storyCharacterId === storyChar.id)
+          );
+          
+          return availableStoryCharacters.length > 0 && (
           <Card className="bg-[#151A22] border border-[#2A3340] rounded-2xl shadow-md shadow-black/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white text-lg font-semibold">
                 <Users className="w-5 h-5" />
-                Create New Character Sheet from Story Characters ({storyCharacters.length})
+                  Create New Character Sheet from Story Characters ({availableStoryCharacters.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {storyCharacters.map((storyChar) => {
+                  {availableStoryCharacters.map((storyChar) => {
                   const suggestedRace = findBestRaceMatch(storyChar.race);
                   const suggestedBackground = findBestBackgroundMatch(storyChar);
                   
@@ -742,20 +1416,8 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               </div>
             </CardContent>
           </Card>
-        )}
-
-        {/* Instructions */}
-        <div className="bg-[#1C1F2B] border border-[#2A3340] rounded-xl p-4">
-          <div className="flex">
-            <Users className="h-5 w-5 text-gray-400 mt-0.5" />
-            <div className="ml-3">
-              <h3 className="text-sm font-semibold text-white">Character Sheet Creation</h3>
-              <div className="mt-2 text-sm text-gray-300">
-                <p>Select a character above to create their SRD 2014 character sheet. The system will intelligently suggest appropriate race and background based on the character's story details. You can then customize the mechanical aspects while preserving the narrative elements.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          );
+        })()}
       </div>
     );
   }
@@ -767,7 +1429,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         <div>
           <h2 className="text-2xl font-bold text-white">Character Sheet</h2>
           <p className="text-gray-400 mt-1">
-            View and edit your SRD 2014 character details
+            Build and customize your SRD 2014 character details
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -810,24 +1472,20 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       <div className="flex space-x-3 items-center">
         <Button
           onClick={() => {
+            logWithDebug('info', 'Back to Selection clicked');
             setCharacter(null);
             setSelectedStoryCharacterId(null);
-            setIsEditing(false);
+            // Clear the last edited character ID when going back to selection
+            setLastEditedCharacterId(null);
+            // Keep hasAttemptedRestore as true to prevent immediate auto-restore
+            // This allows user to actually see the selection screen
+            // The flag will be reset when sessionId changes or component remounts
           }}
           variant="secondary"
         >
           Back to Selection
         </Button>
         
-        <Button
-          onClick={() => setIsEditing(!isEditing)}
-          variant={isEditing ? "secondary" : "primary"}
-          className="rounded-lg px-4 py-2 text-sm"
-        >
-          {isEditing ? 'View Mode' : 'Edit Mode'}
-        </Button>
-        
-        {isEditing && (
           <Button
             onClick={handleSave}
             disabled={loading || validationErrors.length > 0}
@@ -837,7 +1495,6 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
             <Save className="w-4 h-4 mr-2" />
             {loading ? 'Saving...' : 'Save Character'}
           </Button>
-        )}
         
         <Button
           onClick={handleExport}
@@ -849,185 +1506,173 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         </Button>
       </div>
 
-      {/* Step Progress Tracker */}
+
+      {/* Character Creation Tabs */}
       {character && (
-        <div className="bg-[#151A22] border border-[#2A3340] rounded-xl p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-white">Character Creation Progress</h3>
-            <div className="text-xs text-gray-400">
-              {character.name} • {storyCharacters.find(c => c.id === selectedStoryCharacterId)?.class || 'Unknown Class'}
+        <TooltipProvider>
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'background' | 'abilities' | 'equipment')} className="mb-6">
+          {/* Step Progress Header */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm text-gray-400">
+              Character Creation Steps
+            </div>
+            <div className="text-xs text-gray-500">
+              {(() => {
+                const currentStep = activeTab === 'background' ? 1 : activeTab === 'abilities' ? 2 : 3;
+                return `Step ${currentStep} of 3`;
+              })()}
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
-            {/* Step 1: Background */}
-            <div className="flex items-center flex-1">
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${
-                backgroundLocked 
-                  ? 'bg-green-500 border-green-500 text-white' 
-                  : 'bg-[#1C1F2B] border-[#7c63e5] text-[#7c63e5]'
-              }`}>
-                {backgroundLocked ? (
-                  <CheckCircle2 className="w-4 h-4" />
-                ) : (
-                  <span className="text-sm font-semibold">1</span>
-                )}
-              </div>
-              <div className="ml-2 flex-1">
-                <div className={`text-xs font-medium ${backgroundLocked ? 'text-green-300' : 'text-white'}`}>
-                  Background
-                </div>
-                {backgroundLocked && (
-                  <div className="text-xs text-gray-400 truncate">{character.background.name}</div>
-                )}
-              </div>
+          <div className="mb-4">
+            {/* Progress Connector Line */}
+            <div className="relative mb-3">
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#2A3340] -translate-y-1/2" />
+              <div 
+                className="absolute top-1/2 left-0 h-0.5 bg-green-500/60 transition-all duration-500 -translate-y-1/2"
+                style={{
+                  width: equipmentLocked ? '100%' : abilityScoresLocked ? '66.66%' : backgroundLocked ? '33.33%' : '0%'
+                }}
+              />
             </div>
 
-            {/* Connector */}
-            <div className={`h-0.5 w-8 transition-colors ${backgroundLocked ? 'bg-green-500' : 'bg-[#2A3340]'}`} />
-
-            {/* Step 2: Ability Scores */}
-            <div className="flex items-center flex-1">
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${
-                abilityScoresLocked 
-                  ? 'bg-green-500 border-green-500 text-white' 
+            <TabsList className={`${theme.background.card} border ${theme.border.primary} rounded-lg p-1 inline-flex h-auto bg-[#151A22] w-full justify-between mb-6`}>
+              {/* Step 1: Background */}
+              <TabsTrigger 
+                value="background" 
+                className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#7c63e5] data-[state=active]:text-white data-[state=active]:shadow-sm flex-1 ${
+                  activeTab === 'background' 
+                    ? 'bg-[#7c63e5] text-white' 
                   : backgroundLocked
-                  ? 'bg-[#1C1F2B] border-[#7c63e5] text-[#7c63e5]'
-                  : 'bg-[#1C1F2B] border-[#2A3340] text-gray-500'
-              }`}>
-                {abilityScoresLocked ? (
-                  <CheckCircle2 className="w-4 h-4" />
-                ) : (
-                  <span className="text-sm font-semibold">2</span>
-                )}
+                    ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
+                    : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span className="font-semibold text-xs opacity-70">1</span>
+                  <span>Background</span>
+                  {backgroundLocked && <CheckCircle2 className="w-3.5 h-3.5" />}
               </div>
-              <div className="ml-2 flex-1">
-                <div className={`text-xs font-medium ${
-                  abilityScoresLocked ? 'text-green-300' : backgroundLocked ? 'text-white' : 'text-gray-500'
-                }`}>
-                  Abilities
+              </TabsTrigger>
+              
+              {/* Step 2: Abilities */}
+              {!backgroundLocked ? (
+                <Tooltip delayDuration={200}>
+                  <TooltipTrigger asChild>
+                    <div className="flex-1 cursor-not-allowed">
+                      <TabsTrigger 
+                        value="abilities" 
+                        disabled={true}
+                        className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all flex-1 w-full text-gray-500/50 opacity-60 pointer-events-none`}
+                      >
+                        <div className="flex items-center justify-center gap-2">
+                          <Lock className="w-3 h-3" />
+                          <span className="font-semibold text-xs opacity-70">2</span>
+                          <span>Abilities</span>
                 </div>
-                {abilityScoresLocked && (
-                  <div className="text-xs text-gray-400">Assigned</div>
-                )}
+                      </TabsTrigger>
               </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>Complete Step 1: Background to unlock</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <TabsTrigger 
+                  value="abilities" 
+                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#7c63e5] data-[state=active]:text-white data-[state=active]:shadow-sm flex-1 ${
+                    activeTab === 'abilities' 
+                      ? 'bg-[#7c63e5] text-white' 
+                      : abilityScoresLocked 
+                      ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
+                      : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="font-semibold text-xs opacity-70">2</span>
+                    <span>Abilities</span>
+                    {abilityScoresLocked && <CheckCircle2 className="w-3.5 h-3.5" />}
+              </div>
+                </TabsTrigger>
+              )}
+              
+              {/* Step 3: Equipment */}
+              {!abilityScoresLocked ? (
+                <Tooltip delayDuration={200}>
+                  <TooltipTrigger asChild>
+                    <div className="flex-1 cursor-not-allowed">
+                      <TabsTrigger 
+                        value="equipment" 
+                        disabled={true}
+                        className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all flex-1 w-full text-gray-500/50 opacity-60 pointer-events-none`}
+                      >
+                        <div className="flex items-center justify-center gap-2">
+                          <Lock className="w-3 h-3" />
+                          <span className="font-semibold text-xs opacity-70">3</span>
+                          <span>Equipment</span>
+              </div>
+                      </TabsTrigger>
             </div>
-
-            {/* Connector */}
-            <div className={`h-0.5 w-8 transition-colors ${abilityScoresLocked ? 'bg-green-500' : 'bg-[#2A3340]'}`} />
-
-            {/* Step 3: Equipment */}
-            <div className="flex items-center flex-1">
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${
-                equipmentLocked 
-                  ? 'bg-green-500 border-green-500 text-white' 
-                  : abilityScoresLocked
-                  ? 'bg-[#1C1F2B] border-[#7c63e5] text-[#7c63e5]'
-                  : 'bg-[#1C1F2B] border-[#2A3340] text-gray-500'
-              }`}>
-                {equipmentLocked ? (
-                  <CheckCircle2 className="w-4 h-4" />
-                ) : (
-                  <span className="text-sm font-semibold">3</span>
-                )}
-              </div>
-              <div className="ml-2 flex-1">
-                <div className={`text-xs font-medium ${
-                  equipmentLocked ? 'text-green-300' : abilityScoresLocked ? 'text-white' : 'text-gray-500'
-                }`}>
-                  Equipment
-                </div>
-                {equipmentLocked && (
-                  <div className="text-xs text-gray-400">Selected</div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Completion Status */}
-          {equipmentLocked && (
-            <div className="mt-4 pt-4 border-t border-[#2A3340] flex items-center justify-between">
-              <div className="flex items-center gap-2 text-green-300">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-sm font-medium">Character sheet complete!</span>
-              </div>
-              <Button size="sm" variant="primary" onClick={handleSave}>
-                <Save className="w-3 h-3 mr-1" />
-                Save Character
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Character Sheet Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {/* Step 1: Background Selection */}
-        <Card id="step-1-background" className="lg:col-span-2 bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">
-          <Collapsible 
-            open={!backgroundLocked} 
-            onOpenChange={(open) => {
-              if (open && backgroundLocked) {
-                // Allow expanding to review
-                setBackgroundLocked(false);
-                // Collapse later steps
-                const newExpanded = new Set(expandedSections);
-                newExpanded.delete('ability-scores');
-                newExpanded.delete('equipment-preferences');
-                setExpandedSections(newExpanded);
-                setAbilityScoresLocked(false);
-                setEquipmentLocked(false);
-              }
-            }}
-          >
-            <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 border-b border-gray-700 pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${
-                      backgroundLocked 
-                        ? 'bg-green-500 border-green-500' 
-                        : 'bg-[#1C1F2B] border-[#7c63e5]'
-                    }`}>
-                      {backgroundLocked ? (
-                        <CheckCircle2 className="w-4 h-4 text-white" />
-                      ) : (
-                        <span className="text-sm font-semibold text-[#7c63e5]">1</span>
-                      )}
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>Complete Step 2: Abilities to unlock</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <TabsTrigger 
+                  value="equipment" 
+                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#7c63e5] data-[state=active]:text-white data-[state=active]:shadow-sm flex-1 ${
+                    activeTab === 'equipment' 
+                      ? 'bg-[#7c63e5] text-white' 
+                      : equipmentLocked 
+                      ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
+                      : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="font-semibold text-xs opacity-70">3</span>
+                    <span>Equipment</span>
+                    {equipmentLocked && <CheckCircle2 className="w-3.5 h-3.5" />}
                     </div>
-                    <div>
-                      <div className="text-base font-semibold group-hover:underline underline-offset-4">
-                        Step 1: Choose a Background
-                      </div>
-                      {backgroundLocked && (
-                        <div className="text-sm text-gray-400 font-normal mt-0.5">
-                          Selected: {character.background.name}
-                        </div>
-                      )}
+                </TabsTrigger>
+              )}
+            </TabsList>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {backgroundLocked && (
-                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Complete
-                      </Badge>
-                    )}
-                    {!backgroundLocked ? (
-                      <ChevronDown className="w-5 h-5" />
-                    ) : (
-                      <ChevronRight className="w-5 h-5" />
-                    )}
-                  </div>
-                </CardTitle>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
+
+          <TabsContent value="background" className="mt-0">
+            <Card className={`${theme.background.card} border ${theme.border.primary} rounded-xl`}>
               <CardContent className="p-6 md:p-8">
                 <p className="text-sm text-gray-400 mb-6">
                   Select a background that fits your character's history and role. Each background provides skill proficiencies, tool proficiencies, and a special feature. <strong>Click the info icon</strong> on any card to see full details.
                 </p>
+
+                {/* Character Information Summary */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-[#1C1F2B] border border-[#2A3340] rounded-xl p-4">
+                    <div className="text-xs text-gray-400 flex items-center gap-2 mb-2">Race</div>
+                    <div className="text-sm text-gray-300">
+                      <span className="text-white font-medium">{character.race.name}</span>
+                    </div>
+                  </div>
+                  <div className="bg-[#1C1F2B] border border-[#2A3340] rounded-xl p-4">
+                    <div className="text-xs text-gray-400 flex items-center gap-2 mb-2">Class</div>
+                    <div className="text-sm text-gray-300">
+                      <span className="text-white font-medium">
+                        {selectedStoryCharacterId 
+                          ? (storyCharacters.find(c => c.id === selectedStoryCharacterId)?.class || '—') 
+                          : '—'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="bg-[#1C1F2B] border border-[#2A3340] rounded-xl p-4">
+                    <div className="text-xs text-gray-400 flex items-center gap-2 mb-2">Subrace</div>
+                    <div className="text-sm text-gray-300">
+                      <span className="text-white font-medium">
+                        {character.subrace?.name || '—'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
                 
                 <BackgroundSelector
                   backgrounds={SRD_BACKGROUNDS}
@@ -1035,112 +1680,40 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                   suggestedBackgrounds={getSuggestedBackgroundsByClass()}
                   onSelect={handleBackgroundChange}
                   onLock={() => {
+                    logWithDebug('info', 'Background lock button clicked', {
+                      characterId: character?.id,
+                      characterName: character?.name,
+                      selectedBackground: character?.background?.name
+                    });
                     setBackgroundLocked(true);
-                    // Expand Step 2 and scroll to it
-                    const newExpanded = new Set(expandedSections);
-                    newExpanded.add('ability-scores');
-                    setExpandedSections(newExpanded);
-                    
-                    setTimeout(() => {
-                      const el = document.getElementById('step-2-ability-scores');
-                      if (el) {
-                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }, 100);
+                    // Tab will auto-advance via useEffect
                   }}
                   isLocked={backgroundLocked}
                 />
               </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
         </Card>
+          </TabsContent>
 
-        {/* Step 2: Ability Scores (locked until background chosen) */}
-        <Card id="step-2-ability-scores" className={`relative lg:col-span-2 bg-[#121722] border-2 rounded-2xl shadow-xl transition-all duration-300 overflow-hidden ${
-          !backgroundLocked 
-            ? 'border-[#2A3340]' 
-            : 'border-[#7c63e5]/40 shadow-[#7c63e5]/10'
-        } ${!backgroundLocked ? 'min-h-[320px]' : ''}`}>
-          <Collapsible 
-            open={expandedSections.has('ability-scores')} 
-            onOpenChange={() => backgroundLocked && toggleSection('ability-scores')}
-          >
-            <CollapsibleTrigger asChild disabled={!backgroundLocked}>
-              <CardHeader className={`transition-colors rounded-t-2xl ${backgroundLocked ? 'cursor-pointer group hover:bg-[#1A1F2E]' : 'cursor-not-allowed'}`}>
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 border-b border-gray-700 pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${
-                      abilityScoresLocked 
-                        ? 'bg-green-500 border-green-500' 
-                        : backgroundLocked
-                        ? 'bg-[#1C1F2B] border-[#7c63e5]'
-                        : 'bg-[#1C1F2B] border-[#2A3340]'
-                    }`}>
-                      {abilityScoresLocked ? (
-                        <CheckCircle2 className="w-4 h-4 text-white" />
-                      ) : (
-                        <span className={`text-sm font-semibold ${backgroundLocked ? 'text-[#7c63e5]' : 'text-gray-500'}`}>2</span>
-                      )}
-                    </div>
-                    <div>
-                      <div className="text-base font-semibold group-hover:underline underline-offset-4">
-                        Step 2: Assign Ability Scores
-                      </div>
-                      {abilityScoresLocked && (
-                        <div className="text-sm text-gray-400 font-normal mt-0.5">
-                          Scores assigned and locked
-                        </div>
-                      )}
-                      {!backgroundLocked && (
-                        <div className="text-sm text-gray-400 font-normal mt-0.5">
-                          Complete Step 1 first
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {abilityScoresLocked && (
-                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Complete
-                      </Badge>
-                    )}
-                    {backgroundLocked && !abilityScoresLocked && (
-                      <Badge variant="outline" className="text-xs bg-blue-900/30 text-blue-300 border border-blue-600/30">
-                        Ready
-                      </Badge>
-                    )}
-                    {expandedSections.has('ability-scores') ? (
-                      <ChevronDown className="w-5 h-5" />
-                    ) : (
-                      <ChevronRight className="w-5 h-5" />
-                    )}
-                  </div>
-                </CardTitle>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="space-y-6 text-left max-w-[960px] p-6 md:p-8">
+          <TabsContent value="abilities" className="mt-0">
+            {!backgroundLocked ? (
+              <Card className={`${theme.background.card} border ${theme.border.primary} rounded-xl`}>
+                <CardContent className="p-12 text-center">
+                  <Lock className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">Abilities Locked</h3>
+                  <p className="text-sm text-gray-400">
+                    Complete the Background step first to unlock ability score assignment.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className={`${theme.background.card} border ${theme.border.primary} rounded-xl`}>
+              <CardContent className="space-y-6 text-left p-6 md:p-8">
                 
-                {/* Success Banner */}
-                {backgroundLocked && (
-                  <div className="bg-green-900/20 border border-green-600/30 rounded-lg p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-green-300">
-                        Background locked: {character.background.name}
-                      </p>
-                      <p className="text-xs text-green-400/80 mt-1">
-                        Now assign your ability scores based on your race, class, and background.
-                      </p>
-                    </div>
-                  </div>
-                )}
                 {/* Context summary */}
                 {(() => {
                   const storyChar = selectedStoryCharacterId ? storyCharacters.find(c => c.id === selectedStoryCharacterId) : null;
                   return (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                       <div className="bg-[#1C1F2B] border border-[#2A3340] rounded-xl p-4">
                         <div className="text-xs text-gray-400 flex items-center gap-2">Current</div>
                         <div className="mt-2 text-sm text-gray-300"><span className="text-gray-400">Race:</span> <span className="text-white font-medium">{character.race.name}</span></div>
@@ -1158,25 +1731,87 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                 })()}
 
                 {/* Suggestions header */}
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-300">Based on your Race, Class, and Background, here are suggested scores. Modify below or assign manually.</div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="primary" onClick={() => { const p = classPresets[0]; if (p) applyPreset(p); }}>Auto-Fill Suggestions</Button>
-                    <Button size="sm" variant="secondary">Manual Entry</Button>
-                  </div>
+                <div className="text-sm text-gray-300">
+                  Based on your Race, Class, and Background, here are suggested scores. Modify below or assign manually.
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm text-gray-400">Method: {character.abilityScoreMethod === 'standard' ? 'Standard Array' : 'Point Buy'}</Label>
-                  {character.abilityScoreMethod === 'point-buy' && character.pointBuyTotal && (
-                    <Badge variant="outline" className="bg-[#2A3340] text-gray-300 border-0">
-                      {character.pointBuyTotal}/27 points
-                    </Badge>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm text-gray-400">Method: {character.abilityScoreMethod === 'standard' ? 'Standard Array' : 'Point Buy'}</Label>
+                    {character.abilityScoreMethod === 'point-buy' && character.pointBuyTotal !== undefined && (
+                      <Badge 
+                        variant="outline" 
+                        className={`${
+                          character.pointBuyTotal > 27
+                            ? 'bg-red-900/30 text-red-300 border-red-600/50'
+                            : character.pointBuyTotal === 27
+                            ? 'bg-green-900/30 text-green-300 border-green-600/50'
+                            : character.pointBuyTotal >= 24
+                            ? 'bg-amber-900/30 text-amber-300 border-amber-600/50'
+                            : 'bg-[#2A3340] text-gray-300 border-0'
+                        }`}
+                      >
+                        {character.pointBuyTotal}/27 points
+                        {character.pointBuyTotal > 27 && (
+                          <AlertCircle className="w-3 h-3 ml-1 inline" />
+                        )}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {/* SRD 2014 Rule Guidance */}
+                  {character.abilityScoreMethod === 'standard' && (
+                    <>
+                      <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-3">
+                        <div className="text-xs font-semibold text-blue-300 mb-1">Standard Array Rules</div>
+                        <div className="text-xs text-blue-400/80">
+                          You must use exactly these values (in any order): <span className="font-mono font-semibold text-blue-300">15, 14, 13, 12, 10, 8</span>
+                        </div>
+                      </div>
+                      
+                    </>
+                  )}
+                  
+                  {character.abilityScoreMethod === 'point-buy' && (
+                    <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-3">
+                      <div className="text-xs font-semibold text-blue-300 mb-1">Point Buy Rules</div>
+                      <div className="text-xs text-blue-400/80 space-y-1">
+                        <div>Total cost cannot exceed <span className="font-semibold text-blue-300">27 points</span></div>
+                        <div className="text-[10px] text-blue-500/70 mt-1">
+                          Point costs: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9
+                        </div>
+                        {character.pointBuyTotal !== undefined && character.pointBuyTotal > 27 && (
+                          <div className="text-red-400 text-xs font-medium mt-2">
+                            ⚠️ Exceeds maximum! Reduce scores to stay within 27 points.
+                          </div>
+                        )}
+                        {character.pointBuyTotal !== undefined && character.pointBuyTotal < 27 && (
+                          <div className="text-amber-400 text-xs mt-2">
+                            {27 - character.pointBuyTotal} points remaining
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Validation Errors Summary */}
+                  {Object.values(abilityScoreErrors).some(err => err !== null) && (
+                    <div className="bg-red-900/20 border border-red-600/30 rounded-lg p-3">
+                      <div className="text-xs font-semibold text-red-300 mb-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        Validation Errors
+                      </div>
+                      <div className="text-xs text-red-400/80 space-y-1">
+                        {Array.from(new Set(Object.values(abilityScoreErrors).filter(err => err !== null))).map((error, idx) => (
+                          <div key={idx}>• {error}</div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
 
                 {/* Class Tips and Presets */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                   <div className="md:col-span-1 bg-[#131A24] border border-[#2A3340] rounded-xl p-4">
                     <div className="text-sm font-semibold text-white mb-2 flex items-center gap-2"><Info className="w-4 h-4" /> Class Tips</div>
                     <div className="text-xs text-gray-300 space-y-2">
@@ -1188,79 +1823,223 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                   <div className="md:col-span-2 bg-[#131A24] border border-[#2A3340] rounded-xl p-4">
                     <div className="text-sm font-semibold text-white mb-3">Suggested Presets</div>
                     <div className="flex flex-col gap-3">
-                      {classPresets.map(p => (
-                        <div key={p.id} className="flex items-start justify-between gap-3 bg-[#161D28] border border-[#2A3340] rounded-lg p-3">
-                          <div>
-                            <div className="text-sm text-white font-medium">{p.name}</div>
-                            <div className="text-xs text-gray-400">{p.description}</div>
-                            <div className="mt-2 text-xs text-gray-300">
-                              {(['strength','dexterity','constitution','intelligence','wisdom','charisma'] as (keyof AbilityScores)[]).map((ab, i) => (
-                                <span key={ab} className="mr-3">
-                                  <span className="uppercase text-gray-400">{ab.slice(0,3)}</span>: <span className="text-white font-semibold">{p.scores[ab] ?? '-'}</span>
-                                </span>
-                              ))}
+                      {classPresets.map(p => {
+                        const isApplied = appliedPresetId === p.id;
+                        return (
+                          <div 
+                            key={p.id} 
+                            className={`flex items-start justify-between gap-3 bg-[#161D28] border rounded-lg p-3 transition-all duration-300 ${
+                              isApplied 
+                                ? 'border-green-500/50 bg-green-900/10' 
+                                : 'border-[#2A3340]'
+                            }`}
+                          >
+                            <div>
+                              <div className="text-sm text-white font-medium">{p.name}</div>
+                              <div className="text-xs text-gray-400">{p.description}</div>
+                              <div className="mt-2 text-xs text-gray-300">
+                                {(['strength','dexterity','constitution','intelligence','wisdom','charisma'] as (keyof AbilityScores)[]).map((ab, i) => (
+                                  <span key={ab} className="mr-3">
+                                    <span className="uppercase text-gray-400">{ab.slice(0,3)}</span>: <span className="text-white font-semibold">{p.scores[ab] ?? '-'}</span>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button 
+                                size="sm" 
+                                variant={isApplied ? "secondary" : "primary"}
+                                onClick={() => applyPreset(p)}
+                                className={isApplied ? "bg-green-600 hover:bg-green-700 text-white" : ""}
+                                disabled={isApplied}
+                              >
+                                {isApplied ? (
+                                  <>
+                                    <CheckCircle2 className="w-3 h-3 mr-1.5" />
+                                    Applied
+                                  </>
+                                ) : (
+                                  'Apply'
+                                )}
+                              </Button>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Button size="sm" variant="primary" onClick={() => applyPreset(p)}>Apply</Button>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {ABILITY_SCORE_NAMES.map(ability => (
-                    <div key={ability} className="space-y-2">
-                      <Label htmlFor={ability} className="capitalize text-sm text-gray-400 flex items-center gap-1">
-                        {ability}
-                        <span title={ABILITY_DEFINITIONS[ability as keyof AbilityScores]}>
-                          <Info className="w-3 h-3 text-gray-500" aria-label="Ability info" />
-                        </span>
-                      </Label>
-                      <div className="flex items-center space-x-2">
-                        {isEditing && !abilityScoresLocked ? (
-                          <Input
-                            id={ability}
-                            type="number"
-                            min="8"
-                            max="15"
-                            value={character.abilityScores[ability]}
-                            onChange={(e) => handleAbilityScoreChange(ability, e.target.value)}
-                            className="w-16 bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5]"
-                          />
-                        ) : (
-                          <div className="w-16 text-center text-lg font-semibold text-white">
-                            {character.abilityScores[ability]}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full">
+                  {ABILITY_SCORE_NAMES.map(ability => {
+                    const hasError = abilityScoreErrors[ability] !== null;
+                    const score = character.abilityScores[ability];
+                    const isStandardArray = character.abilityScoreMethod === 'standard';
+                    // For Standard Array, 0 is valid (unassigned). For Point Buy, must be 8-15
+                    const isValid = isStandardArray 
+                      ? (score === 0 || (score >= 8 && score <= 15))
+                      : (score >= 8 && score <= 15);
+                    const availableValues = isStandardArray ? getAvailableStandardArrayValues(ability) : [];
+                    const valuesWithStatus = isStandardArray ? getStandardArrayValuesWithStatus(ability) : [];
+                    const currentValue = character.abilityScores[ability];
+                    
+                    // Get ability name for display
+                    const getAbilityDisplayName = (ab: keyof AbilityScores): string => {
+                      return ab.charAt(0).toUpperCase() + ab.slice(1, 3).toUpperCase();
+                    };
+                    
+                    return (
+                      <div key={ability} className="space-y-2">
+                        <Label htmlFor={ability} className="capitalize text-sm text-gray-400 flex items-center gap-1">
+                          {ability}
+                          <span title={ABILITY_DEFINITIONS[ability as keyof AbilityScores]}>
+                            <Info className="w-3 h-3 text-gray-500" aria-label="Ability info" />
+                          </span>
+                        </Label>
+                        <div className="flex items-center space-x-2">
+                          {!abilityScoresLocked ? (
+                            <div className="flex flex-col gap-1">
+                              {isStandardArray ? (
+                                <Select
+                                  value={currentValue > 0 && STANDARD_ARRAY.includes(currentValue as typeof STANDARD_ARRAY[number]) 
+                                    ? currentValue.toString() 
+                                    : currentValue === 0
+                                    ? "0"
+                                    : undefined}
+                                  onValueChange={(value) => handleAbilityScoreChange(ability, parseInt(value))}
+                                >
+                                  <SelectTrigger 
+                                    id={ability}
+                                    className={`w-32 bg-[#1C1F2B] text-white border focus:ring-[#7c63e5] focus:border-[#7c63e5] ${
+                                      hasError 
+                                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                                        : isValid && currentValue > 0
+                                        ? 'border-green-500/50'
+                                        : 'border-[#2A3340]'
+                                    }`}
+                                  >
+                                    <SelectValue placeholder="Select score" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {/* Clear/Unassign option - always available */}
+                                    <SelectItem 
+                                      value="0"
+                                      className="text-gray-400 hover:text-gray-300 border-b border-[#2A3340] mb-1 pb-1"
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-lg">—</span>
+                                        <span className="text-xs text-gray-500">Clear</span>
+                                      </div>
+                                    </SelectItem>
+                                    
+                                    {/* Standard Array values */}
+                                    {valuesWithStatus.length > 0 ? (
+                                      valuesWithStatus.map(({ value, isSelected, isTaken, takenBy }) => {
+                                        const isSelectable = isSelected || !isTaken;
+                                        return (
+                                          <SelectItem 
+                                            key={value} 
+                                            value={value.toString()}
+                                            disabled={!isSelectable}
+                                            className={
+                                              isSelected 
+                                                ? "bg-green-900/20 font-semibold text-green-300" 
+                                                : isTaken
+                                                ? "text-gray-500 opacity-60 cursor-not-allowed"
+                                                : "text-white hover:bg-[#1C1F2B]"
+                                            }
+                                          >
+                                            <div className="flex items-center justify-between w-full">
+                                              <span>{value}</span>
+                                              <div className="flex items-center gap-2 ml-2">
+                                                {isSelected && (
+                                                  <CheckCircle2 className="w-3 h-3 text-green-400" />
+                                                )}
+                                                {isTaken && takenBy && (
+                                                  <span className="text-xs text-gray-500">
+                                                    ({getAbilityDisplayName(takenBy)})
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </SelectItem>
+                                        );
+                                      })
+                                    ) : (
+                                      <SelectItem value="" disabled>
+                                        No values available
+                                      </SelectItem>
+                                    )}
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <Input
+                                  id={ability}
+                                  type="number"
+                                  min="8"
+                                  max="15"
+                                  value={character.abilityScores[ability]}
+                                  onChange={(e) => handleAbilityScoreChange(ability, e.target.value)}
+                                  onBlur={(e) => {
+                                    // Ensure value is clamped on blur
+                                    const val = parseInt(e.target.value);
+                                    if (!isNaN(val)) {
+                                      const clamped = Math.max(8, Math.min(15, val));
+                                      if (clamped !== val) {
+                                        handleAbilityScoreChange(ability, clamped.toString());
+                                      }
+                                    }
+                                  }}
+                                  className={`w-16 bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border focus:ring-[#7c63e5] focus:border-[#7c63e5] ${
+                                    hasError 
+                                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                                      : isValid
+                                      ? 'border-green-500/50'
+                                      : 'border-[#2A3340]'
+                                  }`}
+                                />
+                              )}
+                              {hasError && (
+                                <span className="text-xs text-red-400">{abilityScoreErrors[ability]}</span>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="w-16 text-center text-lg font-semibold text-white">
+                              {character.abilityScores[ability]}
+                            </div>
+                          )}
+                          <div className="text-sm text-gray-500">
+                            ({character.abilityModifiers[ability] >= 0 ? '+' : ''}{character.abilityModifiers[ability]})
                           </div>
-                        )}
-                        <div className="text-sm text-gray-500">
-                          ({character.abilityModifiers[ability] >= 0 ? '+' : ''}{character.abilityModifiers[ability]})
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Lock Ability Scores Button */}
-                {!abilityScoresLocked && hasEditedScores && (
+                {(() => {
+                  const shouldShow = !abilityScoresLocked && hasEditedScores;
+                  if (shouldShow) {
+                    logWithDebug('info', 'Lock Ability Scores button is visible', {
+                      abilityScoresLocked,
+                      hasEditedScores,
+                      abilityScores: character?.abilityScores
+                    });
+                  }
+                  return shouldShow;
+                })() && (
                   <div className="mt-6 flex justify-center">
                     <Button
                       onClick={() => {
+                        logWithDebug('info', 'Lock Ability Scores button clicked', {
+                          characterId: character?.id,
+                          characterName: character?.name,
+                          abilityScores: character?.abilityScores,
+                          abilityScoreMethod: character?.abilityScoreMethod
+                        });
                         setAbilityScoresLocked(true);
-                        // Collapse Step 2 and expand Step 3
-                        const newExpanded = new Set(expandedSections);
-                        newExpanded.delete('ability-scores');
-                        newExpanded.add('equipment-preferences');
-                        setExpandedSections(newExpanded);
-                        
-                        setTimeout(() => {
-                          const el = document.getElementById('step-3-equipment');
-                          if (el) {
-                            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                          }
-                        }, 100);
+                        // Tab will auto-advance via useEffect
                       }}
                       variant="primary"
                       className="px-6 py-2"
@@ -1277,8 +2056,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     <div className="flex items-center gap-3">
                       <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-green-300">Ability Scores Locked</p>
-                        <p className="text-xs text-green-400/80 mt-1">You can now proceed to equipment selection.</p>
+                        <p className="text-xs text-green-400/80">You can now proceed to equipment selection.</p>
                       </div>
                     </div>
                     <Button
@@ -1300,123 +2078,45 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                   </div>
                 )}
               </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
-          
-          {/* Frosted Glass Lock Overlay - Embedded within Step 2 */}
-          <div 
-            className={`absolute inset-0 flex items-center justify-center rounded-2xl ring-1 ring-[#2A3340]/50 transition-all duration-500 ${
-              !backgroundLocked 
-                ? 'opacity-100 pointer-events-auto z-10' 
-                : 'opacity-0 pointer-events-none'
-            }`}
-            style={{
-              background: 'rgba(21, 20, 32, 0.75)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-            }}
-          >
-            <div className="text-center max-w-[360px] px-8 py-6">
-              {/* Lock Icon */}
-              <div className="mb-5">
-                <Lock className="w-10 h-10 text-gray-300 mx-auto" />
-              </div>
-              
-              {/* Headline */}
-              <h3 className="text-base font-semibold text-white mb-4">
-                Step 1 Required
-              </h3>
-              
-              {/* Description with Step 1 Reference */}
-              <p className="text-sm text-gray-300 leading-relaxed mb-5">
-                Please select and lock a background in{' '}
-                <span className="font-semibold text-green-300">Step 1: Choose a Background</span>
-                {' '}to unlock ability score assignment.
-              </p>
-              
-              {/* Subtle hint */}
-              <div className="text-xs text-gray-400 italic">
-                Locked until Step 1 is completed
-              </div>
-            </div>
-          </div>
-        </Card>
+              </Card>
+            )}
+          </TabsContent>
 
-        {/* Step 3: Equipment Selection */}
-        <Card id="step-3-equipment" className={`relative lg:col-span-2 bg-[#121722] border-2 rounded-2xl shadow-xl transition-all duration-300 overflow-hidden ${
-          !abilityScoresLocked 
-            ? 'border-[#2A3340]' 
-            : 'border-[#7c63e5]/40 shadow-[#7c63e5]/10'
-        } ${!abilityScoresLocked ? 'min-h-[320px]' : ''}`}>
-          <Collapsible 
-            open={expandedSections.has('equipment-preferences')} 
-            onOpenChange={() => abilityScoresLocked && toggleSection('equipment-preferences')}
-          >
-            <CollapsibleTrigger asChild disabled={!abilityScoresLocked}>
-              <CardHeader className={`transition-colors rounded-t-2xl ${abilityScoresLocked ? 'cursor-pointer group hover:bg-[#1A1F2E]' : 'cursor-not-allowed'}`}>
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 border-b border-gray-700 pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex items-center justify-center w-7 h-7 rounded-full border-2 ${
-                      equipmentLocked 
-                        ? 'bg-green-500 border-green-500' 
-                        : abilityScoresLocked
-                        ? 'bg-[#1C1F2B] border-[#7c63e5]'
-                        : 'bg-[#1C1F2B] border-[#2A3340]'
-                    }`}>
-                      {equipmentLocked ? (
-                        <CheckCircle2 className="w-4 h-4 text-white" />
-                      ) : (
-                        <span className={`text-sm font-semibold ${abilityScoresLocked ? 'text-[#7c63e5]' : 'text-gray-500'}`}>3</span>
-                      )}
-                    </div>
-                    <div>
-                      <div className="text-base font-semibold group-hover:underline underline-offset-4">
-                        Step 3: Choose Equipment
-                      </div>
-                      {equipmentLocked && (
-                        <div className="text-sm text-gray-400 font-normal mt-0.5">
-                          Equipment selected and locked
-                        </div>
-                      )}
-                      {!abilityScoresLocked && (
-                        <div className="text-sm text-gray-400 font-normal mt-0.5">
-                          Complete Step 2 first
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {equipmentLocked && (
-                      <Badge variant="outline" className="text-xs bg-green-900/30 text-green-300 border border-green-600/30">
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Complete
-                      </Badge>
-                    )}
-                    {abilityScoresLocked && !equipmentLocked && (
-                      <Badge variant="outline" className="text-xs bg-blue-900/30 text-blue-300 border border-blue-600/30">
-                        Ready
-                      </Badge>
-                    )}
-                    {expandedSections.has('equipment-preferences') ? (
-                      <ChevronDown className="w-5 h-5" />
-                    ) : (
-                      <ChevronRight className="w-5 h-5" />
-                    )}
-                  </div>
-                </CardTitle>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="space-y-6 text-left max-w-[960px] p-6 md:p-8">
+          <TabsContent value="equipment" className="mt-0">
+            {!abilityScoresLocked ? (
+              <Card className={`${theme.background.card} border ${theme.border.primary} rounded-xl`}>
+                <CardContent className="p-12 text-center">
+                  <Lock className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-300 mb-2">Equipment Locked</h3>
+                  <p className="text-sm text-gray-400">
+                    Complete the Abilities step first to unlock equipment selection.
+                  </p>
+                </CardContent>
+        </Card>
+            ) : (
+              <Card className={`${theme.background.card} border ${theme.border.primary} rounded-xl`}>
+              <CardContent className="space-y-6 text-left p-6 md:p-8">
                 
                 {/* Success Banner */}
                 {abilityScoresLocked && !equipmentLocked && (
                   <div className="bg-green-900/20 border border-green-600/30 rounded-lg p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                     <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-green-300">Ability Scores Locked</p>
-                      <p className="text-xs text-green-400/80 mt-1">
+                      <p className="text-xs text-green-400/80">
                         Select your starting gear based on your character's background and race. You may use the suggested loadout or customize freely.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Background Equipment Note */}
+                {character.background.equipment.length > 0 && (
+                  <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4 flex items-start gap-3">
+                    <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-blue-300">From Your Background</p>
+                      <p className="text-xs text-blue-400/80 mt-1">
+                        Your {character.background.name} background also provides: {character.background.equipment.join(', ')}
                       </p>
                     </div>
                   </div>
@@ -1428,15 +2128,23 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     <h3 className="text-sm font-semibold text-white">Suggested Equipment</h3>
                     <Button 
                       size="sm" 
-                      variant="primary"
+                      variant={appliedLoadout ? "secondary" : "primary"}
                       onClick={applySuggestedEquipment}
-                      disabled={equipmentLocked}
+                      disabled={equipmentLocked || appliedLoadout}
+                      className={appliedLoadout ? "bg-green-600 hover:bg-green-700 text-white" : ""}
                     >
-                      Use Suggested Loadout
+                      {appliedLoadout ? (
+                        <>
+                          <CheckCircle2 className="w-3 h-3 mr-1.5" />
+                          Applied
+                        </>
+                      ) : (
+                        'Use Suggested Loadout'
+                      )}
                     </Button>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     {(() => {
                       const suggested = getSuggestedEquipment();
                       return (
@@ -1510,10 +2218,14 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                 </div>
 
                 {/* Manual Equipment Selection */}
-                <div className="space-y-4">
+                <div className={`space-y-4 transition-all duration-300 ${
+                  appliedLoadout 
+                    ? 'border-2 border-green-500/50 bg-green-900/10 rounded-xl p-4' 
+                    : ''
+                }`}>
                   <h3 className="text-sm font-semibold text-white border-b border-[#2A3340] pb-2">Custom Equipment Selection</h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                     {/* Weapons */}
                     <div>
                       <Label className="text-sm text-gray-400 mb-2 block">Weapons</Label>
@@ -1588,46 +2300,35 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                   </div>
                 </div>
 
-                {/* Background Equipment Note */}
-                {character.background.equipment.length > 0 && (
-                  <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4 flex items-start gap-3">
-                    <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-blue-300">From Your Background</p>
-                      <p className="text-xs text-blue-400/80 mt-1">
-                        Your {character.background.name} background also provides: {character.background.equipment.join(', ')}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Story Character Equipment Preferences */}
-                {character.customEquipmentPreferences && character.customEquipmentPreferences.length > 0 && (
-                  <div className="bg-purple-900/20 border border-purple-600/30 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <Info className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-purple-300 mb-2">Story Character Preferences</p>
-                        <div className="text-xs text-purple-400/80 space-y-1">
-                          {character.customEquipmentPreferences.map((item, index) => (
-                            <div key={index}>• {item}</div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Lock Equipment Button */}
-                {!equipmentLocked && (
+                {(() => {
+                  const shouldShow = !equipmentLocked;
+                  if (shouldShow) {
+                    logWithDebug('info', 'Lock Equipment button is visible', {
+                      equipmentLocked,
+                      abilityScoresLocked,
+                      selectedEquipment
+                    });
+                  }
+                  return shouldShow;
+                })() && (
                   <div className="mt-6 flex justify-center">
                     <Button
                       onClick={() => {
+                        logWithDebug('info', 'Lock Equipment button clicked', {
+                          characterId: character?.id,
+                          characterName: character?.name,
+                          selectedEquipment: selectedEquipment
+                        });
                         setEquipmentLocked(true);
-                        // Collapse Step 3 after locking
-                        const newExpanded = new Set(expandedSections);
-                        newExpanded.delete('equipment-preferences');
-                        setExpandedSections(newExpanded);
+                        logWithDebug('info', 'Equipment locked, character sheet complete', {
+                          equipmentLocked: true,
+                          allStepsComplete: true,
+                          backgroundLocked,
+                          abilityScoresLocked,
+                          equipmentLocked: true
+                        });
                       }}
                       variant="primary"
                       className="px-6 py-2"
@@ -1642,75 +2343,16 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     </Button>
                   </div>
                 )}
-
-                {/* Locked Confirmation */}
-                {equipmentLocked && (
-                  <div className="mt-6 bg-green-900/20 border border-green-600/30 rounded-lg p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-green-300">Equipment Locked</p>
-                        <p className="text-xs text-green-400/80 mt-1">Your character sheet is now complete!</p>
-                      </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => {
-                        setEquipmentLocked(false);
-                        // Re-expand Step 3
-                        const newExpanded = new Set(expandedSections);
-                        newExpanded.add('equipment-preferences');
-                        setExpandedSections(newExpanded);
-                      }}
-                      className="ml-4"
-                    >
-                      Unlock to Edit
-                    </Button>
-                  </div>
-                )}
               </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
-
-          {/* Frosted Glass Lock Overlay - Embedded within Step 3 */}
-          <div 
-            className={`absolute inset-0 flex items-center justify-center rounded-2xl ring-1 ring-[#2A3340]/50 transition-all duration-500 ${
-              !abilityScoresLocked 
-                ? 'opacity-100 pointer-events-auto z-10' 
-                : 'opacity-0 pointer-events-none'
-            }`}
-            style={{
-              background: 'rgba(21, 20, 32, 0.75)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-            }}
-          >
-            <div className="text-center max-w-[360px] px-8 py-6">
-              {/* Lock Icon */}
-              <div className="mb-5">
-                <Lock className="w-10 h-10 text-gray-300 mx-auto" />
-              </div>
-              
-              {/* Headline */}
-              <h3 className="text-base font-semibold text-white mb-4">
-                Step 2 Required
-              </h3>
-              
-              {/* Description */}
-              <p className="text-sm text-gray-300 leading-relaxed mb-5">
-                Please assign and lock ability scores in{' '}
-                <span className="font-semibold text-green-300">Step 2: Assign Ability Scores</span>
-                {' '}to unlock equipment selection.
-              </p>
-              
-              {/* Subtle hint */}
-              <div className="text-xs text-gray-400 italic">
-                Locked until Step 2 is completed
-              </div>
-            </div>
-          </div>
         </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+        </TooltipProvider>
+      )}
+
+      {/* Character Sheet Sections */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Race Details Section */}
         <Card className="bg-[#151A22] border border-[#2A3340] rounded-xl shadow-lg shadow-black/40">

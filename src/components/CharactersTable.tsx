@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { CheckCircle2, Lock, ChevronRight } from 'lucide-react';
+import { CheckCircle2, Lock, ChevronRight, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Edit, Trash2 } from 'lucide-react';
 import type { Character } from '../types/macro-chain';
@@ -13,6 +13,7 @@ interface CharactersTableProps {
   onDeleteCharacter?: (character: Character) => void;
   getCharacterStatusBadge?: (character: Character) => { label: string; variant: 'default' | 'outline'; className: string };
   onViewCharacter?: (character: Character) => void;
+  hasCharacterSheet?: (characterId: string) => boolean;
 }
 
 export default function CharactersTable({ 
@@ -22,6 +23,7 @@ export default function CharactersTable({
   onDeleteCharacter, 
   getCharacterStatusBadge, 
   onViewCharacter,
+  hasCharacterSheet,
 }: CharactersTableProps) {
   const [revealedSecrets, setRevealedSecrets] = useState<Set<string>>(new Set());
 
@@ -53,9 +55,20 @@ export default function CharactersTable({
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-lg font-semibold text-gray-200">
-                      {character.name}
-                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-lg font-semibold text-gray-200">
+                        {character.name}
+                      </CardTitle>
+                      {/* Character sheet indicator */}
+                      {hasCharacterSheet?.(character.id) && (
+                        <div 
+                          className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-900/20 text-blue-300 border border-blue-700/40"
+                          title="Character Sheet Created"
+                        >
+                          <FileText className="h-3 w-3" />
+                        </div>
+                      )}
+                    </div>
                     {/* Minimal status indicator */}
                     <div className="flex items-center justify-end gap-2 text-xs text-gray-400">
                       {isLocked ? (

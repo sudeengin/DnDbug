@@ -1281,6 +1281,22 @@ app.post('/api/characters/regenerate', async (req, res) => {
   return handler(req, res);
 });
 
+// SRD 2014 Character endpoints
+app.post('/api/characters/srd2014/save', async (req, res) => {
+  const { default: handler } = await import('./api/characters/srd2014/save.js?' + Date.now());
+  return handler(req, res);
+});
+
+app.get('/api/characters/srd2014/list', async (req, res) => {
+  const { default: handler } = await import('./api/characters/srd2014/list.js?' + Date.now());
+  return handler(req, res);
+});
+
+app.post('/api/characters/srd2014/delete', async (req, res) => {
+  const { default: handler } = await import('./api/characters/srd2014/delete.js?' + Date.now());
+  return handler(req, res);
+});
+
 // Test character generation endpoint
 app.post('/api/test-character-generation', async (req, res) => {
   const { default: handler } = await import('./api/test-character-generation.js?' + Date.now());
@@ -1377,6 +1393,9 @@ app.listen(PORT, () => {
   console.log(`   POST /api/characters/lock`);
   console.log(`   POST /api/characters/upsert`);
   console.log(`   POST /api/characters/regenerate`);
+  console.log(`   POST /api/characters/srd2014/save`);
+  console.log(`   GET  /api/characters/srd2014/list`);
+  console.log(`   POST /api/characters/srd2014/delete`);
   console.log(`   POST /api/background/lock`);
   console.log(`   GET  /api/health`);
 });

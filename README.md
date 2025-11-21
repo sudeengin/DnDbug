@@ -109,7 +109,7 @@ dndbug/
 - **Context-Aware Generation** - Maintains story consistency across all scenes
 - **Unified Lock System** - Consistent locking across backgrounds, characters, chains, and scenes
 - **Comprehensive Logging** - Debug and monitoring capabilities with rotation
-- **SRD Character Integration** - Full D&D 5e character sheet integration
+- **SRD Character Integration** - Full SRD 2014 character sheet integration
 - **Session Management** - Automatic cleanup and archival of old sessions
 - **Log Rotation** - Prevents disk space issues with automatic log rotation
 

@@ -20,7 +20,7 @@ async function debugCharacterResponse() {
       body: JSON.stringify({
         sessionId,
         concept: 'A dark gothic mansion with mysterious disappearances',
-        meta: { gameType: 'D&D 5e', players: 4, level: '3-5' }
+        meta: { gameType: 'SRD 2014', players: 4, level: '3-5' }
       })
     });
     
