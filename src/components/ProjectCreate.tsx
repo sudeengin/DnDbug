@@ -130,7 +130,7 @@ export default function ProjectCreate({ onProjectCreated, onCancel }: ProjectCre
             <Button
               type="submit"
               disabled={loading || !title.trim()}
-              className="w-full bg-[#7c63e5] hover:bg-[#6b52d9] text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
+              className="w-full bg-[#000000] hover:bg-[#1a1a1a] text-[#ef6646] font-semibold disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
               radius="lg"
               size="lg"
             >

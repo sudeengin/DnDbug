@@ -3,6 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
+import { LockControl } from './ui/LockControl';
 import SceneDetailEditor from './SceneDetailEditor';
 import SceneContextOut from './SceneContextOut';
 import SceneHistory from './SceneHistory';
@@ -253,6 +254,14 @@ export default function SceneWorkspace({
   const canUnlock = detail?.status === 'Locked';
   const canGenerateNext = detail?.status === 'Locked' && scene.order < total;
 
+  const handleLockToggle = () => {
+    if (canLock) {
+      handleLockScene();
+    } else if (canUnlock) {
+      handleUnlockScene();
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
       <header className="flex items-center justify-between pb-3 border-b px-6 py-4">
@@ -266,11 +275,14 @@ export default function SceneWorkspace({
           {canGenerate && (
             <Button onClick={handleGenerateDetail} variant="primary">Generate Detail</Button>
           )}
-          {canLock && (
-            <Button onClick={handleLockScene} variant="primary">Lock Scene</Button>
-          )}
-          {canUnlock && (
-            <Button variant="secondary" onClick={handleUnlockScene}>Unlock Scene</Button>
+          {(canLock || canUnlock) && (
+            <LockControl
+              isLocked={detail?.status === 'Locked'}
+              onToggle={handleLockToggle}
+              loading={loading}
+              label="Scene"
+              disabled={!canLock && !canUnlock}
+            />
           )}
           {canGenerateNext && (
             <Button onClick={handleGenerateNext} variant="primary">Generate Next</Button>

@@ -30,24 +30,24 @@ export function Toast({
   }, [duration, onClose]);
 
   const variantClasses = {
-    default: 'bg-white border-gray-200 text-gray-900',
-    success: 'bg-green-50 border-green-200 text-green-900',
-    error: 'bg-red-50 border-red-200 text-red-900',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-900',
+    default: 'bg-[#151A22] border-[#2A3340] text-gray-200',
+    success: 'bg-green-900/30 border-green-700/50 text-green-200',
+    error: 'bg-red-900/30 border-red-700/50 text-red-200',
+    warning: 'bg-amber-900/30 border-amber-700/50 text-amber-200',
   };
 
   const iconClasses = {
     default: 'text-gray-400',
     success: 'text-green-400',
     error: 'text-red-400',
-    warning: 'text-yellow-400',
+    warning: 'text-amber-400',
   };
 
   if (!isVisible) return null;
 
   return (
     <div className={cn(
-      'fixed top-4 right-4 z-50 max-w-sm w-full bg-white border rounded-lg shadow-lg p-4 transition-all duration-300',
+      'fixed top-4 right-4 z-50 max-w-sm w-full border rounded-lg shadow-lg p-4 transition-all duration-300',
       variantClasses[variant]
     )}>
       <div className="flex items-start">
@@ -79,7 +79,7 @@ export function Toast({
         </div>
         <div className="ml-4 flex-shrink-0 flex">
           <button
-            className="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none"
+            className="inline-flex text-gray-400 hover:text-gray-300 focus:outline-none transition-colors"
             onClick={() => {
               setIsVisible(false);
               setTimeout(() => onClose?.(), 300);

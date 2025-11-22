@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { postJSON, getJSON } from '../lib/api';
 import type { GenerateBackgroundRequest, GenerateBackgroundResponse, BackgroundData, SessionContext } from '../types/macro-chain';
 import logger from '@/utils/logger';
-import { Lock, Unlock } from 'lucide-react';
 import { Button } from './ui/button';
 
 const log = logger.background;
@@ -10,13 +9,12 @@ const log = logger.background;
 interface StoryBackgroundGeneratorProps {
   onBackgroundGenerated?: (background: BackgroundData) => void;
   onChainGenerated?: (request: any) => void;
-  onLockToggle?: (locked: boolean) => void;
   loading?: boolean;
   sessionId?: string | null;
   isLocked?: boolean;
 }
 
-export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChainGenerated, onLockToggle, loading = false, sessionId, isLocked = false }: StoryBackgroundGeneratorProps) {
+export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChainGenerated, loading = false, sessionId, isLocked = false }: StoryBackgroundGeneratorProps) {
   const [storyConcept, setStoryConcept] = useState('');
   const [background, setBackground] = useState<BackgroundData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -118,33 +116,6 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
     setError(null);
   };
 
-  const lockBackground = async (locked: boolean) => {
-    if (!sessionId) return;
-
-    // CRITICAL: Log when background is being locked/unlocked
-    log.info('🔒 BACKGROUND LOCK STATE CHANGING:', {
-      sessionId,
-      locked,
-      background: !!background,
-      storyConcept: !!storyConcept,
-      timestamp: new Date().toISOString(),
-      warning: 'This should NOT trigger automatic macro chain generation!'
-    });
-
-    try {
-      await postJSON('/api/context/lock', {
-        sessionId,
-        blockType: 'background',
-        locked
-      });
-      
-      if (onLockToggle) {
-        onLockToggle(locked);
-      }
-    } catch (error) {
-      log.error('Failed to lock background:', error);
-    }
-  };
 
   const startEditing = () => {
     if (background) {
@@ -256,35 +227,14 @@ export default function StoryBackgroundGenerator({ onBackgroundGenerated, onChai
             <h3 className="text-[20px] leading-[28px] font-semibold text-[#F0F4F8]">Generated Story Background</h3>
             <div className="flex items-center space-x-3">
               {!isEditing && (
-                <>
-                  <Button
-                    onClick={() => lockBackground(!isLocked)}
-                    disabled={loading}
-                    variant={isLocked ? 'secondary' : 'primary'}
-                    size="sm"
-                    className="flex items-center gap-2"
-                  >
-                    {isLocked ? (
-                      <>
-                        <Lock className="w-4 h-4" />
-                        <span>Locked</span>
-                      </>
-                    ) : (
-                      <>
-                        <Unlock className="w-4 h-4" />
-                        <span>Unlocked</span>
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    onClick={startEditing}
-                    disabled={isLocked}
-                    variant="secondary"
-                    size="sm"
-                  >
-                    Edit
-                  </Button>
-                </>
+                <Button
+                  onClick={startEditing}
+                  disabled={isLocked}
+                  variant="secondary"
+                  size="sm"
+                >
+                  Edit
+                </Button>
               )}
               {isEditing && (
                 <>

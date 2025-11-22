@@ -128,26 +128,38 @@ export function calculatePointBuyCost(scores: AbilityScores): number {
 export function validateAbilityScores(scores: AbilityScores, method: 'standard' | 'point-buy'): string[] {
   const errors: string[] = [];
   
-  // Check score ranges
+  // Check score ranges (only for assigned scores, not 0)
   Object.entries(scores).forEach(([ability, score]) => {
-    if (score < 8 || score > 15) {
+    // For Standard Array, 0 is valid (unassigned)
+    // For Point Buy, check if 0 is allowed or not
+    if (score > 0 && (score < 8 || score > 15)) {
       errors.push(`${ability} score must be between 8 and 15`);
     }
   });
   
   if (method === 'standard') {
-    // Check if scores match standard array (in any order)
-    const sortedScores = Object.values(scores).sort((a, b) => b - a);
-    const sortedStandard = [...STANDARD_ARRAY].sort((a, b) => b - a);
+    // Only validate Standard Array if all scores are assigned (none are 0)
+    const assignedScores = Object.values(scores).filter(score => score > 0);
+    const allAssigned = assignedScores.length === 6;
     
-    if (JSON.stringify(sortedScores) !== JSON.stringify(sortedStandard)) {
-      errors.push('Standard array scores must be exactly: 15, 14, 13, 12, 10, 8');
+    if (allAssigned) {
+      // Check if scores match standard array (in any order)
+      const sortedScores = Object.values(scores).sort((a, b) => b - a);
+      const sortedStandard = [...STANDARD_ARRAY].sort((a, b) => b - a);
+      
+      if (JSON.stringify(sortedScores) !== JSON.stringify(sortedStandard)) {
+        errors.push('Standard array scores must be exactly: 15, 14, 13, 12, 10, 8');
+      }
     }
+    // If not all assigned, don't show Standard Array error (user is still assigning)
   } else if (method === 'point-buy') {
-    // Check point buy total
-    const cost = calculatePointBuyCost(scores);
-    if (cost > 27) {
-      errors.push(`Point buy total (${cost}) exceeds maximum of 27 points`);
+    // Check point buy total (only for assigned scores)
+    const assignedScores = Object.values(scores).filter(score => score > 0);
+    if (assignedScores.length > 0) {
+      const cost = calculatePointBuyCost(scores);
+      if (cost > 27) {
+        errors.push(`Point buy total (${cost}) exceeds maximum of 27 points`);
+      }
     }
   }
   

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { LockControl } from '../ui/LockControl';
 import { postJSON, getJSON } from '../../lib/api';
 import debug from '../../lib/simpleDebug';
 import type { Character, CharactersBlock, SessionContext } from '../../types/macro-chain';
@@ -498,8 +499,15 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
             Generate and manage playable characters for your campaign
           </p>
         </div>
-        <div className="text-sm text-gray-400 flex items-center gap-2">
-          {status.label}
+        <div className="flex items-center gap-2">
+          {characters && characters.length > 0 && (
+            <LockControl
+              isLocked={isLocked}
+              onToggle={handleLockCharacters}
+              loading={loading}
+              label="Characters"
+            />
+          )}
         </div>
       </div>
 
@@ -599,23 +607,14 @@ export default function CharactersPage({ sessionId, context, onContextUpdate }: 
         )}
         
         {characters && characters.length > 0 && (
-          <>
-            <Button
-              onClick={handleRegenerateCharacters}
-              disabled={loading || isLocked || !isBackgroundLocked}
-              variant="secondary"
-              title={isLocked ? 'Unlock characters first to regenerate' : 'Generate a new set of characters'}
-            >
-              {loading ? 'Regenerating...' : 'Regenerate Characters'}
-            </Button>
-            <Button
-              onClick={handleLockCharacters}
-              disabled={loading}
-              variant="primary"
-            >
-              {loading ? (isLocked ? 'Unlocking...' : 'Locking...') : (isLocked ? 'Unlock Characters' : 'Lock Characters')}
-            </Button>
-          </>
+          <Button
+            onClick={handleRegenerateCharacters}
+            disabled={loading || isLocked || !isBackgroundLocked}
+            variant="secondary"
+            title={isLocked ? 'Unlock characters first to regenerate' : 'Generate a new set of characters'}
+          >
+            {loading ? 'Regenerating...' : 'Regenerate Characters'}
+          </Button>
         )}
       </div>
 

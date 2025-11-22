@@ -27,6 +27,7 @@ import logger from '@/utils/logger';
 import { debug } from '@/lib/debugCollector';
 import BackgroundSelector from '../BackgroundSelector';
 import { theme } from '@/lib/theme';
+import { useToast } from '../ui/toast';
 
 const log = logger.character;
 
@@ -93,6 +94,10 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
   const [appliedPresetId, setAppliedPresetId] = useState<string | null>(null);
   const [appliedLoadout, setAppliedLoadout] = useState<boolean>(false);
   const [hasAttemptedRestore, setHasAttemptedRestore] = useState(false);
+  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
+  
+  // Toast hook for user feedback
+  const { addToast } = useToast();
 
   // Track last edited character ID for persistence
   const getLastEditedCharacterId = (): string | null => {
@@ -829,6 +834,17 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         });
         setError(null);
         
+        // Show success toast
+        addToast({
+          title: 'Character sheet saved',
+          description: `${character.name || 'Character'} has been saved successfully`,
+          variant: 'success'
+        });
+        
+        // Show "Saved" state on button temporarily
+        setSavedSuccessfully(true);
+        setTimeout(() => setSavedSuccessfully(false), 2000);
+        
         // Reload saved characters list to get the latest version
         await loadSRDCharacters();
         
@@ -872,12 +888,28 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         }
         
       } else {
-        setError(data.error || 'Failed to save character');
+        const errorMsg = data.error || 'Failed to save character';
+        setError(errorMsg);
         logWithDebug('error', 'Failed to save character', { error: data.error });
+        
+        // Show error toast
+        addToast({
+          title: 'Save failed',
+          description: errorMsg,
+          variant: 'error'
+        });
       }
     } catch (err) {
-      setError('Failed to save character');
+      const errorMsg = 'Failed to save character';
+      setError(errorMsg);
       logWithDebug('error', 'Error saving character:', err);
+      
+      // Show error toast for network/exception errors
+      addToast({
+        title: 'Save failed',
+        description: 'An error occurred while saving the character sheet',
+        variant: 'error'
+      });
     } finally {
       setLoading(false);
     }
@@ -960,6 +992,13 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           errorMessage,
           errorData
         });
+        
+        // Show error toast for HTTP errors
+        addToast({
+          title: 'Delete failed',
+          description: errorMessage,
+          variant: 'error'
+        });
         return;
       }
 
@@ -968,12 +1007,20 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       try {
         data = await response.json();
       } catch (parseErr) {
-        setError('Failed to parse server response');
+        const errorMsg = 'Failed to parse server response';
+        setError(errorMsg);
         logWithDebug('error', 'Failed to parse delete response JSON', {
           sessionId,
           characterId,
           parseError: parseErr,
           status: response.status
+        });
+        
+        // Show error toast for parse errors
+        addToast({
+          title: 'Delete failed',
+          description: errorMsg,
+          variant: 'error'
         });
         return;
       }
@@ -983,6 +1030,13 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           sessionId,
           characterId: data.deletedCharacter.id,
           characterName: data.deletedCharacter.name
+        });
+        
+        // Show success toast
+        addToast({
+          title: 'Character sheet deleted',
+          description: `${data.deletedCharacter.name || 'Character'} has been deleted successfully`,
+          variant: 'success'
         });
         
         // If the deleted character is currently loaded, clear it
@@ -1003,11 +1057,19 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           error: data.error,
           responseData: data
         });
+        
+        // Show error toast
+        addToast({
+          title: 'Delete failed',
+          description: errorMsg,
+          variant: 'error'
+        });
       }
     } catch (err) {
       // Network errors, JSON parse errors, etc.
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError('Failed to delete character sheet');
+      const errorMsg = 'Failed to delete character sheet';
+      setError(errorMsg);
       logWithDebug('error', 'Exception while deleting character sheet', {
         sessionId,
         characterId,
@@ -1015,6 +1077,13 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
         errorType: err instanceof Error ? err.constructor.name : typeof err,
         errorStack: err instanceof Error ? err.stack : undefined,
         fullError: err
+      });
+      
+      // Show error toast for network/exception errors
+      addToast({
+        title: 'Delete failed',
+        description: 'An error occurred while deleting the character sheet',
+        variant: 'error'
       });
     } finally {
       setLoading(false);
@@ -1492,8 +1561,22 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
             variant="primary"
             className="rounded-lg px-4 py-2 text-sm"
           >
-            <Save className="w-4 h-4 mr-2" />
-            {loading ? 'Saving...' : 'Save Character'}
+            {loading ? (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Saving...
+              </>
+            ) : savedSuccessfully ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Saved
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Save Character
+              </>
+            )}
           </Button>
         
         <Button
@@ -1540,9 +1623,9 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               {/* Step 1: Background */}
               <TabsTrigger 
                 value="background" 
-                className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#7c63e5] data-[state=active]:text-white data-[state=active]:shadow-sm flex-1 ${
+                className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#000000] data-[state=active]:text-[#ef6646] data-[state=active]:shadow-sm flex-1 ${
                   activeTab === 'background' 
-                    ? 'bg-[#7c63e5] text-white' 
+                    ? 'bg-[#000000] text-[#ef6646]' 
                   : backgroundLocked
                     ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
                     : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
@@ -1580,9 +1663,9 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               ) : (
                 <TabsTrigger 
                   value="abilities" 
-                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#7c63e5] data-[state=active]:text-white data-[state=active]:shadow-sm flex-1 ${
+                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#000000] data-[state=active]:text-[#ef6646] data-[state=active]:shadow-sm flex-1 ${
                     activeTab === 'abilities' 
-                      ? 'bg-[#7c63e5] text-white' 
+                      ? 'bg-[#000000] text-[#ef6646]' 
                       : abilityScoresLocked 
                       ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
                       : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
@@ -1621,9 +1704,9 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               ) : (
                 <TabsTrigger 
                   value="equipment" 
-                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#7c63e5] data-[state=active]:text-white data-[state=active]:shadow-sm flex-1 ${
+                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#000000] data-[state=active]:text-[#ef6646] data-[state=active]:shadow-sm flex-1 ${
                     activeTab === 'equipment' 
-                      ? 'bg-[#7c63e5] text-white' 
+                      ? 'bg-[#000000] text-[#ef6646]' 
                       : equipmentLocked 
                       ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
                       : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
@@ -1910,7 +1993,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                                 >
                                   <SelectTrigger 
                                     id={ability}
-                                    className={`w-32 bg-[#1C1F2B] text-white border focus:ring-[#7c63e5] focus:border-[#7c63e5] ${
+                                    className={`w-32 bg-[#1C1F2B] text-white border focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] ${
                                       hasError 
                                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                                         : isValid && currentValue > 0
@@ -1990,7 +2073,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                                       }
                                     }
                                   }}
-                                  className={`w-16 bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border focus:ring-[#7c63e5] focus:border-[#7c63e5] ${
+                                  className={`w-16 bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] ${
                                     hasError 
                                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                                       : isValid
@@ -2155,7 +2238,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                               <div className="text-sm text-gray-300 space-y-1">
                                 {suggested.weapons.map((w, i) => (
                                   <div key={i} className="flex items-center gap-2">
-                                    <span className="text-[#7c63e5]">•</span>
+                                    <span className="text-[#ef6646]">•</span>
                                     <span>{w}</span>
                                   </div>
                                 ))}
@@ -2176,7 +2259,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                               <div className="text-sm text-gray-300 space-y-1">
                                 {suggested.packs.map((p, i) => (
                                   <div key={i} className="flex items-center gap-2">
-                                    <span className="text-[#7c63e5]">•</span>
+                                    <span className="text-[#ef6646]">•</span>
                                     <span>{p}</span>
                                   </div>
                                 ))}
@@ -2190,7 +2273,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                               <div className="text-sm text-gray-300 space-y-1">
                                 {suggested.tools.map((t, i) => (
                                   <div key={i} className="flex items-center gap-2">
-                                    <span className="text-[#7c63e5]">•</span>
+                                    <span className="text-[#ef6646]">•</span>
                                     <span>{t}</span>
                                   </div>
                                 ))}
@@ -2204,7 +2287,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                               <div className="text-sm text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
                                 {suggested.miscellaneous.map((m, i) => (
                                   <div key={i} className="flex items-center gap-2">
-                                    <span className="text-[#7c63e5]">•</span>
+                                    <span className="text-[#ef6646]">•</span>
                                     <span>{m}</span>
                                   </div>
                                 ))}
@@ -2237,7 +2320,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                         })}
                         disabled={equipmentLocked}
                         placeholder="e.g., Longsword, Shield"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[60px]"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[60px]"
                       />
                     </div>
 
@@ -2249,7 +2332,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                         onChange={(e) => setSelectedEquipment({ ...selectedEquipment, armor: e.target.value })}
                         disabled={equipmentLocked}
                         placeholder="e.g., Chain Mail"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5]"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646]"
                       />
                     </div>
 
@@ -2264,7 +2347,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                         })}
                         disabled={equipmentLocked}
                         placeholder="e.g., Thieves' Tools"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[60px]"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[60px]"
                       />
                     </div>
 
@@ -2279,7 +2362,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                         })}
                         disabled={equipmentLocked}
                         placeholder="e.g., Explorer's Pack"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[60px]"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[60px]"
                       />
                     </div>
 
@@ -2294,7 +2377,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                         })}
                         disabled={equipmentLocked}
                         placeholder="e.g., Rope (50 ft.), Torch (10)"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[#7c63e5] focus:border-[#7c63e5] min-h-[80px]"
+                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[80px]"
                       />
                     </div>
                   </div>
@@ -2362,7 +2445,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           >
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2 group-hover:text-[#7c63e5]">
+                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2 group-hover:text-[#ef6646]">
                   <span className="group-hover:underline underline-offset-4">Race Details</span>
                   {expandedSections.has('race-details') ? (
                     <ChevronDown className="w-5 h-5" />
@@ -2441,7 +2524,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
           >
             <CollapsibleTrigger asChild>
               <CardHeader className="cursor-pointer group hover:bg-[#1C1F2B] transition-colors rounded-t-xl">
-                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2 group-hover:text-[#7c63e5]">
+                <CardTitle className="flex items-center justify-between text-lg font-semibold text-gray-100 mb-4 border-b border-gray-700 pb-2 group-hover:text-[#ef6646]">
                   <span className="group-hover:underline underline-offset-4">Background Details</span>
                   {expandedSections.has('background-details') ? (
                     <ChevronDown className="w-5 h-5" />

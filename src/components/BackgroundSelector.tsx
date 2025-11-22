@@ -82,8 +82,8 @@ export default function BackgroundSelector({
               key={bg.name}
               className={`group relative cursor-pointer transition-all duration-200 hover:scale-[1.02] rounded-xl ${
                 isSelected 
-                  ? 'bg-[#1C1F2B] border-2 border-[#7c63e5] shadow-lg shadow-[#7c63e5]/20' 
-                  : 'bg-[#151a22] border border-[#2A3340] hover:border-[#7c63e5]/50 shadow-md shadow-[rgba(0,0,0,0.25)]'
+                  ? 'bg-[#1C1F2B] border-2 border-[#ef6646] shadow-lg shadow-[#ef6646]/20' 
+                  : 'bg-[#151a22] border border-[#2A3340] hover:border-[#ef6646]/50 shadow-md shadow-[rgba(0,0,0,0.25)]'
               }`}
               onClick={() => !isLocked && onSelect(bg.name)}
             >
@@ -161,7 +161,7 @@ export default function BackgroundSelector({
                 console.log('[BackgroundSelector] Lock button clicked', { selectedBackground, isLocked });
                 onLock();
               }}
-              className="gap-2 shadow-lg shadow-[#7c63e5]/20 hover:shadow-[#7c63e5]/40"
+              className="gap-2 shadow-lg shadow-[#ef6646]/20 hover:shadow-[#ef6646]/40"
             >
               <Lock className="w-4 h-4" />
               Save & Lock Background → Continue to Step 2
@@ -194,7 +194,7 @@ export default function BackgroundSelector({
                 <h2 className="text-2xl font-bold text-white">{detailView.name}</h2>
                 {detailView.feature?.name && (
                   <p className="text-sm text-gray-400 mt-1">
-                    Feature: <span className="text-[#7c63e5]">{detailView.feature.name}</span>
+                    Feature: <span className="text-[#ef6646]">{detailView.feature.name}</span>
                   </p>
                 )}
               </div>
@@ -265,7 +265,7 @@ export default function BackgroundSelector({
                     <ul className="text-sm text-gray-400 space-y-1">
                       {detailView.equipment.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <span className="text-[#7c63e5] mt-1">•</span>
+                          <span className="text-[#ef6646] mt-1">•</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -281,7 +281,7 @@ export default function BackgroundSelector({
                   <ul className="text-xs text-gray-400 space-y-1 grid grid-cols-1 md:grid-cols-2 gap-2">
                     {detailView.personalityTraits.slice(0, 4).map((trait, idx) => (
                       <li key={idx} className="flex items-start gap-2 bg-[#1C1F2B] p-2 rounded">
-                        <span className="text-[#7c63e5] mt-0.5">•</span>
+                        <span className="text-[#ef6646] mt-0.5">•</span>
                         <span>{trait}</span>
                       </li>
                     ))}
@@ -296,7 +296,7 @@ export default function BackgroundSelector({
                   <ul className="text-xs text-gray-400 space-y-1">
                     {detailView.ideals.slice(0, 3).map((ideal, idx) => (
                       <li key={idx} className="flex items-start gap-2 bg-[#1C1F2B] p-2 rounded">
-                        <span className="text-[#7c63e5] mt-0.5">•</span>
+                        <span className="text-[#ef6646] mt-0.5">•</span>
                         <span>{ideal}</span>
                       </li>
                     ))}

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { LockControl } from '../ui/LockControl';
 import BackgroundPanel from '../BackgroundPanel';
 import StoryBackgroundGenerator from '../StoryBackgroundGenerator';
 import { getJSON, postJSON } from '../../lib/api';
 import type { SessionContext, BackgroundData } from '../../types/macro-chain';
 import logger from '@/utils/logger';
-import { Lock, Unlock } from 'lucide-react';
 
 const log = logger.background;
 
@@ -95,14 +95,12 @@ export default function BackgroundPage({ sessionId, context, onContextUpdate }: 
           </div>
           <div className="flex items-center space-x-2">
             {hasBackground && (
-              <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 ${
-                isBackgroundLocked 
-                  ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
-                  : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-              }`}>
-                {isBackgroundLocked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
-                {isBackgroundLocked ? "Locked" : "Unlocked"}
-              </div>
+              <LockControl
+                isLocked={isBackgroundLocked}
+                onToggle={() => handleLockToggle(!isBackgroundLocked)}
+                loading={loading}
+                label="Background"
+              />
             )}
           </div>
         </div>
@@ -129,7 +127,6 @@ export default function BackgroundPage({ sessionId, context, onContextUpdate }: 
         <div className="space-y-6">
           <StoryBackgroundGenerator 
             onBackgroundGenerated={handleBackgroundGenerated}
-            onLockToggle={handleLockToggle}
             loading={loading}
             sessionId={sessionId}
             isLocked={isBackgroundLocked}
