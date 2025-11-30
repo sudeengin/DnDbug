@@ -960,5 +960,577 @@ export const SRD_BACKGROUNDS: Background[] = [
   }
 ];
 
+// ============================================================================
+// Equipment Types and Data (SRD 2014)
+// ============================================================================
+
+export type WeaponCategory = 'Simple Melee' | 'Simple Ranged' | 'Martial Melee' | 'Martial Ranged';
+export type WeaponProperty = 
+  | 'Light' 
+  | 'Finesse' 
+  | 'Thrown' 
+  | 'Two-Handed' 
+  | 'Versatile' 
+  | 'Heavy' 
+  | 'Reach' 
+  | 'Loading' 
+  | 'Ammunition' 
+  | 'Special';
+
+export interface Weapon {
+  name: string;
+  category: WeaponCategory;
+  cost: string; // e.g., "1 sp", "10 gp"
+  damage: string; // e.g., "1d4", "1d8"
+  damageType: 'bludgeoning' | 'piercing' | 'slashing';
+  weight: number; // in pounds
+  properties: WeaponProperty[];
+  range?: string; // e.g., "20/60", "80/320"
+  description?: string;
+}
+
+export type ArmorCategory = 'Light' | 'Medium' | 'Heavy' | 'Shield';
+
+export interface Armor {
+  name: string;
+  category: ArmorCategory;
+  cost: string;
+  ac: string; // e.g., "11 + Dex modifier", "18"
+  weight: number;
+  stealth: 'Normal' | 'Disadvantage';
+  strength?: number; // Minimum strength requirement
+  description?: string;
+}
+
+export interface Pack {
+  name: string;
+  cost: string;
+  contents: string[];
+  weight: number;
+  description?: string;
+}
+
+export type ToolType = 
+  | 'Artisan\'s Tools'
+  | 'Gaming Set'
+  | 'Musical Instrument'
+  | 'Herbalism Kit'
+  | 'Thieves\' Tools'
+  | 'Navigator\'s Tools'
+  | 'Other';
+
+export interface Tool {
+  name: string;
+  type: ToolType;
+  cost: string;
+  weight: number;
+  description?: string;
+}
+
+export interface MiscellaneousItem {
+  name: string;
+  cost: string;
+  weight: number;
+  description?: string;
+}
+
+// Equipment Collections
+export interface EquipmentCollection {
+  weapons: Weapon[];
+  armor: Armor[];
+  packs: Pack[];
+  tools: Tool[];
+  miscellaneous: MiscellaneousItem[];
+}
+
+// Character Equipment Structure
+export interface CharacterEquipment {
+  weapons: string[];
+  armor: string;
+  tools: string[];
+  packs: string[];
+  miscellaneous: string[];
+}
+
+// ============================================================================
+// SRD 2014 Equipment Data
+// ============================================================================
+
+// Weapons (SRD 2014)
+export const SRD_WEAPONS: Weapon[] = [
+  // Simple Melee Weapons
+  { name: 'Club', category: 'Simple Melee', cost: '1 sp', damage: '1d4', damageType: 'bludgeoning', weight: 2, properties: ['Light'] },
+  { name: 'Dagger', category: 'Simple Melee', cost: '2 gp', damage: '1d4', damageType: 'piercing', weight: 1, properties: ['Finesse', 'Light', 'Thrown'], range: '20/60' },
+  { name: 'Greatclub', category: 'Simple Melee', cost: '2 sp', damage: '1d8', damageType: 'bludgeoning', weight: 10, properties: ['Two-Handed'] },
+  { name: 'Handaxe', category: 'Simple Melee', cost: '5 gp', damage: '1d6', damageType: 'slashing', weight: 2, properties: ['Light', 'Thrown'], range: '20/60' },
+  { name: 'Javelin', category: 'Simple Melee', cost: '5 sp', damage: '1d6', damageType: 'piercing', weight: 2, properties: ['Thrown'], range: '30/120' },
+  { name: 'Light Hammer', category: 'Simple Melee', cost: '2 gp', damage: '1d4', damageType: 'bludgeoning', weight: 2, properties: ['Light', 'Thrown'], range: '20/60' },
+  { name: 'Mace', category: 'Simple Melee', cost: '5 gp', damage: '1d6', damageType: 'bludgeoning', weight: 4, properties: [] },
+  { name: 'Quarterstaff', category: 'Simple Melee', cost: '2 sp', damage: '1d6', damageType: 'bludgeoning', weight: 4, properties: ['Versatile'], description: 'Versatile (1d8)' },
+  { name: 'Sickle', category: 'Simple Melee', cost: '1 gp', damage: '1d4', damageType: 'slashing', weight: 2, properties: ['Light'] },
+  { name: 'Spear', category: 'Simple Melee', cost: '1 gp', damage: '1d6', damageType: 'piercing', weight: 3, properties: ['Thrown', 'Versatile'], range: '20/60', description: 'Versatile (1d8)' },
+  { name: 'Unarmed Strike', category: 'Simple Melee', cost: '—', damage: '1', damageType: 'bludgeoning', weight: 0, properties: [] },
+  
+  // Simple Ranged Weapons
+  { name: 'Light Crossbow', category: 'Simple Ranged', cost: '25 gp', damage: '1d8', damageType: 'piercing', weight: 5, properties: ['Ammunition', 'Loading', 'Two-Handed'], range: '80/320' },
+  { name: 'Dart', category: 'Simple Ranged', cost: '5 cp', damage: '1d4', damageType: 'piercing', weight: 0.25, properties: ['Finesse', 'Thrown'], range: '20/60' },
+  { name: 'Shortbow', category: 'Simple Ranged', cost: '25 gp', damage: '1d6', damageType: 'piercing', weight: 2, properties: ['Ammunition', 'Two-Handed'], range: '80/320' },
+  { name: 'Sling', category: 'Simple Ranged', cost: '1 sp', damage: '1d4', damageType: 'bludgeoning', weight: 0, properties: ['Ammunition'], range: '30/120' },
+  
+  // Martial Melee Weapons
+  { name: 'Battleaxe', category: 'Martial Melee', cost: '10 gp', damage: '1d8', damageType: 'slashing', weight: 4, properties: ['Versatile'], description: 'Versatile (1d10)' },
+  { name: 'Flail', category: 'Martial Melee', cost: '10 gp', damage: '1d8', damageType: 'bludgeoning', weight: 2, properties: [] },
+  { name: 'Glaive', category: 'Martial Melee', cost: '20 gp', damage: '1d10', damageType: 'slashing', weight: 6, properties: ['Heavy', 'Reach', 'Two-Handed'] },
+  { name: 'Greataxe', category: 'Martial Melee', cost: '30 gp', damage: '1d12', damageType: 'slashing', weight: 7, properties: ['Heavy', 'Two-Handed'] },
+  { name: 'Greatsword', category: 'Martial Melee', cost: '50 gp', damage: '2d6', damageType: 'slashing', weight: 6, properties: ['Heavy', 'Two-Handed'] },
+  { name: 'Halberd', category: 'Martial Melee', cost: '20 gp', damage: '1d10', damageType: 'slashing', weight: 6, properties: ['Heavy', 'Reach', 'Two-Handed'] },
+  { name: 'Lance', category: 'Martial Melee', cost: '10 gp', damage: '1d12', damageType: 'piercing', weight: 6, properties: ['Reach', 'Special'], description: 'Special: You have disadvantage when you use a lance to attack a target within 5 feet of you.' },
+  { name: 'Longsword', category: 'Martial Melee', cost: '15 gp', damage: '1d8', damageType: 'slashing', weight: 3, properties: ['Versatile'], description: 'Versatile (1d10)' },
+  { name: 'Maul', category: 'Martial Melee', cost: '10 gp', damage: '2d6', damageType: 'bludgeoning', weight: 10, properties: ['Heavy', 'Two-Handed'] },
+  { name: 'Morningstar', category: 'Martial Melee', cost: '15 gp', damage: '1d8', damageType: 'piercing', weight: 4, properties: [] },
+  { name: 'Pike', category: 'Martial Melee', cost: '5 gp', damage: '1d10', damageType: 'piercing', weight: 18, properties: ['Heavy', 'Reach', 'Two-Handed'] },
+  { name: 'Rapier', category: 'Martial Melee', cost: '25 gp', damage: '1d8', damageType: 'piercing', weight: 2, properties: ['Finesse'] },
+  { name: 'Scimitar', category: 'Martial Melee', cost: '25 gp', damage: '1d6', damageType: 'slashing', weight: 3, properties: ['Finesse', 'Light'] },
+  { name: 'Shortsword', category: 'Martial Melee', cost: '10 gp', damage: '1d6', damageType: 'piercing', weight: 2, properties: ['Finesse', 'Light'] },
+  { name: 'Trident', category: 'Martial Melee', cost: '5 gp', damage: '1d6', damageType: 'piercing', weight: 4, properties: ['Thrown', 'Versatile'], range: '20/60', description: 'Versatile (1d8)' },
+  { name: 'War Pick', category: 'Martial Melee', cost: '5 gp', damage: '1d8', damageType: 'piercing', weight: 2, properties: [] },
+  { name: 'Warhammer', category: 'Martial Melee', cost: '15 gp', damage: '1d8', damageType: 'bludgeoning', weight: 2, properties: ['Versatile'], description: 'Versatile (1d10)' },
+  { name: 'Whip', category: 'Martial Melee', cost: '2 gp', damage: '1d4', damageType: 'slashing', weight: 3, properties: ['Finesse', 'Reach'] },
+  
+  // Martial Ranged Weapons
+  { name: 'Blowgun', category: 'Martial Ranged', cost: '10 gp', damage: '1', damageType: 'piercing', weight: 1, properties: ['Ammunition', 'Loading'], range: '25/100' },
+  { name: 'Hand Crossbow', category: 'Martial Ranged', cost: '75 gp', damage: '1d6', damageType: 'piercing', weight: 3, properties: ['Ammunition', 'Light', 'Loading'], range: '30/120' },
+  { name: 'Heavy Crossbow', category: 'Martial Ranged', cost: '50 gp', damage: '1d10', damageType: 'piercing', weight: 18, properties: ['Ammunition', 'Heavy', 'Loading', 'Two-Handed'], range: '100/400' },
+  { name: 'Longbow', category: 'Martial Ranged', cost: '50 gp', damage: '1d8', damageType: 'piercing', weight: 2, properties: ['Ammunition', 'Heavy', 'Two-Handed'], range: '150/600' },
+  { name: 'Net', category: 'Martial Ranged', cost: '1 gp', damage: '—', damageType: '—', weight: 3, properties: ['Special', 'Thrown'], range: '5/15', description: 'Special: A Large or smaller creature hit by a net is restrained until it is freed. A net has no effect on creatures that are formless, or creatures that are Huge or larger.' },
+];
+
+// Armor (SRD 2014)
+export const SRD_ARMOR: Armor[] = [
+  // Light Armor
+  { name: 'Padded', category: 'Light', cost: '5 gp', ac: '11 + Dex modifier', weight: 8, stealth: 'Disadvantage' },
+  { name: 'Leather', category: 'Light', cost: '10 gp', ac: '11 + Dex modifier', weight: 10, stealth: 'Normal' },
+  { name: 'Studded Leather', category: 'Light', cost: '45 gp', ac: '12 + Dex modifier', weight: 13, stealth: 'Normal' },
+  
+  // Medium Armor
+  { name: 'Hide', category: 'Medium', cost: '10 gp', ac: '12 + Dex modifier (max 2)', weight: 12, stealth: 'Normal' },
+  { name: 'Chain Shirt', category: 'Medium', cost: '50 gp', ac: '13 + Dex modifier (max 2)', weight: 20, stealth: 'Normal' },
+  { name: 'Scale Mail', category: 'Medium', cost: '50 gp', ac: '14 + Dex modifier (max 2)', weight: 45, stealth: 'Disadvantage' },
+  { name: 'Breastplate', category: 'Medium', cost: '400 gp', ac: '14 + Dex modifier (max 2)', weight: 20, stealth: 'Normal' },
+  { name: 'Half Plate', category: 'Medium', cost: '750 gp', ac: '15 + Dex modifier (max 2)', weight: 40, stealth: 'Disadvantage' },
+  
+  // Heavy Armor
+  { name: 'Ring Mail', category: 'Heavy', cost: '30 gp', ac: '14', weight: 40, stealth: 'Disadvantage' },
+  { name: 'Chain Mail', category: 'Heavy', cost: '75 gp', ac: '16', weight: 55, stealth: 'Disadvantage', strength: 13 },
+  { name: 'Splint', category: 'Heavy', cost: '200 gp', ac: '17', weight: 60, stealth: 'Disadvantage', strength: 15 },
+  { name: 'Plate', category: 'Heavy', cost: '1,500 gp', ac: '18', weight: 65, stealth: 'Disadvantage', strength: 15 },
+  
+  // Shields
+  { name: 'Shield', category: 'Shield', cost: '10 gp', ac: '+2', weight: 6, stealth: 'Normal', description: 'You can benefit from only one shield at a time.' },
+];
+
+// Packs (SRD 2014)
+export const SRD_PACKS: Pack[] = [
+  {
+    name: 'Burglar\'s Pack',
+    cost: '16 gp',
+    weight: 46.5,
+    contents: [
+      'A backpack',
+      'A bag of 1,000 ball bearings',
+      '10 feet of string',
+      'A bell',
+      '5 candles',
+      'A crowbar',
+      'A hammer',
+      '10 pitons',
+      'A hooded lantern',
+      '2 flasks of oil',
+      '5 days rations',
+      'A tinderbox',
+      'A waterskin',
+      '50 feet of hempen rope',
+      'Thieves\' tools'
+    ],
+    description: 'Essential gear for stealth and infiltration.'
+  },
+  {
+    name: 'Diplomat\'s Pack',
+    cost: '39 gp',
+    weight: 31.5,
+    contents: [
+      'A chest',
+      '2 cases for maps and scrolls',
+      'A set of fine clothes',
+      'A bottle of ink',
+      'An ink pen',
+      'A lamp',
+      '2 flasks of oil',
+      '5 sheets of paper',
+      'A vial of perfume',
+      'Sealing wax',
+      'Soap'
+    ],
+    description: 'Gear for those who need to make a good impression.'
+  },
+  {
+    name: 'Dungeoneer\'s Pack',
+    cost: '12 gp',
+    weight: 61.5,
+    contents: [
+      'A backpack',
+      'A crowbar',
+      'A hammer',
+      '10 pitons',
+      '10 torches',
+      'A tinderbox',
+      '10 days of rations',
+      'A waterskin',
+      '50 feet of hempen rope'
+    ],
+    description: 'Everything needed for exploring dangerous underground places.'
+  },
+  {
+    name: 'Entertainer\'s Pack',
+    cost: '40 gp',
+    weight: 38,
+    contents: [
+      'A backpack',
+      'A bedroll',
+      '2 costumes',
+      '5 candles',
+      '5 days of rations',
+      'A waterskin',
+      'A disguise kit'
+    ],
+    description: 'Perfect for performers and actors.'
+  },
+  {
+    name: 'Explorer\'s Pack',
+    cost: '10 gp',
+    weight: 59,
+    contents: [
+      'A backpack',
+      'A bedroll',
+      'A mess kit',
+      'A tinderbox',
+      '10 torches',
+      '10 days of rations',
+      'A waterskin',
+      '50 feet of hempen rope'
+    ],
+    description: 'Standard gear for wilderness exploration.'
+  },
+  {
+    name: 'Priest\'s Pack',
+    cost: '19 gp',
+    weight: 25,
+    contents: [
+      'A backpack',
+      'A blanket',
+      '10 candles',
+      'A tinderbox',
+      'An alms box',
+      '2 blocks of incense',
+      'A censer',
+      'Vestments',
+      '2 days of rations',
+      'A waterskin'
+    ],
+    description: 'Equipment for those who serve the divine.'
+  },
+  {
+    name: 'Scholar\'s Pack',
+    cost: '40 gp',
+    weight: 11,
+    contents: [
+      'A backpack',
+      'A book of lore',
+      'A bottle of ink',
+      'An ink pen',
+      '10 sheets of parchment',
+      'A little bag of sand',
+      'A small knife'
+    ],
+    description: 'Essential tools for students and researchers.'
+  },
+];
+
+// Tools (SRD 2014)
+export const SRD_TOOLS: Tool[] = [
+  // Artisan's Tools
+  { name: 'Alchemist\'s Supplies', type: 'Artisan\'s Tools', cost: '50 gp', weight: 8, description: 'Essential for creating potions and alchemical items.' },
+  { name: 'Brewer\'s Supplies', type: 'Artisan\'s Tools', cost: '20 gp', weight: 9, description: 'For brewing ale, wine, and other beverages.' },
+  { name: 'Calligrapher\'s Supplies', type: 'Artisan\'s Tools', cost: '10 gp', weight: 5, description: 'For creating beautiful written works.' },
+  { name: 'Carpenter\'s Tools', type: 'Artisan\'s Tools', cost: '8 gp', weight: 6, description: 'For woodworking and construction.' },
+  { name: 'Cartographer\'s Tools', type: 'Artisan\'s Tools', cost: '15 gp', weight: 6, description: 'For creating and reading maps.' },
+  { name: 'Cobbler\'s Tools', type: 'Artisan\'s Tools', cost: '5 gp', weight: 5, description: 'For making and repairing footwear.' },
+  { name: 'Cook\'s Utensils', type: 'Artisan\'s Tools', cost: '1 gp', weight: 8, description: 'For preparing delicious meals.' },
+  { name: 'Glassblower\'s Tools', type: 'Artisan\'s Tools', cost: '30 gp', weight: 5, description: 'For creating glass items.' },
+  { name: 'Jeweler\'s Tools', type: 'Artisan\'s Tools', cost: '25 gp', weight: 2, description: 'For crafting and appraising jewelry.' },
+  { name: 'Leatherworker\'s Tools', type: 'Artisan\'s Tools', cost: '5 gp', weight: 5, description: 'For working with leather.' },
+  { name: 'Mason\'s Tools', type: 'Artisan\'s Tools', cost: '10 gp', weight: 8, description: 'For stoneworking and masonry.' },
+  { name: 'Painter\'s Supplies', type: 'Artisan\'s Tools', cost: '10 gp', weight: 5, description: 'For creating artwork.' },
+  { name: 'Potter\'s Tools', type: 'Artisan\'s Tools', cost: '10 gp', weight: 3, description: 'For creating pottery.' },
+  { name: 'Smith\'s Tools', type: 'Artisan\'s Tools', cost: '20 gp', weight: 8, description: 'For blacksmithing and metalworking.' },
+  { name: 'Tinker\'s Tools', type: 'Artisan\'s Tools', cost: '50 gp', weight: 10, description: 'For fixing and modifying mechanical devices.' },
+  { name: 'Weaver\'s Tools', type: 'Artisan\'s Tools', cost: '1 gp', weight: 5, description: 'For creating textiles.' },
+  { name: 'Woodcarver\'s Tools', type: 'Artisan\'s Tools', cost: '1 gp', weight: 5, description: 'For carving wood.' },
+  
+  // Gaming Sets
+  { name: 'Dice Set', type: 'Gaming Set', cost: '1 sp', weight: 0, description: 'A set of dice for various games.' },
+  { name: 'Dragonchess Set', type: 'Gaming Set', cost: '1 gp', weight: 0.5, description: 'An elegant strategy game.' },
+  { name: 'Playing Card Set', type: 'Gaming Set', cost: '5 sp', weight: 0, description: 'A standard deck of cards.' },
+  { name: 'Three-Dragon Ante Set', type: 'Gaming Set', cost: '1 gp', weight: 0, description: 'A popular gambling game.' },
+  
+  // Musical Instruments
+  { name: 'Bagpipes', type: 'Musical Instrument', cost: '30 gp', weight: 6 },
+  { name: 'Drum', type: 'Musical Instrument', cost: '6 gp', weight: 3 },
+  { name: 'Dulcimer', type: 'Musical Instrument', cost: '25 gp', weight: 10 },
+  { name: 'Flute', type: 'Musical Instrument', cost: '2 gp', weight: 1 },
+  { name: 'Lute', type: 'Musical Instrument', cost: '35 gp', weight: 2 },
+  { name: 'Lyre', type: 'Musical Instrument', cost: '30 gp', weight: 2 },
+  { name: 'Horn', type: 'Musical Instrument', cost: '3 gp', weight: 2 },
+  { name: 'Pan Flute', type: 'Musical Instrument', cost: '12 gp', weight: 2 },
+  { name: 'Shawm', type: 'Musical Instrument', cost: '2 gp', weight: 1 },
+  { name: 'Viol', type: 'Musical Instrument', cost: '30 gp', weight: 1 },
+  
+  // Other Tools
+  { name: 'Herbalism Kit', type: 'Herbalism Kit', cost: '5 gp', weight: 3, description: 'For creating potions of healing and identifying plants.' },
+  { name: 'Thieves\' Tools', type: 'Thieves\' Tools', cost: '25 gp', weight: 1, description: 'Essential for picking locks and disarming traps.' },
+  { name: 'Navigator\'s Tools', type: 'Navigator\'s Tools', cost: '25 gp', weight: 2, description: 'For navigation and determining direction.' },
+  { name: 'Disguise Kit', type: 'Other', cost: '25 gp', weight: 3, description: 'For creating disguises and altering appearance.' },
+  { name: 'Forgery Kit', type: 'Other', cost: '15 gp', weight: 5, description: 'For creating fake documents and signatures.' },
+];
+
+// Miscellaneous Items (SRD 2014)
+export const SRD_MISCELLANEOUS: MiscellaneousItem[] = [
+  // Spellcasting Focuses
+  { name: 'Arcane Focus (Crystal)', cost: '10 gp', weight: 1, description: 'A crystal used as an arcane focus for spellcasting.' },
+  { name: 'Arcane Focus (Orb)', cost: '20 gp', weight: 3, description: 'An orb used as an arcane focus for spellcasting.' },
+  { name: 'Arcane Focus (Rod)', cost: '10 gp', weight: 2, description: 'A rod used as an arcane focus for spellcasting.' },
+  { name: 'Arcane Focus (Staff)', cost: '5 gp', weight: 4, description: 'A staff used as an arcane focus for spellcasting.' },
+  { name: 'Arcane Focus (Wand)', cost: '10 gp', weight: 1, description: 'A wand used as an arcane focus for spellcasting.' },
+  { name: 'Druidic Focus', cost: '—', weight: 0, description: 'A druid can use a druidic focus as a spellcasting focus.' },
+  { name: 'Holy Symbol (Amulet)', cost: '5 gp', weight: 1, description: 'A holy symbol amulet for divine spellcasting.' },
+  { name: 'Holy Symbol (Emblem)', cost: '5 gp', weight: 0, description: 'A holy symbol emblem for divine spellcasting.' },
+  { name: 'Holy Symbol (Reliquary)', cost: '5 gp', weight: 2, description: 'A holy symbol reliquary for divine spellcasting.' },
+  
+  // Ammunition
+  { name: 'Arrows (20)', cost: '1 gp', weight: 1, description: 'Arrows for use with bows.' },
+  { name: 'Blowgun Needles (50)', cost: '1 gp', weight: 1, description: 'Needles for blowguns.' },
+  { name: 'Crossbow Bolts (20)', cost: '1 gp', weight: 1.5, description: 'Bolts for crossbows.' },
+  { name: 'Sling Bullets (20)', cost: '4 cp', weight: 1.5, description: 'Bullets for slings.' },
+  
+  // Common Items
+  { name: 'Backpack', cost: '2 gp', weight: 5, description: 'A standard backpack for carrying gear.' },
+  { name: 'Bedroll', cost: '1 gp', weight: 7, description: 'A bedroll for sleeping outdoors.' },
+  { name: 'Rope, Hempen (50 feet)', cost: '1 gp', weight: 10, description: 'Strong rope for climbing and tying.' },
+  { name: 'Rope, Silk (50 feet)', cost: '10 gp', weight: 5, description: 'Lightweight, strong rope.' },
+  { name: 'Rations (1 day)', cost: '5 sp', weight: 2, description: 'Food and water for one day.' },
+  { name: 'Torch', cost: '1 cp', weight: 1, description: 'A torch that burns for 1 hour.' },
+  { name: 'Waterskin', cost: '2 sp', weight: 5, description: 'A container that holds 1 day of water.' },
+  { name: 'Component Pouch', cost: '25 gp', weight: 2, description: 'A pouch with components for spellcasting.' },
+  { name: 'Spellbook', cost: '50 gp', weight: 3, description: 'Essential for wizards to learn and prepare spells.' },
+];
+
+// ============================================================================
+// Equipment Utility Functions
+// ============================================================================
+
+export function getWeaponByName(name: string): Weapon | undefined {
+  return SRD_WEAPONS.find(w => w.name.toLowerCase() === name.toLowerCase());
+}
+
+export function getArmorByName(name: string): Armor | undefined {
+  return SRD_ARMOR.find(a => a.name.toLowerCase() === name.toLowerCase());
+}
+
+export function getPackByName(name: string): Pack | undefined {
+  return SRD_PACKS.find(p => p.name.toLowerCase() === name.toLowerCase());
+}
+
+export function getToolByName(name: string): Tool | undefined {
+  return SRD_TOOLS.find(t => t.name.toLowerCase() === name.toLowerCase());
+}
+
+export function getMiscellaneousByName(name: string): MiscellaneousItem | undefined {
+  return SRD_MISCELLANEOUS.find(m => m.name.toLowerCase() === name.toLowerCase());
+}
+
+export function getWeaponsByCategory(category: WeaponCategory): Weapon[] {
+  return SRD_WEAPONS.filter(w => w.category === category);
+}
+
+export function getArmorByCategory(category: ArmorCategory): Armor[] {
+  return SRD_ARMOR.filter(a => a.category === category);
+}
+
+export function getToolsByType(type: ToolType): Tool[] {
+  return SRD_TOOLS.filter(t => t.type === type);
+}
+
+// Class-specific starting equipment (based on SRD 2014)
+export interface ClassStartingEquipment {
+  weapons: string[];
+  armor?: string;
+  tools?: string[];
+  packs: string[];
+  miscellaneous: string[];
+  choices?: {
+    weapons?: { options: string[][]; count: number }[];
+    armor?: { options: string[]; count: number }[];
+    tools?: { options: string[]; count: number }[];
+    packs?: { options: string[]; count: number }[];
+  };
+}
+
+export function getClassStartingEquipment(className: string | null): ClassStartingEquipment | null {
+  if (!className) return null;
+  
+  const normalizedClass = className.toLowerCase();
+  
+  // Fighter
+  if (normalizedClass.includes('fighter')) {
+    return {
+      weapons: [],
+      armor: 'Chain Mail',
+      tools: [],
+      packs: [],
+      miscellaneous: ['Shield'],
+      choices: {
+        weapons: [
+          {
+            options: [['(a) Chain Mail'], ['(b) Leather Armor', 'Longbow', '20 Arrows']],
+            count: 1
+          },
+          {
+            options: [['(a) Martial Weapon', 'Shield'], ['(b) Two Martial Weapons']],
+            count: 1
+          },
+          {
+            options: [['(a) Light Crossbow', '20 Bolts'], ['(b) Two Handaxes']],
+            count: 1
+          },
+        ],
+        packs: [
+          {
+            options: ['Dungeoneer\'s Pack', 'Explorer\'s Pack'],
+            count: 1
+          }
+        ]
+      }
+    };
+  }
+  
+  // Rogue
+  if (normalizedClass.includes('rogue')) {
+    return {
+      weapons: [],
+      armor: 'Leather Armor',
+      tools: ['Thieves\' Tools'],
+      packs: [],
+      miscellaneous: [],
+      choices: {
+        weapons: [
+          {
+            options: [['(a) Rapier'], ['(b) Shortsword']],
+            count: 1
+          },
+          {
+            options: [['(a) Shortbow', '20 Arrows'], ['(b) Shortsword']],
+            count: 1
+          },
+        ],
+        packs: [
+          {
+            options: ['Burglar\'s Pack', 'Dungeoneer\'s Pack', 'Explorer\'s Pack'],
+            count: 1
+          }
+        ]
+      }
+    };
+  }
+  
+  // Wizard
+  if (normalizedClass.includes('wizard')) {
+    return {
+      weapons: ['Quarterstaff'],
+      armor: undefined,
+      tools: [],
+      packs: [],
+      miscellaneous: ['Spellbook'],
+      choices: {
+        weapons: [
+          {
+            options: [['(a) Quarterstaff'], ['(b) Dagger']],
+            count: 1
+          },
+        ],
+        packs: [
+          {
+            options: ['Scholar\'s Pack', 'Explorer\'s Pack'],
+            count: 1
+          }
+        ],
+        tools: [
+          {
+            options: ['Component Pouch', 'Arcane Focus'],
+            count: 1
+          }
+        ]
+      }
+    };
+  }
+  
+  // Cleric
+  if (normalizedClass.includes('cleric')) {
+    return {
+      weapons: [],
+      armor: 'Scale Mail',
+      tools: [],
+      packs: [],
+      miscellaneous: [],
+      choices: {
+        weapons: [
+          {
+            options: [['(a) Mace'], ['(b) Warhammer']],
+            count: 1
+          },
+          {
+            options: [['(a) Scale Mail'], ['(b) Leather Armor']],
+            count: 1
+          },
+          {
+            options: [['(a) Light Crossbow', '20 Bolts'], ['(b) Any Simple Weapon']],
+            count: 1
+          },
+        ],
+        packs: [
+          {
+            options: ['Priest\'s Pack', 'Explorer\'s Pack'],
+            count: 1
+          }
+        ],
+        tools: [
+          {
+            options: ['Shield', 'Holy Symbol'],
+            count: 1
+          }
+        ]
+      }
+    };
+  }
+  
+  // Default fallback
+  return {
+    weapons: ['Longsword'],
+    armor: 'Leather Armor',
+    tools: [],
+    packs: ['Explorer\'s Pack'],
+    miscellaneous: []
+  };
+}
+
 // Re-export Character type from macro-chain for convenience
 export type { Character as StoryCharacter } from './macro-chain';

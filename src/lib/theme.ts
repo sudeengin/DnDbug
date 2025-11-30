@@ -85,11 +85,11 @@ export const theme = {
 
   // Brand/Primary Colors
   brand: {
-    primary: '#000000',
-    primaryText: '#ef6646',
-    primaryHover: '#1a1a1a',
-    primaryFocus: 'rgba(239,102,70,0.3)',
-    primaryShadow: '#ef6646/20',
+    primary: '#3b0d70',
+    primaryText: '#ffffff',
+    primaryHover: '#4a1a8a',
+    primaryFocus: 'rgba(59,13,112,0.3)',
+    primaryShadow: '#3b0d70/20',
     // Secondary brand colors
     secondary: '#1C1F2B',
     secondaryText: '#ef6646',
@@ -141,19 +141,19 @@ export const themeClasses = {
   warningBanner: 'rounded-[12px] bg-amber-900/20 border border-amber-700/40 text-amber-200 p-4',
 
   // Brand colors
-  brandPrimary: 'bg-[#000000] text-[#ef6646]',
-  brandPrimaryHover: 'hover:bg-[#1a1a1a] hover:text-[#ef6646]',
-  brandFocus: 'focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] focus-visible:ring-[rgba(239,102,70,0.3)]',
+  brandPrimary: 'bg-[#3b0d70] text-[#ffffff]',
+  brandPrimaryHover: 'hover:bg-[#4a1a8a] hover:text-[#ffffff]',
+  brandFocus: 'focus:ring-[rgba(59,13,112,0.3)] focus:border-[#3b0d70] focus-visible:ring-[rgba(59,13,112,0.3)]',
   brandText: 'text-[#ef6646]',
   brandTextHover: 'hover:text-[#ff7a5c]',
-  brandBorder: 'border-[#ef6646]',
-  brandShadow: 'shadow-[#ef6646]/20',
+  brandBorder: 'border-[#3b0d70]',
+  brandShadow: 'shadow-[#3b0d70]/20',
   
   // Button patterns
-  buttonPrimary: 'bg-[#000000] text-[#ef6646] hover:bg-[#1a1a1a] hover:text-[#ef6646] focus-visible:ring-[rgba(239,102,70,0.3)] shadow-sm',
+  buttonPrimary: 'bg-[#3b0d70] text-[#ffffff] hover:bg-[#4a1a8a] hover:text-[#ffffff] focus-visible:ring-[rgba(59,13,112,0.3)] shadow-sm',
   buttonSecondary: 'bg-[#1C1F2B] text-[#ef6646] border border-[#2A3340] hover:bg-[#2A3340] hover:text-[#ef6646] focus-visible:ring-[rgba(239,102,70,0.3)]',
   buttonTertiary: 'bg-transparent text-[#ef6646] hover:bg-[#1a1a1a] hover:text-[#ff7a5c] focus-visible:ring-[rgba(239,102,70,0.3)]',
-  buttonFocus: 'focus-visible:ring-[rgba(239,102,70,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  buttonFocus: 'focus-visible:ring-[rgba(59,13,112,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   
   // Link patterns
   link: 'text-[#ef6646] hover:text-[#ff7a5c] underline-offset-4 hover:underline',

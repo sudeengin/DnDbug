@@ -9,7 +9,7 @@ import { Textarea } from '../ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '../ui/tooltip';
-import { ChevronDown, ChevronRight, Save, Download, AlertCircle, Users, Plus, Lock, CheckCircle2, AlertTriangle, Info, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Save, Download, AlertCircle, Users, Plus, Lock, CheckCircle2, AlertTriangle, Info, Trash2, Search, ChevronUp, X } from 'lucide-react';
 import type { SRD2014Character, AbilityScores, Race, Background } from '../../types/srd-2014';
 import type { Character as StoryCharacter } from '../../types/macro-chain';
 import { 
@@ -21,13 +21,29 @@ import {
   SRD_BACKGROUNDS,
   ABILITY_SCORE_NAMES,
   STANDARD_ARRAY,
-  POINT_BUY_COSTS
+  POINT_BUY_COSTS,
+  getClassStartingEquipment,
+  SRD_WEAPONS,
+  SRD_ARMOR,
+  SRD_PACKS,
+  SRD_TOOLS,
+  SRD_MISCELLANEOUS,
+  getWeaponsByCategory,
+  getArmorByCategory,
+  getToolsByType,
+  type Weapon,
+  type Armor,
+  type Pack,
+  type Tool,
+  type MiscellaneousItem
 } from '../../types/srd-2014';
 import logger from '@/utils/logger';
 import { debug } from '@/lib/debugCollector';
 import BackgroundSelector from '../BackgroundSelector';
 import { theme } from '@/lib/theme';
 import { useToast } from '../ui/toast';
+import { MultiSelectChips, type MultiSelectOption } from '../ui/multi-select-chips';
+import { SingleSelectChips, type SingleSelectOption } from '../ui/single-select-chips';
 
 const log = logger.character;
 
@@ -95,6 +111,10 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
   const [appliedLoadout, setAppliedLoadout] = useState<boolean>(false);
   const [hasAttemptedRestore, setHasAttemptedRestore] = useState(false);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
+  
+  
+  // Track which equipment items came from background
+  const [backgroundEquipmentItems, setBackgroundEquipmentItems] = useState<Set<string>>(new Set());
   
   // Toast hook for user feedback
   const { addToast } = useToast();
@@ -173,6 +193,56 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       setActiveTab('equipment');
     }
   }, [abilityScoresLocked]);
+
+  // Auto-add background equipment when background is locked
+  useEffect(() => {
+    if (backgroundLocked && character?.background?.equipment) {
+      const categorized = categorizeBackgroundEquipment(character.background.equipment);
+      
+      setSelectedEquipment(prev => {
+        const updated = { ...prev };
+        
+        // Merge weapons, avoiding duplicates
+        categorized.weapons.forEach(item => {
+          if (!updated.weapons.includes(item)) {
+            updated.weapons.push(item);
+          }
+        });
+        
+        // Merge tools, avoiding duplicates
+        categorized.tools.forEach(item => {
+          if (!updated.tools.includes(item)) {
+            updated.tools.push(item);
+          }
+        });
+        
+        // Merge packs, avoiding duplicates
+        categorized.packs.forEach(item => {
+          if (!updated.packs.includes(item)) {
+            updated.packs.push(item);
+          }
+        });
+        
+        // Merge miscellaneous, avoiding duplicates
+        categorized.miscellaneous.forEach(item => {
+          if (!updated.miscellaneous.includes(item)) {
+            updated.miscellaneous.push(item);
+          }
+        });
+        
+        return updated;
+      });
+      
+      // Track background items
+      setBackgroundEquipmentItems(new Set(character.background.equipment));
+      
+      logWithDebug('info', 'Background equipment auto-added', {
+        backgroundName: character.background.name,
+        equipment: character.background.equipment,
+        categorized
+      });
+    }
+  }, [backgroundLocked, character?.background?.equipment]);
 
   // Load story characters and existing SRD characters on mount or when sessionId changes
   useEffect(() => {
@@ -577,57 +647,248 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
       miscellaneous: [] as string[]
     };
 
-    // Class-based weapon suggestions
-    if (classType?.includes('wizard')) {
-      suggestions.weapons = ['Quarterstaff', 'Dagger'];
-      suggestions.armor = 'None (Mage Armor spell recommended)';
-      suggestions.packs = ['Scholar\'s Pack'];
-      suggestions.miscellaneous = ['Spellbook', 'Component Pouch', 'Arcane Focus'];
-    } else if (classType?.includes('fighter')) {
-      suggestions.weapons = ['Longsword', 'Shield', 'Light Crossbow'];
-      suggestions.armor = 'Chain Mail';
-      suggestions.packs = ['Dungeoneer\'s Pack'];
-      suggestions.miscellaneous = ['20 Bolts'];
-    } else if (classType?.includes('rogue')) {
-      suggestions.weapons = ['Rapier', 'Shortbow', 'Dagger (2)'];
-      suggestions.armor = 'Leather Armor';
-      suggestions.packs = ['Burglar\'s Pack'];
-      suggestions.miscellaneous = ['Thieves\' Tools', '20 Arrows'];
-    } else if (classType?.includes('cleric')) {
-      suggestions.weapons = ['Mace', 'Shield'];
-      suggestions.armor = 'Scale Mail';
-      suggestions.packs = ['Priest\'s Pack'];
-      suggestions.miscellaneous = ['Holy Symbol', 'Prayer Book'];
-    } else {
-      // Default for other classes
-      suggestions.weapons = ['Longsword', 'Shield'];
-      suggestions.armor = 'Leather Armor';
-      suggestions.packs = ['Explorer\'s Pack'];
+    // Get class-specific starting equipment from SRD 2014 database
+    const classEquipment = getClassStartingEquipment(classType || null);
+    
+    if (classEquipment) {
+      // Add default class equipment
+      suggestions.weapons = [...classEquipment.weapons];
+      if (classEquipment.armor) {
+        suggestions.armor = classEquipment.armor;
+      }
+      if (classEquipment.tools) {
+        suggestions.tools = [...classEquipment.tools];
+      }
+      suggestions.packs = [...classEquipment.packs];
+      suggestions.miscellaneous = [...classEquipment.miscellaneous];
+      
+      // Handle class equipment choices (default selections)
+      if (classEquipment.choices) {
+        // Default weapon choices
+        if (classEquipment.choices.weapons) {
+          classEquipment.choices.weapons.forEach(choice => {
+            if (choice.options.length > 0) {
+              const defaultOption = choice.options[0][0].replace(/^\([a-z]\)\s*/, '');
+              if (!defaultOption.includes('(')) {
+                // Only add if it's not a choice placeholder
+                suggestions.weapons.push(...defaultOption.split(',').map(w => w.trim()));
+              }
+            }
+          });
+        }
+        
+        // Default armor choices
+        if (classEquipment.choices.armor && classEquipment.choices.armor.length > 0) {
+          const firstArmorChoice = classEquipment.choices.armor[0].options[0];
+          if (firstArmorChoice && !suggestions.armor) {
+            suggestions.armor = firstArmorChoice;
+          }
+        }
+        
+        // Default pack choices
+        if (classEquipment.choices.packs && classEquipment.choices.packs.length > 0) {
+          if (suggestions.packs.length === 0) {
+            suggestions.packs.push(classEquipment.choices.packs[0].options[0]);
+          }
+        }
+        
+        // Default tool choices
+        if (classEquipment.choices.tools && classEquipment.choices.tools.length > 0) {
+          classEquipment.choices.tools.forEach(choice => {
+            if (choice.options.length > 0 && !suggestions.tools.includes(choice.options[0])) {
+              suggestions.tools.push(choice.options[0]);
+            }
+          });
+        }
+      }
     }
 
-    // Background-based tool additions
-    if (backgroundName.includes('criminal')) {
-      suggestions.tools = ['Thieves\' Tools', 'Gaming Set'];
-    } else if (backgroundName.includes('acolyte')) {
-      suggestions.tools = ['Holy Symbol'];
-      suggestions.miscellaneous.push('Incense (5 sticks)', 'Prayer Book');
-    } else if (backgroundName.includes('folk hero')) {
-      suggestions.tools = ['Artisan\'s Tools', 'Smith\'s Tools'];
-      suggestions.miscellaneous.push('Iron Pot', 'Shovel');
+    // Background-based equipment additions
+    if (character?.background?.equipment) {
+      // Background equipment is already shown separately, but add tools
+      if (character.background.toolProficiencies) {
+        character.background.toolProficiencies.forEach(tool => {
+          if (tool && !suggestions.tools.includes(tool)) {
+            suggestions.tools.push(tool);
+          }
+        });
+      }
     }
 
-    // Race-based additions
+    // Race-based additions (proficiencies don't add equipment, but note them)
     if (raceName.includes('dwarf')) {
-      if (!suggestions.tools.some(t => t.includes('Smith') || t.includes('Mason') || t.includes('Brewer'))) {
-        suggestions.tools.push('Smith\'s Tools or Mason\'s Tools');
-      }
-    } else if (raceName.includes('elf')) {
-      if (!suggestions.weapons.some(w => w.includes('Longbow') || w.includes('Shortbow'))) {
-        suggestions.miscellaneous.push('Longbow proficiency (racial)');
+      // Dwarves get artisan tool proficiency but not the tool itself
+      if (!suggestions.tools.some(t => t.toLowerCase().includes('smith') || t.toLowerCase().includes('mason') || t.toLowerCase().includes('brewer'))) {
+        // Note: They can choose one, but we don't automatically add it
       }
     }
+
+    // Clean up and ensure no duplicates
+    suggestions.weapons = [...new Set(suggestions.weapons.filter(w => w))];
+    suggestions.tools = [...new Set(suggestions.tools.filter(t => t))];
+    suggestions.packs = [...new Set(suggestions.packs.filter(p => p))];
+    suggestions.miscellaneous = [...new Set(suggestions.miscellaneous.filter(m => m))];
 
     return suggestions;
+  };
+
+  // Categorize background equipment into appropriate categories
+  const categorizeBackgroundEquipment = (equipmentItems: string[]): {
+    weapons: string[];
+    tools: string[];
+    packs: string[];
+    miscellaneous: string[];
+  } => {
+    const categorized = {
+      weapons: [] as string[],
+      tools: [] as string[],
+      packs: [] as string[],
+      miscellaneous: [] as string[]
+    };
+
+    equipmentItems.forEach(item => {
+      const lower = item.toLowerCase();
+      
+      // Check for tools first (most specific)
+      if (
+        lower.includes('tools') || 
+        lower.includes('kit') || 
+        lower.includes('set of') ||
+        lower.includes("thieves' tools") ||
+        lower.includes("artisan's tools") ||
+        lower.includes('gaming set') ||
+        lower.includes('musical instrument') ||
+        lower.includes('disguise kit') ||
+        lower.includes('forgery kit') ||
+        lower.includes('herbalism kit') ||
+        lower.includes('navigator\'s tools')
+      ) {
+        categorized.tools.push(item);
+      }
+      // Check for packs
+      else if (lower.includes('pack') || lower.includes('backpack')) {
+        categorized.packs.push(item);
+      }
+      // Check for weapons (but exclude small items)
+      else if (
+        (lower.includes('knife') || 
+         lower.includes('dagger') || 
+         lower.includes('sword') || 
+         lower.includes('weapon') || 
+         lower.includes('club') || 
+         lower.includes('mace') || 
+         lower.includes('staff') ||
+         lower.includes('crossbow') ||
+         lower.includes('bow') ||
+         lower.includes('spear') ||
+         lower.includes('axe') ||
+         lower.includes('hammer')) &&
+        !lower.includes('small') &&
+        !lower.includes('tiny')
+      ) {
+        categorized.weapons.push(item);
+      }
+      // Everything else goes to miscellaneous
+      else {
+        categorized.miscellaneous.push(item);
+      }
+    });
+
+    return categorized;
+  };
+
+  // Equipment selection helpers
+  const setArmorSelection = (armorName: string) => {
+    setSelectedEquipment(prev => ({ ...prev, armor: armorName }));
+  };
+
+  // Remove equipment item from a specific category
+  const removeEquipmentItem = (category: 'weapons' | 'tools' | 'packs' | 'miscellaneous', item: string) => {
+    setSelectedEquipment(prev => {
+      const updated = { ...prev };
+      
+      if (category === 'weapons') {
+        updated.weapons = updated.weapons.filter(w => w !== item);
+      } else if (category === 'tools') {
+        updated.tools = updated.tools.filter(t => t !== item);
+      } else if (category === 'packs') {
+        updated.packs = updated.packs.filter(p => p !== item);
+      } else if (category === 'miscellaneous') {
+        updated.miscellaneous = updated.miscellaneous.filter(m => m !== item);
+      }
+      
+      return updated;
+    });
+    
+    // Remove from background equipment tracking if it was a background item
+    setBackgroundEquipmentItems(prev => {
+      const updated = new Set(prev);
+      updated.delete(item);
+      return updated;
+    });
+    
+    logWithDebug('info', 'Equipment item removed', { category, item });
+  };
+
+
+  // Helper functions to convert SRD data to MultiSelectOption format
+  const getWeaponOptions = (): MultiSelectOption[] => {
+    const allWeapons: MultiSelectOption[] = [];
+    ['Simple Melee', 'Simple Ranged', 'Martial Melee', 'Martial Ranged'].forEach(category => {
+      const weapons = getWeaponsByCategory(category as any);
+      weapons.forEach(weapon => {
+        allWeapons.push({
+          value: weapon.name,
+          label: weapon.name,
+          metadata: `${weapon.damage} ${weapon.damageType} • ${weapon.cost}`,
+          description: `Damage: ${weapon.damage} ${weapon.damageType}, Properties: ${weapon.properties.join(', ') || 'None'}${weapon.range ? `, Range: ${weapon.range}` : ''}, Weight: ${weapon.weight} lbs`
+        });
+      });
+    });
+    return allWeapons;
+  };
+
+  const getToolOptions = (): MultiSelectOption[] => {
+    return SRD_TOOLS.map(tool => ({
+      value: tool.name,
+      label: tool.name,
+      metadata: tool.cost,
+      description: tool.description || `Cost: ${tool.cost}, Weight: ${tool.weight} lbs`
+    }));
+  };
+
+  const getPackOptions = (): MultiSelectOption[] => {
+    return SRD_PACKS.map(pack => ({
+      value: pack.name,
+      label: pack.name,
+      metadata: `${pack.cost} • ${pack.weight} lbs`,
+      description: pack.description || `Cost: ${pack.cost}, Weight: ${pack.weight} lbs`
+    }));
+  };
+
+  const getMiscOptions = (): MultiSelectOption[] => {
+    return SRD_MISCELLANEOUS.map(item => ({
+      value: item.name,
+      label: item.name,
+      metadata: `${item.cost} • ${item.weight} lbs`,
+      description: item.description || `Cost: ${item.cost}, Weight: ${item.weight} lbs`
+    }));
+  };
+
+  const getArmorOptions = (): SingleSelectOption[] => {
+    const allArmor: SingleSelectOption[] = [];
+    ['Light', 'Medium', 'Heavy', 'Shield'].forEach(category => {
+      const armor = getArmorByCategory(category as any);
+      armor.forEach(a => {
+        allArmor.push({
+          value: a.name,
+          label: a.name,
+          metadata: `AC: ${a.ac} • ${a.cost}`,
+          description: `AC: ${a.ac}, Stealth: ${a.stealth}${a.strength ? `, Strength Required: ${a.strength}` : ''}, Weight: ${a.weight} lbs, Cost: ${a.cost}`
+        });
+      });
+    });
+    return allArmor;
   };
 
   const applySuggestedEquipment = () => {
@@ -1623,9 +1884,9 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               {/* Step 1: Background */}
               <TabsTrigger 
                 value="background" 
-                className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#000000] data-[state=active]:text-[#ef6646] data-[state=active]:shadow-sm flex-1 ${
+                className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#3b0d70] data-[state=active]:text-[#ffffff] data-[state=active]:shadow-sm flex-1 ${
                   activeTab === 'background' 
-                    ? 'bg-[#000000] text-[#ef6646]' 
+                    ? 'bg-[#3b0d70] text-[#ffffff]' 
                   : backgroundLocked
                     ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
                     : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
@@ -1663,9 +1924,9 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               ) : (
                 <TabsTrigger 
                   value="abilities" 
-                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#000000] data-[state=active]:text-[#ef6646] data-[state=active]:shadow-sm flex-1 ${
+                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#3b0d70] data-[state=active]:text-[#ffffff] data-[state=active]:shadow-sm flex-1 ${
                     activeTab === 'abilities' 
-                      ? 'bg-[#000000] text-[#ef6646]' 
+                      ? 'bg-[#3b0d70] text-[#ffffff]' 
                       : abilityScoresLocked 
                       ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
                       : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
@@ -1704,9 +1965,9 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
               ) : (
                 <TabsTrigger 
                   value="equipment" 
-                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#000000] data-[state=active]:text-[#ef6646] data-[state=active]:shadow-sm flex-1 ${
+                  className={`relative px-4 py-2.5 text-sm font-medium rounded-md transition-all data-[state=active]:bg-[#3b0d70] data-[state=active]:text-[#ffffff] data-[state=active]:shadow-sm flex-1 ${
                     activeTab === 'equipment' 
-                      ? 'bg-[#000000] text-[#ef6646]' 
+                      ? 'bg-[#3b0d70] text-[#ffffff]' 
                       : equipmentLocked 
                       ? 'text-green-400/90 hover:text-green-300 hover:bg-green-500/10' 
                       : 'text-gray-400 hover:text-gray-300 hover:bg-[#1C1F2B]'
@@ -1975,9 +2236,16 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                       <div key={ability} className="space-y-2">
                         <Label htmlFor={ability} className="capitalize text-sm text-gray-400 flex items-center gap-1">
                           {ability}
-                          <span title={ABILITY_DEFINITIONS[ability as keyof AbilityScores]}>
-                            <Info className="w-3 h-3 text-gray-500" aria-label="Ability info" />
-                          </span>
+                          <Tooltip delayDuration={200}>
+                            <TooltipTrigger asChild>
+                              <span>
+                                <Info className="w-3 h-3 text-gray-500 hover:text-gray-400 cursor-help" aria-label="Ability info" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-xs">
+                              <p>{ABILITY_DEFINITIONS[ability as keyof AbilityScores]}</p>
+                            </TooltipContent>
+                          </Tooltip>
                         </Label>
                         <div className="flex items-center space-x-2">
                           {!abilityScoresLocked ? (
@@ -1993,7 +2261,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                                 >
                                   <SelectTrigger 
                                     id={ability}
-                                    className={`w-32 bg-[#1C1F2B] text-white border focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] ${
+                                    className={`w-32 bg-[#1C1F2B] text-white border focus:ring-[rgba(59,13,112,0.3)] focus:border-[#3b0d70] ${
                                       hasError 
                                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                                         : isValid && currentValue > 0
@@ -2073,7 +2341,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                                       }
                                     }
                                   }}
-                                  className={`w-16 bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] ${
+                                  className={`w-16 bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border focus:ring-[rgba(59,13,112,0.3)] focus:border-[#3b0d70] ${
                                     hasError 
                                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                                       : isValid
@@ -2199,7 +2467,12 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     <div className="flex-1">
                       <p className="text-sm font-medium text-blue-300">From Your Background</p>
                       <p className="text-xs text-blue-400/80 mt-1">
-                        Your {character.background.name} background also provides: {character.background.equipment.join(', ')}
+                        Your {character.background.name} background provides: {character.background.equipment.join(', ')}
+                        {backgroundLocked && (
+                          <span className="block mt-1 text-blue-300">
+                            These items have been automatically added to your equipment below. You can remove them if needed.
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -2306,80 +2579,81 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                     ? 'border-2 border-green-500/50 bg-green-900/10 rounded-xl p-4' 
                     : ''
                 }`}>
-                  <h3 className="text-sm font-semibold text-white border-b border-[#2A3340] pb-2">Custom Equipment Selection</h3>
+                  <h3 className="text-sm font-semibold text-white border-b border-[#2A3340] pb-2 mb-4">Custom Equipment Selection</h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  {/* Equipment Selection in 2-Column Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Weapons */}
-                    <div>
-                      <Label className="text-sm text-gray-400 mb-2 block">Weapons</Label>
-                      <Textarea
-                        value={selectedEquipment.weapons.join(', ')}
-                        onChange={(e) => setSelectedEquipment({
-                          ...selectedEquipment,
-                          weapons: e.target.value.split(',').map(w => w.trim()).filter(w => w)
-                        })}
-                        disabled={equipmentLocked}
-                        placeholder="e.g., Longsword, Shield"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[60px]"
-                      />
-                    </div>
-
-                    {/* Armor */}
-                    <div>
-                      <Label className="text-sm text-gray-400 mb-2 block">Armor</Label>
-                      <Input
-                        value={selectedEquipment.armor}
-                        onChange={(e) => setSelectedEquipment({ ...selectedEquipment, armor: e.target.value })}
-                        disabled={equipmentLocked}
-                        placeholder="e.g., Chain Mail"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646]"
-                      />
-                    </div>
+                    <MultiSelectChips
+                      label="Weapons"
+                      value={selectedEquipment.weapons}
+                      options={getWeaponOptions()}
+                      onChange={(selected) => {
+                        setSelectedEquipment(prev => ({ ...prev, weapons: selected }));
+                      }}
+                      placeholder="Select weapons..."
+                      backgroundItems={backgroundEquipmentItems}
+                      disabled={equipmentLocked}
+                      searchable={true}
+                    />
 
                     {/* Tools */}
-                    <div>
-                      <Label className="text-sm text-gray-400 mb-2 block">Tools</Label>
-                      <Textarea
-                        value={selectedEquipment.tools.join(', ')}
-                        onChange={(e) => setSelectedEquipment({
-                          ...selectedEquipment,
-                          tools: e.target.value.split(',').map(t => t.trim()).filter(t => t)
-                        })}
-                        disabled={equipmentLocked}
-                        placeholder="e.g., Thieves' Tools"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[60px]"
-                      />
-                    </div>
+                    <MultiSelectChips
+                      label="Tools"
+                      value={selectedEquipment.tools}
+                      options={getToolOptions()}
+                      onChange={(selected) => {
+                        setSelectedEquipment(prev => ({ ...prev, tools: selected }));
+                      }}
+                      placeholder="Select tools..."
+                      backgroundItems={backgroundEquipmentItems}
+                      disabled={equipmentLocked}
+                      searchable={true}
+                    />
 
                     {/* Packs */}
-                    <div>
-                      <Label className="text-sm text-gray-400 mb-2 block">Packs</Label>
-                      <Textarea
-                        value={selectedEquipment.packs.join(', ')}
-                        onChange={(e) => setSelectedEquipment({
-                          ...selectedEquipment,
-                          packs: e.target.value.split(',').map(p => p.trim()).filter(p => p)
-                        })}
-                        disabled={equipmentLocked}
-                        placeholder="e.g., Explorer's Pack"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[60px]"
-                      />
-                    </div>
+                    <MultiSelectChips
+                      label="Packs"
+                      value={selectedEquipment.packs}
+                      options={getPackOptions()}
+                      onChange={(selected) => {
+                        setSelectedEquipment(prev => ({ ...prev, packs: selected }));
+                      }}
+                      placeholder="Select packs..."
+                      backgroundItems={backgroundEquipmentItems}
+                      disabled={equipmentLocked}
+                      searchable={true}
+                    />
 
                     {/* Miscellaneous */}
-                    <div className="md:col-span-2">
-                      <Label className="text-sm text-gray-400 mb-2 block">Miscellaneous Items</Label>
-                      <Textarea
-                        value={selectedEquipment.miscellaneous.join(', ')}
-                        onChange={(e) => setSelectedEquipment({
-                          ...selectedEquipment,
-                          miscellaneous: e.target.value.split(',').map(m => m.trim()).filter(m => m)
-                        })}
-                        disabled={equipmentLocked}
-                        placeholder="e.g., Rope (50 ft.), Torch (10)"
-                        className="bg-[#1C1F2B] text-white placeholder:text-gray-500 py-2 px-3 rounded-lg border border-[#2A3340] focus:ring-[rgba(239,102,70,0.3)] focus:border-[#ef6646] min-h-[80px]"
-                      />
-                    </div>
+                    <MultiSelectChips
+                      label="Miscellaneous"
+                      value={selectedEquipment.miscellaneous}
+                      options={getMiscOptions()}
+                      onChange={(selected) => {
+                        setSelectedEquipment(prev => ({ ...prev, miscellaneous: selected }));
+                      }}
+                      placeholder="Select items..."
+                      backgroundItems={backgroundEquipmentItems}
+                      disabled={equipmentLocked}
+                      searchable={true}
+                    />
+                  </div>
+
+                  {/* Armor Section (Single Select) */}
+                  <div className="mt-4">
+                    <SingleSelectChips
+                      label="Armor"
+                      value={selectedEquipment.armor}
+                      options={getArmorOptions()}
+                      onChange={(selected) => {
+                        setSelectedEquipment(prev => ({ ...prev, armor: selected }));
+                      }}
+                      placeholder="Select armor..."
+                      backgroundItems={backgroundEquipmentItems}
+                      disabled={equipmentLocked}
+                      searchable={true}
+                    />
                   </div>
                 </div>
 
@@ -2409,8 +2683,7 @@ export default function CharacterSheetPage({ sessionId, context, onContextUpdate
                           equipmentLocked: true,
                           allStepsComplete: true,
                           backgroundLocked,
-                          abilityScoresLocked,
-                          equipmentLocked: true
+                          abilityScoresLocked
                         });
                       }}
                       variant="primary"

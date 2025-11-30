@@ -190,7 +190,7 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
               radius="md"
               startContent={<Plus className="w-4 h-4" />}
               onClick={onCreateNew}
-              className="rounded-[12px] font-medium bg-[#000000] hover:bg-[#1a1a1a] text-[#ef6646] focus:ring-2 focus:ring-[rgba(239,102,70,0.3)]"
+              className="rounded-[12px] font-medium bg-[#3b0d70] hover:bg-[#4a1a8a] text-[#ffffff] focus:ring-2 focus:ring-[rgba(59,13,112,0.3)]"
             >
               Create Project
             </Button>
@@ -294,7 +294,7 @@ export default function ProjectList({ onProjectSelected, onCreateNew }: ProjectL
                   radius="md"
                   onClick={onCreateNew}
                   startContent={<Plus className="w-4 h-4" />}
-                  className="rounded-[12px] mt-4 font-medium bg-[#000000] hover:bg-[#1a1a1a] text-[#ef6646] focus:ring-2 focus:ring-[rgba(239,102,70,0.3)]"
+                  className="rounded-[12px] mt-4 font-medium bg-[#3b0d70] hover:bg-[#4a1a8a] text-[#ffffff] focus:ring-2 focus:ring-[rgba(59,13,112,0.3)]"
                 >
                   Create Project
                 </Button>

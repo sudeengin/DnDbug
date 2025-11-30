@@ -14,7 +14,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from backend.config import settings
-from backend.routers import projects, context
+from backend.routers import projects, context, characters
 from backend.utils.logger import logger
 
 log = logger['server']
@@ -52,6 +52,7 @@ async def log_requests(request: Request, call_next):
 # Include routers
 app.include_router(projects.router)
 app.include_router(context.router)
+app.include_router(characters.router)
 
 
 # Root endpoint

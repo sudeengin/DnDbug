@@ -261,7 +261,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
             <TabsList className="h-auto p-0 bg-transparent gap-2">
               <TabsTrigger 
                 value="overview" 
-                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ef6646] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#ef6646] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
+                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ffffff] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#3b0d70] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
               >
                 <div className="flex items-center gap-2">
                   <StatusDot tabId="overview" />
@@ -270,7 +270,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
               </TabsTrigger>
               <TabsTrigger 
                 value="background" 
-                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ef6646] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#ef6646] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
+                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ffffff] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#3b0d70] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
               >
                 <div className="flex items-center gap-2">
                   <StatusDot tabId="background" />
@@ -279,7 +279,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
               </TabsTrigger>
               <TabsTrigger 
                 value="characters" 
-                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ef6646] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#ef6646] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
+                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ffffff] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#3b0d70] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
               >
                 <div className="flex items-center gap-2">
                   <StatusDot tabId="characters" />
@@ -288,7 +288,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
               </TabsTrigger>
               <TabsTrigger 
                 value="character-sheet" 
-                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ef6646] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#ef6646] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
+                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ffffff] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#3b0d70] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
               >
                 <div className="flex items-center gap-2">
                   <StatusDot tabId="character-sheet" />
@@ -297,7 +297,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
               </TabsTrigger>
               <TabsTrigger 
                 value="macro-chain" 
-                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ef6646] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#ef6646] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
+                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ffffff] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#3b0d70] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
               >
                 <div className="flex items-center gap-2">
                   <StatusDot tabId="macro-chain" />
@@ -306,7 +306,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
               </TabsTrigger>
               <TabsTrigger 
                 value="scenes" 
-                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ef6646] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#ef6646] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
+                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ffffff] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#3b0d70] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
               >
                 <div className="flex items-center gap-2">
                   <StatusDot tabId="scenes" />
@@ -315,7 +315,7 @@ export default function AppLayout({ project, onProjectChange }: AppLayoutProps) 
               </TabsTrigger>
               <TabsTrigger 
                 value="context" 
-                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ef6646] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#ef6646] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
+                className="px-4 py-2 rounded-[8px] data-[state=active]:bg-[rgba(255,255,255,0.05)] data-[state=active]:text-[#ffffff] data-[state=active]:font-semibold data-[state=active]:border-b-[1px] data-[state=active]:border-[#3b0d70] text-[rgba(255,255,255,0.6)] hover:bg-[rgba(255,255,255,0.04)] transition-all duration-150"
               >
                 <div className="flex items-center gap-2">
                   <StatusDot tabId="context" />

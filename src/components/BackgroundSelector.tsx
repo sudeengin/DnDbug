@@ -92,26 +92,24 @@ export default function BackgroundSelector({
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-white truncate">
-                        {bg.name}
-                      </h3>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDetailView(bg);
-                        }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                        title="View full details"
-                      >
-                        <Info className="w-3.5 h-3.5 text-gray-400 hover:text-gray-300" />
-                      </button>
-                    </div>
+                    <h3 className="text-sm font-semibold text-white truncate">
+                      {bg.name}
+                    </h3>
                     {bg.feature?.name && (
                       <p className="text-xs text-gray-400 truncate">
                         {bg.feature.name}
                       </p>
                     )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDetailView(bg);
+                      }}
+                      className="text-[11px] text-[#ef6646] hover:text-[#ff7a5c] transition-colors underline-offset-2 hover:underline"
+                      title="View full details"
+                    >
+                      See details
+                    </button>
                   </div>
                   {isSelected && (
                     <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />

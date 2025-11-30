@@ -1274,413 +1274,309 @@
   "project_1762114846888_x6con4zna": {
     "sessionId": "project_1762114846888_x6con4zna",
     "blocks": {
+      "custom": {
+        "macroChain": {
+          "chainId": "chain_1763830565825_jz1t7y44b",
+          "scenes": [
+            {
+              "id": "scene_1_1763830565826",
+              "order": 1,
+              "title": "Echoing Heartbeats in Veyra’s Rest Town Square",
+              "objective": "Explore the synchronized activities of the townsfolk while uncovering initial clues about the Hivemind's influence."
+            },
+            {
+              "id": "scene_2_1763830565826",
+              "order": 2,
+              "title": "Silent Whispers at the Chapel of Unified Thoughts",
+              "objective": "Investigate the unsettling prayers that blend into the Hivemind, revealing hints about its control over Veyra's Rest."
+            },
+            {
+              "id": "scene_3_1763830565826",
+              "order": 3,
+              "title": "Crystalline Reflections in the Crystal Chamber",
+              "objective": "Steal the relic amplifying the Hivemind's control while navigating the paranoia of being discovered by its guardians."
+            },
+            {
+              "id": "scene_4_1763830565826",
+              "order": 4,
+              "title": "Blending Shadows on the Valley's Edge",
+              "objective": "Confront the ethical dilemmas of destabilizing the Hivemind's grip and its consequences on the town’s populace."
+            },
+            {
+              "id": "scene_5_1763830565826",
+              "order": 5,
+              "title": "Shared Dreams in the Whispering Woods",
+              "objective": "Experience visions that reveal the hidden motives of each envoy, testing their trust in one another."
+            },
+            {
+              "id": "scene_6_1763830565826",
+              "order": 6,
+              "title": "Unraveling Identity at the Heart of Veyra’s Rest",
+              "objective": "Faced with the relic's awakening potential, decide whether to embrace or resist the Hivemind's deeper power and its impact on their individuality."
+            }
+          ],
+          "status": "Draft",
+          "version": 1,
+          "lastUpdatedAt": "2025-11-22T16:56:05.826Z",
+          "meta": {
+            "source": "macroChainTab",
+            "requestId": "80037d47-e0f4-4d46-8ee5-3695c81c44a1",
+            "isDraftIdeaBank": true
+          },
+          "createdAt": "2025-11-22T16:56:05.826Z",
+          "updatedAt": "2025-11-22T16:56:05.830Z"
+        }
+      }
+    },
+    "locks": {},
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 0,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-11-22T17:04:11.906Z"
+    },
+    "version": 2,
+    "createdAt": "2025-11-22T17:04:11.906Z",
+    "updatedAt": "2025-11-22T17:04:11.949Z"
+  },
+  "test": {
+    "sessionId": "test",
+    "blocks": {},
+    "locks": {
+      "characters": true
+    },
+    "meta": {
+      "backgroundV": 0,
+      "charactersV": 1,
+      "macroSnapshotV": 0,
+      "updatedAt": "2025-11-22T19:43:54.254120"
+    },
+    "version": 1,
+    "createdAt": "2025-11-22T19:43:54.254121",
+    "updatedAt": "2025-11-22T19:44:10.817114"
+  },
+  "project_1763884510416_m9yoysyjo": {
+    "sessionId": "project_1763884510416_m9yoysyjo",
+    "blocks": {
       "story_concept": {
-        "concept": "In the shadow of a sprawling valley stands Veyra’s Rest — a quiet town that moves in perfect rhythm. Every bell toll, every market trade, every whispered prayer happens in eerie unison. To the untrained eye, it looks like harmony. To those who listen closely, it feels like a single thought breathing through a hundred mouths.\n\nThe town is ruled not by crown or council, but by a *Hivemind* — a vast psychic network binding every villager into one will. No crime. No lies. No freedom. Outsiders who stay too long begin to dream in the town’s voice, until even their heartbeat falls in step with the rest.\n\nFar beyond the valley, a distant kingdom grows desperate. The Hivemind holds an ancient relic — a core of crystal thought said to amplify its control. If stolen, it could break the connection and free the town. Or, if disturbed, it could awaken something far worse.\n\nSo a small band of envoys is sent under moonlight: spies, thieves, and soldiers disguised as pilgrims. Their task is clear — retrieve the relic without alerting the Hivemind. But in Veyra’s Rest, *every whisper is heard*, *every heartbeat is shared*, and *every lie echoes in a thousand minds*.\n\nThe deeper they move into the town’s pulse, the more their own thoughts begin to blur. Who among them is still free — and who has already been claimed?\n\nBecause in Veyra’s Rest, silence isn’t safety.\nIt’s the sound of something thinking.",
-        "timestamp": "2025-11-02T20:51:37.549Z"
+        "concept": "After centuries of war waged through steel and sorcery, the lands finally fell silent. But this “silence” was no peace — it was a curse. It crept into the minds of those who lived within the fallen kingdoms, twisting their thoughts until they lost themselves entirely, becoming monstrous reflections of their former selves.\n\nNo scholar, priest, or sorcerer could ever uncover the origin of this silence. The ancient libraries burned, the oracle stones cracked, and even the gods’ whispers faded from the temples. Only fragments of old prophecies remain — warnings that the silence was never meant to end.\n\nNow, generations later, a band of explorers from distant realms sets out to trace its source. Among them: a war-scarred knight seeking redemption, a scholar of forbidden magic, a healer who survived the silence once before, and a hunter who has seen its creatures up close. Each bears a personal scar — and a secret reason to uncover the truth.\n\nTheir journey leads them beyond ruined fortresses and into a place untouched by time — a forgotten relic buried in the heart of the dead lands. But what they find there is not the echo of a lost age. It is a living design, one that proves the silence was never abandoned.\n\nSomeone — or something — is still guarding it.\nAnd perhaps, the silence isn’t sleeping at all… it’s calling them home.",
+        "timestamp": "2025-11-23T08:17:43.502Z"
       },
       "background": {
-        "premise": "A band of envoys seeks to infiltrate the Hivemind-controlled town of Veyra’s Rest to steal a relic that could free its inhabitants.",
+        "premise": "In a land cursed into silence, a group of explorers seeks to uncover the dark origins of the curse, risking their lives to break its hold and reveal long-buried secrets.",
         "tone_rules": [
-          "Maintain an atmosphere of eerie synchronicity.",
-          "Emphasize the tension between freedom and control.",
-          "Highlight the unsettling nature of shared thoughts.",
-          "Keep a constant undercurrent of paranoia.",
-          "Focus on the surreal blending of identities."
+          "Dark and foreboding atmosphere",
+          "Mystical with hints of ancient magic",
+          "Desperate yet hopeful undertones",
+          "Character-driven with personal stakes",
+          "Suspenseful with constant tension"
         ],
         "stakes": [
-          "Failure to retrieve the relic could mean the envoys are absorbed into the Hivemind.",
-          "Breaking the Hivemind's control could destabilize the town, causing chaos.",
-          "Discovery by the Hivemind could alert it to the kingdom's intentions.",
-          "The relic's disturbance might awaken a greater threat.",
-          "The envoys risk losing their own identities."
+          "The curse threatens to consume all who come near",
+          "Each explorer struggles with their own dark past",
+          "Unraveling the curse risks awakening a greater evil",
+          "Personal redemption hangs in the balance"
         ],
         "mysteries": [
-          "What is the true nature of the Hivemind?",
-          "How does the relic amplify the Hivemind's control?",
-          "Who among the envoys is already compromised?",
-          "What hidden motives do each of the envoys have?",
-          "Is there a deeper power lurking beneath Veyra’s Rest?"
+          "The true origin of the silence",
+          "How did \"Silence\" come to this world?",
+          "Who are the forces behind the silence that enforces it?",
+          "What's the motivation of the Factions towards the Silecne?"
         ],
         "factions": [
-          "The Hivemind: A psychic network controlling the town.",
-          "The Envoys: Spies, thieves, and soldiers on a secret mission.",
-          "The Townsfolk: Unwitting extensions of the Hivemind.",
-          "The Kingdom: Desperate to undermine the Hivemind's power.",
-          "The Whisperers: A rumored group resisting the Hivemind from within."
+          "The Order of the Silent Watchers",
+          "The Guild of Forbidden Scholars",
+          "The Remnants of the Old Kingdoms",
+          "The Cult of the Cursed Echo",
+          "The Protectors of the Ancient Relic"
         ],
         "location_palette": [
-          "Veyra’s Rest Town Square: The heart of synchronized activity.",
-          "The Chapel of Unified Thoughts: Where prayers blend into the Hivemind.",
-          "The Crystal Chamber: Where the relic is kept under guard.",
-          "The Valley's Edge: The boundary between freedom and control.",
-          "The Whispering Woods: A place of rumored resistance."
+          "The Ruined Fortresses",
+          "The Burnt Libraries"
         ],
-        "npc_roster_skeleton": [
-          "Elder Jaron: The town's spokesperson, both charismatic and unsettling.",
-          "Seraphine, the Seer: Claims to sense disruptions in the Hivemind.",
-          "Captain Lorn: Leader of the envoys, struggling with inner voices.",
-          "Mira, the Smith: A local with a glimmer of independent thought.",
-          "The Faceless One: A mysterious figure rumored to navigate the Hivemind undetected."
-        ],
+        "npc_roster_skeleton": [],
         "motifs": [
-          "Echoing heartbeats.",
-          "Shared dreams.",
-          "Crystalline reflections.",
-          "Silent whispers.",
-          "Blending shadows."
+          "Echoes of the past",
+          "Shattered reflections",
+          "The struggle for redemption",
+          "The power of forgotten knowledge",
+          "The balance between silence and sound"
         ],
         "doNots": [
-          "Avoid overt violence; focus on psychological tension.",
-          "Do not break the surreal atmosphere with unrelated humor.",
-          "Avoid clear-cut good vs evil; emphasize moral ambiguity.",
-          "Do not reveal the Hivemind's nature too quickly.",
-          "Avoid excessive exposition; let mysteries unfold naturally."
+          "Avoid clear-cut good versus evil",
+          "Do not reveal all secrets at once",
+          "Avoid modern technology elements",
+          "Do not stray into comedic tones",
+          "Avoid trivializing the curse's impact"
         ],
         "playstyle_implications": [
-          "Encourage players to explore psychological dimensions of their characters.",
-          "Focus on stealth and subtlety over brute force.",
-          "Allow for dynamic shifts in trust and suspicion among players.",
-          "Provide opportunities for players to experience shared dream sequences.",
-          "Create challenges that test players' ability to maintain their individuality."
+          "Encourage exploration and discovery",
+          "Emphasize character development",
+          "Focus on solving mysteries collaboratively",
+          "Allow flexibility in overcoming challenges",
+          "Create tension through moral dilemmas"
         ],
         "numberOfPlayers": 3
       },
       "characters": {
         "list": [
           {
-            "name": "Elara Moonshadow",
-            "role": "Mystic Seeker",
-            "race": "Elf",
-            "class": "Ranger",
-            "personality": "Elara embodies the ethereal grace and keen perception of her Elven ancestry, intertwined with an intense inner dialogue that echoes the whispers of the Hivemind. Her demeanor is calm and observant, yet her mind is a labyrinth of shared dreams and ancestral calls, making her both a steadfast ally and an enigma to her companions. She often appears lost in thought, as if listening to voices beyond the physical realm, constantly balancing her desire for liberation with the fear of being drawn into the Hivemind's enigmatic embrace.",
-            "motivation": "Elara is driven by the call of ancestral memory etched within her very essence, a resonance that connects her to the Dwarven forges of old. She seeks to unlock the secrets of the relic in Veyra's Rest, driven by an intrinsic duty to meld the art of stone and nature with the arcane mysteries she has glimpsed in her visions. For Elara, the liberation of Veyra’s Rest symbolizes a deeper personal quest to reconnect with her lost Dwarven heritage, believing that by understanding the relic's power, she can prevent the Hivemind from consuming not only her identity but the essence of individuality for all.",
-            "connectionToStory": "Elara has always felt a magnetic pull towards Veyra’s Rest, perceiving it as a place where her fragmented dreams and hidden ancestry intersect with the enigmatic forces of the Hivemind. Her connection to the town is deepened by the eerie synchronicity she experiences in her thoughts, often mirroring the whispers of the Hivemind. These shared dreams have revealed to her the presence of a powerful relic within the Crystal Chamber, believed to amplify the Hivemind's grasp. As a Dwarf Ranger, her intrinsic resilience and attunement to the earth guide her in unraveling the hidden pathways within the town, allowing her to seek out the relic that could liberate the townsfolk and perhaps illuminate the mysterious ties to her own lineage.",
-            "gmSecret": "Elara is unknowingly the last descendant of the Hivemind's original creators. Her presence near the relic could either disrupt or strengthen its power, a fact known only to the Hivemind itself.",
-            "potentialConflict": "Her lineage, if discovered, could lead to both internal doubts about her allegiance and external distrust from her companions.",
-            "voiceTone": "Elara's voice carries the steady resonance of a mountain echo, her words deliberate and weighted, as if each syllable is chosen to withstand the test of time. There is a grounding depth to her speech, underscored by a subtle, enduring rhythm that reflects the ancient and enduring wisdom of her Dwarven lineage. Her tones are rich and enveloping, weaving a tapestry of introspection and resolve that entices listeners into the enigmatic realms of shared dreams and elusive truths.",
-            "inventoryHint": "A translucent crystal shard, its surface etched with indecipherable runes, whispering faint echoes of past thoughts.",
+            "name": "Eira Swiftwind",
+            "role": "Wandering Scholar",
+            "race": "Half-Elf",
+            "class": "Monk",
+            "personality": "Eira possesses a serene determination, her movements and thoughts flowing with the grace of a practiced monk. She remains unfazed by chaos, finding solace in silence as she navigates the world, her curiosity tempered by the discipline of her training.",
+            "motivation": "Eira is driven by a deep-seated need to restore balance between silence and sound, believing that understanding the curse's origin is key to preserving the world's forgotten knowledge. Her monastic training has taught her discipline and focus, which she channels into uncovering the mysteries of the silent lands.",
+            "connectionToStory": "Eira's quest leads her to the heart of the Ruined Fortresses, where she believes an ancient sect of monks once meditated upon the mysteries of sound and silence. She hopes to uncover their forgotten techniques and use them to unravel the curse, balancing her search for enlightenment with the need to survive the perils of these haunted lands.",
+            "gmSecret": "Eira unknowingly carries a scroll containing a fragment of ancient text, stolen from the Guild of Forbidden Scholars. This text is rumored to reveal the true origin of the silence if properly decoded.",
+            "potentialConflict": "Her insatiable curiosity often leads her into dangerous situations, disregarding personal safety.",
+            "voiceTone": "Measured and serene, with an undercurrent of curiosity",
+            "inventoryHint": "A leather-bound tome with illegible script",
             "motifAlignment": [
-              "Shared dreams",
-              "Silent whispers",
-              "Echoing heartbeats",
-              "Crystalline reflections",
-              "Eerie synchronicity"
+              "Echoes of the past",
+              "The struggle for redemption",
+              "The power of forgotten knowledge"
             ],
-            "backgroundHistory": "Born in the rugged mountains of the Dwarven stronghold of Khazad-Tal, Elara was raised amidst the echoing chants of the stone halls and the harmonious clang of forging steel. Her father, a master smith, infused his craft with arcane runes, while her mother, a seer, spoke of whispers carried through the stones. From them, Elara inherited a dual legacy of craftsmanship and mysticism, nurturing her unique talents. Her defining moment came during a rare lunar eclipse when she stumbled upon an ancient cave adorned with crystals that sang to her in the language of dreams, revealing visions of Veyra’s Rest and a crystal relic. This encounter ignited her desire to understand the intertwined fates of her lineage and the Hivemind's secrets. With the burden of these revelations and her family’s legacy, she joined the envoys to Veyra’s Rest, driven by a quest to unravel the enigma of the relic and prevent the shroud of the Hivemind from consuming her identity and the freedom of the townsfolk.",
+            "backgroundHistory": "Eira Swiftwind was born in a secluded enclave nestled between the Ruined Fortresses and the Burnt Libraries, where silence and shadows lingered like a haunting melody. Her mother, an elven historian, taught her the ancient scripts etched into the remnants of civilization, and she grew up revering the whispers of forgotten knowledge. As a child, Eira spent countless hours beneath the crumbling vaults, tracing the runes carved into stone, yearning for the echoes of lost wisdom to reveal themselves.\n\nA defining moment came when Eira discovered an ancient monk meditating amidst the ruins. Intrigued by his serene presence and command of self-discipline, she began training under him, mastering the balance between body and mind. As the curse spread, she realized the true power of silence, using her monk abilities to delve into the enigma shrouding her world. Driven by the hope of restoring harmony, she journeyed into the silent lands, believing that the key to redemption lay in unraveling the mysteries held within the Burnt Libraries' ashes.",
             "keyRelationships": [
-              "Captain Lorn - Fellow envoy and leader",
-              "Seraphine, the Seer - Respected elder who guided her arcane studies"
+              "The Guild of Forbidden Scholars",
+              "A reclusive librarian who mentored her"
             ],
-            "flawOrWeakness": "Elara is haunted by self-doubt, stemming from the fear that her arcane pursuits and visions might be leading her down a path of isolation and potential madness, mirroring the Hivemind’s control she seeks to break.",
+            "flawOrWeakness": "She often values knowledge over human connection, which isolates her from companions.",
             "languages": [
               "Common",
-              "Dwarvish"
+              "Elvish",
+              "Sylvan"
             ],
-            "alignment": "True Neutral",
-            "deity": "Mystra, the goddess of magic",
-            "physicalDescription": "Slender and graceful, her skin has a faint luminescence. She wears flowing garments that shimmer with hues of midnight blue and deep purple.",
-            "equipmentPreferences": [
-              "Longbow",
-              "Shortswords",
-              "Leather Armor",
-              "Explorer's Pack",
-              "Arrows"
-            ],
-            "subrace": "Half-Elf",
-            "age": 28,
-            "height": "5'9\"",
-            "proficiencies": [
-              "Athletics",
-              "Survival",
-              "Nature",
-              "Insight",
-              "Thieves' Tools",
-              "Longswords",
-              "Shortswords",
-              "Longbows"
-            ],
-            "id": "char_1763218061363_zp18u6yvb",
-            "status": "generated"
-          },
-          {
-            "name": "Thorin Stoneheart",
-            "role": "Guardian of Shadows",
-            "race": "Dwarf",
-            "class": "Rogue",
-            "personality": "Thorin is stoic and pragmatic, with a dry wit. He's a loyal protector but is also wary of those who hide their true intentions.",
-            "motivation": "Thorin is driven by the need to prove himself against the unyielding control of the Hivemind, seeking to liberate the town of Veyra’s Rest.",
-            "connectionToStory": "A former mercenary, Thorin was hired by the kingdom to infiltrate Veyra’s Rest, but his personal drive stems from a familial connection to the land.",
-            "gmSecret": "Thorin's ancestor was one of the original settlers of Veyra’s Rest, a fact hidden from him by his family. This connection allows him to occasionally sense the Hivemind's presence more acutely.",
-            "potentialConflict": "His distrust of magic-users can cause friction with other party members, particularly Elara.",
-            "voiceTone": "Gruff and deliberate, with a hint of a Dwarven accent.",
-            "inventoryHint": "An old family crest, tarnished but still recognizable.",
-            "motifAlignment": [
-              "Blending shadows",
-              "Echoing heartbeats",
-              "Silent whispers"
-            ],
-            "backgroundHistory": "Born into a family of craftsmen, Thorin chose the path of a mercenary to escape the shadows of his ancestors' misdeeds. His skills in stealth and protection were honed over years spent in dangerous territories.",
-            "keyRelationships": [
-              "Mira, the Smith - Distant relative and potential ally within the town",
-              "Captain Lorn - Respects but remains cautious of"
-            ],
-            "flawOrWeakness": "Thorin is highly suspicious, often leading him to see betrayal where there is none.",
-            "languages": [
-              "Common",
-              "Dwarvish"
-            ],
-            "alignment": "Lawful Neutral",
-            "deity": null,
-            "physicalDescription": "Broad-shouldered and stout, with a beard braided with small iron rings. His attire is practical, consisting of dark leathers and a hooded cloak.",
+            "alignment": "Neutral Good",
+            "deity": "Oghma, the God of Knowledge",
+            "physicalDescription": "Lithe build with silver-streaked black hair, her eyes sparkle with a quiet intensity. She wears simple robes adorned with arcane symbols.",
             "equipmentPreferences": [
               "Shortsword",
-              "Thieves' tools",
-              "Leather armor"
+              "Dart",
+              "Explorer's Pack",
+              "Simple Weapon"
             ],
-            "subrace": "Mountain Dwarf",
-            "age": 90,
-            "height": "4'8\"",
+            "subrace": "Half-Elf",
+            "age": 32,
+            "height": "5'5\"",
             "proficiencies": [
+              "Acrobatics",
+              "Athletics",
+              "Insight",
               "Stealth",
-              "Perception",
-              "Thieves' Tools"
+              "Herbalism Kit",
+              "Simple Weapons",
+              "Shortswords"
             ],
-            "id": "char_1763218061363_5s0nte81d",
+            "id": "char_1763886012149_n1s8q4dtm",
             "status": "generated"
           },
           {
-            "name": "Lyra Windwhisper",
-            "role": "Enigmatic Bard",
-            "race": "Tiefling",
-            "class": "Bard",
-            "personality": "Lyra is enigmatic and charismatic, with a talent for weaving stories and songs. Her carefree demeanor masks a deep-seated fear of losing her individuality.",
-            "motivation": "She seeks to document the tale of Veyra’s Rest, hoping to uncover the truth of the Hivemind through her art.",
-            "connectionToStory": "Lyra's music has always resonated with echoes of the Hivemind, compelling her to explore Veyra's Rest as part of the envoys.",
-            "gmSecret": "Unbeknownst to Lyra, her performances can subtly influence the Hivemind's collective thoughts, a latent power stemming from her infernal heritage.",
-            "potentialConflict": "Her fear of conformity can lead to resistance against necessary group decisions, potentially endangering the mission.",
-            "voiceTone": "Lyrical and enchanting, with a playful undertone.",
-            "inventoryHint": "A silver flute, intricately carved with infernal runes.",
+            "name": "Thorn Blackbark",
+            "role": "Mercenary Captain",
+            "race": "Half-Orc",
+            "class": "Fighter",
+            "personality": "Gruff and pragmatic, Thorn believes in action over words. He values strength and loyalty above all, though his heart hides a deep-seated sense of guilt.",
+            "motivation": "Thorn seeks redemption for a betrayal that led to his squad's downfall, hoping to find peace by breaking the curse.",
+            "connectionToStory": "His old commander, now a silent shade, haunts the Ruined Fortresses, tied to the mystery of the curse.",
+            "gmSecret": "Thorn's betrayal wasn't entirely his own; he was manipulated by the Cult of the Cursed Echo, who seek to use him as a pawn to further their dark goals.",
+            "potentialConflict": "His quest for redemption often blinds him to the dangers, putting others at risk.",
+            "voiceTone": "Gruff and direct",
+            "inventoryHint": "A worn locket with a faded picture of his old squad",
             "motifAlignment": [
-              "Echoing heartbeats",
-              "Crystalline reflections",
-              "Shared dreams"
+              "The struggle for redemption",
+              "Shattered reflections"
             ],
-            "backgroundHistory": "Lyra was raised in a troupe of traveling performers, where she honed her craft. A chance encounter with a seer revealed her potential connection to the town of Veyra’s Rest, sparking her curiosity and determination.",
+            "backgroundHistory": "Born into a mercenary company, Thorn learned early the cost of loyalty and betrayal. When a mission went awry, resulting in the death of his comrades, he was left with the scars of regret. Joining the quest to lift the curse, he seeks to avenge his fallen comrades and confront the shade of his past.",
             "keyRelationships": [
-              "Elder Jaron - Fascination with his enigmatic leadership",
-              "The Faceless One - Intrigued by the mystery"
+              "The Cult of the Cursed Echo",
+              "His fallen commander, now a shade"
             ],
-            "flawOrWeakness": "Her desire for freedom often blinds her to the value of rules and structure.",
+            "flawOrWeakness": "His guilt over past betrayals weighs heavily on his conscience.",
             "languages": [
               "Common",
-              "Infernal",
-              "Sylvan"
+              "Orc",
+              "Dwarvish"
             ],
             "alignment": "Chaotic Neutral",
             "deity": null,
-            "physicalDescription": "Her skin is a deep red, with curling horns and a tail that twitches with her emotions. She wears colorful, flowing attire that catches the light with each movement.",
+            "physicalDescription": "Muscular with grey-green skin and a distinct scar across his cheek. He wears practical armor, showing signs of wear from past battles.",
             "equipmentPreferences": [
-              "Rapier",
-              "Lute",
-              "Entertainer's pack"
+              "Greatsword",
+              "Chainmail",
+              "Shield"
             ],
             "subrace": null,
-            "age": 25,
-            "height": "5'6\"",
+            "age": 40,
+            "height": "6'4\"",
             "proficiencies": [
-              "Performance",
-              "Persuasion",
-              "Acrobatics"
+              "Athletics",
+              "Intimidation",
+              "Survival"
             ],
-            "id": "char_1763218061363_ibrrvh71s",
+            "id": "char_1763886012149_6g2kzhvpy",
+            "status": "generated"
+          },
+          {
+            "name": "Lirael Moonshadow",
+            "role": "Cursed Acolyte",
+            "race": "Gnome",
+            "class": "Cleric",
+            "personality": "Lirael is introspective and enigmatic, often retreating into deep contemplation about her past and the world around her. She carries an air of quiet resilience, using her intuition and cryptic expressions to communicate, embodying the delicate dance between silence and sound.",
+            "motivation": "Driven by echoes of her past with the Cult of the Cursed Echo, Lirael is determined to dismantle their influence and find redemption. She believes uncovering the truth of the curse will not only cleanse her soul but also restore a balance between the silence that haunts the land and the sound that once thrived. This quest for redemption is fueled by a desperate hope to prevent the Cult from manipulating her prophetic destiny for their own dark purposes.",
+            "connectionToStory": "Lirael was once a pivotal figure within the Cult of the Cursed Echo, instrumental in rituals aimed at strengthening the silence. However, plagued by visions of a world restored, she abandoned the cult, now determined to use her insight and clerical abilities to unravel the very curse she once helped solidify. Her journey is one of redemption, walking the line between her past and the hope of healing the land's silence.",
+            "gmSecret": "Lirael's true calling lies in a prophecy that speaks of a 'Moonshadow' who will either seal or break the silence permanently. The Cult still seeks her for their own ends.",
+            "potentialConflict": "Her past allegiances make her a suspect among allies, and her prophetic ties might thrust unwanted responsibility upon her.",
+            "voiceTone": "Whispering and ethereal, with an occasional hint of solemn wisdom",
+            "inventoryHint": "A silver pendant in the shape of a crescent moon",
+            "motifAlignment": [
+              "echoes of the past",
+              "shattered reflections",
+              "the power of forgotten knowledge"
+            ],
+            "backgroundHistory": "Born in the labyrinthine tunnels of a gnome enclave, Lirael Moonshadow grew up surrounded by whispered legends and ancient mysteries. Her natural curiosity led her to the revered libraries of her homeland, where she unearthed forbidden texts speaking of the Cult of the Cursed Echo. Drawn to their promise of unraveling the silence's mystery, she joined their ranks. However, as she ascended within their hierarchy, Lirael stumbled upon a dark revelation that their intentions were to harness the silence for malevolent purposes. Realizing her own complicity, she fled the cult, seeking redemption in the lands above, guided by the faint echoes of an old prophecy that spoke of a gnome who would tip the scales of silence. Haunted by her past and driven by the hope of atonement, she now journeys through the cursed lands, determined to mend what her former allegiance has broken.",
+            "keyRelationships": [
+              "The Cult of the Cursed Echo",
+              "A mysterious oracle who first foretold her destiny"
+            ],
+            "flawOrWeakness": "Her ties to the Cult haunt her, and she fears their control over her fate.",
+            "languages": [
+              "Common",
+              "Gnomish",
+              "Undercommon"
+            ],
+            "alignment": "Neutral",
+            "deity": "Eilistraee, the Drow Goddess of Redemption",
+            "physicalDescription": "Slender with alabaster skin and long white hair. Her eyes are a deep violet, and she wears flowing robes that seem to shimmer like moonlight.",
+            "equipmentPreferences": [
+              "Mace",
+              "Shield",
+              "Chain Mail",
+              "Holy Symbol",
+              "Priest's Pack"
+            ],
+            "subrace": "Drow",
+            "age": 120,
+            "height": "5'8\"",
+            "proficiencies": [
+              "Insight",
+              "Medicine",
+              "History",
+              "Religion",
+              "Light Armor",
+              "Medium Armor",
+              "Shields",
+              "Simple Weapons",
+              "Smith's Tools",
+              "Tinker's Tools"
+            ],
+            "id": "char_1763886012149_4n8g6sg6u",
             "status": "generated"
           }
         ],
         "locked": false,
-        "version": 1763674084451
-      },
-      "srd2014Characters": {
-        "characters": [
-          {
-            "id": "srd_char_1763218061363_zp18u6yvb",
-            "name": "Elara Moonshadow",
-            "level": 1,
-            "ruleset": "SRD2014",
-            "abilityScores": {
-              "strength": 15,
-              "dexterity": 14,
-              "constitution": 13,
-              "intelligence": 12,
-              "wisdom": 10,
-              "charisma": 8
-            },
-            "abilityScoreMethod": "standard",
-            "race": {
-              "name": "Elf",
-              "abilityScoreIncrease": {
-                "dexterity": 2
-              },
-              "traits": [
-                {
-                  "name": "Darkvision",
-                  "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light."
-                },
-                {
-                  "name": "Keen Senses",
-                  "description": "You have proficiency in the Perception skill."
-                },
-                {
-                  "name": "Fey Ancestry",
-                  "description": "You have advantage on saving throws against being charmed, and magic can't put you to sleep."
-                },
-                {
-                  "name": "Trance",
-                  "description": "You don't need to sleep. Instead, you meditate deeply, remaining semiconscious, for 4 hours a day."
-                }
-              ],
-              "languages": [
-                "Common",
-                "Elvish"
-              ],
-              "speed": 30,
-              "size": "Medium",
-              "subraces": [
-                {
-                  "name": "High Elf",
-                  "abilityScoreIncrease": {
-                    "intelligence": 1
-                  },
-                  "traits": [
-                    {
-                      "name": "Elf Weapon Training",
-                      "description": "You have proficiency with the longsword, shortsword, shortbow, and longbow."
-                    },
-                    {
-                      "name": "Cantrip",
-                      "description": "You know one cantrip of your choice from the wizard spell list."
-                    },
-                    {
-                      "name": "Extra Language",
-                      "description": "You can speak, read, and write one extra language of your choice."
-                    }
-                  ]
-                },
-                {
-                  "name": "Wood Elf",
-                  "abilityScoreIncrease": {
-                    "wisdom": 1
-                  },
-                  "traits": [
-                    {
-                      "name": "Elf Weapon Training",
-                      "description": "You have proficiency with the longsword, shortsword, shortbow, and longbow."
-                    },
-                    {
-                      "name": "Fleet of Foot",
-                      "description": "Your base walking speed increases to 35 feet."
-                    },
-                    {
-                      "name": "Mask of the Wild",
-                      "description": "You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."
-                    }
-                  ]
-                }
-              ]
-            },
-            "background": {
-              "name": "Acolyte",
-              "skillProficiencies": [
-                "Insight",
-                "Religion"
-              ],
-              "toolProficiencies": [],
-              "languages": [
-                "Two of your choice"
-              ],
-              "equipment": [
-                "A holy symbol (a gift to you when you entered the priesthood)",
-                "A prayer book or prayer wheel",
-                "5 sticks of incense",
-                "Common clothes",
-                "A belt pouch containing 15 gp"
-              ],
-              "feature": {
-                "name": "Shelter of the Faithful",
-                "description": "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle."
-              },
-              "personalityTraits": [
-                "I idolize a particular hero of my faith, and constantly refer to that person's deeds and example.",
-                "I can find common ground between the fiercest enemies, empathizing with them and always working toward peace.",
-                "I see omens in every event and action. The gods try to speak to us, we just need to listen.",
-                "Nothing can shake my optimistic attitude.",
-                "I quote (or misquote) sacred texts and proverbs in almost every situation.",
-                "I am tolerant (or intolerant) of other faiths and respect (or condemn) the worship of other gods.",
-                "I've enjoyed fine food, drink, and high society among my temple's elite. Rough living grates on me.",
-                "I've spent so long in the temple that I have little practical experience dealing with people in the outside world."
-              ],
-              "ideals": [
-                "Tradition. The ancient traditions of worship and sacrifice must be preserved and upheld. (Lawful)",
-                "Charity. I always try to help those in need, no matter what the personal cost. (Good)",
-                "Change. We must help bring about the changes the gods are constantly working in the world. (Chaotic)",
-                "Power. I hope to one day rise to the top of my faith's religious hierarchy. (Lawful)",
-                "Faith. I trust that my deity will guide my actions. I have faith that if I work hard, things will go well. (Lawful)",
-                "Aspiration. I seek to prove myself worthy of my god's favor by matching my actions against his or her teachings. (Any)"
-              ],
-              "bonds": [
-                "I would die to recover an ancient relic of my faith that was lost long ago.",
-                "I will someday get revenge on the corrupt temple hierarchy who branded me a heretic.",
-                "I owe my life to the priest who took me in when my parents died.",
-                "Everything I do is for the common people.",
-                "I will do anything to protect the temple where I served.",
-                "I seek to preserve a sacred text that my enemies consider heretical and seek to destroy."
-              ],
-              "flaws": [
-                "I judge others harshly, and myself even more severely.",
-                "I put too much trust in those who wield power within my temple's hierarchy.",
-                "My piety sometimes leads me to blindly trust those that profess faith in my god.",
-                "I am inflexible in my thinking.",
-                "I am suspicious of strangers and expect the worst of them.",
-                "Once I pick a goal, I become obsessed with it to the detriment of everything else in my life."
-              ]
-            },
-            "abilityModifiers": {
-              "strength": 2,
-              "dexterity": 2,
-              "constitution": 1,
-              "intelligence": 1,
-              "wisdom": 0,
-              "charisma": -1
-            },
-            "storyCharacterId": "char_1763218061363_zp18u6yvb",
-            "customLanguages": [
-              "Common",
-              "Dwarvish"
-            ],
-            "customProficiencies": [
-              "Athletics",
-              "Survival",
-              "Nature",
-              "Insight",
-              "Thieves' Tools",
-              "Longswords",
-              "Shortswords",
-              "Longbows"
-            ],
-            "customAge": 28,
-            "customHeight": "5'9\"",
-            "customPhysicalDescription": "Slender and graceful, her skin has a faint luminescence. She wears flowing garments that shimmer with hues of midnight blue and deep purple.",
-            "customEquipmentPreferences": [
-              "Longbow",
-              "Shortswords",
-              "Leather Armor",
-              "Explorer's Pack",
-              "Arrows"
-            ],
-            "createdAt": "2025-11-22T15:59:05.915Z",
-            "updatedAt": "2025-11-22T16:34:07.019Z"
-          }
-        ],
-        "version": 1763829247019
+        "version": 1763886365323
       }
     },
     "locks": {
@@ -1689,12 +1585,12 @@
     },
     "meta": {
       "backgroundV": 0,
-      "charactersV": 2,
+      "charactersV": 1,
       "macroSnapshotV": 0,
-      "updatedAt": "2025-11-22T15:58:21.367Z"
+      "updatedAt": "2025-11-23T08:26:40.070Z"
     },
-    "version": 274,
-    "createdAt": "2025-11-02T20:31:10.301Z",
-    "updatedAt": "2025-11-22T16:34:23.309Z"
+    "version": 45,
+    "createdAt": "2025-11-23T07:55:10.480Z",
+    "updatedAt": "2025-11-23T08:26:40.071Z"
   }
 }

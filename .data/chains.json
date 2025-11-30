@@ -2882,5 +2882,56 @@
     },
     "createdAt": "2025-10-29T00:29:49.162Z",
     "updatedAt": "2025-10-29T00:29:49.164Z"
+  },
+  "chain_1763830565825_jz1t7y44b": {
+    "chainId": "chain_1763830565825_jz1t7y44b",
+    "scenes": [
+      {
+        "id": "scene_1_1763830565826",
+        "order": 1,
+        "title": "Echoing Heartbeats in Veyra’s Rest Town Square",
+        "objective": "Explore the synchronized activities of the townsfolk while uncovering initial clues about the Hivemind's influence."
+      },
+      {
+        "id": "scene_2_1763830565826",
+        "order": 2,
+        "title": "Silent Whispers at the Chapel of Unified Thoughts",
+        "objective": "Investigate the unsettling prayers that blend into the Hivemind, revealing hints about its control over Veyra's Rest."
+      },
+      {
+        "id": "scene_3_1763830565826",
+        "order": 3,
+        "title": "Crystalline Reflections in the Crystal Chamber",
+        "objective": "Steal the relic amplifying the Hivemind's control while navigating the paranoia of being discovered by its guardians."
+      },
+      {
+        "id": "scene_4_1763830565826",
+        "order": 4,
+        "title": "Blending Shadows on the Valley's Edge",
+        "objective": "Confront the ethical dilemmas of destabilizing the Hivemind's grip and its consequences on the town’s populace."
+      },
+      {
+        "id": "scene_5_1763830565826",
+        "order": 5,
+        "title": "Shared Dreams in the Whispering Woods",
+        "objective": "Experience visions that reveal the hidden motives of each envoy, testing their trust in one another."
+      },
+      {
+        "id": "scene_6_1763830565826",
+        "order": 6,
+        "title": "Unraveling Identity at the Heart of Veyra’s Rest",
+        "objective": "Faced with the relic's awakening potential, decide whether to embrace or resist the Hivemind's deeper power and its impact on their individuality."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2025-11-22T16:56:05.826Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "80037d47-e0f4-4d46-8ee5-3695c81c44a1",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2025-11-22T16:56:05.826Z",
+    "updatedAt": "2025-11-22T16:56:05.830Z"
   }
 }
