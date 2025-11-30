@@ -151,7 +151,7 @@ export const themeClasses = {
   
   // Button patterns
   buttonPrimary: 'bg-[#3b0d70] text-[#ffffff] hover:bg-[#4a1a8a] hover:text-[#ffffff] focus-visible:ring-[rgba(59,13,112,0.3)] shadow-sm',
-  buttonSecondary: 'bg-[#1C1F2B] text-[#ef6646] border border-[#2A3340] hover:bg-[#2A3340] hover:text-[#ef6646] focus-visible:ring-[rgba(239,102,70,0.3)]',
+  buttonSecondary: 'bg-[#1C1F2B] text-[#ffffff] border border-[#2A3340] hover:bg-[#2A3340] hover:text-[#ffffff] focus-visible:ring-[rgba(239,102,70,0.3)]',
   buttonTertiary: 'bg-transparent text-[#ef6646] hover:bg-[#1a1a1a] hover:text-[#ff7a5c] focus-visible:ring-[rgba(239,102,70,0.3)]',
   buttonFocus: 'focus-visible:ring-[rgba(59,13,112,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   
