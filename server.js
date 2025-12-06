@@ -2,9 +2,22 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import dotenv from 'dotenv';
+import fs from 'fs';
 
-// Load environment variables from .env.local
-dotenv.config({ path: '.env.local' });
+// Load environment variables - check .env.local first, then fallback to .env
+// This matches the Python backend behavior
+const envLocalPath = '.env.local';
+const envPath = '.env';
+
+if (fs.existsSync(envLocalPath)) {
+  dotenv.config({ path: envLocalPath });
+  console.log('✅ Loaded environment variables from .env.local');
+} else if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+  console.log('✅ Loaded environment variables from .env');
+} else {
+  console.warn('⚠️  No .env.local or .env file found. Environment variables may not be loaded.');
+}
 
 // Startup validation - check critical imports
 console.log('🔍 Validating critical imports...');
