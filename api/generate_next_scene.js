@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { buildPromptContext } from './lib/promptContext.js';
 import { renderNextScenePrompt } from './lib/prompt.js';
 import { getOrCreateSessionContext } from './context.js';
-import { saveSessionContext } from './storage.js';
+import { updateSessionContext } from './storage.js';
 import logger from "./lib/logger.js";
 
 const log = logger.scene;
@@ -22,12 +22,13 @@ function getOpenAI() {
 }
 
 /**
- * Builds effective context from locked predecessors only
- * @param {Object} sessionContext - The session context
- * @param {number} upToSequence - The sequence number to build context up to
+ * Builds effective context from locked macro chain scenes
+ * @param {Object} macroChain - The macro chain
+ * @param {Array<string>} lockedSceneIds - Array of locked scene IDs
+ * @param {number} upToOrder - The order number to build context up to
  * @returns {Object} The effective context object
  */
-function buildEffectiveContext(sessionContext, upToSequence) {
+function buildEffectiveContextFromMacroScenes(macroChain, lockedSceneIds, upToOrder) {
   const effectiveContext = {
     keyEvents: [],
     revealedInfo: [],
@@ -38,131 +39,22 @@ function buildEffectiveContext(sessionContext, upToSequence) {
     playerDecisions: []
   };
 
-  if (!sessionContext.sceneDetails) {
+  if (!macroChain || !macroChain.scenes) {
     return effectiveContext;
   }
 
-  // Find all locked scenes with sequence <= upToSequence
-  const lockedScenes = Object.values(sessionContext.sceneDetails).filter(detail => 
-    detail.status === 'Locked' && detail.sequence <= upToSequence
-  );
+  // Get locked prior scenes (from macro chain)
+  const lockedPriorScenes = macroChain.scenes
+    .filter(s => s.order < upToOrder && lockedSceneIds?.includes(s.id))
+    .sort((a, b) => a.order - b.order);
 
-  // Sort by sequence to maintain order
-  lockedScenes.sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
-
-  // Merge context from locked scenes
-  for (const sceneDetail of lockedScenes) {
-    if (sceneDetail.dynamicElements?.contextOut) {
-      const contextOut = sceneDetail.dynamicElements.contextOut;
-      
-      // Merge story_facts
-      if (contextOut.story_facts) {
-        effectiveContext.keyEvents.push(...(contextOut.story_facts.keyEvents || []));
-        effectiveContext.revealedInfo.push(...(contextOut.story_facts.revealedInfo || []));
-        effectiveContext.stateChanges = {
-          ...effectiveContext.stateChanges,
-          ...(contextOut.story_facts.stateChanges || {})
-        };
-      }
-
-      // Merge world_state
-      if (contextOut.world_state) {
-        effectiveContext.stateChanges = {
-          ...effectiveContext.stateChanges,
-          ...contextOut.world_state
-        };
-      }
-
-      // Merge world_seeds
-      if (contextOut.world_seeds) {
-        effectiveContext.environmentalState = {
-          ...effectiveContext.environmentalState,
-          ...contextOut.world_seeds
-        };
-      }
-
-      // Merge character moments
-      if (contextOut.characterMoments) {
-        effectiveContext.playerDecisions.push(...contextOut.characterMoments);
-      }
-    }
-  }
-
-  return effectiveContext;
-}
-
-/**
- * Checks if a scene is locked
- * @param {string} sessionId - The session ID
- * @param {string} sceneId - The scene ID
- * @returns {Promise<boolean>} True if the scene is locked
- */
-async function isSceneLocked(sessionId, sceneId) {
-  const sessionContext = await getOrCreateSessionContext(sessionId);
-  const sceneDetail = sessionContext.sceneDetails?.[sceneId];
-  return sceneDetail?.status === 'Locked';
-}
-
-/**
- * Gets a scene by ID
- * @param {string} sessionId - The session ID
- * @param {string} sceneId - The scene ID
- * @returns {Promise<Object>} The scene detail
- */
-async function getSceneById(sessionId, sceneId) {
-  const sessionContext = await getOrCreateSessionContext(sessionId);
-  const sceneDetail = sessionContext.sceneDetails?.[sceneId];
-  
-  if (!sceneDetail) {
-    throw new Error('Scene not found');
-  }
-  
-  return sceneDetail;
-}
-
-/**
- * Appends a new scene to the macro chain
- * @param {string} sessionId - The session ID
- * @param {Object} sceneData - The scene data
- * @returns {Promise<Object>} The created scene
- */
-async function appendScene(sessionId, sceneData) {
-  const sessionContext = await getOrCreateSessionContext(sessionId);
-  
-  // Generate a new scene ID
-  const sceneId = `scene_${sceneData.sequence}_${Date.now()}`;
-  
-  const newScene = {
-    id: sceneId,
-    sequence: sceneData.sequence,
-    title: sceneData.title,
-    objective: sceneData.objective,
-    status: 'Draft',
-    meta: sceneData.meta || {},
-    createdAt: new Date().toISOString(),
-    lastUpdatedAt: new Date().toISOString(),
-    version: 1
-  };
-
-  // Initialize sceneDetails if it doesn't exist
-  if (!sessionContext.sceneDetails) {
-    sessionContext.sceneDetails = {};
-  }
-
-  // Add the new scene
-  sessionContext.sceneDetails[sceneId] = newScene;
-  sessionContext.updatedAt = new Date().toISOString();
-
-  // Save the updated context
-  await saveSessionContext(sessionId, sessionContext);
-
-  log.info(`New scene ${sceneId} appended to session ${sessionId}`, {
-    sceneId,
-    sequence: sceneData.sequence,
-    title: sceneData.title
+  // Add titles and objectives from locked prior scenes as context
+  lockedPriorScenes.forEach(scene => {
+    effectiveContext.keyEvents.push(`Scene ${scene.order}: ${scene.title}`);
+    effectiveContext.revealedInfo.push(scene.objective);
   });
 
-  return newScene;
+  return effectiveContext;
 }
 
 export default async function handler(req, res) {
@@ -175,29 +67,47 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { sessionId, previousSceneId, gmIntent } = req.body;
+    const { sessionId, previousSceneId, chainId, gmIntent, lockedSceneIds } = req.body;
 
-    if (!sessionId || !previousSceneId) {
-      res.status(400).json({ error: 'Missing required fields: sessionId, previousSceneId' });
+    if (!sessionId || !previousSceneId || !chainId) {
+      res.status(400).json({ error: 'Missing required fields: sessionId, previousSceneId, chainId' });
       return;
     }
 
-    // Validate that the previous scene is locked
-    const locked = await isSceneLocked(sessionId, previousSceneId);
-    if (!locked) {
+    // Get session context
+    const sessionContext = await getOrCreateSessionContext(sessionId);
+    
+    // Get the macro chain
+    if (!sessionContext.macroChains || !sessionContext.macroChains[chainId]) {
+      res.status(404).json({ error: 'Macro chain not found' });
+      return;
+    }
+
+    const macroChain = sessionContext.macroChains[chainId];
+    
+    // Find the previous scene in the macro chain
+    const previousScene = macroChain.scenes.find(s => s.id === previousSceneId);
+    
+    if (!previousScene) {
+      res.status(404).json({ error: 'Previous scene not found in macro chain' });
+      return;
+    }
+
+    // Validate that the previous scene is locked (check if it's in lockedSceneIds array)
+    if (lockedSceneIds && !lockedSceneIds.includes(previousSceneId)) {
       res.status(409).json({ error: 'Previous scene must be locked before generating the next scene.' });
       return;
     }
 
-    // Get the previous scene
-    const previousScene = await getSceneById(sessionId, previousSceneId);
-    
     // Build prompt context
     const promptContext = await buildPromptContext(sessionId);
     
-    // Build effective context from locked predecessors
-    const sessionContext = await getOrCreateSessionContext(sessionId);
-    const effectiveContext = buildEffectiveContext(sessionContext, previousScene.sequence);
+    // Build effective context from locked prior macro chain scenes
+    const effectiveContext = buildEffectiveContextFromMacroScenes(
+      macroChain, 
+      lockedSceneIds || [], 
+      previousScene.order
+    );
 
     // Create the prompt
     const prompt = renderNextScenePrompt({
@@ -206,7 +116,7 @@ export default async function handler(req, res) {
       previousScene: {
         title: previousScene.title,
         objective: previousScene.objective,
-        sequence: previousScene.sequence
+        sequence: previousScene.order
       },
       effectiveContext,
       gmIntent: gmIntent?.trim() || ''
@@ -214,7 +124,9 @@ export default async function handler(req, res) {
 
     log.info('Generated prompt for next scene:', {
       sessionId,
+      chainId,
       previousSceneId,
+      previousSceneOrder: previousScene.order,
       gmIntent: gmIntent?.trim(),
       hasBackground: !!promptContext.background,
       hasCharacters: !!promptContext.characters,
@@ -255,28 +167,51 @@ export default async function handler(req, res) {
       throw new Error('AI response must contain title and objective fields');
     }
 
-    // Calculate next sequence number
-    const nextSequence = (previousScene.sequence || 0) + 1;
+    // Calculate next order number
+    const nextOrder = previousScene.order + 1;
 
-    // Create the new scene
-    const newScene = await appendScene(sessionId, {
+    // Create the new macro chain scene
+    const newScene = {
+      id: `scene_${nextOrder}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      order: nextOrder,
       title: parsedResponse.title,
-      objective: parsedResponse.objective,
-      sequence: nextSequence,
-      meta: { gmIntent: gmIntent?.trim() }
+      objective: parsedResponse.objective
+    };
+
+    // Append the new scene to the macro chain
+    const updatedScenes = [...macroChain.scenes, newScene];
+    
+    // Update the macro chain
+    const updatedChain = {
+      ...macroChain,
+      scenes: updatedScenes,
+      version: (macroChain.version || 0) + 1,
+      lastUpdatedAt: new Date().toISOString(),
+      status: macroChain.status === 'Locked' ? 'Locked' : 'Edited'
+    };
+
+    // Save to session context using updateSessionContext to preserve all existing data
+    await updateSessionContext(sessionId, {
+      macroChains: {
+        [chainId]: updatedChain
+      }
     });
 
-    log.info('Next scene generated successfully:', {
+    log.info('Next macro chain scene generated successfully:', {
       sessionId,
+      chainId,
       previousSceneId,
       newSceneId: newScene.id,
-      sequence: nextSequence,
+      order: nextOrder,
       title: newScene.title
     });
 
     res.status(200).json({
       ok: true,
-      data: newScene
+      data: {
+        scene: newScene,
+        chain: updatedChain
+      }
     });
 
   } catch (error) {

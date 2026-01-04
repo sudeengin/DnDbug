@@ -2933,5 +2933,107 @@
     },
     "createdAt": "2025-11-22T16:56:05.826Z",
     "updatedAt": "2025-11-22T16:56:05.830Z"
+  },
+  "chain_1767554285752_mq3mwcxz3": {
+    "chainId": "chain_1767554285752_mq3mwcxz3",
+    "scenes": [
+      {
+        "id": "scene_1_1767554285753",
+        "order": 1,
+        "title": "The Enigma of the Silent Village",
+        "objective": "Investigate eerie silence to uncover the initial layers of the curse's impact."
+      },
+      {
+        "id": "scene_2_1767554285753",
+        "order": 2,
+        "title": "Whispers of the Ruined Fortress",
+        "objective": "Explore overgrown ruins to discover clues about the curse's true origin."
+      },
+      {
+        "id": "scene_3_1767554285753",
+        "order": 3,
+        "title": "Cryptic Prophecies in the Ancient Library",
+        "objective": "Decipher lost prophecies to deepen understanding of world-altering secrets."
+      },
+      {
+        "id": "scene_4_1767554285753",
+        "order": 4,
+        "title": "Meeting the Guardian in Echoing Silence",
+        "objective": "Converse with the Mysterious Guardian to reveal the nature of the silent curse."
+      },
+      {
+        "id": "scene_5_1767554285753",
+        "order": 5,
+        "title": "Confronting Transformation in the Dead Lands",
+        "objective": "Encounter the duality of redemption and damnation while uncovering the purpose of the forgotten relic."
+      },
+      {
+        "id": "scene_6_1767554285753",
+        "order": 6,
+        "title": "Redemption and Revelation at the Whispering Temple",
+        "objective": "Resolve personal stakes and attempt to change the fate of untouched realms."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2026-01-04T19:18:05.753Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "6ae05d08-7a1c-430d-9294-a99a37f7dc50",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2026-01-04T19:18:05.753Z",
+    "updatedAt": "2026-01-04T19:18:05.765Z"
+  },
+  "chain_1767557652976_jw6c3bq59": {
+    "chainId": "chain_1767557652976_jw6c3bq59",
+    "scenes": [
+      {
+        "id": "scene_1_1767557652977",
+        "order": 1,
+        "title": "Whispers Among Ruined Fortresses",
+        "objective": "Explore the overgrown fortress to uncover the first clues about the silence curse's origin."
+      },
+      {
+        "id": "scene_2_1767557652977",
+        "order": 2,
+        "title": "Echoes in the Silent Villages",
+        "objective": "Investigate an eerie village to understand how the silence has transformed its inhabitants."
+      },
+      {
+        "id": "scene_3_1767557652977",
+        "order": 3,
+        "title": "Lost Knowledge of Ancient Libraries",
+        "objective": "Delve into the ruins of an ancient library to find lost prophecies that hint at the curse's awakening."
+      },
+      {
+        "id": "scene_4_1767557652977",
+        "order": 4,
+        "title": "The Hunter's Secret in Dead Lands",
+        "objective": "Learn from the Hunter about creatures' transformations and the relic buried in the dead lands."
+      },
+      {
+        "id": "scene_5_1767557652977",
+        "order": 5,
+        "title": "Temple of Faded Whispers",
+        "objective": "Confront the Mysterious Guardian in the temple to unlock the purpose of the forgotten relic."
+      },
+      {
+        "id": "scene_6_1767557652977",
+        "order": 6,
+        "title": "Redemption's Path and the Silent Truth",
+        "objective": "Each explorer faces personal redemption as they uncover the truth of the silence, affecting their world's fate."
+      }
+    ],
+    "status": "Draft",
+    "version": 1,
+    "lastUpdatedAt": "2026-01-04T20:14:12.977Z",
+    "meta": {
+      "source": "macroChainTab",
+      "requestId": "2ebeba28-2ee1-464b-beb2-8425b2883e3b",
+      "isDraftIdeaBank": true
+    },
+    "createdAt": "2026-01-04T20:14:12.977Z",
+    "updatedAt": "2026-01-04T20:14:12.993Z"
   }
 }

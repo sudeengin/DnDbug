@@ -1595,16 +1595,372 @@
   },
   "project_1764526731157_ay8689sjl": {
     "sessionId": "project_1764526731157_ay8689sjl",
-    "blocks": {},
-    "locks": {},
+    "blocks": {
+      "custom": {
+        "macroChain": {
+          "chainId": "chain_1767557652976_jw6c3bq59",
+          "scenes": [
+            {
+              "id": "scene_1_1767557652977",
+              "order": 1,
+              "title": "Whispers of the Merchant's Haunt",
+              "objective": "Investigate the abandoned mansion of a once-prominent merchant to uncover its connection to the cursed silence and the hidden truths it may guard."
+            },
+            {
+              "id": "scene_2_1767565457816_2yqxsje2e",
+              "order": 2,
+              "title": "Echoes in the Ashen Halls",
+              "objective": "Explore the mansion's shadowed corridors to uncover hidden truths about the silence and its influence."
+            },
+            {
+              "id": "scene_3_1767565475108_2jfxhydni",
+              "order": 3,
+              "title": "Whispers of a Fractured Mind",
+              "objective": "Confront a deranged stranger in the mansion who succumbs to the silence, unveiling further mysteries and testing the explorers' resolve."
+            },
+            {
+              "id": "scene_4_1767565482489_fieiy9o9a",
+              "order": 4,
+              "title": "Revelation in the Ashen Ruins",
+              "objective": "Uncover the true identity of the deranged stranger and their connection to the cursed silence, deepening the explorers' understanding of the mysterious force."
+            }
+          ],
+          "status": "Locked",
+          "version": 16,
+          "lastUpdatedAt": "2026-01-04T22:29:42.391Z",
+          "meta": {
+            "source": "macroChainTab",
+            "requestId": "2ebeba28-2ee1-464b-beb2-8425b2883e3b",
+            "isDraftIdeaBank": true
+          },
+          "createdAt": "2026-01-04T20:14:12.977Z",
+          "updatedAt": "2026-01-04T20:14:12.993Z",
+          "lockedAt": "2026-01-04T22:29:42.391Z"
+        }
+      },
+      "story_concept": {
+        "concept": "After centuries of war waged through steel and sorcery, the lands finally fell silent. But this “silence” was no peace — it was a curse. It crept into the minds of those who lived within the fallen kingdoms, twisting their thoughts until they lost themselves entirely, becoming monstrous reflections of their former selves.\n\nNo scholar, priest, or sorcerer could ever uncover the origin of this silence. The ancient libraries burned, the oracle stones cracked, and even the gods’ whispers faded from the temples. Only fragments of old prophecies remain — warnings that the silence was never meant to end.\n\nNow, generations later, a band of explorers from distant realms sets out to trace its source. Among them: a war-scarred knight seeking redemption, a scholar of forbidden magic, a healer who survived the silence once before, and a hunter who has seen its creatures up close. Each bears a personal scar — and a secret reason to uncover the truth.\n\nTheir journey leads them beyond ruined fortresses and into a place untouched by time — a forgotten relic buried in the heart of the dead lands. But what they find there is not the echo of a lost age. It is a living design, one that proves the silence was never abandoned.\n\nSomeone — or something — is still guarding it.\nAnd perhaps, the silence isn’t sleeping at all… it’s calling them home.",
+        "timestamp": "2026-01-04T22:11:48.558Z"
+      },
+      "background": {
+        "premise": "A cursed silence haunts the land, twisting minds and warping souls; a disparate band of explorers seeks to uncover its origins and end its dark influence.",
+        "tone_rules": [
+          "Dark and mysterious",
+          "Tense and suspenseful",
+          "Melancholic yet hopeful",
+          "Mythic and epic",
+          "Intriguingly complex"
+        ],
+        "stakes": [
+          "The explorers' sanity and humanity",
+          "The fate of the cursed kingdoms",
+          "The world's balance between peace and chaos",
+          "Personal redemption and healing",
+          "Unraveling a deep-rooted conspiracy"
+        ],
+        "mysteries": [
+          "The true origin of the silence",
+          "Who or what guards the silence",
+          "The meaning of the fragmented prophecies",
+          "The identity of the explorers' hidden adversary",
+          "The nature of the living design"
+        ],
+        "factions": [
+          "The Brotherhood of the Silent",
+          "Order of the Shattered Prophets",
+          "The Cursed Wanderers",
+          "The Guardians of the Echo",
+          "The Silent Enclave"
+        ],
+        "location_palette": [
+          "Ruined fortresses covered in ash",
+          "Ancient libraries filled with charred tomes",
+          "A timeless valley of whispers",
+          "The heart of the dead lands",
+          "An untouched relic of a forgotten age"
+        ],
+        "npc_roster_skeleton": [
+          "Eldrin, the wise yet tormented scholar",
+          "Liora, the empathetic healer with a haunted past",
+          "Thorne, the knight battling inner demons",
+          "Kael, the enigmatic hunter with hidden motives",
+          "The Keeper, a mysterious guardian of the silence"
+        ],
+        "motifs": [
+          "Silence and sound",
+          "Transformation and identity",
+          "Lost knowledge",
+          "Redemption and guilt",
+          "The balance of light and dark"
+        ],
+        "doNots": [
+          "Avoid clear-cut good versus evil",
+          "Do not simplify the characters' motivations",
+          "Avoid a purely linear narrative",
+          "Do not over-rely on combat",
+          "Avoid resolving mysteries too quickly"
+        ],
+        "playstyle_implications": [
+          "Encourages exploration and discovery",
+          "Fosters character-driven storytelling",
+          "Balances combat with problem-solving",
+          "Rewards collaboration and sharing secrets",
+          "Emphasizes atmospheric world-building"
+        ],
+        "numberOfPlayers": 4
+      },
+      "characters": {
+        "list": [
+          {
+            "name": "Eldria Moonwhisper",
+            "role": "Cursed Enchanter",
+            "race": "High Elf",
+            "class": "Wizard",
+            "personality": "Eldria is quiet and contemplative, often lost in thought, yet she possesses a sharp wit that surfaces when least expected. Her demeanor is serene, masking a relentless determination to uncover truths.",
+            "motivation": "Eldria seeks to break the curse of silence that has claimed her homeland, driven by a vision of restoring balance and peace.",
+            "connectionToStory": "Eldria's arcane research led her to the myth of the silence, connecting her fate with the explorers.",
+            "gmSecret": "Unbeknownst to her, Eldria's former mentor was the architect of the silence, a secret member of the Order of the Shattered Prophets. Her mentor intended for Eldria to carry on his work, leaving hidden clues in her studies.",
+            "potentialConflict": "Eldria's trust in others is fragile, fearing betrayal at every corner as shadows of her past haunt her.",
+            "voiceTone": "Soft and deliberate, with an undercurrent of mystery",
+            "inventoryHint": "An aged journal filled with enigmatic notes",
+            "motifAlignment": [
+              "Silence and sound",
+              "Lost knowledge"
+            ],
+            "backgroundHistory": "Growing up in a secluded elven enclave, Eldria was a prodigy in the arcane arts. Her life took a dark turn when an ancient ritual backfired, casting her homeland into a cursed silence. Seeking redemption, she ventured forth to undo the harm and restore her people's voice.",
+            "keyRelationships": [
+              "Eldrin, her former mentor now revealed to be her hidden adversary",
+              "The Guardians of the Echo, who watch her with interest"
+            ],
+            "flawOrWeakness": "Eldria is obsessed with deciphering hidden meanings, often at the cost of her own well-being.",
+            "languages": [
+              "Common",
+              "Elvish",
+              "Draconic"
+            ],
+            "alignment": "Neutral Good",
+            "deity": "Sehanine Moonbow",
+            "physicalDescription": "Slender and ethereal, with long silver hair and piercing violet eyes. She wears robes adorned with arcane sigils, giving her an enigmatic appearance.",
+            "equipmentPreferences": [
+              "Spellbook",
+              "Wand",
+              "Robes of Protection",
+              "Potion of Healing"
+            ],
+            "subrace": "High Elf",
+            "age": 125,
+            "height": "5'11\"",
+            "proficiencies": [
+              "Arcana",
+              "History",
+              "Investigation",
+              "Insight"
+            ],
+            "id": "char_1767564754247_wve74ym02",
+            "status": "generated"
+          },
+          {
+            "name": "Thorne Ironheart",
+            "role": "Haunted Knight",
+            "race": "Human",
+            "class": "Paladin",
+            "personality": "Thorne is stoic and disciplined, driven by a code of honor that compels him to protect others. He carries a quiet burden of past failures, seeking redemption through acts of valor.",
+            "motivation": "Thorne seeks to reclaim his honor and protect the innocent from the creeping darkness of the silence.",
+            "connectionToStory": "Thorne's past battles with the silence left him scarred, and he joins the explorers to make amends for those who fell under his command.",
+            "gmSecret": "The silence claimed his childhood village, and Thorne's brother is now a twisted guardian of the silence, unknowingly manipulated by The Silent Enclave. Thorne's quest is as much about rescuing his brother as it is about ending the curse.",
+            "potentialConflict": "Thorne struggles with his faith, haunted by the idea that his brother cannot be saved.",
+            "voiceTone": "Gruff and direct, with an edge of urgency",
+            "inventoryHint": "A rusted locket with a faded image of his brother",
+            "motifAlignment": [
+              "Redemption and guilt",
+              "The balance of light and dark"
+            ],
+            "backgroundHistory": "Trained from a young age to be a knight, Thorne rose through the ranks quickly. However, his past haunts him—a disastrous campaign against the silence left many of his comrades dead. Thorne bears the weight of survivor's guilt, driving him to correct his past mistakes.",
+            "keyRelationships": [
+              "Liora, an empathetic healer who saved his life",
+              "The Silent Enclave, responsible for twisting his brother's soul"
+            ],
+            "flawOrWeakness": "Thorne is prone to reckless bravery, endangering himself to protect others.",
+            "languages": [
+              "Common",
+              "Dwarvish"
+            ],
+            "alignment": "Lawful Neutral",
+            "deity": "Torm",
+            "physicalDescription": "Broad and muscular, with short-cropped black hair and a stern visage. His armor bears the marks of many battles, a testament to his enduring resolve.",
+            "equipmentPreferences": [
+              "Longsword",
+              "Shield",
+              "Chain Mail",
+              "Holy Symbol"
+            ],
+            "subrace": null,
+            "age": 38,
+            "height": "6'2\"",
+            "proficiencies": [
+              "Athletics",
+              "Intimidation",
+              "Persuasion",
+              "Religion"
+            ],
+            "id": "char_1767564754247_yknh5drp7",
+            "status": "generated"
+          },
+          {
+            "name": "Kael Shadowstep",
+            "role": "Enigmatic Hunter",
+            "race": "Half-Elf",
+            "class": "Ranger",
+            "personality": "Kael is aloof and enigmatic, preferring the company of nature to that of people. He is strategic and meticulous, with a quiet intensity that speaks to his focus.",
+            "motivation": "Kael is driven by a sense of duty to protect the wilderness from the corrupting influence of the silence.",
+            "connectionToStory": "Kael's connection to the story is through his bond with the forest spirits, who whispered warnings of the silence spreading.",
+            "gmSecret": "Kael's father was a member of The Brotherhood of the Silent and orchestrated key parts of the curse, unbeknownst to Kael. This legacy hunts him, threatening to drag him into a destiny he never wanted.",
+            "potentialConflict": "Kael battles with his lineage, fearing that he might follow in his father's dark footsteps.",
+            "voiceTone": "Calm and precise, with an undercurrent of intensity",
+            "inventoryHint": "A silvered arrow, imbued with his father's essence",
+            "motifAlignment": [
+              "Transformation and identity",
+              "The balance of light and dark"
+            ],
+            "backgroundHistory": "Born to a human mother and elven father, Kael grew up at the edge of civilization, learning the ways of the wild. His father's mysterious past left Kael questioning his own identity. When whispers of the silence reached him, he took it upon himself to stop the encroaching darkness.",
+            "keyRelationships": [
+              "Liora, who aids him in understanding his lineage",
+              "A mysterious forest spirit that guides his path"
+            ],
+            "flawOrWeakness": "Kael is mistrustful of others, believing that solitude is his greatest ally.",
+            "languages": [
+              "Common",
+              "Elvish",
+              "Sylvan"
+            ],
+            "alignment": "Chaotic Neutral",
+            "deity": null,
+            "physicalDescription": "Lean and agile, with shoulder-length dark hair and piercing green eyes. His attire is a patchwork of leather and furs, suited for moving silently through the forest.",
+            "equipmentPreferences": [
+              "Longbow",
+              "Shortsword",
+              "Leather Armor",
+              "Herbalism Kit"
+            ],
+            "subrace": null,
+            "age": 29,
+            "height": "5'10\"",
+            "proficiencies": [
+              "Stealth",
+              "Survival",
+              "Nature",
+              "Perception"
+            ],
+            "id": "char_1767564754247_x4ur0szp0",
+            "status": "generated"
+          },
+          {
+            "name": "Liora Amara",
+            "role": "Empathetic Healer",
+            "race": "Half-Orc",
+            "class": "Cleric",
+            "personality": "Liora is gentle and compassionate, a soothing presence in times of distress. She is fiercely protective of her companions, often placing their needs above her own.",
+            "motivation": "Liora's driving force is to heal the land and its people, mending the wounds left by the silence.",
+            "connectionToStory": "Liora's past in a village devastated by the silence connects her deeply to the mission, as she seeks to prevent such suffering from spreading.",
+            "gmSecret": "Liora harbors a dark secret: she unwittingly carries a fragment of the silence within her soul, a result of a failed healing ritual. This piece can either be the key to unraveling the silence or its ultimate weapon.",
+            "potentialConflict": "Her innate fear of the dark power inside her may lead her to make risky decisions to protect others.",
+            "voiceTone": "Warm and calming, with a touch of sorrow",
+            "inventoryHint": "A wooden amulet inscribed with a protective rune",
+            "motifAlignment": [
+              "Redemption and guilt",
+              "Transformation and identity"
+            ],
+            "backgroundHistory": "Liora was raised in a close-knit village that was ravaged by the silence during her adolescence. She dedicated herself to the healing arts, determined to prevent such tragedies from recurring. Her journey has been one of constant learning, as she seeks ways to overcome the curse and save those she encounters.",
+            "keyRelationships": [
+              "Thorne, who she saved and now feels responsible for",
+              "The Keeper, who views her as both an ally and a potential threat"
+            ],
+            "flawOrWeakness": "Liora often neglects her own well-being, pushing herself to exhaustion in her quest to heal others.",
+            "languages": [
+              "Common",
+              "Orc",
+              "Celestial"
+            ],
+            "alignment": "Neutral Good",
+            "deity": "Ilmater",
+            "physicalDescription": "Tall and sturdy, with a kind face marked by soft features unusual for her heritage. Her attire is simple, designed for practicality, and she often carries a satchel of herbs and ointments.",
+            "equipmentPreferences": [
+              "Mace",
+              "Healer's Kit",
+              "Chain Shirt",
+              "Holy Symbol"
+            ],
+            "subrace": null,
+            "age": 34,
+            "height": "6'0\"",
+            "proficiencies": [
+              "Medicine",
+              "Insight",
+              "Religion",
+              "Persuasion"
+            ],
+            "id": "char_1767564754247_8as9kldqb",
+            "status": "generated"
+          }
+        ],
+        "locked": false,
+        "version": 1767564754247
+      }
+    },
+    "locks": {
+      "background": true,
+      "characters": true
+    },
     "meta": {
       "backgroundV": 0,
-      "charactersV": 0,
+      "charactersV": 1,
       "macroSnapshotV": 0,
-      "updatedAt": "2025-11-30T18:18:51.188Z"
+      "updatedAt": "2026-01-04T22:14:23.038Z"
     },
-    "version": 0,
-    "createdAt": "2025-11-30T18:18:51.188Z",
-    "updatedAt": "2025-11-30T18:18:51.191Z"
+    "version": 77,
+    "createdAt": "2026-01-04T22:06:41.843Z",
+    "updatedAt": "2026-01-04T22:29:42.414Z",
+    "macroChains": {
+      "chain_1767557652976_jw6c3bq59": {
+        "chainId": "chain_1767557652976_jw6c3bq59",
+        "scenes": [
+          {
+            "id": "scene_1_1767557652977",
+            "order": 1,
+            "title": "Whispers of the Merchant's Haunt",
+            "objective": "Investigate the abandoned mansion of a once-prominent merchant to uncover its connection to the cursed silence and the hidden truths it may guard."
+          },
+          {
+            "id": "scene_2_1767565457816_2yqxsje2e",
+            "order": 2,
+            "title": "Echoes in the Ashen Halls",
+            "objective": "Explore the mansion's shadowed corridors to uncover hidden truths about the silence and its influence."
+          },
+          {
+            "id": "scene_3_1767565475108_2jfxhydni",
+            "order": 3,
+            "title": "Whispers of a Fractured Mind",
+            "objective": "Confront a deranged stranger in the mansion who succumbs to the silence, unveiling further mysteries and testing the explorers' resolve."
+          },
+          {
+            "id": "scene_4_1767565482489_fieiy9o9a",
+            "order": 4,
+            "title": "Revelation in the Ashen Ruins",
+            "objective": "Uncover the true identity of the deranged stranger and their connection to the cursed silence, deepening the explorers' understanding of the mysterious force."
+          }
+        ],
+        "status": "Locked",
+        "version": 16,
+        "lastUpdatedAt": "2026-01-04T22:29:42.391Z",
+        "meta": {
+          "source": "macroChainTab",
+          "requestId": "2ebeba28-2ee1-464b-beb2-8425b2883e3b",
+          "isDraftIdeaBank": true
+        },
+        "createdAt": "2026-01-04T20:14:12.977Z",
+        "updatedAt": "2026-01-04T20:14:12.993Z",
+        "lockedAt": "2026-01-04T22:29:42.391Z"
+      }
+    }
   }
 }

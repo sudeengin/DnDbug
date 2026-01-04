@@ -1246,6 +1246,12 @@ app.post('/api/scene/delete', async (req, res) => {
   return handler(req, res);
 });
 
+// Macro chain regenerate scene endpoint
+app.post('/api/macro_chain/regenerate_scene', async (req, res) => {
+  const { default: handler } = await import('./api/macro_chain/regenerate_scene.js?' + Date.now());
+  return handler(req, res);
+});
+
 // Generate Next Scene API route
 app.post('/api/generate_next_scene', async (req, res) => {
   const { default: handler } = await import('./api/generate_next_scene.js?' + Date.now());
@@ -1400,6 +1406,7 @@ app.listen(PORT, () => {
   console.log(`   POST /api/scene/unlock`);
   console.log(`   POST /api/scene/update`);
   console.log(`   POST /api/scene/delete`);
+  console.log(`   POST /api/macro_chain/regenerate_scene`);
   console.log(`   POST /api/generate_next_scene`);
   console.log(`   POST /api/characters/generate`);
   console.log(`   GET  /api/characters/list`);

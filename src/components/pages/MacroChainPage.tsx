@@ -8,6 +8,8 @@ import MacroChainBoard from '../MacroChainBoard';
 import { getJSON, postJSON, generateChain } from '../../lib/api';
 import { useOnTabFocus } from '../../hooks/useOnTabFocus';
 import { navigateToTab } from '../../lib/router';
+import { theme } from '../../lib/theme';
+import { cn } from '../../lib/utils';
 import type { SessionContext, MacroChain, MacroScene } from '../../types/macro-chain';
 
 interface MacroChainPageProps {
@@ -300,8 +302,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Macro Chain</h2>
-            <p className="text-gray-600">Plan your story sequence and scene flow.</p>
+            <h2 className={cn("text-2xl font-bold mb-2", theme.text.primary)}>Macro Chain</h2>
+            <p className={theme.text.secondary}>Plan your story sequence and scene flow.</p>
           </div>
         </div>
         
@@ -321,8 +323,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Macro Chain</h2>
-            <p className="text-gray-600">Plan your story sequence and scene flow.</p>
+            <h2 className={cn("text-2xl font-bold mb-2", theme.text.primary)}>Macro Chain</h2>
+            <p className={theme.text.secondary}>Plan your story sequence and scene flow.</p>
           </div>
         </div>
         
@@ -340,8 +342,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Macro Chain</h2>
-          <p className="text-gray-600">Plan your story sequence and scene flow.</p>
+          <h2 className={cn("text-2xl font-bold mb-2", theme.text.primary)}>Macro Chain</h2>
+          <p className={theme.text.secondary}>Plan your story sequence and scene flow.</p>
           {/* Version indicators */}
           <div className="flex items-center space-x-2 mt-2">
             <Badge variant="outline">Background v{backgroundV}</Badge>
@@ -371,8 +373,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Context has changed — regenerate Macro Chain.</h3>
-                <p className="text-sm text-red-700 mt-1">
+                <h3 className="text-sm font-medium">Context has changed — regenerate Macro Chain.</h3>
+                <p className="text-sm mt-1">
                   Background or Characters were updated. The current Macro Chain is based on outdated context.
                 </p>
               </div>
@@ -390,7 +392,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">Background is not locked — lock it first.</h3>
+                <h3 className="text-sm font-medium">Background is not locked — lock it first.</h3>
               </div>
             </div>
           </Alert>
@@ -406,7 +408,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">Characters are not locked — lock them first.</h3>
+                <h3 className="text-sm font-medium">Characters are not locked — lock them first.</h3>
               </div>
             </div>
           </Alert>
@@ -439,7 +441,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
 
         {/* Draft Idea Bank Helper Text */}
         {hasChain && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <Alert variant="default">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg className="h-5 w-5 text-blue-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -447,20 +449,20 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-blue-800">Draft Idea Bank</h3>
-                <p className="text-sm text-blue-700 mt-1">
+                <h3 className="text-sm font-medium">Draft Idea Bank</h3>
+                <p className="text-sm mt-1">
                   These six scenes are draft ideas. Use the Scenes tab to lock Scene 1 and iteratively grow your chain with "What do you want to see next?" prompts.
                 </p>
               </div>
             </div>
-          </div>
+          </Alert>
         )}
 
         {/* Macro Chain Board */}
         {hasChain ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className={cn(theme.card.rounded, "border p-6")}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Generated Macro Chain</h3>
+              <h3 className={cn("text-lg font-semibold", theme.text.primary)}>Generated Macro Chain</h3>
               <Badge variant="generated">{chain.length} scenes</Badge>
             </div>
             <MacroChainBoard 
@@ -479,15 +481,15 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
             />
           </div>
         ) : (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className={cn(theme.card.rounded, "border p-6")}>
             <div className="text-center py-8">
-              <div className="text-gray-400 mb-4">
+              <div className={cn("mb-4", theme.text.muted)}>
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Macro Chain Generated</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className={cn("text-lg font-medium mb-2", theme.text.primary)}>No Macro Chain Generated</h3>
+              <p className={cn("mb-4", theme.text.secondary)}>
                 {isBackgroundLocked && isCharactersLocked
                   ? "Click 'Create Macro Chain' above to generate your story scenes."
                   : "Lock your background and characters first, then create your macro chain."
@@ -509,7 +511,7 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
         <div className="text-center py-4">
           <div className="inline-flex items-center space-x-2">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="text-sm text-gray-600">Loading...</span>
+            <span className={cn("text-sm", theme.text.muted)}>Loading...</span>
           </div>
         </div>
       )}
@@ -523,8 +525,8 @@ export default function MacroChainPage({ sessionId, context, onContextUpdate }: 
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-2 text-sm text-red-700">{error}</div>
+              <h3 className="text-sm font-medium">Error</h3>
+              <div className="mt-2 text-sm">{error}</div>
             </div>
           </div>
         </Alert>

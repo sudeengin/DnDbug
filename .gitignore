@@ -29,6 +29,7 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+!.env.local.template
 
 # User data files
 projects.json
